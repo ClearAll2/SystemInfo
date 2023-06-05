@@ -4,14 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -66,10 +72,15 @@ fun ScaffoldContext(){
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Display Info") },
-                scrollBehavior = scrollBehavior
+                title = { Text("Display Info", color = MaterialTheme.colorScheme.primary) },
+                scrollBehavior = scrollBehavior,
             )
         },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { /*TODO*/ }) {
+                Icon(imageVector = Icons.Default.Star, contentDescription = "Rate us 5 stars!", modifier = Modifier.padding(5.dp))
+            }
+        }
     ) { paddingValues ->
         Surface(
             modifier = Modifier
@@ -96,28 +107,38 @@ fun MainScreen(){
     Column(
         Modifier
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState())) {
-        AdvertView(R.string.ad_banner_id_1, Modifier.fillMaxWidth())
+            .padding(
+                horizontal = 10.dp
+            )
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.secondary,
+                shape = RoundedCornerShape(15.dp)
+            )) {
+        AdvertView(R.string.ad_banner_id_1, Modifier.fillMaxWidth().weight(1.5f))
         Column(
             Modifier
                 .padding(10.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .weight(7f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             IndividualLine(tittle = "Device Model", info = DeviceName.getDeviceName())
             IndividualLine(tittle = "Android version", info = android.os.Build.VERSION.RELEASE)
             IndividualLine(tittle = "API level", info = android.os.Build.VERSION.SDK_INT.toString())
             IndividualLine(tittle = "Drawable Density", info = densityReturn(density.density))
-            AdvertView(R.string.ad_banner_id_2, Modifier.fillMaxWidth())
             IndividualLine(tittle = "Smallest Dp", info = configuration.smallestScreenWidthDp.toString())
             IndividualLine(tittle = "Screen (dpi)", info = configuration.densityDpi.toString())
+            AdvertView(R.string.ad_banner_id_2, Modifier.fillMaxWidth())
             IndividualLine(tittle = "Width (dp)", info = screenWidthDp)
             IndividualLine(tittle = "Height (dp)", info = screenHeightDp)
             IndividualLine(tittle = "Orientation", info = if (screenOrientation == 1) "Portrait" else "Landscape")
             IndividualLine(tittle = "Usable Width (px)", info = screenWidthPx.toString())
             IndividualLine(tittle = "Usable Height (px)", info = screenHeightPx.toString())
             IndividualLine(tittle = "Touch screen", info = if (configuration.touchscreen == 1) "No touch" else "Finger")
-            if (android.os.Build.VERSION.SDK_INT >= 26)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
             {
                 IndividualLine(tittle = "Support HDR", info = if (configuration.isScreenHdr) "Yes" else "No")
                 IndividualLine(tittle = "Support HLG", info = if (configuration.isScreenWideColorGamut) "Yes" else "No")
@@ -125,7 +146,7 @@ fun MainScreen(){
 
             }
         }
-        AdvertView(R.string.ad_banner_id_3, Modifier.fillMaxWidth())
+        AdvertView(R.string.ad_banner_id_3, Modifier.fillMaxWidth().weight(1.5f))
 
     }
 
