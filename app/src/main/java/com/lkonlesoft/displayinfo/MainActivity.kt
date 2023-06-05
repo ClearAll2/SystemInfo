@@ -4,25 +4,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,7 +26,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowCompat
@@ -71,15 +63,11 @@ fun ScaffoldContext(){
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { Text("Display Info", color = MaterialTheme.colorScheme.primary) },
                 scrollBehavior = scrollBehavior,
+                modifier = Modifier.padding(4.dp)
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }) {
-                Icon(imageVector = Icons.Default.Star, contentDescription = "Rate us 5 stars!", modifier = Modifier.padding(5.dp))
-            }
         }
     ) { paddingValues ->
         Surface(
@@ -92,8 +80,10 @@ fun ScaffoldContext(){
     }
 }
 
+
+
 @Composable
-fun MainScreen(){
+fun InfoContext(){
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
     val screenHeight = configuration.screenHeightDp
@@ -106,50 +96,115 @@ fun MainScreen(){
 
     Column(
         Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+
+        ,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        IndividualLine(tittle = "Device Model", info = DeviceName.getDeviceName())
+        IndividualLine(tittle = "Android version", info = android.os.Build.VERSION.RELEASE)
+        IndividualLine(tittle = "API level", info = android.os.Build.VERSION.SDK_INT.toString())
+        IndividualLine(tittle = "Drawable Density", info = densityReturn(density.density))
+        IndividualLine(tittle = "Smallest Dp", info = configuration.smallestScreenWidthDp.toString())
+        IndividualLine(tittle = "Screen (dpi)", info = configuration.densityDpi.toString())
+        IndividualLine(tittle = "Width (dp)", info = screenWidthDp)
+        IndividualLine(tittle = "Height (dp)", info = screenHeightDp)
+        IndividualLine(tittle = "Orientation", info = if (screenOrientation == 1) "Portrait" else "Landscape")
+        IndividualLine(tittle = "Usable Width (px)", info = screenWidthPx.toString())
+        IndividualLine(tittle = "Usable Height (px)", info = screenHeightPx.toString())
+        IndividualLine(tittle = "Touch screen", info = if (configuration.touchscreen == 1) "No touch" else "Finger")
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+        {
+            IndividualLine(tittle = "Support HDR", info = if (configuration.isScreenHdr) "Yes" else "No")
+            IndividualLine(tittle = "Support HLG", info = if (configuration.isScreenWideColorGamut) "Yes" else "No")
+
+
+        }
+    }
+}
+
+@Composable
+fun MainScreen(){
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    if (screenWidth < 480.dp)
+    {
+        Column( Modifier
             .fillMaxWidth()
             .padding(
                 horizontal = 10.dp
-            )
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.secondary,
-                shape = RoundedCornerShape(15.dp)
             )) {
-        AdvertView(R.string.ad_banner_id_1, Modifier.fillMaxWidth().weight(1.5f))
-        Column(
-            Modifier
-                .padding(10.dp)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .weight(7f),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
 
-            IndividualLine(tittle = "Device Model", info = DeviceName.getDeviceName())
-            IndividualLine(tittle = "Android version", info = android.os.Build.VERSION.RELEASE)
-            IndividualLine(tittle = "API level", info = android.os.Build.VERSION.SDK_INT.toString())
-            IndividualLine(tittle = "Drawable Density", info = densityReturn(density.density))
-            IndividualLine(tittle = "Smallest Dp", info = configuration.smallestScreenWidthDp.toString())
-            IndividualLine(tittle = "Screen (dpi)", info = configuration.densityDpi.toString())
-            AdvertView(R.string.ad_banner_id_2, Modifier.fillMaxWidth())
-            IndividualLine(tittle = "Width (dp)", info = screenWidthDp)
-            IndividualLine(tittle = "Height (dp)", info = screenHeightDp)
-            IndividualLine(tittle = "Orientation", info = if (screenOrientation == 1) "Portrait" else "Landscape")
-            IndividualLine(tittle = "Usable Width (px)", info = screenWidthPx.toString())
-            IndividualLine(tittle = "Usable Height (px)", info = screenHeightPx.toString())
-            IndividualLine(tittle = "Touch screen", info = if (configuration.touchscreen == 1) "No touch" else "Finger")
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
-            {
-                IndividualLine(tittle = "Support HDR", info = if (configuration.isScreenHdr) "Yes" else "No")
-                IndividualLine(tittle = "Support HLG", info = if (configuration.isScreenWideColorGamut) "Yes" else "No")
+            AdvertView(
+                R.string.ad_banner_id_1,
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
 
+            )
+            LazyColumn(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(8f)
 
+            ) {
+                item{ }
+
+                item {InfoContext()}
+                item {}
             }
+            AdvertView(
+                R.string.ad_banner_id_2,
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
         }
-        AdvertView(R.string.ad_banner_id_3, Modifier.fillMaxWidth().weight(1.5f))
 
     }
+    else
+    {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(5.dp)
+        ) {
+            LazyColumn(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 10.dp
+                    )
+                    .weight(1.5f)
+            ) {
+                item {InfoContext()}
+            }
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                AdvertView(
+                    R.string.ad_banner_id_1,
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+                AdvertView(
+                    R.string.ad_banner_id_2,
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+                AdvertView(
+                    R.string.ad_banner_id_3,
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+            }
+        }
 
+    }
 }
 
 fun densityReturn(density: Float): String{
@@ -221,11 +276,3 @@ fun IndividualLine(tittle: String, info: String){
 }
 
 
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ScreenInfoTheme {
-        IndividualLine(tittle = "API level", info = "24")
-    }
-}
