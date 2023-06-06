@@ -22,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +35,7 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.jaredrummler.android.device.DeviceName
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +65,7 @@ fun ScaffoldContext(){
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Display Info", color = MaterialTheme.colorScheme.primary) },
+                title = { Text(DeviceName.getDeviceName(), color = MaterialTheme.colorScheme.primary) },
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.padding(4.dp)
             )
@@ -81,18 +82,18 @@ fun ScaffoldContext(){
 }
 
 
-
 @Composable
 fun InfoContext(){
-    val configuration = LocalConfiguration.current
-    val density = LocalDensity.current
-    val screenHeight = configuration.screenHeightDp
-    val screenWidth = configuration.screenWidthDp
-    val screenOrientation = configuration.orientation
-    val screenHeightDp = screenHeight.toString()
-    val screenWidthDp = screenWidth.toString()
-    val screenHeightPx = with(density) {screenHeight.dp.roundToPx()}
-    val screenWidthPx = with(density) {screenWidth.dp.roundToPx()}
+    val resources = LocalContext.current.resources
+    val density = resources.displayMetrics.densityDpi.toString()
+    val scaleDensity = resources.displayMetrics.scaledDensity.toString()
+    val xDpi = resources.displayMetrics.xdpi.toString()
+    val yDpi = resources.displayMetrics.ydpi.toString()
+    val screenOrientation = resources.configuration.orientation
+    val screenHeightDp = resources.configuration.screenHeightDp.toString()
+    val screenWidthDp = resources.configuration.screenWidthDp.toString()
+    val screenHeightPx = resources.displayMetrics.heightPixels.toString()
+    val screenWidthPx = resources.displayMetrics.widthPixels.toString()
 
     Column(
         Modifier
@@ -102,27 +103,36 @@ fun InfoContext(){
         ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        IndividualLine(tittle = "Device Model", info = DeviceName.getDeviceName())
         IndividualLine(tittle = "Android version", info = android.os.Build.VERSION.RELEASE)
         IndividualLine(tittle = "API level", info = android.os.Build.VERSION.SDK_INT.toString())
-        IndividualLine(tittle = "Drawable Density", info = densityReturn(density.density))
-        IndividualLine(tittle = "Smallest Dp", info = configuration.smallestScreenWidthDp.toString())
-        IndividualLine(tittle = "Screen (dpi)", info = configuration.densityDpi.toString())
+        IndividualLine(tittle = "Smallest dp", info = resources.configuration.smallestScreenWidthDp.toString())
+        IndividualLine(tittle = "Screen (dpi)", info = density)
+        IndividualLine(tittle = "Scaled Density", info = scaleDensity)
+        IndividualLine(tittle = "X dpi", info = xDpi)
+        IndividualLine(tittle = "Y dpi", info = yDpi)
         IndividualLine(tittle = "Width (dp)", info = screenWidthDp)
         IndividualLine(tittle = "Height (dp)", info = screenHeightDp)
         IndividualLine(tittle = "Orientation", info = if (screenOrientation == 1) "Portrait" else "Landscape")
-        IndividualLine(tittle = "Usable Width (px)", info = screenWidthPx.toString())
-        IndividualLine(tittle = "Usable Height (px)", info = screenHeightPx.toString())
-        IndividualLine(tittle = "Touch screen", info = if (configuration.touchscreen == 1) "No touch" else "Finger")
+        IndividualLine(tittle = "Usable Width (px)", info = screenWidthPx)
+        IndividualLine(tittle = "Usable Height (px)", info = screenHeightPx)
+
+
+        IndividualLine(tittle = "Touch screen", info = if (resources.configuration.touchscreen == 1) "No touch" else "Finger")
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
         {
-            IndividualLine(tittle = "Support HDR", info = if (configuration.isScreenHdr) "Yes" else "No")
-            IndividualLine(tittle = "Support HLG", info = if (configuration.isScreenWideColorGamut) "Yes" else "No")
-
-
+            IndividualLine(tittle = "Support HDR", info = if (resources.configuration.isScreenHdr) "Yes" else "No")
+            IndividualLine(tittle = "Support HLG", info = if (resources.configuration.isScreenWideColorGamut) "Yes" else "No")
         }
+
     }
+}
+
+
+
+
+@Composable
+fun Header(text: String){
+    Text(text = text, style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(5.dp))
 }
 
 @Composable
@@ -130,11 +140,12 @@ fun MainScreen(){
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     if (screenWidth < 480.dp)
     {
-        Column( Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = 10.dp
-            )) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = 10.dp
+                )) {
 
             AdvertView(
                 R.string.ad_banner_id_1,
@@ -152,7 +163,7 @@ fun MainScreen(){
                 item{ }
 
                 item {InfoContext()}
-                item {}
+
             }
             AdvertView(
                 R.string.ad_banner_id_2,
@@ -165,29 +176,31 @@ fun MainScreen(){
     }
     else
     {
-        Row(
+        Column(
             Modifier
                 .fillMaxWidth()
-                .padding(5.dp)
-        ) {
+                .padding(
+                    horizontal = 10.dp
+                )) {
+
             LazyColumn(
                 Modifier
                     .fillMaxWidth()
-                    .padding(
-                        horizontal = 10.dp
-                    )
-                    .weight(1.5f)
+                    .weight(8f)
+
             ) {
+                item{ }
+
                 item {InfoContext()}
+
             }
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Row(Modifier.fillMaxWidth().weight(2f)) {
                 AdvertView(
                     R.string.ad_banner_id_1,
                     Modifier
                         .fillMaxWidth()
                         .weight(1f)
+
                 )
                 AdvertView(
                     R.string.ad_banner_id_2,
@@ -195,36 +208,14 @@ fun MainScreen(){
                         .fillMaxWidth()
                         .weight(1f)
                 )
-                AdvertView(
-                    R.string.ad_banner_id_3,
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
             }
+
         }
 
     }
 }
 
-fun densityReturn(density: Float): String{
-    if (density >= 4.0) {
-        return "xxxhdpi"
-    }
-    if (density >= 3.0) {
-        return "xxhdpi"
-    }
-    if (density >= 2.0) {
-        return "xhdpi"
-    }
-    if (density >= 1.5) {
-        return "hdpi"
-    }
-    if (density >= 1.0) {
-        return "mdpi"
-    }
-    return "ldpi"
-}
+
 
 @Composable
 fun AdvertView(adId: Int, modifier: Modifier = Modifier){
