@@ -1,5 +1,6 @@
 package com.lkonlesoft.displayinfo
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,8 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -37,6 +42,7 @@ import com.jaredrummler.android.device.DeviceName
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
 
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,24 +55,37 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background)
                 {
-                    ScaffoldContext()
+                    ScaffoldContext(onClick = {startAboutActivity()})
                 }
             }
         }
         MobileAds.initialize(this)
     }
 
+    private fun startAboutActivity(){
+        val intent = Intent(this, AboutActivity::class.java)
+        startActivity(intent)
+    }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldContext(){
+fun ScaffoldContext(onClick: () -> Unit){
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val deviceModel = DeviceName.getDeviceName()
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(DeviceName.getDeviceName(), color = MaterialTheme.colorScheme.primary) },
+                title = { Text(text = deviceModel, color = MaterialTheme.colorScheme.primary) },
                 scrollBehavior = scrollBehavior,
+                actions = {
+                    IconButton(onClick = onClick) {
+                        Icon(
+                            imageVector = Icons.Filled.Info, contentDescription = "Info"
+                        )
+                    }
+                },
                 modifier = Modifier.padding(4.dp)
             )
         }
@@ -130,10 +149,7 @@ fun InfoContext(){
 
 
 
-@Composable
-fun Header(text: String){
-    Text(text = text, style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(5.dp))
-}
+
 
 @Composable
 fun MainScreen(){
@@ -151,7 +167,7 @@ fun MainScreen(){
                 R.string.ad_banner_id_1,
                 Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .weight(1f), AdSize.BANNER
 
             )
             LazyColumn(
@@ -169,7 +185,7 @@ fun MainScreen(){
                 R.string.ad_banner_id_2,
                 Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .weight(1f), AdSize.BANNER
             )
         }
 
@@ -199,14 +215,14 @@ fun MainScreen(){
                     R.string.ad_banner_id_1,
                     Modifier
                         .fillMaxWidth()
-                        .weight(1f)
+                        .weight(1f), AdSize.BANNER
 
                 )
                 AdvertView(
                     R.string.ad_banner_id_2,
                     Modifier
                         .fillMaxWidth()
-                        .weight(1f)
+                        .weight(1f), AdSize.BANNER
                 )
             }
 
@@ -218,7 +234,7 @@ fun MainScreen(){
 
 
 @Composable
-fun AdvertView(adId: Int, modifier: Modifier = Modifier){
+fun AdvertView(adId: Int, modifier: Modifier = Modifier, adSize: AdSize){
     val isInEditMode = LocalInspectionMode.current
     if (isInEditMode) {
         Text(
@@ -235,13 +251,14 @@ fun AdvertView(adId: Int, modifier: Modifier = Modifier){
             modifier = modifier.fillMaxWidth(),
             factory = { context ->
                 AdView(context).apply {
-                    setAdSize(AdSize.BANNER)
+                    setAdSize(adSize)
                     adUnitId = context.getString(adId)
                     loadAd(AdRequest.Builder().build())
                 }
             })
     }
 }
+
 
 
 
