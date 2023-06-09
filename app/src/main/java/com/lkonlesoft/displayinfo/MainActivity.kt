@@ -42,7 +42,6 @@ import com.jaredrummler.android.device.DeviceName
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
 
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
