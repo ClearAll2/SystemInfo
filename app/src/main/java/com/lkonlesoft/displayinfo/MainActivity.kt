@@ -1,6 +1,7 @@
 package com.lkonlesoft.displayinfo
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -100,6 +101,7 @@ fun ScaffoldContext(onClick: () -> Unit){
 }
 
 
+
 @Composable
 fun InfoContext(){
     val resources = LocalContext.current.resources
@@ -113,6 +115,7 @@ fun InfoContext(){
     val screenHeightPx = resources.displayMetrics.heightPixels.toString()
     val screenWidthPx = resources.displayMetrics.widthPixels.toString()
 
+
     Column(
         Modifier
             .padding(10.dp)
@@ -121,8 +124,8 @@ fun InfoContext(){
         ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        IndividualLine(tittle = "Android version", info = android.os.Build.VERSION.RELEASE)
-        IndividualLine(tittle = "API level", info = android.os.Build.VERSION.SDK_INT.toString())
+        IndividualLine(tittle = "Android version", info = Build.VERSION.RELEASE)
+        IndividualLine(tittle = "API level", info = Build.VERSION.SDK_INT.toString())
         IndividualLine(tittle = "Smallest dp", info = resources.configuration.smallestScreenWidthDp.toString())
         IndividualLine(tittle = "Screen (dpi)", info = density)
         IndividualLine(tittle = "Scaled Density", info = scaleDensity)
@@ -136,17 +139,20 @@ fun InfoContext(){
 
 
         IndividualLine(tittle = "Touch screen", info = if (resources.configuration.touchscreen == 1) "No touch" else "Finger")
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
             IndividualLine(tittle = "Support HDR", info = if (resources.configuration.isScreenHdr) "Yes" else "No")
-            IndividualLine(tittle = "Support HLG", info = if (resources.configuration.isScreenWideColorGamut) "Yes" else "No")
+            IndividualLine(tittle = "Support Wide Color Gamut", info = if (resources.configuration.isScreenWideColorGamut) "Yes" else "No")
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+        {
+            IndividualLine(tittle = "Display type", info = LocalContext.current.display?.name.toString())
+            IndividualLine(tittle = "Refresh rate", info = LocalContext.current.display?.refreshRate?.toInt()
+                .toString())
         }
 
     }
 }
-
-
-
 
 
 

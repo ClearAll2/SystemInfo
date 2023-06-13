@@ -3,10 +3,15 @@ package com.lkonlesoft.displayinfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,6 +26,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,7 +60,7 @@ fun AboutScaffoldContext(onClick: () -> Unit){
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Display Info", color = MaterialTheme.colorScheme.primary) },
+                title = { Text(text = "About", color = MaterialTheme.colorScheme.primary) },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
                     IconButton(onClick = onClick) {
@@ -73,34 +82,44 @@ fun AboutScaffoldContext(onClick: () -> Unit){
 }
 
 
+
 @Composable
 fun About(){
-    Column(
+    LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth(),
     ) {
+        item {Image(imageVector = ImageVector.vectorResource(id = R.drawable.appicon_playstore), contentDescription = "logo",
+       modifier = Modifier
+           .clip(CircleShape)
+           .height(100.dp)
+           .width(100.dp), contentScale = ContentScale.Fit)}
+        item{Text(text = "Display Info", textAlign = TextAlign.Center, modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth())}
 
-        Text(text = "Built by Duc Nguyen as a hobby", textAlign = TextAlign.Center, modifier = Modifier
+        item{Text(text = "Built by Duc Nguyen as a hobby", textAlign = TextAlign.Center, modifier = Modifier
             .padding(10.dp)
-            .fillMaxWidth())
-        Text(text = "Icon made by SANB from Flaticon", textAlign = TextAlign.Center, modifier = Modifier
+            .fillMaxWidth())}
+        item{Text(text = "Icon made by SANB from Flaticon", textAlign = TextAlign.Center, modifier = Modifier
             .padding(10.dp)
-            .fillMaxWidth())
-        AdvertView(
+            .fillMaxWidth())}
+
+        item{ Spacer(modifier = Modifier.padding(50.dp))}
+        item {AdvertView(
             R.string.ad_banner_id_1,
             Modifier
                 .fillMaxWidth(), AdSize.LARGE_BANNER
-        )
-        AdvertView(
+        )}
+        item {AdvertView(
             R.string.ad_banner_id_2,
             Modifier
                 .fillMaxWidth(), AdSize.LARGE_BANNER
-        )
+        )}
     }
 }
-
 
 
 @Preview
