@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
@@ -48,6 +49,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         DeviceName.init(this)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        installSplashScreen()
         setContent {
             ScreenInfoTheme {
                 // A surface container using the 'background' color from the theme

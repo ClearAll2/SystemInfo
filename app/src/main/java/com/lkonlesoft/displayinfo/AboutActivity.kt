@@ -3,15 +3,14 @@ package com.lkonlesoft.displayinfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,13 +25,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import com.google.android.gms.ads.AdSize
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
@@ -60,7 +57,7 @@ fun AboutScaffoldContext(onClick: () -> Unit){
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "About", color = MaterialTheme.colorScheme.primary) },
+                title = { Text(text = "About") },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
                     IconButton(onClick = onClick) {
@@ -76,7 +73,7 @@ fun AboutScaffoldContext(onClick: () -> Unit){
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            About()
+            AboutScreen()
         }
     }
 }
@@ -84,51 +81,61 @@ fun AboutScaffoldContext(onClick: () -> Unit){
 
 
 @Composable
-fun About(){
+private fun AboutMenuItem(
+    tittle: String,
+    text: String,
+    onItemClick: () -> Unit){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onItemClick)
+            .padding(
+                horizontal = 16.dp,
+                vertical = 10.dp
+            ),
+        horizontalAlignment = Alignment.Start,
+    ){
+        Text(text = tittle, fontSize = 18.sp,  modifier = Modifier.padding(5.dp))
+        Text(text = text, color = Color.Gray, modifier = Modifier.padding(5.dp))
+    }
+}
+
+@Composable
+fun AboutScreen() {
+    val uriHandler = LocalUriHandler.current
+    val items = listOf(
+        AboutItem.AppVer,
+        AboutItem.IconCredit,
+        AboutItem.Privacy,
+        AboutItem.Contact
+    )
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth(),
+            .fillMaxSize()
+
     ) {
-        item {Image(imageVector = ImageVector.vectorResource(id = R.drawable.appicon_playstore), contentDescription = "logo",
-       modifier = Modifier
-           .clip(CircleShape)
-           .height(100.dp)
-           .width(100.dp), contentScale = ContentScale.Fit)}
-        item{Text(text = "Display Info", textAlign = TextAlign.Center, modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth())}
-
-        item{Text(text = "Built by Duc Nguyen as a hobby", textAlign = TextAlign.Center, modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth())}
-        item{Text(text = "Icon made by SANB from Flaticon", textAlign = TextAlign.Center, modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth())}
-
-        item{ Spacer(modifier = Modifier.padding(50.dp))}
+        items(items){ item ->
+            val url = stringResource(id = item.url)
+            AboutMenuItem(tittle = item.tittle,
+                text = stringResource(id = item.text),
+                onItemClick = {
+                    uriHandler.openUri(url)
+                }
+            )
+        }
+        item { Spacer(modifier = Modifier.padding(vertical = 40.dp))}
         item {AdvertView(
             R.string.ad_banner_id_1,
             Modifier
-                .fillMaxWidth(), AdSize.LARGE_BANNER
+                .fillMaxWidth(), AdSize.BANNER
+
         )}
         item {AdvertView(
             R.string.ad_banner_id_2,
             Modifier
-                .fillMaxWidth(), AdSize.LARGE_BANNER
+                .fillMaxWidth(), AdSize.BANNER
+
         )}
-    }
-}
-
-
-@Preview
-@Composable
-fun Preview(){
-    ScreenInfoTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            AboutScaffoldContext(onClick = { })
-        }
     }
 }

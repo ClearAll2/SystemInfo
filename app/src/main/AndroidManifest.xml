@@ -17,12 +17,11 @@
         <activity
             android:name=".AboutActivity"
             android:exported="false"
-            android:label="@string/title_activity_about"
             android:theme="@style/Theme.ScreenInfo" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.ScreenInfo" >
+            android:theme="@style/Theme.App.Splash" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
