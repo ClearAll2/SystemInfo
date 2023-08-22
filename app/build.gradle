@@ -3,6 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+def VERSION_CODE = 6
+def VERSION_NAME = "1.2.0"
+
 android {
     namespace 'com.lkonlesoft.displayinfo'
     compileSdk 33
@@ -11,9 +14,9 @@ android {
         applicationId "com.lkonlesoft.displayinfo"
         minSdk 24
         targetSdk 33
-        versionCode 5
-        versionName "1.1.2"
-
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
+        resValue('string', 'app_ver', VERSION_NAME)
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -22,7 +25,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -60,7 +64,6 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
     implementation'com.jaredrummler:android-device-names:2.1.1'
-    implementation 'com.google.android.gms:play-services-ads:22.1.0'
     implementation 'androidx.navigation:navigation-compose:2.6.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
 
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,11 +13,11 @@
         android:theme="@style/Theme.ScreenInfo"
         tools:targetApi="33" >
         <activity
-            android:name=".AboutActivity"
+            android:name=".view.AboutActivity"
             android:exported="false"
             android:theme="@style/Theme.ScreenInfo" />
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Splash" >
             <intent-filter>
@@ -28,10 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/app_id" />
     </application>
 
 </manifest>

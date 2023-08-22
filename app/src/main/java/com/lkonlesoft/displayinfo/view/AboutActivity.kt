@@ -1,11 +1,10 @@
-package com.lkonlesoft.displayinfo
+package com.lkonlesoft.displayinfo.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import com.google.android.gms.ads.AdSize
+import com.lkonlesoft.displayinfo.`object`.AboutItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
 
 class AboutActivity : ComponentActivity() {
@@ -90,7 +89,7 @@ private fun AboutMenuItem(
             .fillMaxWidth()
             .clickable(onClick = onItemClick)
             .padding(
-                horizontal = 16.dp,
+                horizontal = 30.dp,
                 vertical = 10.dp
             ),
         horizontalAlignment = Alignment.Start,
@@ -124,18 +123,5 @@ fun AboutScreen() {
                 }
             )
         }
-        item { Spacer(modifier = Modifier.padding(vertical = 40.dp))}
-        item {AdvertView(
-            R.string.ad_banner_id_1,
-            Modifier
-                .fillMaxWidth(), AdSize.BANNER
-
-        )}
-        item {AdvertView(
-            R.string.ad_banner_id_2,
-            Modifier
-                .fillMaxWidth(), AdSize.BANNER
-
-        )}
     }
 }

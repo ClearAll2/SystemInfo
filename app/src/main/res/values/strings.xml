@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">Display Info</string>
-    <string name="app_id">ca-app-pub-2561165301615368~1247903724</string>
-    <string name="ad_banner_id_1">ca-app-pub-2561165301615368/2280965552</string>
-    <string name="ad_banner_id_2">ca-app-pub-2561165301615368/4506252760</string>
-    <string name="app_ver">1.1.2</string>
+    <string name="app_ver" translatable="false">x.x.x</string>
     <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="icon_credit_text">Open link to Flaticon</string>
     <string name="privacy_text">Read our policy</string>
