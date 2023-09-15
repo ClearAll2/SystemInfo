@@ -129,7 +129,7 @@ fun ScaffoldContext(onClick: () -> Unit){
             {
                 item {IndividualLine(tittle = "Display type", info = LocalContext.current.display?.name.toString())}
                 item {IndividualLine(tittle = "Refresh rate", info = LocalContext.current.display?.refreshRate?.toInt()
-                    .toString())}
+                    .toString() + " Hz")}
             }
         }
     }
