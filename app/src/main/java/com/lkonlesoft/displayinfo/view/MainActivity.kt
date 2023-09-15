@@ -90,7 +90,7 @@ fun ScaffoldContext(onClick: () -> Unit){
                         )
                     }
                 },
-                modifier = Modifier.padding(5.dp).nestedScroll(scrollBehavior.nestedScrollConnection)
+                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
             )
         }
     ) {paddingValues ->
