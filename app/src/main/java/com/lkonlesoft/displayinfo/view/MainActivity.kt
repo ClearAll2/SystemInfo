@@ -13,6 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -119,14 +120,12 @@ fun ScaffoldContext(onClick: () -> Unit){
                 },
                 scrollBehavior = scrollBehavior,
                 actions = {
-                    if (currentRoute == NavigationItem.Home.route) {
-                        IconButton(onClick = onClick) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(
-                                    R.drawable.outline_info_24
-                                ), contentDescription = "Info"
-                            )
-                        }
+                    IconButton(onClick = onClick) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(
+                                R.drawable.outline_info_24
+                            ), contentDescription = "Info"
+                        )
                     }
                 }
             )
@@ -142,6 +141,7 @@ fun ScaffoldContext(onClick: () -> Unit){
 
 @Composable
 fun SystemScreen(navController: NavHostController) {
+    val supportedABIS = Build.SUPPORTED_ABIS
     BackHandler {
         navController.popBackStack()
         navController.navigate(NavigationItem.Home.route) {
@@ -154,13 +154,19 @@ fun SystemScreen(navController: NavHostController) {
             .fillMaxWidth()
 
     ) {
-        header { HeaderLine(tittle = "System") }
-        item { IndividualLine(tittle = "Device", info = Build.DEVICE) }
+        header { HeaderLine(tittle = "Device") }
         item { IndividualLine(tittle = "Model", info = Build.MODEL) }
+        item { IndividualLine(tittle = "Product", info = Build.PRODUCT) }
+        item { IndividualLine(tittle = "Device", info = Build.DEVICE) }
         item { IndividualLine(tittle = "Board", info = Build.BOARD) }
         item { IndividualLine(tittle = "Brand", info = Build.BRAND) }
-        item { IndividualLine(tittle = "Product", info = Build.PRODUCT) }
         item { IndividualLine(tittle = "Manufacturer", info = Build.MANUFACTURER) }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            item { IndividualLine(tittle = "SKU", info = Build.SKU) }
+        }
+        item { IndividualLine(tittle = "Radio", info = Build.getRadioVersion()) }
+        item { IndividualLine(tittle = "Instruction Sets", info = supportedABIS.joinToString(", ")) }
+
     }
 }
 
@@ -178,9 +184,11 @@ fun AndroidScreen(navController: NavHostController) {
             .fillMaxWidth()
 
     ) {
-        header { HeaderLine(tittle = "Android") }
         item { IndividualLine(tittle = "Android Version", info = Build.VERSION.RELEASE) }
         item {IndividualLine(tittle = "API Level", info = Build.VERSION.SDK_INT.toString())}
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            item { IndividualLine(tittle = "Security Patch", info = Build.VERSION.SECURITY_PATCH)}
+        }
         item { IndividualLine(tittle = "ID", info = Build.ID) }
         item { IndividualLine(tittle = "Build ID", info = Build.DISPLAY) }
         item { IndividualLine(tittle = "Incremental", info = Build.VERSION.INCREMENTAL) }
@@ -188,6 +196,7 @@ fun AndroidScreen(navController: NavHostController) {
         item { IndividualLine(tittle = "Type", info = Build.TYPE) }
         item { IndividualLine(tittle = "Tags", info = Build.TAGS) }
         item { IndividualLine(tittle = "Fingerprint", info = Build.FINGERPRINT) }
+
     }
 }
 
@@ -215,7 +224,6 @@ fun DisplayScreen(navController: NavHostController) {
             .fillMaxWidth()
 
     ) {
-        header { HeaderLine(tittle = "Display") }
         item {IndividualLine(tittle = "Smallest dp", info = resources.configuration.smallestScreenWidthDp.toString())}
         item {IndividualLine(tittle = "Screen (dpi)", info = density)}
         item {IndividualLine(tittle = "Scaled Density", info = scaleDensity)}
@@ -240,14 +248,15 @@ fun DisplayScreen(navController: NavHostController) {
     }
 }
 
-
-
 @Composable
 fun BatteryScreen(navController: NavHostController) {
     val context = LocalContext.current
     val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { filter ->
         context.registerReceiver(null, filter)
     }
+    val status: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+    val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING
+            || status == BatteryManager.BATTERY_STATUS_FULL
     BackHandler {
         navController.popBackStack()
         navController.navigate(NavigationItem.Home.route) {
@@ -260,12 +269,10 @@ fun BatteryScreen(navController: NavHostController) {
             .fillMaxWidth()
 
     ) {
-        header { HeaderLine(tittle = "Battery") }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            item { IndividualLine(tittle = "Cycle Count", info = batteryStatus?.getStringExtra(BatteryManager.EXTRA_CYCLE_COUNT).toString() )}
-        }
-        item { IndividualLine(tittle = "Temperature", info = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TEMPERATURE).toString()) }
-        item { IndividualLine(tittle = "Voltage", info = batteryStatus?.getStringExtra(BatteryManager.EXTRA_VOLTAGE).toString()) }
+        item { IndividualLine(tittle = "Status", info = if (isCharging) "Charging" else "Discharging")}
+        item { IndividualLine(tittle = "Cycle Count", info = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) batteryStatus?.getIntExtra(BatteryManager.EXTRA_CYCLE_COUNT, 0).toString() else "This feature requires Android 14" )}
+        item { IndividualLine(tittle = "Temperature", info = batteryStatus?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)?.div(10F).toString() + " °C") }
+        item { IndividualLine(tittle = "Voltage", info = batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0)?.div(1000F).toString() + " V") }
         item { IndividualLine(tittle = "Technology", info = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY).toString()) }
     }
 }
@@ -304,16 +311,21 @@ fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
-            .padding(10.dp)
+            .padding(horizontal = 15.dp, vertical = 10.dp)
             .clip(shape = RoundedCornerShape(25.dp))
-            .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(25.dp))
+            .background(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = RoundedCornerShape(25.dp)
+            )
             .clickable {
                 onClick()
             }) {
+        Spacer(modifier = Modifier.padding(10.dp))
         Icon(imageVector = ImageVector.vectorResource(icon), contentDescription = title, modifier = Modifier
-            .padding(20.dp)
+            .padding(10.dp)
             .size(40.dp), tint = MaterialTheme.colorScheme.primary)
-        Text(text = title, fontSize = 25.sp, modifier = Modifier.padding(20.dp))
+        Text(text = title, fontSize = 25.sp, modifier = Modifier.padding(10.dp))
+        Spacer(modifier = Modifier.padding(10.dp))
     }
 }
 

@@ -8,10 +8,6 @@ sealed class AboutItem(var tittle: String, @StringRes var text: Int, @StringRes 
         R.string.app_ver,
         R.string.rate_link
     )
-    object IconCredit: AboutItem("Icon created by SANB",
-        R.string.icon_credit_text,
-        R.string.icon_link
-    )
     object Privacy: AboutItem("Privacy Policy",
         R.string.privacy_text,
         R.string.privacy_link

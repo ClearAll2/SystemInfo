@@ -102,7 +102,6 @@ fun AboutScreen() {
     val uriHandler = LocalUriHandler.current
     val items = listOf(
         AboutItem.AppVer,
-        AboutItem.IconCredit,
         AboutItem.Privacy,
         AboutItem.More,
         AboutItem.Contact
