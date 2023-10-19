@@ -5,13 +5,12 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,17 +18,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.jaredrummler.android.device.DeviceName
@@ -66,11 +68,12 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldContext(onClick: () -> Unit){
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val state = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(state)
     val deviceModel = DeviceName.getDeviceName()
     val resources = LocalContext.current.resources
     val density = resources.displayMetrics.densityDpi.toString()
-    val scaleDensity = resources.displayMetrics.scaledDensity.toString()
+    val scaleDensity = resources.displayMetrics.density.toString()
     val xDpi = resources.displayMetrics.xdpi.toString()
     val yDpi = resources.displayMetrics.ydpi.toString()
     val screenOrientation = resources.configuration.orientation
@@ -79,9 +82,10 @@ fun ScaffoldContext(onClick: () -> Unit){
     val screenHeightPx = resources.displayMetrics.heightPixels.toString()
     val screenWidthPx = resources.displayMetrics.widthPixels.toString()
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = deviceModel, color = MaterialTheme.colorScheme.primary) },
+            TopAppBar(
+                title = { Text(text = "Display Info", color = MaterialTheme.colorScheme.primary) },
                 scrollBehavior = scrollBehavior,
                 actions = {
                     IconButton(onClick = onClick) {
@@ -89,8 +93,7 @@ fun ScaffoldContext(onClick: () -> Unit){
                             imageVector = ImageVector.vectorResource(R.drawable.outline_info_24), contentDescription = "Info"
                         )
                     }
-                },
-                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+                }
             )
         }
     ) {paddingValues ->
@@ -103,9 +106,8 @@ fun ScaffoldContext(onClick: () -> Unit){
                 .fillMaxWidth()
 
         ) {
-            item {
-                IndividualLine(tittle = "Android version", info = Build.VERSION.RELEASE)
-            }
+            item { IndividualLine(tittle = "Device", info = deviceModel) }
+            item { IndividualLine(tittle = "Android version", info = Build.VERSION.RELEASE) }
             item {IndividualLine(tittle = "API level", info = Build.VERSION.SDK_INT.toString())}
             item {IndividualLine(tittle = "Smallest dp", info = resources.configuration.smallestScreenWidthDp.toString())}
             item {IndividualLine(tittle = "Screen (dpi)", info = density)}
@@ -139,22 +141,17 @@ fun ScaffoldContext(onClick: () -> Unit){
 
 @Composable
 fun IndividualLine(tittle: String, info: String){
-    Row(
-        Modifier
+    Column(
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)) {
-
-        Text(text = tittle, textAlign = TextAlign.End,
-            modifier = Modifier
-                .padding(4.dp)
-                .fillMaxWidth()
-                .weight(1f))
-
-        Text(text = info, textAlign = TextAlign.Start,
-            modifier = Modifier
-                .padding(4.dp)
-                .fillMaxWidth()
-                .weight(1f), fontWeight = FontWeight.Bold)
+            .padding(
+                horizontal = 30.dp,
+                vertical = 10.dp
+            ),
+        horizontalAlignment = Alignment.Start,
+    ){
+        Text(text = tittle, fontSize = 18.sp,  modifier = Modifier.padding(5.dp))
+        Text(text = info, color = Color.Gray, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(5.dp))
     }
 }
 
