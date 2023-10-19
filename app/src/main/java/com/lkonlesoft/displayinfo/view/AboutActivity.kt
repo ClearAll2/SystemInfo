@@ -29,14 +29,12 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
 import com.lkonlesoft.displayinfo.`object`.AboutItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
 
 class AboutActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             ScreenInfoTheme {
                 // A surface container using the 'background' color from the theme
@@ -106,6 +104,7 @@ fun AboutScreen() {
         AboutItem.AppVer,
         AboutItem.IconCredit,
         AboutItem.Privacy,
+        AboutItem.More,
         AboutItem.Contact
     )
     LazyColumn(

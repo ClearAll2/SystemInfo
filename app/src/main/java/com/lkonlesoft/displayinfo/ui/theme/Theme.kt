@@ -66,6 +66,7 @@ fun ScreenInfoTheme(
             val windowsInsetsController = WindowCompat.getInsetsController(window, view)
             windowsInsetsController.isAppearanceLightStatusBars = !darkTheme
             windowsInsetsController.isAppearanceLightNavigationBars = !darkTheme
+            WindowCompat.setDecorFitsSystemWindows(window, false)
         }
     }
 

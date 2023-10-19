@@ -1,11 +1,14 @@
 <resources>
-    <string name="app_name">Display Info</string>
+    <string name="app_name">System Info</string>
     <string name="app_ver" translatable="false">x.x.x</string>
     <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="icon_credit_text">Open link to Flaticon</string>
     <string name="privacy_text">Read our policy</string>
-    <string name="privacy_link">https://fdsrepo.cf/privacy/displayinfo</string>
+    <string name="privacy_link">https://clearall2.github.io/SmartSleepApp/privacy.html#display-info-app</string>
+    <string name="more_app_link">https://play.google.com/store/apps/developer?id=LKONLE</string>
+    <string name="more_app_text">Get more apps from us</string>
     <string name="contact_text">Contact us</string>
-    <string name="contact_link">https://t.me/lkonle</string>
+    <string name="contact_link">https://clearall2.github.io/SmartSleepApp/</string>
     <string name="icon_link">https://www.flaticon.com/free-icon/display-size_8797929?term=screen&amp;page=1&amp;position=22&amp;origin=search&amp;related_id=8797929</string>
+    <string name="title_activity_web_view">WebView</string>
 </resources>

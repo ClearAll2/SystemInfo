@@ -1,16 +1,31 @@
 package com.lkonlesoft.displayinfo.view
 
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,8 +37,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -33,17 +50,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
-import com.jaredrummler.android.device.DeviceName
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.`object`.NavigationItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DeviceName.init(this)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         installSplashScreen()
         setContent {
             ScreenInfoTheme {
@@ -70,7 +89,110 @@ class MainActivity : ComponentActivity() {
 fun ScaffoldContext(onClick: () -> Unit){
     val state = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(state)
-    val deviceModel = DeviceName.getDeviceName()
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                title = { Text(text =
+                when(currentRoute){
+                    NavigationItem.System.route -> "System"
+                    NavigationItem.Android.route -> "Android"
+                    NavigationItem.Display.route -> "Display"
+                    NavigationItem.Battery.route -> "Battery"
+                    else -> "System Info"
+                },
+                color = MaterialTheme.colorScheme.primary) },
+                navigationIcon = {
+                   if (currentRoute != NavigationItem.Home.route){
+                       IconButton(onClick = {
+                           navController.popBackStack()
+                           navController.navigate(NavigationItem.Home.route) {
+                               launchSingleTop = true
+                           }
+                       }) {
+                           Icon(Icons.Filled.ArrowBack, "backIcon")
+                       }
+                   }
+                },
+                scrollBehavior = scrollBehavior,
+                actions = {
+                    if (currentRoute == NavigationItem.Home.route) {
+                        IconButton(onClick = onClick) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(
+                                    R.drawable.outline_info_24
+                                ), contentDescription = "Info"
+                            )
+                        }
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Box (modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()) {
+            MainNavigation(navController = navController, currentRoute = currentRoute)
+        }
+    }
+}
+
+@Composable
+fun SystemScreen(navController: NavHostController) {
+    BackHandler {
+        navController.popBackStack()
+        navController.navigate(NavigationItem.Home.route) {
+            launchSingleTop = true
+        }
+    }
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(300.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+        header { HeaderLine(tittle = "System") }
+        item { IndividualLine(tittle = "Device", info = Build.DEVICE) }
+        item { IndividualLine(tittle = "Model", info = Build.MODEL) }
+        item { IndividualLine(tittle = "Board", info = Build.BOARD) }
+        item { IndividualLine(tittle = "Brand", info = Build.BRAND) }
+        item { IndividualLine(tittle = "Product", info = Build.PRODUCT) }
+        item { IndividualLine(tittle = "Manufacturer", info = Build.MANUFACTURER) }
+    }
+}
+
+@Composable
+fun AndroidScreen(navController: NavHostController) {
+    BackHandler {
+        navController.popBackStack()
+        navController.navigate(NavigationItem.Home.route) {
+            launchSingleTop = true
+        }
+    }
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(300.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+        header { HeaderLine(tittle = "Android") }
+        item { IndividualLine(tittle = "Android Version", info = Build.VERSION.RELEASE) }
+        item {IndividualLine(tittle = "API Level", info = Build.VERSION.SDK_INT.toString())}
+        item { IndividualLine(tittle = "ID", info = Build.ID) }
+        item { IndividualLine(tittle = "Build ID", info = Build.DISPLAY) }
+        item { IndividualLine(tittle = "Incremental", info = Build.VERSION.INCREMENTAL) }
+        item { IndividualLine(tittle = "Codename", info = Build.VERSION.CODENAME) }
+        item { IndividualLine(tittle = "Type", info = Build.TYPE) }
+        item { IndividualLine(tittle = "Tags", info = Build.TAGS) }
+        item { IndividualLine(tittle = "Fingerprint", info = Build.FINGERPRINT) }
+    }
+}
+
+@Composable
+fun DisplayScreen(navController: NavHostController) {
     val resources = LocalContext.current.resources
     val density = resources.displayMetrics.densityDpi.toString()
     val scaleDensity = resources.displayMetrics.density.toString()
@@ -81,62 +203,119 @@ fun ScaffoldContext(onClick: () -> Unit){
     val screenWidthDp = resources.configuration.screenWidthDp.toString()
     val screenHeightPx = resources.displayMetrics.heightPixels.toString()
     val screenWidthPx = resources.displayMetrics.widthPixels.toString()
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Display Info", color = MaterialTheme.colorScheme.primary) },
-                scrollBehavior = scrollBehavior,
-                actions = {
-                    IconButton(onClick = onClick) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.outline_info_24), contentDescription = "Info"
-                        )
+    BackHandler {
+        navController.popBackStack()
+        navController.navigate(NavigationItem.Home.route) {
+            launchSingleTop = true
+        }
+    }
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(300.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+        header { HeaderLine(tittle = "Display") }
+        item {IndividualLine(tittle = "Smallest dp", info = resources.configuration.smallestScreenWidthDp.toString())}
+        item {IndividualLine(tittle = "Screen (dpi)", info = density)}
+        item {IndividualLine(tittle = "Scaled Density", info = scaleDensity)}
+        item {IndividualLine(tittle = "X dpi", info = xDpi)}
+        item {IndividualLine(tittle = "Y dpi", info = yDpi)}
+        item {IndividualLine(tittle = "Width (dp)", info = screenWidthDp)}
+        item {IndividualLine(tittle = "Height (dp)", info = screenHeightDp)}
+        item {IndividualLine(tittle = "Orientation", info = if (screenOrientation == 1) "Portrait" else "Landscape")}
+        item {IndividualLine(tittle = "Usable Width (px)", info = screenWidthPx)}
+        item {IndividualLine(tittle = "Usable Height (px)", info = screenHeightPx)}
+        item {IndividualLine(tittle = "Touch Screen", info = if (resources.configuration.touchscreen == 1) "No touch" else "Finger")}
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            item {IndividualLine(tittle = "HDR", info = if (resources.configuration.isScreenHdr) "Supported" else "Not Supported")}
+            item {IndividualLine(tittle = "Wide Color Gamut", info = if (resources.configuration.isScreenWideColorGamut) "Supported" else "Not Supported")}
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+        {
+            item {IndividualLine(tittle = "Display Type", info = LocalContext.current.display?.name.toString())}
+            item {IndividualLine(tittle = "Refresh Rate", info = LocalContext.current.display?.refreshRate?.toInt().toString() + " Hz")}
+        }
+    }
+}
+
+
+
+@Composable
+fun BatteryScreen(navController: NavHostController) {
+    val context = LocalContext.current
+    val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { filter ->
+        context.registerReceiver(null, filter)
+    }
+    BackHandler {
+        navController.popBackStack()
+        navController.navigate(NavigationItem.Home.route) {
+            launchSingleTop = true
+        }
+    }
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(300.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+        header { HeaderLine(tittle = "Battery") }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            item { IndividualLine(tittle = "Cycle Count", info = batteryStatus?.getStringExtra(BatteryManager.EXTRA_CYCLE_COUNT).toString() )}
+        }
+        item { IndividualLine(tittle = "Temperature", info = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TEMPERATURE).toString()) }
+        item { IndividualLine(tittle = "Voltage", info = batteryStatus?.getStringExtra(BatteryManager.EXTRA_VOLTAGE).toString()) }
+        item { IndividualLine(tittle = "Technology", info = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY).toString()) }
+    }
+}
+
+@Composable
+fun HomeScreen(navController: NavHostController, currentRoute: String?) {
+    val listScreen = listOf(
+        NavigationItem.System,
+        NavigationItem.Android,
+        NavigationItem.Display,
+        NavigationItem.Battery,
+    )
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(300.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+        items(listScreen){ item ->
+            val isSelected = currentRoute == item.route
+            BigTitle(title = item.route, icon = item.icon) {
+                if (!isSelected) {
+                    navController.popBackStack()
+                    navController.navigate(item.route) {
+                        launchSingleTop = true
                     }
                 }
-            )
-        }
-    ) {paddingValues ->
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(250.dp),
-            modifier = Modifier
-                .padding(
-                    paddingValues
-                )
-                .fillMaxWidth()
-
-        ) {
-            item { IndividualLine(tittle = "Device", info = deviceModel) }
-            item { IndividualLine(tittle = "Android version", info = Build.VERSION.RELEASE) }
-            item {IndividualLine(tittle = "API level", info = Build.VERSION.SDK_INT.toString())}
-            item {IndividualLine(tittle = "Smallest dp", info = resources.configuration.smallestScreenWidthDp.toString())}
-            item {IndividualLine(tittle = "Screen (dpi)", info = density)}
-            item {IndividualLine(tittle = "Scaled Density", info = scaleDensity)}
-            item {IndividualLine(tittle = "X dpi", info = xDpi)}
-            item {IndividualLine(tittle = "Y dpi", info = yDpi)}
-            item {IndividualLine(tittle = "Width (dp)", info = screenWidthDp)}
-            item {IndividualLine(tittle = "Height (dp)", info = screenHeightDp)}
-            item {IndividualLine(tittle = "Orientation", info = if (screenOrientation == 1) "Portrait" else "Landscape")}
-            item {IndividualLine(tittle = "Usable Width (px)", info = screenWidthPx)}
-            item {IndividualLine(tittle = "Usable Height (px)", info = screenHeightPx)}
-
-
-            item {IndividualLine(tittle = "Touch screen", info = if (resources.configuration.touchscreen == 1) "No touch" else "Finger")}
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            {
-                item {IndividualLine(tittle = "Support HDR", info = if (resources.configuration.isScreenHdr) "Yes" else "No")}
-                item {IndividualLine(tittle = "Support Wide Color Gamut", info = if (resources.configuration.isScreenWideColorGamut) "Yes" else "No")}
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-            {
-                item {IndividualLine(tittle = "Display type", info = LocalContext.current.display?.name.toString())}
-                item {IndividualLine(tittle = "Refresh rate", info = LocalContext.current.display?.refreshRate?.toInt()
-                    .toString() + " Hz")}
             }
         }
     }
 }
 
+@Composable
+fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .padding(10.dp)
+            .clip(shape = RoundedCornerShape(25.dp))
+            .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(25.dp))
+            .clickable {
+                onClick()
+            }) {
+        Icon(imageVector = ImageVector.vectorResource(icon), contentDescription = title, modifier = Modifier
+            .padding(20.dp)
+            .size(40.dp), tint = MaterialTheme.colorScheme.primary)
+        Text(text = title, fontSize = 25.sp, modifier = Modifier.padding(20.dp))
+    }
+}
 
 
 @Composable
@@ -152,6 +331,56 @@ fun IndividualLine(tittle: String, info: String){
     ){
         Text(text = tittle, fontSize = 18.sp,  modifier = Modifier.padding(5.dp))
         Text(text = info, color = Color.Gray, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(5.dp))
+    }
+}
+
+
+fun LazyGridScope.header(
+    content: @Composable LazyGridItemScope.() -> Unit
+) {
+    item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
+}
+
+@Composable
+fun HeaderLine(tittle: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = 30.dp,
+                vertical = 10.dp
+            ),
+        horizontalAlignment = Alignment.Start,
+    ) {
+        Text(
+            text = tittle,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)
+        )
+    }
+}
+
+@Composable
+fun MainNavigation(
+    navController: NavHostController,
+    currentRoute: String?
+) {
+    NavHost(navController, startDestination = NavigationItem.Home.route) {
+        composable(route = NavigationItem.Home.route){
+            HomeScreen(navController = navController, currentRoute = currentRoute)
+        }
+        composable(route = NavigationItem.System.route){
+            SystemScreen(navController = navController)
+        }
+        composable(route = NavigationItem.Android.route){
+            AndroidScreen(navController = navController)
+        }
+        composable(route = NavigationItem.Display.route){
+           DisplayScreen(navController = navController)
+        }
+        composable(route = NavigationItem.Battery.route){
+            BatteryScreen(navController = navController)
+        }
     }
 }
 
