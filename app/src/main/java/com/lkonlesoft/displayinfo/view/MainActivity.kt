@@ -1,10 +1,14 @@
 package com.lkonlesoft.displayinfo.view
 
+import android.app.ActivityManager
+import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.os.StatFs
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -38,7 +42,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,6 +69,10 @@ import androidx.navigation.compose.rememberNavController
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.`object`.NavigationItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
+import kotlinx.coroutines.delay
+import java.io.File
+import java.text.DecimalFormat
+import kotlin.math.roundToInt
 
 
 class MainActivity : ComponentActivity() {
@@ -97,14 +111,7 @@ fun ScaffoldContext(onClick: () -> Unit){
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = { Text(text =
-                when(currentRoute){
-                    NavigationItem.System.route -> "System"
-                    NavigationItem.Android.route -> "Android"
-                    NavigationItem.Display.route -> "Display"
-                    NavigationItem.Battery.route -> "Battery"
-                    else -> "System Info"
-                },
+                title = { Text(text = currentRoute.toString(),
                 color = MaterialTheme.colorScheme.primary) },
                 navigationIcon = {
                    if (currentRoute != NavigationItem.Home.route){
@@ -196,7 +203,8 @@ fun AndroidScreen(navController: NavHostController) {
         item { IndividualLine(tittle = "Type", info = Build.TYPE) }
         item { IndividualLine(tittle = "Tags", info = Build.TAGS) }
         item { IndividualLine(tittle = "Fingerprint", info = Build.FINGERPRINT) }
-
+        item { IndividualLine(tittle = "Bootloader", info = Build.BOOTLOADER) }
+        item { IndividualLine(tittle = "Hardware", info = Build.HARDWARE) }
     }
 }
 
@@ -254,9 +262,21 @@ fun BatteryScreen(navController: NavHostController) {
     val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { filter ->
         context.registerReceiver(null, filter)
     }
-    val status: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
-    val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING
-            || status == BatteryManager.BATTERY_STATUS_FULL
+    var status by remember { mutableIntStateOf(-1) }
+    var isCharging by remember { mutableStateOf(false) }
+    var chargeStatus by remember { mutableStateOf("-1") }
+    var temper by remember { mutableStateOf("-1") }
+    var voltage by remember { mutableStateOf("-1") }
+    LaunchedEffect(Unit){
+        while (true){
+            status = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+            isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL
+            chargeStatus = if (isCharging) "Charging" else "Discharging"
+            temper = batteryStatus?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)?.div(10F).toString() + " °C"
+            voltage = batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0)?.div(1000F).toString() + " V"
+            delay(1000L)
+        }
+    }
     BackHandler {
         navController.popBackStack()
         navController.navigate(NavigationItem.Home.route) {
@@ -269,10 +289,10 @@ fun BatteryScreen(navController: NavHostController) {
             .fillMaxWidth()
 
     ) {
-        item { IndividualLine(tittle = "Status", info = if (isCharging) "Charging" else "Discharging")}
+        item { IndividualLine(tittle = "Status", info = chargeStatus)}
         item { IndividualLine(tittle = "Cycle Count", info = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) batteryStatus?.getIntExtra(BatteryManager.EXTRA_CYCLE_COUNT, 0).toString() else "This feature requires Android 14" )}
-        item { IndividualLine(tittle = "Temperature", info = batteryStatus?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)?.div(10F).toString() + " °C") }
-        item { IndividualLine(tittle = "Voltage", info = batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0)?.div(1000F).toString() + " V") }
+        item { IndividualLine(tittle = "Temperature", info = temper) }
+        item { IndividualLine(tittle = "Voltage", info = voltage) }
         item { IndividualLine(tittle = "Technology", info = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY).toString()) }
     }
 }
@@ -284,11 +304,13 @@ fun HomeScreen(navController: NavHostController, currentRoute: String?) {
         NavigationItem.Android,
         NavigationItem.Display,
         NavigationItem.Battery,
+        NavigationItem.Memory,
     )
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
+        columns = GridCells.Adaptive(150.dp),
         modifier = Modifier
             .fillMaxWidth()
+            .padding(10.dp)
 
     ) {
         items(listScreen){ item ->
@@ -306,12 +328,102 @@ fun HomeScreen(navController: NavHostController, currentRoute: String?) {
 }
 
 @Composable
+fun MemoryScreen(navController: NavHostController) {
+    val context = LocalContext.current
+    val actManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+    val memInfo = ActivityManager.MemoryInfo()
+    var availMem by remember {
+        mutableLongStateOf(0L)
+    }
+    var totalMem by remember {
+        mutableLongStateOf(0L)
+    }
+    var percentage by remember {
+        mutableIntStateOf(0)
+    }
+    val internalDataMem = getTotalMemory(Environment.getDataDirectory())
+    val internalUsedMem = getUsedMemory(Environment.getDataDirectory())
+    val internalFreeMem = getFreeMemory(Environment.getDataDirectory())
+    val externalDataMem = getTotalMemory(Environment.getExternalStorageDirectory())
+    val externalUsedMem = getUsedMemory(Environment.getExternalStorageDirectory())
+    val externalFreeMem = getFreeMemory(Environment.getExternalStorageDirectory())
+    LaunchedEffect(Unit){
+        while (true) {
+            actManager.getMemoryInfo(memInfo)
+            availMem = memInfo.availMem / 1048576L
+            totalMem = memInfo.totalMem / 1048576L
+            percentage = 100 - availMem.toFloat().div(totalMem).times(100).roundToInt()
+            delay(1000L)
+        }
+    }
+    BackHandler {
+        navController.popBackStack()
+        navController.navigate(NavigationItem.Home.route) {
+            launchSingleTop = true
+        }
+    }
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(300.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+        header { HeaderLine(tittle = "RAM") }
+        item { IndividualLine(tittle = "Used", info = "$percentage%")}
+        item { IndividualLine(tittle = "Available RAM", info = "$availMem MB")}
+        item { IndividualLine(tittle = "Total RAM", info = "$totalMem MB")}
+        header { HeaderLine(tittle = "Internal Storage") }
+        item { IndividualLine(tittle = "Total", info = internalDataMem.byteToHuman()) }
+        item { IndividualLine(tittle = "Free", info = internalFreeMem.byteToHuman()) }
+        item { IndividualLine(tittle = "Used", info = internalUsedMem.byteToHuman()) }
+        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED){
+            header { HeaderLine(tittle = "External Storage") }
+            item { IndividualLine(tittle = "Total", info = externalDataMem.byteToHuman()) }
+            item { IndividualLine(tittle = "Free", info = externalFreeMem.byteToHuman()) }
+            item { IndividualLine(tittle = "Used", info = externalUsedMem.byteToHuman()) }
+        }
+    }
+}
+
+fun getUsedMemory(path: File): Long {
+    return getTotalMemory(path) - getFreeMemory(path)
+}
+
+fun getTotalMemory(path: File): Long{
+    if (path.isDirectory && path.exists()){
+        val stats = StatFs(path.absolutePath)
+        return stats.blockCountLong.times(stats.blockSizeLong)
+    }
+    return -1
+}
+
+fun getFreeMemory(path: File): Long{
+    if (path.isDirectory && path.exists()){
+        val stats = StatFs(path.absolutePath)
+        return stats.availableBlocksLong.times(stats.blockSizeLong)
+    }
+    return -1
+}
+
+fun Long.byteToHuman(): String {
+    val symbols = listOf("B", "KB", "MB", "GB", "TB", "PB", "EB")
+    var scale = 1L
+    symbols.forEach {
+        if (this < scale.times(1024L)){
+            return String.format("%s %s", DecimalFormat("#.##").format(this.toDouble() / scale), it)
+        }
+        scale *= 1024L
+    }
+    return "-1 B"
+}
+
+@Composable
 fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
-            .padding(horizontal = 15.dp, vertical = 10.dp)
+            .padding(horizontal = 10.dp, vertical = 10.dp)
             .clip(shape = RoundedCornerShape(25.dp))
             .background(
                 color = MaterialTheme.colorScheme.surfaceVariant,
@@ -392,6 +504,9 @@ fun MainNavigation(
         }
         composable(route = NavigationItem.Battery.route){
             BatteryScreen(navController = navController)
+        }
+        composable(route = NavigationItem.Memory.route){
+            MemoryScreen(navController = navController)
         }
     }
 }
