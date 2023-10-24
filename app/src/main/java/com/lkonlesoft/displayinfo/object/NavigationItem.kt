@@ -9,4 +9,5 @@ sealed class NavigationItem (val route: String, val icon: Int){
     data object Display: NavigationItem(route = "Display", R.drawable.outline_smartphone_24)
     data object Battery: NavigationItem(route = "Battery", R.drawable.outline_battery_4_bar_24)
     data object Memory: NavigationItem(route = "Memory", R.drawable.outline_memory_24)
+    data object Network: NavigationItem(route = "Network", R.drawable.outline_network_cell_24)
 }

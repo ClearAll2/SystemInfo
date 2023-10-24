@@ -1,17 +1,20 @@
 package com.lkonlesoft.displayinfo.view
 
+import android.Manifest
 import android.app.ActivityManager
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
-import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.StatFs
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,8 +32,12 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,6 +55,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,6 +68,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -67,11 +77,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.helper.byteToHuman
+import com.lkonlesoft.displayinfo.helper.getBatteryStatus
+import com.lkonlesoft.displayinfo.helper.getFreeMemory
+import com.lkonlesoft.displayinfo.helper.getKernelVersion
+import com.lkonlesoft.displayinfo.helper.getNetInfo
+import com.lkonlesoft.displayinfo.helper.getNetwork
+import com.lkonlesoft.displayinfo.helper.getNetworkOldApi
+import com.lkonlesoft.displayinfo.helper.getTotalMemory
+import com.lkonlesoft.displayinfo.helper.getUsedMemory
 import com.lkonlesoft.displayinfo.`object`.NavigationItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
 import kotlinx.coroutines.delay
-import java.io.File
-import java.text.DecimalFormat
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
@@ -157,8 +175,7 @@ fun SystemScreen(navController: NavHostController) {
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxSize()
 
     ) {
         header { HeaderLine(tittle = "Device") }
@@ -173,7 +190,6 @@ fun SystemScreen(navController: NavHostController) {
         }
         item { IndividualLine(tittle = "Radio", info = Build.getRadioVersion()) }
         item { IndividualLine(tittle = "Instruction Sets", info = supportedABIS.joinToString(", ")) }
-
     }
 }
 
@@ -187,14 +203,14 @@ fun AndroidScreen(navController: NavHostController) {
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxSize()
 
     ) {
         item { IndividualLine(tittle = "Android Version", info = Build.VERSION.RELEASE) }
         item {IndividualLine(tittle = "API Level", info = Build.VERSION.SDK_INT.toString())}
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             item { IndividualLine(tittle = "Security Patch", info = Build.VERSION.SECURITY_PATCH)}
+            item { IndividualLine(tittle = "SDK", info = Build.VERSION.SDK_INT.toString()) }
         }
         item { IndividualLine(tittle = "ID", info = Build.ID) }
         item { IndividualLine(tittle = "Build ID", info = Build.DISPLAY) }
@@ -203,10 +219,89 @@ fun AndroidScreen(navController: NavHostController) {
         item { IndividualLine(tittle = "Type", info = Build.TYPE) }
         item { IndividualLine(tittle = "Tags", info = Build.TAGS) }
         item { IndividualLine(tittle = "Fingerprint", info = Build.FINGERPRINT) }
+        item { IndividualLine(tittle = "Kernel", info = getKernelVersion().toString()) }
         item { IndividualLine(tittle = "Bootloader", info = Build.BOOTLOADER) }
         item { IndividualLine(tittle = "Hardware", info = Build.HARDWARE) }
+
     }
 }
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun NetworkScreen(navController: NavHostController) {
+    val context = LocalContext.current
+    var networkType by remember{
+        mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) getNetwork(context) else getNetworkOldApi(context))
+    }
+    val startForResult = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()) {isGranted ->
+        if (isGranted){
+            Toast.makeText(context, "Permission granted", Toast.LENGTH_SHORT).show()
+            networkType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) getNetwork(context) else getNetworkOldApi(context)
+        }
+        else{
+            Toast.makeText(context, "Permission is not granted", Toast.LENGTH_SHORT).show()
+        }
+    }
+    val refreshScope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = {
+            refreshScope.launch {
+                refreshing = true
+                delay(500L)
+                networkType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) getNetwork(context) else getNetworkOldApi(context)
+                refreshing = false
+            }
+        }
+    )
+    BackHandler {
+        navController.popBackStack()
+        navController.navigate(NavigationItem.Home.route) {
+            launchSingleTop = true
+        }
+    }
+    Box (modifier = Modifier
+        .fillMaxSize()
+        .pullRefresh(pullRefreshState)) {
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(300.dp),
+            modifier = Modifier.fillMaxSize()
+
+        ) {
+            item {IndividualLine(tittle = "Network Type", info = networkType,
+                canClick = true,
+                onClick = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        if (ActivityCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.READ_PHONE_STATE
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            startForResult.launch(Manifest.permission.READ_PHONE_STATE)
+                        }
+                    }
+                })}
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                val networkInfo = getNetInfo(context)
+                header { HeaderLine(tittle = "Details") }
+                item { IndividualLine(tittle = "Interface", info = networkInfo.interfaces) }
+                item { IndividualLine(tittle = "IP Addresses", info = networkInfo.ip) }
+                item { IndividualLine(tittle = "Domain", info = networkInfo.domain) }
+                item { IndividualLine(tittle = "DNS Servers", info = networkInfo.dnsServer) }
+            }
+
+        }
+        PullRefreshIndicator(
+            refreshing = refreshing,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
+    }
+
+}
+
 
 @Composable
 fun DisplayScreen(navController: NavHostController) {
@@ -228,8 +323,7 @@ fun DisplayScreen(navController: NavHostController) {
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxSize()
 
     ) {
         item {IndividualLine(tittle = "Smallest dp", info = resources.configuration.smallestScreenWidthDp.toString())}
@@ -256,45 +350,63 @@ fun DisplayScreen(navController: NavHostController) {
     }
 }
 
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BatteryScreen(navController: NavHostController) {
     val context = LocalContext.current
-    val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { filter ->
-        context.registerReceiver(null, filter)
-    }
-    var status by remember { mutableIntStateOf(-1) }
-    var isCharging by remember { mutableStateOf(false) }
-    var chargeStatus by remember { mutableStateOf("-1") }
-    var temper by remember { mutableStateOf("-1") }
-    var voltage by remember { mutableStateOf("-1") }
-    LaunchedEffect(Unit){
-        while (true){
-            status = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
-            isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL
-            chargeStatus = if (isCharging) "Charging" else "Discharging"
-            temper = batteryStatus?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)?.div(10F).toString() + " °C"
-            voltage = batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0)?.div(1000F).toString() + " V"
-            delay(1000L)
+    val batteryStatus = getBatteryStatus(context)
+    var status by remember { mutableIntStateOf(batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1) }
+    var isCharging by remember { mutableStateOf(status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL) }
+    var chargeStatus by remember { mutableStateOf(if (isCharging) "Charging" else "Discharging") }
+    var temper by remember { mutableStateOf(batteryStatus?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)?.div(10F).toString() + " °C") }
+    var voltage by remember { mutableStateOf(batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0)?.div(1000F).toString() + " V") }
+    val refreshScope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = {
+            refreshScope.launch {
+                refreshing = true
+                delay(500L)
+                status = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+                isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL
+                chargeStatus = if (isCharging) "Charging" else "Discharging"
+                temper = batteryStatus?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)?.div(10F).toString() + " °C"
+                voltage = batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0)?.div(1000F).toString() + " V"
+                refreshing = false
+            }
         }
-    }
+    )
     BackHandler {
         navController.popBackStack()
         navController.navigate(NavigationItem.Home.route) {
             launchSingleTop = true
         }
     }
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
-        modifier = Modifier
-            .fillMaxWidth()
+    Box (modifier = Modifier
+        .fillMaxSize()
+        .pullRefresh(pullRefreshState)) {
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(300.dp),
+            modifier = Modifier.fillMaxSize()
 
-    ) {
-        item { IndividualLine(tittle = "Status", info = chargeStatus)}
-        item { IndividualLine(tittle = "Cycle Count", info = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) batteryStatus?.getIntExtra(BatteryManager.EXTRA_CYCLE_COUNT, 0).toString() else "This feature requires Android 14" )}
-        item { IndividualLine(tittle = "Temperature", info = temper) }
-        item { IndividualLine(tittle = "Voltage", info = voltage) }
-        item { IndividualLine(tittle = "Technology", info = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY).toString()) }
+        ) {
+            item { IndividualLine(tittle = "Status", info = chargeStatus)}
+            item { IndividualLine(tittle = "Cycle Count", info =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) batteryStatus?.getIntExtra(BatteryManager.EXTRA_CYCLE_COUNT, 0).toString()
+            else "Only available from Android 14" )}
+            item { IndividualLine(tittle = "Temperature", info = temper) }
+            item { IndividualLine(tittle = "Voltage", info = voltage) }
+            item { IndividualLine(tittle = "Technology", info = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY).toString()) }
+        }
+        PullRefreshIndicator(
+            refreshing = refreshing,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
+
 }
 
 @Composable
@@ -305,11 +417,12 @@ fun HomeScreen(navController: NavHostController, currentRoute: String?) {
         NavigationItem.Display,
         NavigationItem.Battery,
         NavigationItem.Memory,
+        NavigationItem.Network,
     )
     LazyVerticalGrid(
         columns = GridCells.Adaptive(150.dp),
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(10.dp)
 
     ) {
@@ -344,16 +457,22 @@ fun MemoryScreen(navController: NavHostController) {
     val internalDataMem = getTotalMemory(Environment.getDataDirectory())
     val internalUsedMem = getUsedMemory(Environment.getDataDirectory())
     val internalFreeMem = getFreeMemory(Environment.getDataDirectory())
-    val externalDataMem = getTotalMemory(Environment.getExternalStorageDirectory())
-    val externalUsedMem = getUsedMemory(Environment.getExternalStorageDirectory())
-    val externalFreeMem = getFreeMemory(Environment.getExternalStorageDirectory())
+    var externalToTal = -1L
+    var externalFree = -1L
+    var externalUsed = -1L
+    val externalFiles = ContextCompat.getExternalFilesDirs(context, null)
+    if (externalFiles.size > 1 && externalFiles[0] != null && externalFiles[1] != null){
+        externalToTal = getTotalMemory(externalFiles[1])
+        externalUsed = getUsedMemory(externalFiles[1])
+        externalFree = getFreeMemory(externalFiles[1])
+    }
     LaunchedEffect(Unit){
         while (true) {
             actManager.getMemoryInfo(memInfo)
             availMem = memInfo.availMem / 1048576L
             totalMem = memInfo.totalMem / 1048576L
             percentage = 100 - availMem.toFloat().div(totalMem).times(100).roundToInt()
-            delay(1000L)
+            delay(2000L)
         }
     }
     BackHandler {
@@ -364,57 +483,25 @@ fun MemoryScreen(navController: NavHostController) {
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxSize()
 
     ) {
         header { HeaderLine(tittle = "RAM") }
         item { IndividualLine(tittle = "Used", info = "$percentage%")}
         item { IndividualLine(tittle = "Available RAM", info = "$availMem MB")}
         item { IndividualLine(tittle = "Total RAM", info = "$totalMem MB")}
-        header { HeaderLine(tittle = "Internal Storage") }
+        header { HeaderLine(tittle = "Internal Storage (User Space)") }
         item { IndividualLine(tittle = "Total", info = internalDataMem.byteToHuman()) }
         item { IndividualLine(tittle = "Free", info = internalFreeMem.byteToHuman()) }
         item { IndividualLine(tittle = "Used", info = internalUsedMem.byteToHuman()) }
-        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED){
-            header { HeaderLine(tittle = "External Storage") }
-            item { IndividualLine(tittle = "Total", info = externalDataMem.byteToHuman()) }
-            item { IndividualLine(tittle = "Free", info = externalFreeMem.byteToHuman()) }
-            item { IndividualLine(tittle = "Used", info = externalUsedMem.byteToHuman()) }
+        if (externalToTal != -1L){
+            header { HeaderLine(tittle = "SD Card") }
+            item { IndividualLine(tittle = "Total", info = externalToTal.byteToHuman()) }
+            item { IndividualLine(tittle = "Free", info = externalFree.byteToHuman()) }
+            item { IndividualLine(tittle = "Used", info = externalUsed.byteToHuman()) }
         }
-    }
-}
 
-fun getUsedMemory(path: File): Long {
-    return getTotalMemory(path) - getFreeMemory(path)
-}
-
-fun getTotalMemory(path: File): Long{
-    if (path.isDirectory && path.exists()){
-        val stats = StatFs(path.absolutePath)
-        return stats.blockCountLong.times(stats.blockSizeLong)
     }
-    return -1
-}
-
-fun getFreeMemory(path: File): Long{
-    if (path.isDirectory && path.exists()){
-        val stats = StatFs(path.absolutePath)
-        return stats.availableBlocksLong.times(stats.blockSizeLong)
-    }
-    return -1
-}
-
-fun Long.byteToHuman(): String {
-    val symbols = listOf("B", "KB", "MB", "GB", "TB", "PB", "EB")
-    var scale = 1L
-    symbols.forEach {
-        if (this < scale.times(1024L)){
-            return String.format("%s %s", DecimalFormat("#.##").format(this.toDouble() / scale), it)
-        }
-        scale *= 1024L
-    }
-    return "-1 B"
 }
 
 @Composable
@@ -443,14 +530,16 @@ fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
 
 
 @Composable
-fun IndividualLine(tittle: String, info: String){
+fun IndividualLine(tittle: String, info: String, canClick: Boolean = false, onClick: () -> Unit = { }){
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
                 horizontal = 30.dp,
                 vertical = 10.dp
-            ),
+            )
+            .clickable(enabled = canClick, onClick = onClick)
+        ,
         horizontalAlignment = Alignment.Start,
     ){
         Text(text = tittle, fontSize = 18.sp,  modifier = Modifier.padding(5.dp))
@@ -484,6 +573,7 @@ fun HeaderLine(tittle: String) {
     }
 }
 
+
 @Composable
 fun MainNavigation(
     navController: NavHostController,
@@ -507,6 +597,9 @@ fun MainNavigation(
         }
         composable(route = NavigationItem.Memory.route){
             MemoryScreen(navController = navController)
+        }
+        composable(route = NavigationItem.Network.route){
+            NetworkScreen(navController = navController)
         }
     }
 }
