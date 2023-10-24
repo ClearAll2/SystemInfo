@@ -6,12 +6,12 @@ System Info is a simple Android app built with [Jetpack Compose UI toolkit](http
 
 ## Features
 Show various system information of device:
-- System Info
-- Android Info
-- Display Info
-- Battery Info
-- Memory Info
-- Network Info
+- System
+- Android
+- Display
+- Battery
+- Memory
+- Network
 - ...
 
 ## Screenshots
