@@ -24,4 +24,7 @@ Simple and adaptive UI.
   <img src="https://github.com/ClearAll2/SystemInfo/assets/18387271/c741cfa2-7c0b-4ad2-81c4-5ccc21d44708" alt="sp4"  height="350px"/>
 </p>
 
+## License
+Read our [license](LICENSE)
+
 
