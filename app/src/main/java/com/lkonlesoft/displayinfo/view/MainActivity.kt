@@ -368,12 +368,12 @@ fun BatteryScreen(navController: NavHostController) {
         onRefresh = {
             refreshScope.launch {
                 refreshing = true
-                delay(500L)
                 status = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
                 isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL
                 chargeStatus = if (isCharging) "Charging" else "Discharging"
                 temper = batteryStatus?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)?.div(10F).toString() + " °C"
                 voltage = batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0)?.div(1000F).toString() + " V"
+                delay(1000L)
                 refreshing = false
             }
         }
