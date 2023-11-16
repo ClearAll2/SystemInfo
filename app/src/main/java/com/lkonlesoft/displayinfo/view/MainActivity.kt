@@ -15,6 +15,10 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -579,7 +583,29 @@ fun MainNavigation(
     navController: NavHostController,
     currentRoute: String?
 ) {
-    NavHost(navController, startDestination = NavigationItem.Home.route) {
+    NavHost(navController, startDestination = NavigationItem.Home.route,
+        enterTransition = {
+            fadeIn(
+                animationSpec = tween(220, delayMillis = 100)
+            ) + scaleIn(
+                initialScale = 0.92f,
+                animationSpec = tween(220, delayMillis = 100)
+            )
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(100))
+        },
+        popEnterTransition = {
+            fadeIn(
+                animationSpec = tween(220, delayMillis = 100)
+            ) + scaleIn(
+                initialScale = 0.92f,
+                animationSpec = tween(220, delayMillis = 100)
+            )
+        },
+        popExitTransition = {
+            fadeOut(animationSpec = tween(100))
+        }) {
         composable(route = NavigationItem.Home.route){
             HomeScreen(navController = navController, currentRoute = currentRoute)
         }
