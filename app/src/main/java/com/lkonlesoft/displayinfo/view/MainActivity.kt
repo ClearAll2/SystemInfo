@@ -15,10 +15,13 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -84,10 +87,13 @@ import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.byteToHuman
 import com.lkonlesoft.displayinfo.helper.getBatteryStatus
 import com.lkonlesoft.displayinfo.helper.getFreeMemory
+import com.lkonlesoft.displayinfo.helper.getGlEsVersion
 import com.lkonlesoft.displayinfo.helper.getKernelVersion
+import com.lkonlesoft.displayinfo.helper.getMinMaxFreq
 import com.lkonlesoft.displayinfo.helper.getNetInfo
 import com.lkonlesoft.displayinfo.helper.getNetwork
 import com.lkonlesoft.displayinfo.helper.getNetworkOldApi
+import com.lkonlesoft.displayinfo.helper.getNumberOfCores
 import com.lkonlesoft.displayinfo.helper.getTotalMemory
 import com.lkonlesoft.displayinfo.helper.getUsedMemory
 import com.lkonlesoft.displayinfo.`object`.NavigationItem
@@ -120,6 +126,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+fun NavHostController.returnToHome(){
+    popBackStack()
+    navigate(NavigationItem.Home.route) {
+        launchSingleTop = true
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,7 +148,13 @@ fun ScaffoldContext(onClick: () -> Unit){
                 title = { Text(text = currentRoute.toString(),
                 color = MaterialTheme.colorScheme.primary) },
                 navigationIcon = {
-                   if (currentRoute != NavigationItem.Home.route){
+                    AnimatedVisibility(visible = currentRoute == NavigationItem.Home.route){
+                        Spacer(modifier = Modifier.padding(horizontal = 24.dp))
+                    }
+                    AnimatedVisibility(visible = currentRoute != NavigationItem.Home.route,
+                       enter = slideInHorizontally() + fadeIn(),
+                       exit = slideOutHorizontally() + fadeOut()
+                    ){
                        IconButton(onClick = {
                            navController.popBackStack()
                            navController.navigate(NavigationItem.Home.route) {
@@ -145,7 +163,7 @@ fun ScaffoldContext(onClick: () -> Unit){
                        }) {
                            Icon(Icons.Filled.ArrowBack, "backIcon")
                        }
-                   }
+                    }
                 },
                 scrollBehavior = scrollBehavior,
                 actions = {
@@ -169,13 +187,10 @@ fun ScaffoldContext(onClick: () -> Unit){
 }
 
 @Composable
-fun SystemScreen(navController: NavHostController) {
+fun SystemScreen(onClick: () -> Unit) {
     val supportedABIS = Build.SUPPORTED_ABIS
     BackHandler {
-        navController.popBackStack()
-        navController.navigate(NavigationItem.Home.route) {
-            launchSingleTop = true
-        }
+        onClick()
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
@@ -198,12 +213,9 @@ fun SystemScreen(navController: NavHostController) {
 }
 
 @Composable
-fun AndroidScreen(navController: NavHostController) {
+fun AndroidScreen(onClick: () -> Unit) {
     BackHandler {
-        navController.popBackStack()
-        navController.navigate(NavigationItem.Home.route) {
-            launchSingleTop = true
-        }
+        onClick()
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
@@ -232,7 +244,7 @@ fun AndroidScreen(navController: NavHostController) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NetworkScreen(navController: NavHostController) {
+fun NetworkScreen(onClick: () -> Unit) {
     val context = LocalContext.current
     var networkType by remember{
         mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) getNetwork(context) else getNetworkOldApi(context))
@@ -261,10 +273,7 @@ fun NetworkScreen(navController: NavHostController) {
         }
     )
     BackHandler {
-        navController.popBackStack()
-        navController.navigate(NavigationItem.Home.route) {
-            launchSingleTop = true
-        }
+        onClick()
     }
     Box (modifier = Modifier
         .fillMaxSize()
@@ -308,7 +317,7 @@ fun NetworkScreen(navController: NavHostController) {
 
 
 @Composable
-fun DisplayScreen(navController: NavHostController) {
+fun DisplayScreen(onClick: () -> Unit) {
     val resources = LocalContext.current.resources
     val density = resources.displayMetrics.densityDpi.toString()
     val scaleDensity = resources.displayMetrics.density.toString()
@@ -320,10 +329,7 @@ fun DisplayScreen(navController: NavHostController) {
     val screenHeightPx = resources.displayMetrics.heightPixels.toString()
     val screenWidthPx = resources.displayMetrics.widthPixels.toString()
     BackHandler {
-        navController.popBackStack()
-        navController.navigate(NavigationItem.Home.route) {
-            launchSingleTop = true
-        }
+        onClick()
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
@@ -357,7 +363,7 @@ fun DisplayScreen(navController: NavHostController) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BatteryScreen(navController: NavHostController) {
+fun BatteryScreen(onClick: () -> Unit) {
     val context = LocalContext.current
     val batteryStatus = getBatteryStatus(context)
     var status by remember { mutableIntStateOf(batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1) }
@@ -383,10 +389,7 @@ fun BatteryScreen(navController: NavHostController) {
         }
     )
     BackHandler {
-        navController.popBackStack()
-        navController.navigate(NavigationItem.Home.route) {
-            launchSingleTop = true
-        }
+        onClick()
     }
     Box (modifier = Modifier
         .fillMaxSize()
@@ -418,6 +421,7 @@ fun HomeScreen(navController: NavHostController, currentRoute: String?) {
     val listScreen = listOf(
         NavigationItem.System,
         NavigationItem.Android,
+        NavigationItem.SOC,
         NavigationItem.Display,
         NavigationItem.Battery,
         NavigationItem.Memory,
@@ -445,9 +449,9 @@ fun HomeScreen(navController: NavHostController, currentRoute: String?) {
 }
 
 @Composable
-fun MemoryScreen(navController: NavHostController) {
+fun MemoryScreen(onClick: () -> Unit) {
     val context = LocalContext.current
-    val actManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+    val actManager = context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
     val memInfo = ActivityManager.MemoryInfo()
     var availMem by remember {
         mutableLongStateOf(0L)
@@ -480,10 +484,7 @@ fun MemoryScreen(navController: NavHostController) {
         }
     }
     BackHandler {
-        navController.popBackStack()
-        navController.navigate(NavigationItem.Home.route) {
-            launchSingleTop = true
-        }
+        onClick()
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
@@ -505,6 +506,35 @@ fun MemoryScreen(navController: NavHostController) {
             item { IndividualLine(tittle = "Used", info = externalUsed.byteToHuman()) }
         }
 
+    }
+}
+
+@Composable
+fun HardwareScreen(onClick: () -> Unit) {
+    val context = LocalContext.current
+    val activityManager: ActivityManager = context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+    val coreNum = getNumberOfCores()
+    BackHandler {
+        onClick()
+    }
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(300.dp),
+        modifier = Modifier.fillMaxSize()
+
+    ) {
+        header { HeaderLine(tittle = "CPU Info") }
+        item { IndividualLine(tittle = "Cores", info = coreNum.toString()) }
+        items(coreNum) {
+            val coreValue = getMinMaxFreq(it)
+            IndividualLine(
+                tittle = "Core $it",
+                info = "Minimum Frequency: ${coreValue.first} MHz",
+                info2 = "Maximum Frequency: ${coreValue.second} MHz"
+            )
+        }
+        //item { IndividualLine(tittle = "Raw Info", info = getSocRawInfo()) }
+        header { HeaderLine(tittle = "GPU Info") }
+        item { IndividualLine(tittle = "glEs Version", info = activityManager.getGlEsVersion()) }
     }
 }
 
@@ -534,7 +564,7 @@ fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
 
 
 @Composable
-fun IndividualLine(tittle: String, info: String, canClick: Boolean = false, onClick: () -> Unit = { }){
+fun IndividualLine(tittle: String, info: String, info2: String = "", canClick: Boolean = false, onClick: () -> Unit = { }){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -548,6 +578,8 @@ fun IndividualLine(tittle: String, info: String, canClick: Boolean = false, onCl
     ){
         Text(text = tittle, fontSize = 18.sp,  modifier = Modifier.padding(5.dp))
         Text(text = info, color = Color.Gray, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(5.dp))
+        if (info2.isNotEmpty())
+            Text(text = info2, color = Color.Gray, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(5.dp))
     }
 }
 
@@ -610,22 +642,39 @@ fun MainNavigation(
             HomeScreen(navController = navController, currentRoute = currentRoute)
         }
         composable(route = NavigationItem.System.route){
-            SystemScreen(navController = navController)
+            SystemScreen{
+                navController.returnToHome()
+            }
         }
         composable(route = NavigationItem.Android.route){
-            AndroidScreen(navController = navController)
+            AndroidScreen{
+                navController.returnToHome()
+            }
+        }
+        composable(route = NavigationItem.SOC.route){
+            HardwareScreen{
+                navController.returnToHome()
+            }
         }
         composable(route = NavigationItem.Display.route){
-           DisplayScreen(navController = navController)
+           DisplayScreen {
+               navController.returnToHome()
+           }
         }
         composable(route = NavigationItem.Battery.route){
-            BatteryScreen(navController = navController)
+            BatteryScreen{
+                navController.returnToHome()
+            }
         }
         composable(route = NavigationItem.Memory.route){
-            MemoryScreen(navController = navController)
+            MemoryScreen{
+                navController.returnToHome()
+            }
         }
         composable(route = NavigationItem.Network.route){
-            NetworkScreen(navController = navController)
+            NetworkScreen{
+                navController.returnToHome()
+            }
         }
     }
 }

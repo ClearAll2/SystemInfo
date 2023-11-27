@@ -1,6 +1,7 @@
 package com.lkonlesoft.displayinfo.helper
 
 import android.Manifest
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Intent
@@ -19,6 +20,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.RandomAccessFile
 import java.text.DecimalFormat
 
 fun getKernelVersion(): String? {
@@ -160,4 +162,49 @@ fun getNetInfo(context: Context): NetworkInfo {
         netInfo.dnsServer = link.dnsServers.joinToString("\n")
     }
     return netInfo
+}
+
+private const val CPU_INFO_DIR = "/sys/devices/system/cpu/"
+fun getNumberOfCores(): Int {
+    return Runtime.getRuntime().availableProcessors()
+}
+
+/**
+ * Checking frequencies directories and return current value if exists (otherwise we can
+ * assume that core is stopped - value -1)
+ */
+fun getCurrentFreq(coreNumber: Int): Long {
+    val currentFreqPath = "${CPU_INFO_DIR}cpu$coreNumber/cpufreq/scaling_cur_freq"
+    return try {
+        RandomAccessFile(currentFreqPath, "r").use { it.readLine().toLong() / 1000 }
+    } catch (e: Exception) {
+        //Timber.e("getCurrentFreq() - cannot read file")
+        -1
+    }
+}
+
+
+fun getSocRawInfo(): String {
+    return File("/proc/cpuinfo").readLines().toString() // Cpu name
+}
+
+/**
+ * Read max/min frequencies for specific [coreNumber]. Return [Pair] with min and max frequency
+ * or [Pair] with -1.
+ */
+fun getMinMaxFreq(coreNumber: Int): Pair<Long, Long> {
+    val minPath = "${CPU_INFO_DIR}cpu$coreNumber/cpufreq/cpuinfo_min_freq"
+    val maxPath = "${CPU_INFO_DIR}cpu$coreNumber/cpufreq/cpuinfo_max_freq"
+    return try {
+        val minMhz = RandomAccessFile(minPath, "r").use { it.readLine().toLong() / 1000 }
+        val maxMhz = RandomAccessFile(maxPath, "r").use { it.readLine().toLong() / 1000 }
+        Pair(minMhz, maxMhz)
+    } catch (e: Exception) {
+        //Timber.e("getMinMaxFreq() - cannot read file")
+        Pair(-1, -1)
+    }
+}
+
+fun ActivityManager.getGlEsVersion(): String {
+    return deviceConfigurationInfo.glEsVersion
 }

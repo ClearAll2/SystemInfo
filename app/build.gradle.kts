@@ -4,7 +4,7 @@ plugins {
 }
 
 val VERSION_CODE = 13
-val VERSION_NAME = "1.5.1"
+val VERSION_NAME = "1.6.0"
 
 android {
     namespace = "com.lkonlesoft.displayinfo"
