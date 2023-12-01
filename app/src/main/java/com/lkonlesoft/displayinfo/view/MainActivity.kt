@@ -156,10 +156,7 @@ fun ScaffoldContext(onClick: () -> Unit){
                        exit = slideOutHorizontally() + fadeOut()
                     ){
                        IconButton(onClick = {
-                           navController.popBackStack()
-                           navController.navigate(NavigationItem.Home.route) {
-                               launchSingleTop = true
-                           }
+                           navController.returnToHome()
                        }) {
                            Icon(Icons.Filled.ArrowBack, "backIcon")
                        }
