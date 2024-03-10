@@ -21,7 +21,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,7 +43,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -145,8 +147,26 @@ fun ScaffoldContext(onClick: () -> Unit){
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = { Text(text = currentRoute.toString(),
-                color = MaterialTheme.colorScheme.primary) },
+                title = {
+                    AnimatedVisibility(visible = currentRoute !== NavigationItem.Home.route,
+                        enter = slideInVertically{-it}+ fadeIn(),
+                        exit = slideOutVertically{it} + fadeOut()
+                    ) {
+                        Text(
+                            text = currentRoute.toString(),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    AnimatedVisibility(visible = currentRoute == NavigationItem.Home.route,
+                        enter = slideInVertically{-it} + fadeIn(),
+                        exit = slideOutVertically{it} + fadeOut()
+                    ) {
+                        Text(
+                            text = currentRoute.toString(),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
                 navigationIcon = {
                     AnimatedVisibility(visible = currentRoute == NavigationItem.Home.route){
                         Spacer(modifier = Modifier.padding(horizontal = 24.dp))
@@ -158,7 +178,7 @@ fun ScaffoldContext(onClick: () -> Unit){
                        IconButton(onClick = {
                            navController.returnToHome()
                        }) {
-                           Icon(Icons.Filled.ArrowBack, "backIcon")
+                           Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
                        }
                     }
                 },
