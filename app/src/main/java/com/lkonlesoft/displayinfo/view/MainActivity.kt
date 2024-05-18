@@ -509,7 +509,7 @@ fun MemoryScreen(onClick: () -> Unit) {
 
     ) {
         header { HeaderLine(tittle = "RAM") }
-        item { IndividualLine(tittle = "Used", info = "$percentage%")}
+        item { IndividualLine(tittle = "Used", info = "${percentage}%")}
         item { IndividualLine(tittle = "Available RAM", info = "$availMem MB")}
         item { IndividualLine(tittle = "Total RAM", info = "$totalMem MB")}
         header { HeaderLine(tittle = "Internal Storage (User Space)") }
@@ -544,7 +544,7 @@ fun HardwareScreen(onClick: () -> Unit) {
         items(coreNum) {
             val coreValue = getMinMaxFreq(it)
             IndividualLine(
-                tittle = "Core $it",
+                tittle = "Core ${it+1}",
                 info = "Minimum Frequency: ${coreValue.first} MHz",
                 info2 = "Maximum Frequency: ${coreValue.second} MHz"
             )
