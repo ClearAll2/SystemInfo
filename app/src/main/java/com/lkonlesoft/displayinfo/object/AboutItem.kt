@@ -17,7 +17,7 @@ sealed class AboutItem(var tittle: String, @StringRes var text: Int, @StringRes 
         R.string.more_app_text,
         R.string.more_app_link
     )
-    object Contact: AboutItem("© 2023 LKONLE",
+    object Contact: AboutItem("© 2024 LKONLE",
         R.string.contact_text,
         R.string.contact_link
     )
