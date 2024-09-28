@@ -14,16 +14,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -109,6 +110,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
+        enableEdgeToEdge()
         setContent {
             ScreenInfoTheme {
                 // A surface container using the 'background' color from the theme
@@ -148,9 +150,9 @@ fun ScaffoldContext(onClick: () -> Unit){
         topBar = {
             TopAppBar(
                 title = {
-                    AnimatedVisibility(visible = currentRoute !== NavigationItem.Home.route,
-                        enter = slideInVertically{-it}+ fadeIn(),
-                        exit = slideOutVertically{it} + fadeOut()
+                    AnimatedVisibility(visible = currentRoute != NavigationItem.Home.route,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
                     ) {
                         Text(
                             text = currentRoute.toString(),
@@ -158,8 +160,8 @@ fun ScaffoldContext(onClick: () -> Unit){
                         )
                     }
                     AnimatedVisibility(visible = currentRoute == NavigationItem.Home.route,
-                        enter = slideInVertically{-it} + fadeIn(),
-                        exit = slideOutVertically{it} + fadeOut()
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
                     ) {
                         Text(
                             text = currentRoute.toString(),
@@ -371,8 +373,9 @@ fun DisplayScreen(onClick: () -> Unit) {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
         {
-            item {IndividualLine(tittle = "Display Type", info = LocalContext.current.display?.name.toString())}
-            item {IndividualLine(tittle = "Refresh Rate", info = LocalContext.current.display?.refreshRate?.toInt().toString() + " Hz")}
+            item {IndividualLine(tittle = "Display Type", info = LocalContext.current.display.name.toString())}
+            item {IndividualLine(tittle = "Refresh Rate", info = LocalContext.current.display.refreshRate.toInt()
+                .toString() + " Hz")}
         }
     }
 }
