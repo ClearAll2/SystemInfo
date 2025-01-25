@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200.dp"
+    android:layout_height="100.dp"
+    android:orientation="vertical"
+    android:layout_centerVertical="true"
+    android:layout_centerHorizontal="true"
+    android:visibility="visible">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="center"
+        android:src="@mipmap/appicon_round" />
+</LinearLayout>

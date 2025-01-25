@@ -9,4 +9,5 @@
     <string name="contact_text">Contact us</string>
     <string name="contact_link">https://clearall2.github.io/SmartSleepApp/</string>
     <string name="title_activity_web_view">WebView</string>
+    <string name="appwidget_description">Battery Cycle Count</string>
 </resources>

@@ -18,11 +18,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
@@ -79,7 +77,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -150,24 +147,10 @@ fun ScaffoldContext(onClick: () -> Unit){
         topBar = {
             TopAppBar(
                 title = {
-                    AnimatedVisibility(visible = currentRoute != NavigationItem.Home.route,
-                        enter = fadeIn() + expandVertically(),
-                        exit = fadeOut() + shrinkVertically()
-                    ) {
-                        Text(
-                            text = currentRoute.toString(),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    AnimatedVisibility(visible = currentRoute == NavigationItem.Home.route,
-                        enter = fadeIn() + expandVertically(),
-                        exit = fadeOut() + shrinkVertically()
-                    ) {
-                        Text(
-                            text = currentRoute.toString(),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                    Text(
+                        text = currentRoute.toString(),
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 },
                 navigationIcon = {
                     AnimatedVisibility(visible = currentRoute == NavigationItem.Home.route){
@@ -488,7 +471,7 @@ fun MemoryScreen(onClick: () -> Unit) {
     var externalToTal = -1L
     var externalFree = -1L
     var externalUsed = -1L
-    val externalFiles = ContextCompat.getExternalFilesDirs(context, null)
+    val externalFiles = context.getExternalFilesDirs(null)
     if (externalFiles.size > 1 && externalFiles[0] != null && externalFiles[1] != null){
         externalToTal = getTotalMemory(externalFiles[1])
         externalUsed = getUsedMemory(externalFiles[1])

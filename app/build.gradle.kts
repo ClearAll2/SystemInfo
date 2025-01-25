@@ -4,8 +4,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val VERSION_CODE = 18
-val VERSION_NAME = "1.6.2"
+val buildCode = 18
+val buildName = "1.6.2"
 
 android {
     namespace = "com.lkonlesoft.displayinfo"
@@ -15,9 +15,9 @@ android {
         applicationId = "com.lkonlesoft.displayinfo"
         minSdk = 21
         targetSdk = 35
-        versionCode = VERSION_CODE
-        versionName = VERSION_NAME
-        resValue("string", "app_ver", VERSION_NAME)
+        versionCode = buildCode
+        versionName = buildName
+        resValue("string", "app_ver", buildName)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -32,11 +32,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -52,23 +52,25 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.glance:glance-appwidget:1.1.1")
+    implementation ("androidx.glance:glance-material3:1.1.1")
     implementation("androidx.compose.material:material")
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.core:core-ktx:1.15.0")
     implementation (platform("org.jetbrains.kotlin:kotlin-bom:2.0.20"))
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
-    implementation("androidx.activity:activity-compose:1.9.2")
-    implementation(platform("androidx.compose:compose-bom:2024.09.02"))
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation("androidx.activity:activity-compose:1.10.0")
+    implementation(platform("androidx.compose:compose-bom:2025.01.00"))
     implementation("androidx.compose.ui:ui")
-    implementation("androidx.activity:activity-ktx:1.9.2")
+    implementation("androidx.activity:activity-ktx:1.10.0")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.navigation:navigation-compose:2.8.1")
+    implementation("androidx.navigation:navigation-compose:2.8.5")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.09.02"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.01.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
