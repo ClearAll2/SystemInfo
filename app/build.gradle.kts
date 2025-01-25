@@ -4,8 +4,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 18
-val buildName = "1.6.2"
+val buildCode = 19
+val buildName = "1.6.3"
 
 android {
     namespace = "com.lkonlesoft.displayinfo"
