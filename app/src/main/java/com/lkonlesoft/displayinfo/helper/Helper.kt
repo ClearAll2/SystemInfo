@@ -2,17 +2,21 @@ package com.lkonlesoft.displayinfo.helper
 
 import android.Manifest
 import android.app.ActivityManager
+import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.media.MediaDrm
 import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.NetworkCapabilities
+import android.os.BatteryManager
 import android.os.Build
 import android.os.StatFs
 import android.telephony.TelephonyManager
+import android.util.Base64
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -22,6 +26,7 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.RandomAccessFile
 import java.text.DecimalFormat
+import java.util.UUID
 
 fun getKernelVersion(): String? {
     return try {
@@ -40,12 +45,6 @@ fun getKernelVersion(): String? {
     }
     catch (ex: Exception) {
         "ERROR: " + ex.message
-    }
-}
-
-fun getBatteryStatus(context: Context): Intent?{
-    return IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { filter ->
-        context.registerReceiver(null, filter)
     }
 }
 
@@ -141,7 +140,7 @@ fun getNetwork(context: Context): String {
                 TelephonyManager.NETWORK_TYPE_HSPAP,
                 TelephonyManager.NETWORK_TYPE_TD_SCDMA -> return "3G"
                 TelephonyManager.NETWORK_TYPE_LTE,
-                TelephonyManager.NETWORK_TYPE_IWLAN, 19 -> return "4G"
+                TelephonyManager.NETWORK_TYPE_IWLAN -> return "4G"
                 TelephonyManager.NETWORK_TYPE_NR -> return "5G"
                 else -> return "?"
             }
@@ -177,7 +176,7 @@ fun getCurrentFreq(coreNumber: Int): Long {
     val currentFreqPath = "${CPU_INFO_DIR}cpu$coreNumber/cpufreq/scaling_cur_freq"
     return try {
         RandomAccessFile(currentFreqPath, "r").use { it.readLine().toLong() / 1000 }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         //Timber.e("getCurrentFreq() - cannot read file")
         -1
     }
@@ -199,7 +198,7 @@ fun getMinMaxFreq(coreNumber: Int): Pair<Long, Long> {
         val minMhz = RandomAccessFile(minPath, "r").use { it.readLine().toLong() / 1000 }
         val maxMhz = RandomAccessFile(maxPath, "r").use { it.readLine().toLong() / 1000 }
         Pair(minMhz, maxMhz)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         //Timber.e("getMinMaxFreq() - cannot read file")
         Pair(-1, -1)
     }
@@ -207,4 +206,173 @@ fun getMinMaxFreq(coreNumber: Int): Pair<Long, Long> {
 
 fun ActivityManager.getGlEsVersion(): String {
     return deviceConfigurationInfo.glEsVersion
+}
+
+fun getWidevineInfo(): Map<String, String> {
+    val widevineUUID = UUID.fromString("edef8ba9-79d6-4ace-a3c8-27dcd51d21ed")
+    val info = mutableMapOf<String, String>()
+
+    try {
+        val mediaDrm = MediaDrm(widevineUUID)
+
+        // Direct string for security level (no constant available)
+        val customProps = listOf(
+            "vendor",
+            "version",
+            "securityLevel",
+            "algorithms"
+        )
+
+        for (prop in customProps) {
+            val value = try {
+                mediaDrm.getPropertyString(prop)
+            } catch (_: Exception) {
+                "Unavailable"
+            }
+            info[prop] = value
+        }
+
+        // Special handling for byte array props
+        val uniqueId = try {
+            val bytes = mediaDrm.getPropertyByteArray("deviceUniqueId")
+            Base64.encodeToString(bytes, Base64.NO_WRAP)
+        } catch (_: Exception) {
+            "Unavailable"
+        }
+
+        info["deviceUniqueId"] = uniqueId
+
+        mediaDrm.close()
+
+    } catch (e: Exception) {
+        info["error"] = e.message ?: "Error accessing MediaDrm"
+    }
+
+    return info
+}
+
+fun getClearKeyInfo(): Map<String, String> {
+    val clearKeyUUID = UUID.fromString("e2719d58-a985-b3c9-781a-b030af78d30e")
+    val info = mutableMapOf<String, String>()
+    try {
+        val mediaDrm = MediaDrm(clearKeyUUID)
+
+        // Direct string for security level (no constant available)
+        val customProps = listOf(
+            "vendor",
+            "version"
+        )
+
+        for (prop in customProps) {
+            val value = try {
+                mediaDrm.getPropertyString(prop)
+            } catch (_: Exception) {
+                "Unavailable"
+            }
+            info[prop] = value
+        }
+
+        // Special handling for byte array props
+        val uniqueId = try {
+            val bytes = mediaDrm.getPropertyByteArray("deviceUniqueId")
+            Base64.encodeToString(bytes, Base64.NO_WRAP)
+        } catch (_: Exception) {
+            "Unavailable"
+        }
+        mediaDrm.close()
+
+    } catch (e: Exception) {
+        info["error"] = e.message ?: "Error accessing MediaDrm"
+    }
+
+    return info
+}
+
+fun getDischargeCurrent(context: Context): Int? {
+    val batteryManager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+
+    // Value in microamperes (µA); negative = discharging, positive = charging
+    val currentMicroAmps = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+
+    return if (currentMicroAmps != Int.MIN_VALUE) {
+        currentMicroAmps
+    } else {
+        null // Unsupported on this device
+    }
+}
+
+fun getBatteryPercentage(context: Context): Int {
+    val intent = context.registerReceiver(
+        null,
+        IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+    ) ?: return -1 // Return -1 if intent is null
+
+    val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+    val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+
+    return if (level >= 0 && scale > 0) {
+        (level * 100) / scale
+    } else {
+        -1
+    }
+}
+
+fun getCpuClockSpeed(core: Int): Int {
+    val path = "/sys/devices/system/cpu/cpu$core/cpufreq/scaling_cur_freq"
+    return try {
+        val file = File(path)
+        if (file.exists()) {
+            val freqKHz = file.readText().trim().toInt()
+            freqKHz / 1000
+        } else -1
+    } catch (_: Exception) {
+        -1
+    }
+}
+
+fun getAllCpuFrequencies(): List<Int> {
+    val cpuCount = Runtime.getRuntime().availableProcessors()
+    return (0 until cpuCount).map { getCpuClockSpeed(it) }
+}
+
+fun getCpuName(): String {
+    return try {
+        val file = File("/proc/cpuinfo")
+        val lines = file.readLines()
+        val processorLine = lines.firstOrNull { it.startsWith("Hardware") || it.startsWith("Processor") || it.startsWith("model name") }
+        processorLine?.split(":")?.getOrNull(1)?.trim() ?: "Unknown"
+    } catch (_: Exception) {
+        "Unavailable"
+    }
+}
+
+fun getCpuGovernor(core: Int = 0): String {
+    val path = "/sys/devices/system/cpu/cpu$core/cpufreq/scaling_governor"
+    return try {
+        File(path).readText().trim()
+    } catch (_: Exception) {
+        "Unavailable"
+    }
+}
+
+fun getAllGovernors(): List<String> {
+    val coreCount = Runtime.getRuntime().availableProcessors()
+    return (0 until coreCount).map { getCpuGovernor(it) }
+}
+
+fun getChargeStatus(info: Int?): String {
+    return when (info) {
+        BatteryManager.BATTERY_STATUS_CHARGING -> "Charging"
+        BatteryManager.BATTERY_STATUS_DISCHARGING -> "Discharging"
+        BatteryManager.BATTERY_STATUS_FULL -> "Full"
+        else -> "Unknown"
+    }
+}
+
+fun connectionStateToString(state: Int): String = when (state) {
+    BluetoothProfile.STATE_CONNECTED -> "Connected"
+    BluetoothProfile.STATE_CONNECTING -> "Connecting"
+    BluetoothProfile.STATE_DISCONNECTED -> "Disconnected"
+    BluetoothProfile.STATE_DISCONNECTING -> "Disconnecting"
+    else -> "Unknown"
 }
