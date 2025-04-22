@@ -5,13 +5,12 @@ import android.app.ActivityManager
 import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.media.MediaDrm
 import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.NetworkCapabilities
+import android.opengl.GLES10
 import android.os.BatteryManager
 import android.os.Build
 import android.os.StatFs
@@ -19,6 +18,7 @@ import android.telephony.TelephonyManager
 import android.util.Base64
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import java.io.BufferedReader
 import java.io.File
@@ -288,35 +288,6 @@ fun getClearKeyInfo(): Map<String, String> {
     return info
 }
 
-fun getDischargeCurrent(context: Context): Int? {
-    val batteryManager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
-
-    // Value in microamperes (µA); negative = discharging, positive = charging
-    val currentMicroAmps = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
-
-    return if (currentMicroAmps != Int.MIN_VALUE) {
-        currentMicroAmps
-    } else {
-        null // Unsupported on this device
-    }
-}
-
-fun getBatteryPercentage(context: Context): Int {
-    val intent = context.registerReceiver(
-        null,
-        IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-    ) ?: return -1 // Return -1 if intent is null
-
-    val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-    val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-
-    return if (level >= 0 && scale > 0) {
-        (level * 100) / scale
-    } else {
-        -1
-    }
-}
-
 fun getCpuClockSpeed(core: Int): Int {
     val path = "/sys/devices/system/cpu/cpu$core/cpufreq/scaling_cur_freq"
     return try {
@@ -376,3 +347,69 @@ fun connectionStateToString(state: Int): String = when (state) {
     BluetoothProfile.STATE_DISCONNECTING -> "Disconnecting"
     else -> "Unknown"
 }
+
+fun getStatusColor(value: String): Color {
+    return when (value.lowercase()) {
+        "good", "full", "charging" -> Color(0xFF4CAF50)
+        "dead", "overheat", "failure" -> Color(0xFFF44336)
+        else -> Color(0xFFFF9800)
+    }
+}
+
+fun getTemperatureColor(temp: Float): Color {
+    return when {
+        temp < 30f -> Color(0xFF4CAF50)
+        temp in 30f..40f -> Color(0xFFFFC107)
+        else -> Color(0xFFF44336)
+    }
+}
+
+fun getBatteryLevelColor(level: Long): Color {
+    return when {
+        level >= 80 -> Color(0xFF4CAF50)
+        level >= 30 -> Color(0xFFFFC107)
+        else -> Color(0xFFF44336)
+    }
+}
+
+fun getMemoryLevelColor(level: Long): Color {
+    return when {
+        level <= 50 -> Color(0xFF4CAF50)
+        level <= 80 -> Color(0xFFFFC107)
+        else -> Color(0xFFF44336)
+    }
+}
+
+/*fun exportBatteryInfoToJson(context: Context): String {
+    val info = mapOf(
+        "level" to BatteryUtils.getBatteryPercentage(context),
+        "health" to BatteryUtils.getBatteryHealth(context),
+        "status" to BatteryUtils.getBatteryStatus(context),
+        "plug" to BatteryUtils.getPlugType(context),
+        "cycles" to BatteryUtils.getBatteryCycleCount(context),
+        "temperature" to BatteryUtils.getBatteryTemperature(context),
+        "voltage" to BatteryUtils.getChargingVoltage(),
+        "current" to BatteryUtils.getChargingCurrent(),
+        "capacity" to BatteryUtils.getBatteryCapacity(context)
+    )
+    return JSONObject(info).toString(2)
+}*/
+
+fun getGpuRenderer(): String {
+    return try {
+        GLES10.glGetString(GLES10.GL_RENDERER) ?: "Unknown"
+    } catch (_: Exception) {
+        "Unavailable"
+    }
+}
+
+fun getGpuVendor(): String {
+    return try {
+        GLES10.glGetString(GLES10.GL_VENDOR) ?: "Unknown"
+    } catch (_: Exception) {
+        "Unavailable"
+    }
+}
+
+
+
