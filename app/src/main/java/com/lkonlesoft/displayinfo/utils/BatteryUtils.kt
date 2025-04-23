@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
-import java.io.File
 
 object BatteryUtils {
 
@@ -96,22 +95,23 @@ object BatteryUtils {
         }
     }
 
-    fun getChargingCurrent(): Int {
-        return try {
-            val path = "/sys/class/power_supply/battery/current_now"
-            File(path).readText().trim().toInt() / 1000 // Convert μA to mA
-        } catch (e: Exception) {
-            -1
+    fun getDischargeCurrent(context: Context): Int {
+        val batteryManager = context.applicationContext.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+
+        // Value in microamperes (µA); negative = discharging, positive = charging
+        val currentMicroAmps = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+
+        return if (currentMicroAmps != Int.MIN_VALUE) {
+            currentMicroAmps.div(1000)
+        } else {
+            -1 // Unsupported on this device
         }
     }
 
-    fun getChargingVoltage(): Float {
-        return try {
-            val path = "/sys/class/power_supply/battery/voltage_now"
-            File(path).readText().trim().toFloat() / 1000000f // Convert μV to V
-        } catch (e: Exception) {
-            -1f
-        }
+    fun getChargingVoltage(context: Context): Float {
+        val intent = getBatteryIntent(context)
+        val temp = intent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1) ?: -1
+        return if (temp > 0) temp / 1000f else -1f
     }
 
 

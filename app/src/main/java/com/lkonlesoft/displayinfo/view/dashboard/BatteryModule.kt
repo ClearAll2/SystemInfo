@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.helper.getBatteryLevelColor
@@ -42,7 +43,6 @@ fun BatteryDashboard(onBack: () -> Unit, onClick: () -> Unit) {
     val batteryHealth = remember { mutableStateOf("Unknown") }
     val batteryStatus = remember { mutableStateOf("Unknown") }
     val batteryTemperature = remember { mutableFloatStateOf(0f) }
-    val batteryCurrent = remember { mutableIntStateOf(0) }
     val batteryCycles = remember { mutableIntStateOf(-1) }
 
     BackHandler {
@@ -54,7 +54,6 @@ fun BatteryDashboard(onBack: () -> Unit, onClick: () -> Unit) {
             batteryHealth.value = BatteryUtils.getBatteryHealth(context)
             batteryStatus.value = BatteryUtils.getBatteryStatus(context)
             batteryTemperature.floatValue = BatteryUtils.getBatteryTemperature(context)
-            batteryCurrent.intValue = BatteryUtils.getChargingCurrent()
             batteryCycles.intValue = BatteryUtils.getBatteryCycleCount(context)
             delay(2000L)
         }
@@ -91,8 +90,8 @@ fun GeneralStatRow(label: String, value: String, valueColor: Color = Color.Unspe
             .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, fontSize = 16.sp)
-        Text(value, fontSize = 16.sp, fontWeight = FontWeight.Medium, color = valueColor)
+        Text(label, fontSize = 16.sp, textAlign = TextAlign.Start)
+        Text(value, fontSize = 16.sp, fontWeight = FontWeight.Medium, color = valueColor, textAlign = TextAlign.End)
     }
 }
 

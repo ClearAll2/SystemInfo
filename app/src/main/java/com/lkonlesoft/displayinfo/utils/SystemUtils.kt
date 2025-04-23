@@ -1,7 +1,11 @@
 package com.lkonlesoft.displayinfo.utils
 
 import android.os.Build
+import android.os.SystemClock
 import androidx.annotation.RequiresApi
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 object SystemUtils {
     fun getModel(): String {
@@ -41,4 +45,23 @@ object SystemUtils {
         val supportedABIS = Build.SUPPORTED_ABIS
         return supportedABIS?.joinToString(", ") ?: "Unknown"
     }
+
+    fun getUptime(): String {
+        val uptimeMillis = SystemClock.elapsedRealtime()
+        val seconds = uptimeMillis / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+
+        return "${days}d ${hours % 24}h ${minutes % 60}m"
+    }
+
+    fun getBootTime(): String {
+        val bootTime = System.currentTimeMillis() - SystemClock.elapsedRealtime()
+        val date = Date(bootTime)
+        val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return format.format(date)
+    }
+
+
 }

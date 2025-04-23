@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -67,13 +69,7 @@ fun AboutScaffoldContext(onClick: () -> Unit){
             )
         }
     ) { paddingValues ->
-        Surface(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            AboutScreen()
-        }
+        AboutScreen(paddingValues = paddingValues)
     }
 }
 
@@ -100,7 +96,7 @@ private fun AboutMenuItem(
 }
 
 @Composable
-fun AboutScreen() {
+fun AboutScreen(paddingValues: PaddingValues) {
     val uriHandler = LocalUriHandler.current
     val items = listOf(
         AboutItem.AppVer,
@@ -112,6 +108,8 @@ fun AboutScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
+            .consumeWindowInsets(paddingValues),
+        contentPadding = paddingValues
 
     ) {
         items(items){ item ->

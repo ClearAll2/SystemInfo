@@ -12,13 +12,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lkonlesoft.displayinfo.utils.SystemUtils
+import com.lkonlesoft.displayinfo.utils.DisplayUtils
 
 @Composable
-fun SystemDashboard(onBack: () -> Unit, onClick: () -> Unit) {
+fun DisplayDashboard(onBack: () -> Unit, onClick: () -> Unit) {
+    val context = LocalContext.current
+    val resources = context.resources
     BackHandler {
         onBack()
     }
@@ -30,21 +33,15 @@ fun SystemDashboard(onBack: () -> Unit, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                "⚙️ System",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Text("📱 Display", fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(12.dp))
 
-            GeneralStatRow("Model", SystemUtils.getModel())
-            GeneralStatRow("Product", SystemUtils.getProduct())
-            GeneralStatRow("Device", SystemUtils.getDevice())
-            GeneralStatRow(
-                "Manufacturer",
-                SystemUtils.getManufacturer()
-            )
-            GeneralStatRow("Up time", SystemUtils.getUptime())
+            GeneralStatRow("Resolution", "${DisplayUtils.getHeightPx(resources)}" + " • " +  "${DisplayUtils.getWidthPx(resources)}")
+            GeneralStatRow("Smallest dp", "${DisplayUtils.getSmallestDp(resources)}")
+            GeneralStatRow("X dpi", "${DisplayUtils.getXDpi(resources)}")
+            GeneralStatRow("Y dpi", "${DisplayUtils.getYDpi(resources)}")
+            GeneralStatRow("Width dp", "${DisplayUtils.getWidthDp(resources)}")
+            GeneralStatRow("Height dp", "${DisplayUtils.getHeightDp(resources)}")
         }
     }
 }

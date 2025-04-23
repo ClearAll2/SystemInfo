@@ -68,7 +68,6 @@ fun MemoryDashBoard(intervalMillis: Long = 2000L, onBack: () -> Unit, onClick: (
 
 @Composable
 fun StorageDashboard(intervalMillis: Long = 60000L, onBack: () -> Unit, onClick: () -> Unit) {
-    val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
 
     BackHandler {

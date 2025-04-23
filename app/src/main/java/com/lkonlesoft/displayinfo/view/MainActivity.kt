@@ -1,14 +1,12 @@
 package com.lkonlesoft.displayinfo.view
 
 import android.Manifest
-import android.app.ActivityManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -102,27 +100,22 @@ import androidx.navigation.navDeepLink
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.CameraInfo
 import com.lkonlesoft.displayinfo.helper.connectionStateToString
-import com.lkonlesoft.displayinfo.helper.getAllCpuFrequencies
-import com.lkonlesoft.displayinfo.helper.getAllGovernors
-import com.lkonlesoft.displayinfo.helper.getClearKeyInfo
-import com.lkonlesoft.displayinfo.helper.getGlEsVersion
-import com.lkonlesoft.displayinfo.helper.getGpuRenderer
-import com.lkonlesoft.displayinfo.helper.getGpuVendor
-import com.lkonlesoft.displayinfo.helper.getMinMaxFreq
-import com.lkonlesoft.displayinfo.helper.getNetInfo
-import com.lkonlesoft.displayinfo.helper.getNetwork
 import com.lkonlesoft.displayinfo.helper.getNetworkOldApi
-import com.lkonlesoft.displayinfo.helper.getNumberOfCores
-import com.lkonlesoft.displayinfo.helper.getWidevineInfo
 import com.lkonlesoft.displayinfo.`object`.NavigationItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
 import com.lkonlesoft.displayinfo.utils.AndroidUtils
 import com.lkonlesoft.displayinfo.utils.BatteryUtils
+import com.lkonlesoft.displayinfo.utils.DisplayUtils
+import com.lkonlesoft.displayinfo.utils.NetworkUtils
+import com.lkonlesoft.displayinfo.utils.SocUtils
 import com.lkonlesoft.displayinfo.utils.StorageUtils
 import com.lkonlesoft.displayinfo.utils.SystemUtils
 import com.lkonlesoft.displayinfo.view.dashboard.AndroidDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.BatteryDashboard
+import com.lkonlesoft.displayinfo.view.dashboard.DisplayDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.MemoryDashBoard
+import com.lkonlesoft.displayinfo.view.dashboard.NetworkDashboard
+import com.lkonlesoft.displayinfo.view.dashboard.SoCDashBoard
 import com.lkonlesoft.displayinfo.view.dashboard.StorageDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.SystemDashboard
 import kotlinx.coroutines.delay
@@ -272,6 +265,8 @@ fun SystemScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
         }
         item { IndividualLine(tittle = "Radio", info = SystemUtils.getRadio()) }
         item { IndividualLine(tittle = "Instruction Sets", info = SystemUtils.getInstructions()) }
+        item { IndividualLine(tittle = "Up time", info = SystemUtils.getUptime()) }
+        item { IndividualLine(tittle = "Boot Time", info = SystemUtils.getBootTime()) }
     }
 }
 
@@ -310,18 +305,18 @@ fun AndroidScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NetworkScreen(onClick: () -> Unit) {
+fun NetworkScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var networkType by remember{
-        mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) getNetwork(context) else getNetworkOldApi(context))
+        mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils.getNetwork(context) else getNetworkOldApi(context))
     }
-    var networkInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getNetInfo(context) else null
+    var networkInfo by remember { mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) NetworkUtils.getNetInfo(context) else null) }
     val startForResult = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()) {isGranted ->
         if (isGranted){
             Toast.makeText(context, "Permission granted", Toast.LENGTH_SHORT).show()
-            networkType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) getNetwork(context) else getNetworkOldApi(context)
-            networkInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getNetInfo(context) else null
+            networkType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils.getNetwork(context) else NetworkUtils.getNetworkOldApi(context)
+            networkInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) NetworkUtils.getNetInfo(context) else null
         }
         else{
             Toast.makeText(context, "Permission is not granted", Toast.LENGTH_SHORT).show()
@@ -329,10 +324,9 @@ fun NetworkScreen(onClick: () -> Unit) {
     }
     LaunchedEffect(Unit) {
         while (true){
-            delay(1000L)
-            networkType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) getNetwork(context) else getNetworkOldApi(context)
-            networkInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getNetInfo(context) else null
-            delay(1000L)
+            delay(4000L)
+            networkType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils.getNetwork(context) else NetworkUtils.getNetworkOldApi(context)
+            networkInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) NetworkUtils.getNetInfo(context) else null
         }
     }
     BackHandler {
@@ -342,8 +336,8 @@ fun NetworkScreen(onClick: () -> Unit) {
         .fillMaxSize()) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(300.dp),
-            modifier = Modifier.fillMaxSize()
-
+            modifier = Modifier.fillMaxSize().consumeWindowInsets(paddingValues),
+            contentPadding = paddingValues
         ) {
             item {IndividualLine(tittle = "Network Type", info = networkType,
                 canClick = true,
@@ -373,56 +367,47 @@ fun NetworkScreen(onClick: () -> Unit) {
 
 
 @Composable
-fun DisplayScreen(onClick: () -> Unit) {
-    val resources = LocalContext.current.resources
-    val density = resources.displayMetrics.densityDpi.toString()
-    val scaleDensity = resources.displayMetrics.density.toString()
-    val xDpi = resources.displayMetrics.xdpi.toString()
-    val yDpi = resources.displayMetrics.ydpi.toString()
-    val screenOrientation = resources.configuration.orientation
-    val screenHeightDp = resources.configuration.screenHeightDp.toString()
-    val screenWidthDp = resources.configuration.screenWidthDp.toString()
-    val screenHeightPx = resources.displayMetrics.heightPixels.toString()
-    val screenWidthPx = resources.displayMetrics.widthPixels.toString()
-    var drmInfo = getWidevineInfo()
-    var clearKeyInfo = getClearKeyInfo()
+fun DisplayScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
+    val context = LocalContext.current
+    val resources = context.resources
+
     BackHandler {
         onClick()
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().consumeWindowInsets(paddingValues),
+        contentPadding = paddingValues
 
     ) {
         header { HeaderLine(tittle = "Display") }
-        item {IndividualLine(tittle = "Smallest dp", info = resources.configuration.smallestScreenWidthDp.toString())}
-        item {IndividualLine(tittle = "Screen (dpi)", info = density)}
-        item {IndividualLine(tittle = "Scaled Density", info = scaleDensity)}
-        item {IndividualLine(tittle = "X dpi", info = xDpi)}
-        item {IndividualLine(tittle = "Y dpi", info = yDpi)}
-        item {IndividualLine(tittle = "Width (dp)", info = screenWidthDp)}
-        item {IndividualLine(tittle = "Height (dp)", info = screenHeightDp)}
-        item {IndividualLine(tittle = "Orientation", info = if (screenOrientation == 1) "Portrait" else "Landscape")}
-        item {IndividualLine(tittle = "Usable Width (px)", info = screenWidthPx)}
-        item {IndividualLine(tittle = "Usable Height (px)", info = screenHeightPx)}
-        item {IndividualLine(tittle = "Touch Screen", info = if (resources.configuration.touchscreen == 1) "No touch" else "Finger")}
+        item {IndividualLine(tittle = "Smallest dp", info = DisplayUtils.getSmallestDp(resources).toString())}
+        item {IndividualLine(tittle = "Screen (dpi)", info = DisplayUtils.getDensity(resources).toString())}
+        item {IndividualLine(tittle = "Scaled Density", info = DisplayUtils.getScaleDensity(resources).toString())}
+        item {IndividualLine(tittle = "X dpi", info = DisplayUtils.getXDpi(resources).toString())}
+        item {IndividualLine(tittle = "Y dpi", info = DisplayUtils.getYDpi(resources).toString())}
+        item {IndividualLine(tittle = "Width (dp)", info = DisplayUtils.getWidthDp(resources).toString())}
+        item {IndividualLine(tittle = "Height (dp)", info = DisplayUtils.getHeightDp(resources).toString())}
+        item {IndividualLine(tittle = "Orientation", info = if (DisplayUtils.getOrientation(resources) == 1) "Portrait" else "Landscape")}
+        item {IndividualLine(tittle = "Usable Width (px)", info = DisplayUtils.getWidthPx(resources).toString())}
+        item {IndividualLine(tittle = "Usable Height (px)", info = DisplayUtils.getHeightPx(resources).toString())}
+        item {IndividualLine(tittle = "Touch Screen", info = if (DisplayUtils.getTouchScreen(resources) == 1) "No touch" else "Finger")}
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
-            item {IndividualLine(tittle = "HDR", info = if (resources.configuration.isScreenHdr) "Supported" else "Not Supported")}
-            item {IndividualLine(tittle = "Wide Color Gamut", info = if (resources.configuration.isScreenWideColorGamut) "Supported" else "Not Supported")}
+            item {IndividualLine(tittle = "HDR", info = if (DisplayUtils.getIsHdr(resources)) "Supported" else "Not Supported")}
+            item {IndividualLine(tittle = "Wide Color Gamut", info = if (DisplayUtils.getIsScreenWideColorGamut(resources)) "Supported" else "Not Supported")}
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
         {
-            item {IndividualLine(tittle = "Display Type", info = LocalContext.current.display.name.toString())}
-            item {IndividualLine(tittle = "Refresh Rate", info = LocalContext.current.display.refreshRate.toInt()
-                .toString() + " Hz")}
+            item {IndividualLine(tittle = "Display Type", info = DisplayUtils.getDisPlayType(context))}
+            item {IndividualLine(tittle = "Refresh Rate", info = DisplayUtils.getDisplayRefreshRate(context).toString() + " Hz")}
         }
         header { HeaderLine(tittle = "Widevine CDM") }
-        items(drmInfo.toList()){
+        items(DisplayUtils.getWidevineInfo().toList()){
             IndividualLine(tittle = it.first, info = it.second)
         }
         header { HeaderLine(tittle = "ClearKey CDM") }
-        items(clearKeyInfo.toList()){
+        items(DisplayUtils.getClearKeyInfo().toList()){
             IndividualLine(tittle = it.first, info = it.second)
         }
     }
@@ -580,8 +565,8 @@ fun BatteryScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
     var capacity by remember { mutableIntStateOf(BatteryUtils.getBatteryCapacity(context).toInt()) }
     var chargeStatus by remember { mutableStateOf(BatteryUtils.getBatteryStatus(context)) }
     var temper by remember { mutableFloatStateOf(BatteryUtils.getBatteryTemperature(context)) }
-    var currentInMilliAmps by remember { mutableIntStateOf(BatteryUtils.getChargingCurrent()) }
-    var voltage by remember { mutableFloatStateOf(BatteryUtils.getChargingVoltage()) }
+    var currentInMilliAmps by remember { mutableIntStateOf(BatteryUtils.getDischargeCurrent(context)) }
+    var voltage by remember { mutableFloatStateOf(BatteryUtils.getChargingVoltage(context)) }
     var batteryPercent by remember { mutableIntStateOf(BatteryUtils.getBatteryPercentage(context)) }
     var cycleCount by remember { mutableIntStateOf(BatteryUtils.getBatteryCycleCount(context)) }
     var tech by remember { mutableStateOf(BatteryUtils.getBatteryTechnology(context)) }
@@ -592,8 +577,9 @@ fun BatteryScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
         while (true){
             chargeStatus = BatteryUtils.getBatteryStatus(context)
             temper = BatteryUtils.getBatteryTemperature(context)
-            voltage = BatteryUtils.getChargingVoltage()
+            voltage = BatteryUtils.getChargingVoltage(context)
             batteryPercent = BatteryUtils.getBatteryPercentage(context)
+            currentInMilliAmps = BatteryUtils.getDischargeCurrent(context)
             delay(1000L)
         }
     }
@@ -603,11 +589,11 @@ fun BatteryScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
         contentPadding = paddingValues
     ) {
         item { IndividualLine(tittle = "Status", info = chargeStatus)}
+        item { IndividualLine(tittle = "Battery Level", info = "$batteryPercent%")}
         item { IndividualLine(tittle = "Health", info = health)}
-        item { IndividualLine(tittle = "Capacity", info = if (capacity >= 0) ("$capacity mAh") else "Unknown")}
+        item { IndividualLine(tittle = "Capacity", info = if (capacity > 0) ("$capacity mAh") else "Unknown")}
         item { IndividualLine(tittle = "Cycle Count", info = if (cycleCount >= 0) cycleCount.toString() else "N/A")}
-        item { IndividualLine(tittle = "Current", info = if (currentInMilliAmps >= 0) ("$currentInMilliAmps mA") else "N/A")}
-        item { IndividualLine(tittle = "Percentage", info = "$batteryPercent%")}
+        item { IndividualLine(tittle = "Current", info = "$currentInMilliAmps mA")}
         item { IndividualLine(tittle = "Temperature", info = if (temper >= 0) ("$temper °C") else "N/A") }
         item { IndividualLine(tittle = "Voltage", info = if (voltage >= 0) ("$voltage V") else "N/A") }
         item { IndividualLine(tittle = "Technology", info = tech) }
@@ -615,27 +601,14 @@ fun BatteryScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
 }
 
 @Composable
-fun HomeScreen(navController: NavHostController, currentRoute: String?, paddingValues: PaddingValues) {
+fun HomeScreen(navController: NavHostController, paddingValues: PaddingValues) {
     val width = LocalConfiguration.current.screenWidthDp.dp
-    val listScreen = listOf(
-        NavigationItem.System,
-        NavigationItem.Android,
-        NavigationItem.SOC,
-        NavigationItem.Display,
-        NavigationItem.Battery,
-        NavigationItem.Memory,
-        NavigationItem.Network,
-        NavigationItem.Camera,
-        //NavigationItem.Connectivity
-    )
     LazyVerticalGrid(
         columns = if (width < 600.dp) GridCells.Fixed(1) else GridCells.Adaptive(300.dp),
         contentPadding = paddingValues,
         modifier = Modifier
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
-            .padding(10.dp)
-
     ) {
         item {
             SystemDashboard(
@@ -648,9 +621,19 @@ fun HomeScreen(navController: NavHostController, currentRoute: String?, paddingV
                 onClick = { navController.navigate(NavigationItem.Android.route) })
         }
         item {
+            SoCDashBoard(
+                onBack = { navController.returnToHome() },
+                onClick = { navController.navigate(NavigationItem.SOC.route) })
+        }
+        item {
             BatteryDashboard(
                 onBack = { navController.returnToHome() },
                 onClick = { navController.navigate(NavigationItem.Battery.route) })
+        }
+        item {
+            DisplayDashboard(
+                onBack = { navController.returnToHome() },
+                onClick = { navController.navigate(NavigationItem.Display.route) })
         }
         item {
             MemoryDashBoard(
@@ -662,17 +645,12 @@ fun HomeScreen(navController: NavHostController, currentRoute: String?, paddingV
                 onBack = { navController.returnToHome() },
                 onClick = { navController.navigate(NavigationItem.Memory.route) })
         }
-        /*items(listScreen){ item ->
-            val isSelected = currentRoute == item.route
-            BigTitle(title = item.route, icon = item.icon) {
-                if (!isSelected) {
-                    navController.popBackStack()
-                    navController.navigate(item.route) {
-                        launchSingleTop = true
-                    }
-                }
-            }
-        }*/
+        item {
+            NetworkDashboard(
+                onBack = { navController.returnToHome() },
+                onClick = { navController.navigate(NavigationItem.Network.route) })
+        }
+
     }
 }
 
@@ -815,10 +793,9 @@ fun MemoryScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
 }
 
 @Composable
-fun HardwareScreen(onClick: () -> Unit) {
+fun HardwareScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
     val context = LocalContext.current
-    val activityManager: ActivityManager = context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
-    val coreNum = getNumberOfCores()
+    val coreNum = SocUtils.getNumberOfCores()
     var cpuGovernors by remember { mutableStateOf(listOf<String>()) }
     //val cpuName = remember { getCpuName() }
     var cpuFreqs by remember { mutableStateOf(listOf<Int>()) }
@@ -827,21 +804,21 @@ fun HardwareScreen(onClick: () -> Unit) {
     }
     LaunchedEffect(Unit) {
         while (true) {
-            cpuFreqs = getAllCpuFrequencies()
-            cpuGovernors = getAllGovernors()
+            cpuFreqs = SocUtils.getAllCpuFrequencies()
+            cpuGovernors = SocUtils.getAllGovernors()
             delay(1000L) // Update every 1 second
         }
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(300.dp),
-        modifier = Modifier.fillMaxSize()
-
+        modifier = Modifier.fillMaxSize().consumeWindowInsets(paddingValues),
+        contentPadding = paddingValues
     ) {
         header { HeaderLine(tittle = "CPU Info") }
         //item { IndividualLine(tittle = "Name", info = cpuName) }
         item { IndividualLine(tittle = "Cores", info = coreNum.toString()) }
         items(coreNum) {
-            val coreValue = getMinMaxFreq(it)
+            val coreValue = SocUtils.getMinMaxFreq(it)
             val governor = cpuGovernors.getOrNull(it) ?: "Unknown"
             IndividualLine(
                 tittle = "Core ${it+1}",
@@ -856,9 +833,9 @@ fun HardwareScreen(onClick: () -> Unit) {
         }
         //item { IndividualLine(tittle = "Raw Info", info = getSocRawInfo()) }
         header { HeaderLine(tittle = "GPU Info") }
-        item { IndividualLine(tittle = "glEs Version", info = activityManager.getGlEsVersion()) }
-        item { IndividualLine(tittle = "GPU Renderer", info = getGpuRenderer()) }
-        item { IndividualLine(tittle = "GPU Vendor", info = getGpuVendor()) }
+        item { IndividualLine(tittle = "glEs Version", info = SocUtils.getGlEsVersion(context)) }
+        item { IndividualLine(tittle = "GPU Renderer", info = SocUtils.getGpuRenderer()) }
+        item { IndividualLine(tittle = "GPU Vendor", info = SocUtils.getGpuVendor()) }
 
     }
 }
@@ -973,7 +950,7 @@ fun MainNavigation(
                     uriPattern = "si://info/home"
                 }
             )){
-            HomeScreen(navController = navController, currentRoute = currentRoute, paddingValues = paddingValues)
+            HomeScreen(navController = navController, paddingValues = paddingValues)
         }
         composable(route = NavigationItem.System.route,
             deepLinks = listOf(
@@ -1001,9 +978,9 @@ fun MainNavigation(
                     uriPattern = "si://info/soc"
                 }
             )){
-            HardwareScreen{
+            HardwareScreen(paddingValues = paddingValues, onClick = {
                 navController.returnToHome()
-            }
+            })
         }
         composable(route = NavigationItem.Display.route,
             deepLinks = listOf(
@@ -1011,9 +988,9 @@ fun MainNavigation(
                     uriPattern = "si://info/display"
                 }
             )){
-           DisplayScreen {
-               navController.returnToHome()
-           }
+           DisplayScreen (paddingValues = paddingValues, onClick = {
+                navController.returnToHome()
+           })
         }
         composable(route = NavigationItem.Battery.route,
             deepLinks = listOf(
@@ -1041,9 +1018,9 @@ fun MainNavigation(
                     uriPattern = "si://info/network"
                 }
             )){
-            NetworkScreen{
+            NetworkScreen(paddingValues = paddingValues, onClick = {
                 navController.returnToHome()
-            }
+            })
         }
         composable(route = NavigationItem.Camera.route, deepLinks = listOf(
             navDeepLink {

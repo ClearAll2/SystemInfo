@@ -31,7 +31,7 @@ fun AndroidDashboard(onBack: () -> Unit, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("📱 Android Info", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("📱 Android", fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
 
             GeneralStatRow("Android Version", AndroidUtils.getAndroidVersion())

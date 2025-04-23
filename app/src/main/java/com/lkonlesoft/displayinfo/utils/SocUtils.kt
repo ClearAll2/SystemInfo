@@ -1,0 +1,85 @@
+package com.lkonlesoft.displayinfo.utils
+
+import android.app.ActivityManager
+import android.content.Context
+import android.content.Context.ACTIVITY_SERVICE
+import android.opengl.GLES10
+import com.lkonlesoft.displayinfo.helper.getGlEsVersion
+import java.io.File
+import java.io.RandomAccessFile
+
+object SocUtils {
+
+    private const val CPU_INFO_DIR = "/sys/devices/system/cpu/"
+
+    fun getCpuGovernor(core: Int = 0): String {
+        val path = "/sys/devices/system/cpu/cpu$core/cpufreq/scaling_governor"
+        return try {
+            File(path).readText().trim()
+        } catch (_: Exception) {
+            "Unavailable"
+        }
+    }
+
+    fun getAllGovernors(): List<String> {
+        val coreCount = Runtime.getRuntime().availableProcessors()
+        return (0 until coreCount).map { getCpuGovernor(it) }
+    }
+
+    fun getCpuClockSpeed(core: Int): Int {
+        val path = "/sys/devices/system/cpu/cpu$core/cpufreq/scaling_cur_freq"
+        return try {
+            val file = File(path)
+            if (file.exists()) {
+                val freqKHz = file.readText().trim().toInt()
+                freqKHz / 1000
+            } else -1
+        } catch (_: Exception) {
+            -1
+        }
+    }
+
+    fun getAllCpuFrequencies(): List<Int> {
+        val cpuCount = Runtime.getRuntime().availableProcessors()
+        return (0 until cpuCount).map { getCpuClockSpeed(it) }
+    }
+
+    fun getGpuRenderer(): String {
+        return try {
+            GLES10.glGetString(GLES10.GL_RENDERER) ?: "Unknown"
+        } catch (_: Exception) {
+            "Unavailable"
+        }
+    }
+
+    fun getGpuVendor(): String {
+        return try {
+            GLES10.glGetString(GLES10.GL_VENDOR) ?: "Unknown"
+        } catch (_: Exception) {
+            "Unavailable"
+        }
+    }
+
+    fun getGlEsVersion(context: Context): String{
+        val activityManager: ActivityManager = context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        return activityManager.getGlEsVersion()
+    }
+
+    fun getNumberOfCores(): Int {
+        return Runtime.getRuntime().availableProcessors()
+    }
+
+    fun getMinMaxFreq(coreNumber: Int): Pair<Long, Long> {
+        val minPath = "${CPU_INFO_DIR}cpu$coreNumber/cpufreq/cpuinfo_min_freq"
+        val maxPath = "${CPU_INFO_DIR}cpu$coreNumber/cpufreq/cpuinfo_max_freq"
+        return try {
+            val minMhz = RandomAccessFile(minPath, "r").use { it.readLine().toLong() / 1000 }
+            val maxMhz = RandomAccessFile(maxPath, "r").use { it.readLine().toLong() / 1000 }
+            Pair(minMhz, maxMhz)
+        } catch (_: Exception) {
+            //Timber.e("getMinMaxFreq() - cannot read file")
+            Pair(-1, -1)
+        }
+    }
+
+}
