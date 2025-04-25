@@ -24,6 +24,7 @@ import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.lkonlesoft.displayinfo.utils.BatteryUtils
 
 class BatteryWidget : GlanceAppWidget() {
 
@@ -31,8 +32,6 @@ class BatteryWidget : GlanceAppWidget() {
         private val SMALL_SQUARE = DpSize(100.dp, 50.dp)
         private val MEDIUM_SQUARE = DpSize(200.dp, 100.dp)
         private val BIG_SQUARE = DpSize(300.dp, 200.dp)
-        const val PREFS_NAME = "BatteryWidgetPrefs"
-        const val CYCLE_COUNT = "Cycle_count"
     }
 
     override val sizeMode = SizeMode.Responsive(
@@ -54,8 +53,7 @@ class BatteryWidget : GlanceAppWidget() {
     @Composable
     fun BatteryInfoContent(context: Context) {
         val size = LocalSize.current
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val cycleCount = prefs.getString(CYCLE_COUNT, "No Data")
+        val cycleCount = BatteryUtils.getBatteryCycleCount(context)
         val titleFontSize = when {
             size.height >= 50.dp && size.height < 100.dp -> 14.sp
             size.height >= 100.dp && size.height < 150.dp -> 16.sp
@@ -78,11 +76,11 @@ class BatteryWidget : GlanceAppWidget() {
                 .clickable(onClick = actionStartActivity(intent)),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Cycle Count", modifier = GlanceModifier.padding(vertical = 10.dp, horizontal = 5.dp),
-                style = TextStyle(fontSize = titleFontSize, fontWeight = FontWeight.Normal)
+            Text(text = "🔋 Cycle Count", modifier = GlanceModifier.padding(vertical = 10.dp, horizontal = 5.dp),
+                style = TextStyle(fontSize = titleFontSize, fontWeight = FontWeight.Medium)
             )
-            Text(text = cycleCount.toString(),
-                modifier = GlanceModifier.padding(vertical = 10.dp, horizontal = 5.dp),
+            Text(text = if (cycleCount == -1) "N/A" else cycleCount.toString(),
+                modifier = GlanceModifier.padding(vertical = 10.dp, horizontal = 10.dp),
                 style = TextStyle(fontSize = countFontSize, fontWeight = FontWeight.Bold)
                 )
         }

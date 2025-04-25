@@ -33,10 +33,10 @@ fun DisplayDashboard(onBack: () -> Unit, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("📱 Display", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("Display", fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(12.dp))
 
-            GeneralStatRow("Resolution", "${DisplayUtils.getHeightPx(resources)}" + " • " +  "${DisplayUtils.getWidthPx(resources)}")
+            GeneralStatRow("Display Pixels", "${DisplayUtils.getHeightPx(resources)}" + " • " +  "${DisplayUtils.getWidthPx(resources)}")
             GeneralStatRow("Smallest dp", "${DisplayUtils.getSmallestDp(resources)}")
             GeneralStatRow("X dpi", "${DisplayUtils.getXDpi(resources)}")
             GeneralStatRow("Y dpi", "${DisplayUtils.getYDpi(resources)}")

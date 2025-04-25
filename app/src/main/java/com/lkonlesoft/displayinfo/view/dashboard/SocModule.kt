@@ -46,7 +46,7 @@ fun SoCDashBoard(intervalMillis: Long = 1000L, onBack: () -> Unit, onClick: () -
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text("🤖 CPU Usage", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("CPU", fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.height(12.dp))
 

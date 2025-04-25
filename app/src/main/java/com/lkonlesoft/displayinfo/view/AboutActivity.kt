@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -24,6 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,13 +41,14 @@ class AboutActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        val color = this.intent.getIntExtra("color", 0)
+        val isDynamic = this.intent.getBooleanExtra("isDynamic", false)
         setContent {
-            ScreenInfoTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    AboutScaffoldContext(onClick = { this.finish()})
-                }
-            }
+            AboutScaffoldContext(
+                color = color,
+                isDynamic = isDynamic,
+                onClick = { this.finish()})
+
         }
     }
 }
@@ -53,30 +56,43 @@ class AboutActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutScaffoldContext(onClick: () -> Unit){
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "About") },
-                scrollBehavior = scrollBehavior,
-                navigationIcon = {
-                    IconButton(onClick = onClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
-                    }
-                },
-                modifier = Modifier.padding(4.dp)
-            )
+fun AboutScaffoldContext(color: Int, isDynamic: Boolean, onClick: () -> Unit){
+    val state = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(state)
+    ScreenInfoTheme (
+        dynamicColor = isDynamic,
+        darkTheme = when(color) {
+            0 -> isSystemInDarkTheme()
+            1 -> true
+            else -> false
+        },
+    ) {
+        // A surface container using the 'background' color from the theme
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = { Text(text = "About") },
+                        scrollBehavior = scrollBehavior,
+                        navigationIcon = {
+                            IconButton(onClick = onClick) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
+                            }
+                        },
+                    )
+                }
+            ) { paddingValues ->
+                AboutScreen(paddingValues = paddingValues)
+            }
         }
-    ) { paddingValues ->
-        AboutScreen(paddingValues = paddingValues)
     }
+
 }
 
 
 
 @Composable
-private fun AboutMenuItem(
+fun AboutMenuItem(
     tittle: String,
     text: String,
     onItemClick: () -> Unit){
@@ -85,7 +101,7 @@ private fun AboutMenuItem(
             .fillMaxWidth()
             .clickable(onClick = onItemClick)
             .padding(
-                horizontal = 30.dp,
+                horizontal = 20.dp,
                 vertical = 10.dp
             ),
         horizontalAlignment = Alignment.Start,
@@ -114,7 +130,7 @@ fun AboutScreen(paddingValues: PaddingValues) {
     ) {
         items(items){ item ->
             val url = stringResource(id = item.url)
-            AboutMenuItem(tittle = item.tittle,
+            AboutMenuItem(tittle = stringResource(id = item.title),
                 text = stringResource(id = item.text),
                 onItemClick = {
                     uriHandler.openUri(url)

@@ -31,7 +31,7 @@ fun SystemDashboard(onBack: () -> Unit, onClick: () -> Unit) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                "⚙️ System",
+                "System",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )

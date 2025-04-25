@@ -67,7 +67,7 @@ fun BatteryDashboard(onBack: () -> Unit, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("🔋 Battery", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("Battery", fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.height(12.dp))
             GeneralProgressBar(batteryPercentage.intValue.toLong(), 100L)

@@ -42,7 +42,7 @@
                     android:scheme="si" />
             </intent-filter>
         </activity>
-        <!--<receiver android:name=".widget.BatReceiver"
+        <receiver android:name=".widget.BatReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -50,11 +50,6 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
-        </receiver>-->
-        <receiver android:name=".receiver.BatteryStatusReceiver" android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.BATTERY_CHANGED" />
-            </intent-filter>
         </receiver>
     </application>
 

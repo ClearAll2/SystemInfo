@@ -4,7 +4,6 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.opengl.GLES10
-import com.lkonlesoft.displayinfo.helper.getGlEsVersion
 import java.io.File
 import java.io.RandomAccessFile
 
@@ -62,7 +61,7 @@ object SocUtils {
 
     fun getGlEsVersion(context: Context): String{
         val activityManager: ActivityManager = context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
-        return activityManager.getGlEsVersion()
+        return activityManager.deviceConfigurationInfo.glEsVersion
     }
 
     fun getNumberOfCores(): Int {

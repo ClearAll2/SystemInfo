@@ -13,4 +13,5 @@ sealed class NavigationItem (val route: String, val icon: Int){
     data object SOC: NavigationItem(route = "SoC", R.drawable.outline_developer_board_24)
     data object Camera: NavigationItem(route = "Camera", R.drawable.outline_camera_24)
     data object Connectivity: NavigationItem(route = "Connectivity", R.drawable.outline_network_cell_24)
+    data object Settings: NavigationItem(route = "Settings", R.drawable.outline_settings_24)
 }

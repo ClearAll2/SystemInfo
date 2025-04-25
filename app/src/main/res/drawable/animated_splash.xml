@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/appicon_foreground">
+    <target
+        android:animation="@animator/splash_animator"
+        android:name="animationGroup"/>
+
+</animated-vector>

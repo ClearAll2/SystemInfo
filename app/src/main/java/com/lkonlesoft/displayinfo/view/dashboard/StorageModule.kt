@@ -53,7 +53,7 @@ fun MemoryDashBoard(intervalMillis: Long = 2000L, onBack: () -> Unit, onClick: (
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text("🧠 Memory", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("Memory", fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
             Spacer(Modifier.height(12.dp))
             GeneralProgressBar(usedRAM, totalRAM, 1)
@@ -92,7 +92,7 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onBack: () -> Unit, onClick:
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text("💾 Storage", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("Storage", fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(12.dp))
             GeneralProgressBar(usedStorage, totalStorage, 1)
             Spacer(modifier = Modifier.height(12.dp))

@@ -1,5 +1,6 @@
 package com.lkonlesoft.displayinfo.utils
 
+import android.content.Context
 import android.os.Build
 import android.os.SystemClock
 import androidx.annotation.RequiresApi
@@ -63,5 +64,11 @@ object SystemUtils {
         return format.format(date)
     }
 
+    fun getAllSystemFeatures(context: Context): List<String> {
+        val pm = context.packageManager
+        return pm.systemAvailableFeatures
+            .mapNotNull { it?.name }  // filter out nulls (some features don't have a name)
+            .sorted()
+    }
 
 }
