@@ -1,6 +1,5 @@
 package com.lkonlesoft.displayinfo.view.dashboard
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,12 +23,10 @@ import com.lkonlesoft.displayinfo.utils.SocUtils
 import kotlinx.coroutines.delay
 
 @Composable
-fun SoCDashBoard(intervalMillis: Long = 1000L, onBack: () -> Unit, onClick: () -> Unit) {
+fun SoCDashBoard(intervalMillis: Long = 1000L, onClick: () -> Unit) {
     var cpuFreqs by remember { mutableStateOf(listOf<Int>()) }
 
-    BackHandler {
-        onBack()
-    }
+
     // Auto-refresh every 2 seconds
     LaunchedEffect(Unit) {
         while (true) {

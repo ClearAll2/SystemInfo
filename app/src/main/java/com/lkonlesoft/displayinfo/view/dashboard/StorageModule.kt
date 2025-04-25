@@ -1,6 +1,5 @@
 package com.lkonlesoft.displayinfo.view.dashboard
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,13 +24,10 @@ import com.lkonlesoft.displayinfo.utils.StorageUtils
 import kotlinx.coroutines.delay
 
 @Composable
-fun MemoryDashBoard(intervalMillis: Long = 2000L, onBack: () -> Unit, onClick: () -> Unit) {
+fun MemoryDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
 
-    BackHandler {
-        onBack()
-    }
     // Auto-refresh every 2 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -67,12 +63,8 @@ fun MemoryDashBoard(intervalMillis: Long = 2000L, onBack: () -> Unit, onClick: (
 }
 
 @Composable
-fun StorageDashboard(intervalMillis: Long = 60000L, onBack: () -> Unit, onClick: () -> Unit) {
+fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
     var refreshKey by remember { mutableIntStateOf(0) }
-
-    BackHandler {
-        onBack()
-    }
     // Auto-refresh every 2 seconds
     LaunchedEffect(Unit) {
         while (true) {

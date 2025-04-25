@@ -1,6 +1,5 @@
 package com.lkonlesoft.displayinfo.view.dashboard
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,12 +18,10 @@ import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.utils.DisplayUtils
 
 @Composable
-fun DisplayDashboard(onBack: () -> Unit, onClick: () -> Unit) {
+fun DisplayDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
     val resources = context.resources
-    BackHandler {
-        onBack()
-    }
+
     Card(
         modifier = Modifier
             .padding(10.dp)

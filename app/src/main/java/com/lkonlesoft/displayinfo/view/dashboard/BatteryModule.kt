@@ -1,7 +1,6 @@
 package com.lkonlesoft.displayinfo.view.dashboard
 
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,7 +36,7 @@ import com.lkonlesoft.displayinfo.utils.BatteryUtils
 import kotlinx.coroutines.delay
 
 @Composable
-fun BatteryDashboard(onBack: () -> Unit, onClick: () -> Unit) {
+fun BatteryDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
     val batteryPercentage = remember { mutableIntStateOf(0) }
     val batteryHealth = remember { mutableStateOf("Unknown") }
@@ -45,9 +44,6 @@ fun BatteryDashboard(onBack: () -> Unit, onClick: () -> Unit) {
     val batteryTemperature = remember { mutableFloatStateOf(0f) }
     val batteryCycles = remember { mutableIntStateOf(-1) }
 
-    BackHandler {
-        onBack()
-    }
     LaunchedEffect(Unit) {
         while (true) {
             batteryPercentage.intValue = BatteryUtils.getBatteryPercentage(context)
@@ -73,9 +69,9 @@ fun BatteryDashboard(onBack: () -> Unit, onClick: () -> Unit) {
             GeneralProgressBar(batteryPercentage.intValue.toLong(), 100L)
             Spacer(modifier = Modifier.height(12.dp))
 
-            GeneralStatRow("Battery Level", "${batteryPercentage.intValue} %", getBatteryLevelColor(batteryPercentage.intValue.toLong()))
+            GeneralStatRow("Battery Level", "${batteryPercentage.intValue} %")
             GeneralStatRow("Health", batteryHealth.value, getStatusColor(batteryHealth.value))
-            GeneralStatRow("Status", batteryStatus.value, getStatusColor(batteryStatus.value))
+            GeneralStatRow("Status", batteryStatus.value)
             GeneralStatRow("Cycle Count", if (batteryCycles.intValue >= 0) "${batteryCycles.intValue}" else "N/A")
             GeneralStatRow("Temperature", "${batteryTemperature.floatValue} °C", getTemperatureColor(batteryTemperature.floatValue))
         }

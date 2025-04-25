@@ -17,11 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ScreenInfo"
         android:enableOnBackInvokedCallback="true"
-        tools:targetApi="33">
-        <activity
-            android:name=".view.AboutActivity"
-            android:exported="false"
-            android:theme="@style/Theme.ScreenInfo" />
+        tools:targetApi="35">
         <activity
             android:name=".view.MainActivity"
             android:exported="true"

@@ -95,6 +95,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -118,6 +119,7 @@ import androidx.navigation.navDeepLink
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.CameraInfo
 import com.lkonlesoft.displayinfo.helper.connectionStateToString
+import com.lkonlesoft.displayinfo.`object`.AboutItem
 import com.lkonlesoft.displayinfo.`object`.AppTheme
 import com.lkonlesoft.displayinfo.`object`.NavigationItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
@@ -245,7 +247,7 @@ fun ScaffoldContext(){
                                 exit = slideOutHorizontally() + fadeOut()
                             ){
                                 IconButton(onClick = {
-                                    navController.returnToHome()
+                                    navController.navigateUp()
                                 }) {
                                     Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
                                 }
@@ -287,13 +289,11 @@ fun ScaffoldContext(){
 }
 
 @Composable
-fun SystemScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
+fun SystemScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
-    BackHandler {
-        onClick()
-    }
+
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
+        columns = GridCells.Adaptive(400.dp),
         modifier = Modifier
             .fillMaxSize()
             .consumeWindowInsets(paddingValues),
@@ -319,12 +319,9 @@ fun SystemScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
 }
 
 @Composable
-fun AndroidScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
-    BackHandler {
-        onClick()
-    }
+fun AndroidScreen(paddingValues: PaddingValues) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
+        columns = GridCells.Adaptive(400.dp),
         modifier = Modifier
             .fillMaxSize()
             .consumeWindowInsets(paddingValues),
@@ -355,7 +352,7 @@ fun AndroidScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NetworkScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
+fun NetworkScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
     var networkType by remember{
         mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils.getNetwork(context) else NetworkUtils.getNetworkOldApi(context))
@@ -379,13 +376,10 @@ fun NetworkScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
             networkInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) NetworkUtils.getNetInfo(context) else null
         }
     }
-    BackHandler {
-        onClick()
-    }
     Box (modifier = Modifier
         .fillMaxSize()) {
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(300.dp),
+            columns = GridCells.Adaptive(400.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .consumeWindowInsets(paddingValues),
@@ -419,15 +413,12 @@ fun NetworkScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
 
 
 @Composable
-fun DisplayScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
+fun DisplayScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
     val resources = context.resources
 
-    BackHandler {
-        onClick()
-    }
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
+        columns = GridCells.Adaptive(400.dp),
         modifier = Modifier
             .fillMaxSize()
             .consumeWindowInsets(paddingValues),
@@ -596,7 +587,7 @@ fun BluetoothStatusScreen(onClick: () -> Unit) {
     }
     // Build the UI to display Bluetooth status.
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
+        columns = GridCells.Adaptive(400.dp),
         modifier = Modifier.fillMaxSize()
 
     ) {
@@ -613,7 +604,7 @@ fun BluetoothStatusScreen(onClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BatteryScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
+fun BatteryScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
     var health by remember { mutableStateOf(BatteryUtils.getBatteryHealth(context)) }
     var capacity by remember { mutableIntStateOf(BatteryUtils.getBatteryCapacity(context).toInt()) }
@@ -624,9 +615,6 @@ fun BatteryScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
     var batteryPercent by remember { mutableIntStateOf(BatteryUtils.getBatteryPercentage(context)) }
     var cycleCount by remember { mutableIntStateOf(BatteryUtils.getBatteryCycleCount(context)) }
     var tech by remember { mutableStateOf(BatteryUtils.getBatteryTechnology(context)) }
-    BackHandler {
-        onClick()
-    }
     LaunchedEffect(Unit) {
         while (true){
             chargeStatus = BatteryUtils.getBatteryStatus(context)
@@ -638,7 +626,7 @@ fun BatteryScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
         }
     }
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
+        columns = GridCells.Adaptive(400.dp),
         modifier = Modifier
             .fillMaxSize()
             .consumeWindowInsets(paddingValues),
@@ -685,7 +673,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
         state = state,
         columns = if (width < 600.dp) GridCells.Fixed(if (!useNewDashboard) 2 else 1)
         else GridCells.Adaptive(
-            300.dp
+            400.dp
         ),
         contentPadding = paddingValues,
         modifier = Modifier
@@ -698,7 +686,6 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
                 val isSelected = currentRoute == item.route
                 BigTitle(title = item.route, icon = item.icon) {
                     if (!isSelected) {
-                        navController.popBackStack()
                         navController.navigate(item.route) {
                             launchSingleTop = true
                         }
@@ -709,42 +696,34 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
         if (useNewDashboard){
             item {
                 SystemDashboard(
-                    onBack = { navController.returnToHome() },
                     onClick = { navController.navigate(NavigationItem.System.route) })
             }
             item {
                 AndroidDashboard(
-                    onBack = { navController.returnToHome() },
                     onClick = { navController.navigate(NavigationItem.Android.route) })
             }
             item {
                 SoCDashBoard(
-                    onBack = { navController.returnToHome() },
                     onClick = { navController.navigate(NavigationItem.SOC.route) })
             }
             item {
                 BatteryDashboard(
-                    onBack = { navController.returnToHome() },
                     onClick = { navController.navigate(NavigationItem.Battery.route) })
             }
             item {
                 DisplayDashboard(
-                    onBack = { navController.returnToHome() },
                     onClick = { navController.navigate(NavigationItem.Display.route) })
             }
             item {
                 MemoryDashBoard(
-                    onBack = { navController.returnToHome() },
                     onClick = { navController.navigate(NavigationItem.Memory.route) })
             }
             item {
                 StorageDashboard(
-                    onBack = { navController.returnToHome() },
                     onClick = { navController.navigate(NavigationItem.Memory.route) })
             }
             item {
                 NetworkDashboard(
-                    onBack = { navController.returnToHome() },
                     onClick = { navController.navigate(NavigationItem.Network.route) })
             }
         }
@@ -817,7 +796,7 @@ fun CameraInfoScreen(onClick: () -> Unit) {
 
     // Display the list of camera details.
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
+        columns = GridCells.Adaptive(400.dp),
         modifier = Modifier.fillMaxSize()
 
     ) {
@@ -836,13 +815,10 @@ fun CameraInfoScreen(onClick: () -> Unit) {
 }
 
 @Composable
-fun MemoryScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
+fun MemoryScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
 
-    BackHandler {
-        onClick()
-    }
     // Auto-refresh every 2 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -862,7 +838,7 @@ fun MemoryScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
     val (extTotal, extFree) = remember(refreshKey) { StorageUtils.getExternalStorageStats(context) }
 
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
+        columns = GridCells.Adaptive(400.dp),
         modifier = Modifier
             .fillMaxSize()
             .consumeWindowInsets(paddingValues),
@@ -888,15 +864,13 @@ fun MemoryScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
 }
 
 @Composable
-fun HardwareScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
+fun HardwareScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
     val coreNum = SocUtils.getNumberOfCores()
     var cpuGovernors by remember { mutableStateOf(listOf<String>()) }
     //val cpuName = remember { getCpuName() }
     var cpuFreqs by remember { mutableStateOf(listOf<Int>()) }
-    BackHandler {
-        onClick()
-    }
+
     LaunchedEffect(Unit) {
         while (true) {
             cpuFreqs = SocUtils.getAllCpuFrequencies()
@@ -905,7 +879,7 @@ fun HardwareScreen(onClick: () -> Unit, paddingValues: PaddingValues) {
         }
     }
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
+        columns = GridCells.Adaptive(400.dp),
         modifier = Modifier
             .fillMaxSize()
             .consumeWindowInsets(paddingValues),
@@ -976,13 +950,13 @@ fun IndividualLine(tittle: String, info: String, info2: String = "", info3: Stri
             .clickable(enabled = canClick, onClick = onClick),
         horizontalAlignment = Alignment.Start,
     ){
-        Text(text = tittle, fontSize = 18.sp,  modifier = Modifier.padding(vertical = 5.dp))
+        Text(text = tittle, fontSize = 18.sp, fontWeight = FontWeight.Medium,  modifier = Modifier.padding(vertical = 5.dp))
         if (info.isNotEmpty())
-            Text(text = info, color = Color.Gray, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(vertical = 5.dp))
+            Text(text = info, modifier = Modifier.padding(vertical = 5.dp))
         if (info2.isNotEmpty())
-            Text(text = info2, color = Color.Gray, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(vertical = 5.dp))
+            Text(text = info2, modifier = Modifier.padding(vertical = 5.dp))
         if (info3.isNotEmpty())
-            Text(text = info3, color = Color.Gray, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(vertical = 5.dp))
+            Text(text = info3, modifier = Modifier.padding(vertical = 5.dp))
     }
 }
 
@@ -1015,19 +989,21 @@ fun HeaderLine(tittle: String, horizontalPadding: Dp = 30.dp, verticalPadding: D
 
 @Composable
 fun SettingsScreen(
-    onClick: () -> Unit,
     useNewDashboard: Boolean,
     appColor: Int,
     isDynamicColors: Boolean,
     settings: SettingsViewModel,
     paddingValues: PaddingValues
 ) {
-    val context = LocalContext.current
-    BackHandler {
-        onClick()
-    }
+    val uriHandler = LocalUriHandler.current
+    val items = listOf(
+        AboutItem.AppVer,
+        AboutItem.Privacy,
+        AboutItem.More,
+        AboutItem.Contact
+    )
     LazyVerticalGrid (
-        columns = GridCells.Adaptive(300.dp),
+        columns = GridCells.Adaptive(400.dp),
         modifier = Modifier
             .fillMaxSize()
             .consumeWindowInsets(paddingValues),
@@ -1075,16 +1051,35 @@ fun SettingsScreen(
             )
         }
         header { HeaderLine(tittle = stringResource(R.string.about)) }
-        item {
-            IndividualLine(tittle = stringResource(R.string.app_version), info = stringResource(R.string.app_ver), canClick = true,
-                onClick = {
-                    val intent = Intent(context, AboutActivity::class.java)
-                    intent.putExtra("color", appColor)
-                    intent.putExtra("isDynamicColors", isDynamicColors)
-                    context.startActivity(intent)
+        items(items){ item ->
+            val url = stringResource(id = item.url)
+            AboutMenuItem(tittle = stringResource(id = item.title),
+                text = stringResource(id = item.text),
+                onItemClick = {
+                    uriHandler.openUri(url)
                 }
             )
         }
+    }
+}
+
+@Composable
+fun AboutMenuItem(
+    tittle: String,
+    text: String,
+    onItemClick: () -> Unit){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onItemClick)
+            .padding(
+                horizontal = 30.dp,
+                vertical = 10.dp
+            ),
+        horizontalAlignment = Alignment.Start,
+    ){
+        Text(text = tittle, fontSize = 18.sp, fontWeight = FontWeight.Medium,  modifier = Modifier.padding(vertical = 5.dp))
+        Text(text = text, modifier = Modifier.padding(vertical = 5.dp))
     }
 }
 
@@ -1124,11 +1119,12 @@ fun CommonSwitchOption(
                 Text(
                     text = stringResource(id = text),
                     fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(vertical = 5.dp),
                     color = if (enabled) MaterialTheme.colorScheme.onBackground else Color.Gray
                 )
                 if (subText != -1)
-                    Text(text = stringResource(id = subText, extra), color = Color.Gray, fontSize = 15.sp)
+                    Text(text = stringResource(id = subText, extra), fontSize = 15.sp)
             }
         }
         if (separator){
@@ -1175,6 +1171,7 @@ fun ThemeSelector(
         Text(
             text = stringResource(R.string.app_color),
             fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
             modifier = Modifier.padding(vertical = 5.dp).padding(bottom = 5.dp)
         )
         Row(
@@ -1187,7 +1184,8 @@ fun ThemeSelector(
                 FilterChip(
                     leadingIcon = {
                         Icon(imageVector = ImageVector.vectorResource(theme.icon),
-                            contentDescription = null)
+                            contentDescription = null
+                        )
                     },
                     selected = selectedTheme == theme.value,
                     onClick = { onThemeSelected(theme.value) },
@@ -1240,9 +1238,6 @@ fun MainNavigation(
                 }
             )){
             SettingsScreen(
-                onClick = {
-                    navController.returnToHome()
-                },
                 settings= settings,
                 useNewDashboard = useNewDashboard,
                 paddingValues = paddingValues,
@@ -1265,9 +1260,7 @@ fun MainNavigation(
                     uriPattern = "si://info/system"
                 }
             )){
-            SystemScreen(paddingValues = paddingValues, onClick = {
-                navController.returnToHome()
-            })
+            SystemScreen(paddingValues = paddingValues)
         }
         composable(route = NavigationItem.Android.route,
             deepLinks = listOf(
@@ -1275,9 +1268,7 @@ fun MainNavigation(
                     uriPattern = "si://info/android"
                 }
             )){
-            AndroidScreen (paddingValues = paddingValues, onClick = {
-                navController.returnToHome()
-            })
+            AndroidScreen (paddingValues = paddingValues)
         }
         composable(route = NavigationItem.SOC.route,
             deepLinks = listOf(
@@ -1285,9 +1276,7 @@ fun MainNavigation(
                     uriPattern = "si://info/soc"
                 }
             )){
-            HardwareScreen(paddingValues = paddingValues, onClick = {
-                navController.returnToHome()
-            })
+            HardwareScreen(paddingValues = paddingValues)
         }
         composable(route = NavigationItem.Display.route,
             deepLinks = listOf(
@@ -1295,9 +1284,7 @@ fun MainNavigation(
                     uriPattern = "si://info/display"
                 }
             )){
-           DisplayScreen (paddingValues = paddingValues, onClick = {
-                navController.returnToHome()
-           })
+           DisplayScreen (paddingValues = paddingValues)
         }
         composable(route = NavigationItem.Battery.route,
             deepLinks = listOf(
@@ -1305,9 +1292,7 @@ fun MainNavigation(
                     uriPattern = "si://info/battery"
                 }
             )){
-            BatteryScreen (paddingValues = paddingValues, onClick = {
-                navController.returnToHome()
-            })
+            BatteryScreen (paddingValues = paddingValues)
         }
         composable(route = NavigationItem.Memory.route,
             deepLinks = listOf(
@@ -1315,9 +1300,7 @@ fun MainNavigation(
                     uriPattern = "si://info/memory"
                 }
             )){
-            MemoryScreen(paddingValues = paddingValues, onClick = {
-                navController.returnToHome()
-            })
+            MemoryScreen(paddingValues = paddingValues)
         }
         composable(route = NavigationItem.Network.route,
             deepLinks = listOf(
@@ -1325,9 +1308,7 @@ fun MainNavigation(
                     uriPattern = "si://info/network"
                 }
             )){
-            NetworkScreen(paddingValues = paddingValues, onClick = {
-                navController.returnToHome()
-            })
+            NetworkScreen(paddingValues = paddingValues)
         }
         composable(route = NavigationItem.Camera.route, deepLinks = listOf(
             navDeepLink {

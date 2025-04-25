@@ -1,7 +1,6 @@
 package com.lkonlesoft.displayinfo.view.dashboard
 
 import android.os.Build
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,12 +26,9 @@ import com.lkonlesoft.displayinfo.utils.NetworkUtils
 import kotlinx.coroutines.delay
 
 @Composable
-fun NetworkDashboard(onBack: () -> Unit, onClick: () -> Unit) {
+fun NetworkDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    BackHandler {
-        onBack()
-    }
 
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {

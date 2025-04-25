@@ -72,12 +72,14 @@ class BatteryWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .fillMaxSize()
                 .padding(vertical = 10.dp, horizontal = 10.dp)
-                .background(MaterialTheme.colorScheme.secondaryContainer)
+                .background(MaterialTheme.colorScheme.background)
                 .clickable(onClick = actionStartActivity(intent)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "🔋 Cycle Count", modifier = GlanceModifier.padding(vertical = 10.dp, horizontal = 5.dp),
-                style = TextStyle(fontSize = titleFontSize, fontWeight = FontWeight.Medium)
+                style = TextStyle(
+                    fontSize = titleFontSize,
+                    fontWeight = FontWeight.Medium)
             )
             Text(text = if (cycleCount == -1) "N/A" else cycleCount.toString(),
                 modifier = GlanceModifier.padding(vertical = 10.dp, horizontal = 10.dp),
