@@ -29,7 +29,7 @@ class SettingsManager private constructor(context: Context) {
     }
 
     // Retrieve settings (example: retrieve a boolean value)
-    fun getSettingLogic(key: String, defaultValue: Boolean = false): Boolean {
+    fun getSettingLogic(key: String, defaultValue: Boolean = true): Boolean {
         return sharedPreferences.getBoolean(key, defaultValue)
     }
 

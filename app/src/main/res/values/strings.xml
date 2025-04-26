@@ -76,7 +76,7 @@
     <string name="display_type">Display type</string>
     <string name="refresh_rate">Refresh rate</string>
     <string name="widevine">Widevine CDM</string>
-    <string name="clearkey">ClearKey CDM\n</string>
+    <string name="clearkey">ClearKey CDM</string>
     <string name="status">Status</string>
     <string name="battery_level">Battery level</string>
     <string name="health">Health</string>
@@ -133,4 +133,13 @@
     <string name="soc">SoC</string>
     <string name="camera">Camera</string>
     <string name="connectivity">Connectivity</string>
+    <string name="extra">Extra</string>
+    <string name="usd_debug">USB debugging</string>
+    <string name="SELinux">SELinux</string>
+    <string name="treble">Treble</string>
+    <string name="seamless_update">Seamless Updates</string>
+    <string name="active_slot">Active slot</string>
+    <string name="root">Root</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

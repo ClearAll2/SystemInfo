@@ -315,6 +315,14 @@ fun SystemScreen(paddingValues: PaddingValues) {
         item { IndividualLine(tittle = stringResource(R.string.instruction_sets), info = SystemUtils.getInstructions()) }
         item { IndividualLine(tittle = stringResource(R.string.up_time), info = SystemUtils.getUptime()) }
         item { IndividualLine(tittle = stringResource(R.string.boot_time), info = SystemUtils.getBootTime()) }
+        //item { IndividualLine(tittle = stringResource(R.string.SELinux), info = SystemUtils.getSelinuxStatus()) }
+        header { HeaderLine(tittle = stringResource(R.string.extra)) }
+        item { IndividualLine(tittle = stringResource(R.string.usd_debug), info = if (SystemUtils.isUsbDebuggingEnabled(context)) stringResource(R.string.enabled) else stringResource(R.string.disabled)) }
+        item { IndividualLine(tittle = stringResource(R.string.treble), info = if (SystemUtils.isTrebleSupported()) stringResource(R.string.supported) else stringResource(R.string.not_supported)) }
+        item { IndividualLine(tittle = stringResource(R.string.seamless_update), info = if (SystemUtils.isSeamlessUpdateSupported()) stringResource(R.string.supported) else stringResource(R.string.not_supported)) }
+        item { IndividualLine(tittle = stringResource(R.string.active_slot), info = SystemUtils.getActiveSlot()) }
+        item { IndividualLine(tittle = stringResource(R.string.root), info = if (SystemUtils.isDeviceRooted()) stringResource(R.string.yes) else stringResource(R.string.no)) }
+        header { HeaderLine(tittle = stringResource(R.string.device_features)) }
         item { IndividualLine(tittle = stringResource(R.string.device_features), info = SystemUtils.getAllSystemFeatures(context).joinToString("\n")) }
     }
 }
@@ -956,8 +964,8 @@ fun HardwareScreen(paddingValues: PaddingValues) {
         //item { IndividualLine(tittle = "Raw Info", info = getSocRawInfo()) }
         header { HeaderLine(tittle = stringResource(R.string.gpu_info)) }
         item { IndividualLine(tittle = stringResource(R.string.gles_version), info = SocUtils.getGlEsVersion(context)) }
-        item { IndividualLine(tittle = stringResource(R.string.gpu_renderer), info = SocUtils.getGpuRenderer()) }
-        item { IndividualLine(tittle = stringResource(R.string.gpu_vendor), info = SocUtils.getGpuVendor()) }
+        //item { IndividualLine(tittle = stringResource(R.string.gpu_renderer), info = SocUtils.getGpuRenderer()) }
+        //item { IndividualLine(tittle = stringResource(R.string.gpu_vendor), info = SocUtils.getGpuVendor()) }
 
     }
 }

@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 22
+val buildCode = 23
 val buildName = "2.0"
 
 android {

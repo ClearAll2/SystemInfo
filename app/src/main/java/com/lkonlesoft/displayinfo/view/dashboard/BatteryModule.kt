@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -90,7 +91,7 @@ fun HeaderForDashboard(title: String, icon: Int) {
         verticalAlignment = Alignment.CenterVertically) {
         Icon(imageVector = ImageVector.vectorResource(icon),
             contentDescription = title,
-            modifier = Modifier.padding(end = 10.dp),
+            modifier = Modifier.size(48.dp).padding(end = 10.dp),
             tint = MaterialTheme.colorScheme.primary)
         Text(title, fontSize = 20.sp, fontWeight = FontWeight.Bold)
     }
@@ -104,8 +105,8 @@ fun GeneralStatRow(label: String, value: String, valueColor: Color = Color.Unspe
             .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, fontSize = 16.sp, textAlign = TextAlign.Start)
-        Text(value, fontSize = 16.sp, fontWeight = FontWeight.Medium, color = valueColor, textAlign = TextAlign.End)
+        Text(label, fontSize = 16.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Start)
+        Text(value, fontSize = 16.sp, color = valueColor, textAlign = TextAlign.End)
     }
 }
 
