@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 21
+val buildCode = 22
 val buildName = "2.0"
 
 android {
@@ -17,7 +17,7 @@ android {
         targetSdk = 35
         versionCode = buildCode
         versionName = buildName
-        resValue("string", "app_ver", buildName)
+        resValue("string", "app_ver", "$buildName ($buildCode)")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
