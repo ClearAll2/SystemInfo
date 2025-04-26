@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,14 +15,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.SocUtils
 import kotlinx.coroutines.delay
 
 @Composable
-fun SoCDashBoard(intervalMillis: Long = 1000L, onClick: () -> Unit) {
+fun SoCDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
     var cpuFreqs by remember { mutableStateOf(listOf<Int>()) }
 
 
@@ -43,12 +42,12 @@ fun SoCDashBoard(intervalMillis: Long = 1000L, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text("CPU", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            HeaderForDashboard(title = stringResource(R.string.cpu_usage), icon = R.drawable.outline_developer_board_24)
 
             Spacer(modifier = Modifier.height(12.dp))
 
             cpuFreqs.forEachIndexed { index, freq ->
-                GeneralStatRow("Core ${index+1}", "$freq MHz")
+                GeneralStatRow(stringResource(R.string.core, "${index+1}"), "$freq MHz")
             }
 
         }

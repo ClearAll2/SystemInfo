@@ -1,8 +1,12 @@
 package com.lkonlesoft.displayinfo.helper
 
 class NetworkInfo {
-    var ip: String = "?"
-    var domain: String = "?"
-    var interfaces: String = "?"
-    var dnsServer: String = "?"
+    var ip: String = "N/A"
+    var domain: String = "N/A"
+    var interfaces: String = "N/A"
+    var dnsServer: String = "N/A"
+    var isPrivateDNSActive: Boolean = false
+    var privateDNS: String = "N/A"
+    var dhcpServer: String = "N/A"
+    var wakeOnLanSupported: Boolean = false
 }

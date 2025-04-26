@@ -60,17 +60,26 @@ object NetworkUtils {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    fun getNetInfo(context: Context): NetworkInfo {
+    fun getNetInfo(context: Context): NetworkInfo? {
         val netInfo = NetworkInfo()
         val connectivityManager = context.getSystemService(CONNECTIVITY_SERVICE)
-        if (connectivityManager is ConnectivityManager) {
+        if (connectivityManager is ConnectivityManager && connectivityManager.activeNetwork != null) {
             val link: LinkProperties =  connectivityManager.getLinkProperties(connectivityManager.activeNetwork) as LinkProperties
             netInfo.ip = link.linkAddresses.joinToString("\n")
             netInfo.domain = link.domains.toString()
             netInfo.interfaces = link.interfaceName.toString()
             netInfo.dnsServer = link.dnsServers.joinToString("\n")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                netInfo.isPrivateDNSActive = link.isPrivateDnsActive
+                netInfo.privateDNS = link.privateDnsServerName.toString()
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                netInfo.dhcpServer = link.dhcpServerAddress?.hostAddress.toString()
+                netInfo.wakeOnLanSupported = link.isWakeOnLanSupported
+            }
+            return netInfo
         }
-        return netInfo
+        return null
     }
 
     @Suppress("DEPRECATION")

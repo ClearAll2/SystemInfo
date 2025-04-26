@@ -10,7 +10,7 @@
     <string name="contact_link">https://clearall2.github.io/SmartSleepApp/</string>
     <string name="title_activity_web_view">WebView</string>
     <string name="appwidget_description">Battery Cycle Count</string>
-    <string name="use_new_dashboard">Use new dashboard</string>
+    <string name="use_details_dashboard">Use details dashboard</string>
     <string name="about">About</string>
     <string name="use_new_dashboard_details">Get device info at a glance</string>
     <string name="app_version">App version</string>
@@ -114,4 +114,23 @@
     <string name="material_you">Material You</string>
     <string name="material_you_details">Enjoy an experience closer to your device</string>
     <string name="app_color">App Color</string>
+    <string name="network">Network</string>
+    <string name="n_a">N/A</string>
+    <string name="dhcp_server">DHCP server</string>
+    <string name="wake_on_lan_sp">Wake on LAN</string>
+    <string name="is_private_dns_on">Private DNS</string>
+    <string name="private_dns_server">Private DNS server</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
+    <string name="display_pixels">Display pixels</string>
+    <string name="storage">Storage</string>
+    <string name="google_play_service">Google Play service</string>
+    <string name="unknown">Unknown</string>
+    <string name="performance_class">Performance class</string>
+    <string name="device_language">Language</string>
+    <string name="device_locale">Locale</string>
+    <string name="system_info">System Info</string>
+    <string name="soc">SoC</string>
+    <string name="camera">Camera</string>
+    <string name="connectivity">Connectivity</string>
 </resources>

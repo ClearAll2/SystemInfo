@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,18 +16,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.StorageUtils
 import kotlinx.coroutines.delay
 
 @Composable
-fun MemoryDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
+fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
 
-    // Auto-refresh every 2 seconds
+    // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
             delay(intervalMillis)
@@ -49,15 +48,15 @@ fun MemoryDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text("Memory", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            HeaderForDashboard(title = stringResource(R.string.memory), icon = R.drawable.outline_memory_24)
 
             Spacer(Modifier.height(12.dp))
             GeneralProgressBar(usedRAM, totalRAM, 1)
             Spacer(modifier = Modifier.height(12.dp))
 
-            GeneralStatRow("Total RAM", "$totalRAM MB")
-            GeneralStatRow("Used RAM", "$usedRAM MB")
-            GeneralStatRow("Free RAM", "$availableRAM MB")
+            GeneralStatRow(stringResource(R.string.total_ram), "$totalRAM MB")
+            GeneralStatRow(stringResource(R.string.used_ram), "$usedRAM MB")
+            GeneralStatRow(stringResource(R.string.available_ram), "$availableRAM MB")
         }
     }
 }
@@ -65,7 +64,7 @@ fun MemoryDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
 @Composable
 fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
     var refreshKey by remember { mutableIntStateOf(0) }
-    // Auto-refresh every 2 seconds
+    // Auto-refresh every 60 seconds
     LaunchedEffect(Unit) {
         while (true) {
             delay(intervalMillis)
@@ -84,14 +83,14 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text("Storage", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            HeaderForDashboard(title = stringResource(R.string.storage), icon = R.drawable.outline_storage_24)
             Spacer(Modifier.height(12.dp))
             GeneralProgressBar(usedStorage, totalStorage, 1)
             Spacer(modifier = Modifier.height(12.dp))
 
-            GeneralStatRow("Total Storage", StorageUtils.formatSize(totalStorage))
-            GeneralStatRow("Used Storage", StorageUtils.formatSize(usedStorage))
-            GeneralStatRow("Free Storage", StorageUtils.formatSize(freeStorage))
+            GeneralStatRow(stringResource(R.string.total), StorageUtils.formatSize(totalStorage))
+            GeneralStatRow(stringResource(R.string.used), StorageUtils.formatSize(usedStorage))
+            GeneralStatRow(stringResource(R.string.free), StorageUtils.formatSize(freeStorage))
         }
     }
 }

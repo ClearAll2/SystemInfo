@@ -133,6 +133,7 @@ import com.lkonlesoft.displayinfo.utils.SystemUtils
 import com.lkonlesoft.displayinfo.view.dashboard.AndroidDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.BatteryDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.DisplayDashboard
+import com.lkonlesoft.displayinfo.view.dashboard.GeneralProgressBar
 import com.lkonlesoft.displayinfo.view.dashboard.MemoryDashBoard
 import com.lkonlesoft.displayinfo.view.dashboard.NetworkDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.SoCDashBoard
@@ -234,7 +235,7 @@ fun ScaffoldContext(){
                         ),
                         title = {
                             Text(
-                                text = currentRoute.toString(),
+                                text = currentRoute.toString().replaceFirstChar { it.uppercase() },
                                 color = MaterialTheme.colorScheme.primary,
                             )
                         },
@@ -320,6 +321,7 @@ fun SystemScreen(paddingValues: PaddingValues) {
 
 @Composable
 fun AndroidScreen(paddingValues: PaddingValues) {
+    val context = LocalContext.current
     LazyVerticalGrid(
         columns = GridCells.Adaptive(400.dp),
         modifier = Modifier
@@ -346,7 +348,10 @@ fun AndroidScreen(paddingValues: PaddingValues) {
         item { IndividualLine(tittle = stringResource(R.string.hardware), info = AndroidUtils.getHardware())}
         item { IndividualLine(tittle = stringResource(R.string.host), info = AndroidUtils.getHost()) }
         item { IndividualLine(tittle = stringResource(R.string.board), info = AndroidUtils.getBoard()) }
-
+        item {IndividualLine(tittle = stringResource(R.string.google_play_service), info = AndroidUtils.getGmsVersion(context))}
+        item {IndividualLine(tittle = stringResource(R.string.performance_class), info = AndroidUtils.getPerformanceClass().toString())}
+        item {IndividualLine(tittle = stringResource(R.string.device_language), info = AndroidUtils.getDeviceLanguage())}
+        item {IndividualLine(tittle = stringResource(R.string.device_locale), info = AndroidUtils.getDeviceLocale())}
     }
 }
 
@@ -400,12 +405,24 @@ fun NetworkScreen(paddingValues: PaddingValues) {
                 })}
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                 header { HeaderLine(tittle = stringResource(R.string.details)) }
-                item { IndividualLine(tittle = stringResource(R.string.interfaces), info = networkInfo?.interfaces.toString()) }
-                item { IndividualLine(tittle = stringResource(R.string.ip_address), info = networkInfo?.ip.toString()) }
-                item { IndividualLine(tittle = stringResource(R.string.domain), info = networkInfo?.domain.toString()) }
-                item { IndividualLine(tittle = stringResource(R.string.dns), info = networkInfo?.dnsServer?.replace("/", "").toString()) }
+                if (networkInfo != null){
+                    item { IndividualLine(tittle = stringResource(R.string.interfaces), info = networkInfo?.interfaces.toString()) }
+                    item { IndividualLine(tittle = stringResource(R.string.ip_address), info = networkInfo?.ip.toString()) }
+                    item { IndividualLine(tittle = stringResource(R.string.domain), info = networkInfo?.domain.toString()) }
+                    item { IndividualLine(tittle = stringResource(R.string.dns), info = networkInfo?.dnsServer?.replace("/", "").toString()) }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        item { IndividualLine(tittle = stringResource(R.string.dhcp_server), info = networkInfo?.dhcpServer.toString()) }
+                        item { IndividualLine(tittle = stringResource(R.string.wake_on_lan_sp), info = if (networkInfo?.wakeOnLanSupported == true) stringResource(R.string.supported) else stringResource(R.string.not_supported)) }
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                        item { IndividualLine(tittle = stringResource(R.string.is_private_dns_on), info = if (networkInfo?.isPrivateDNSActive == true) stringResource(R.string.enabled) else stringResource(R.string.disabled)) }
+                        item { IndividualLine(tittle = stringResource(R.string.private_dns_server), info = networkInfo?.privateDNS.toString()) }
+                    }
+                }
+                else {
+                    item { IndividualLine(tittle = stringResource(R.string.n_a), info = "")}
+                }
             }
-
         }
     }
 
@@ -658,6 +675,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
         NavigationItem.Display,
         NavigationItem.Battery,
         NavigationItem.Memory,
+        NavigationItem.Storage,
         NavigationItem.Network,
         //NavigationItem.Camera,
         //NavigationItem.Connectivity
@@ -684,7 +702,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
         if (!useNewDashboard) {
             items(listScreen) { item ->
                 val isSelected = currentRoute == item.route
-                BigTitle(title = item.route, icon = item.icon) {
+                BigTitle(title = stringResource(item.name), icon = item.icon) {
                     if (!isSelected) {
                         navController.navigate(item.route) {
                             launchSingleTop = true
@@ -720,7 +738,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
             }
             item {
                 StorageDashboard(
-                    onClick = { navController.navigate(NavigationItem.Memory.route) })
+                    onClick = { navController.navigate(NavigationItem.Storage.route) })
             }
             item {
                 NetworkDashboard(
@@ -832,10 +850,43 @@ fun MemoryScreen(paddingValues: PaddingValues) {
     val usedRAM = totalRAM - availableRAM
     val percentage = (usedRAM.toDouble() / totalRAM.toDouble() * 100).toInt()
 
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(400.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .consumeWindowInsets(paddingValues),
+        contentPadding = paddingValues
+
+    ) {
+
+        item { IndividualLine(tittle = stringResource(R.string.used), info = "${percentage}%")}
+        item {GeneralProgressBar(usedRAM, totalRAM, 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
+        item { IndividualLine(tittle = stringResource(R.string.available_ram), info = "$availableRAM MB")}
+        item { IndividualLine(tittle = stringResource(R.string.used_ram), info = "$usedRAM MB")}
+        item { IndividualLine(tittle = stringResource(R.string.total_ram), info = "$totalRAM MB")}
+    }
+}
+
+@Composable
+fun StorageScreen(paddingValues: PaddingValues) {
+    val context = LocalContext.current
+    var refreshKey by remember { mutableIntStateOf(0) }
+
+    // Auto-refresh every 60 seconds
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(60000L)
+            refreshKey++ // Triggers recomposition
+        }
+    }
+
     val (totalStorage, freeStorage) = remember(refreshKey) { StorageUtils.getInternalStorageStats() }
     val usedStorage = totalStorage - freeStorage
+    val usedPercent = (usedStorage.toDouble() / totalStorage.toDouble() * 100).toInt()
 
     val (extTotal, extFree) = remember(refreshKey) { StorageUtils.getExternalStorageStats(context) }
+    val usedExtStorage = extTotal - extFree
+    val usedExtPercent = (usedExtStorage.toDouble() / extTotal.toDouble() * 100).toInt()
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(400.dp),
@@ -845,20 +896,20 @@ fun MemoryScreen(paddingValues: PaddingValues) {
         contentPadding = paddingValues
 
     ) {
-        header { HeaderLine(tittle = stringResource(R.string.memory)) }
-        item { IndividualLine(tittle = stringResource(R.string.used), info = "${percentage}%")}
-        item { IndividualLine(tittle = stringResource(R.string.available_ram), info = "$availableRAM MB")}
-        item { IndividualLine(tittle = stringResource(R.string.used_ram), info = "$usedRAM MB")}
-        item { IndividualLine(tittle = stringResource(R.string.total_ram), info = "$totalRAM MB")}
         header { HeaderLine(tittle = stringResource(R.string.internal_storage)) }
+        item { IndividualLine(tittle = stringResource(R.string.used), info = "${usedPercent}%")}
+        item {GeneralProgressBar(usedStorage, totalStorage, 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
         item { IndividualLine(tittle = stringResource(R.string.total), info = StorageUtils.formatSize(totalStorage)) }
         item { IndividualLine(tittle = stringResource(R.string.free), info = StorageUtils.formatSize(freeStorage)) }
         item { IndividualLine(tittle = stringResource(R.string.used), info = StorageUtils.formatSize(usedStorage)) }
 
         if (extTotal > 0) {
             header { HeaderLine(tittle = stringResource(R.string.external_storage)) }
+            item { IndividualLine(tittle = stringResource(R.string.used), info = "${usedExtPercent}%")}
+            item {GeneralProgressBar(usedExtStorage, extTotal, 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
             item { IndividualLine(tittle = stringResource(R.string.total), info = StorageUtils.formatSize(extTotal)) }
             item { IndividualLine(tittle = stringResource(R.string.free), info = StorageUtils.formatSize(extFree)) }
+            item { IndividualLine(tittle = stringResource(R.string.used), info = StorageUtils.formatSize(usedExtStorage)) }
         }
     }
 }
@@ -1037,7 +1088,7 @@ fun SettingsScreen(
         }
         item {
             CommonSwitchOption(
-                text = R.string.use_new_dashboard,
+                text = R.string.use_details_dashboard,
                 subText = R.string.use_new_dashboard_details,
                 extra = "",
                 horizontalPadding = 30.dp,
@@ -1172,7 +1223,9 @@ fun ThemeSelector(
             text = stringResource(R.string.app_color),
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(vertical = 5.dp).padding(bottom = 5.dp)
+            modifier = Modifier
+                .padding(vertical = 5.dp)
+                .padding(bottom = 5.dp)
         )
         Row(
             modifier = Modifier
@@ -1301,6 +1354,14 @@ fun MainNavigation(
                 }
             )){
             MemoryScreen(paddingValues = paddingValues)
+        }
+        composable(route = NavigationItem.Storage.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "si://info/storage"
+                })
+        ){
+            StorageScreen(paddingValues = paddingValues)
         }
         composable(route = NavigationItem.Network.route,
             deepLinks = listOf(

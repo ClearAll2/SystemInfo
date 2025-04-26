@@ -9,16 +9,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.AndroidUtils
 
 @Composable
 fun AndroidDashboard(onClick: () -> Unit) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -27,15 +28,16 @@ fun AndroidDashboard(onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Android", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            HeaderForDashboard(title = stringResource(R.string.android), icon = R.drawable.outline_android_24)
             Spacer(modifier = Modifier.height(8.dp))
 
-            GeneralStatRow("Android Version", AndroidUtils.getAndroidVersion())
-            GeneralStatRow("API Level", AndroidUtils.getApiLevel().toString())
+            GeneralStatRow(stringResource(R.string.android_version), AndroidUtils.getAndroidVersion())
+            GeneralStatRow(stringResource(R.string.api_level), AndroidUtils.getApiLevel().toString())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                GeneralStatRow("Security Patch", AndroidUtils.getSecurityPatch())
+                GeneralStatRow(stringResource(R.string.security_patch), AndroidUtils.getSecurityPatch())
             }
-            GeneralStatRow("SDK Name", AndroidUtils.getSdkName())
+            GeneralStatRow(stringResource(R.string.sdk), AndroidUtils.getSdkName())
+            GeneralStatRow(stringResource(R.string.google_play_service), AndroidUtils.getGmsVersion(context))
         }
     }
 }
