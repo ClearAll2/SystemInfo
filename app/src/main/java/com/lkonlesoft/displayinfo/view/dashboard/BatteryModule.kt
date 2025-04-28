@@ -113,12 +113,12 @@ fun GeneralStatRow(label: String, value: String, valueColor: Color = Color.Unspe
 @Composable
 fun GeneralProgressBar(level: Long, total: Long, type: Int = 0, horizontalPadding: Dp = 0.dp, verticalPadding: Dp = 0.dp) {
     LinearProgressIndicator(
-        progress = { level.toFloat() / total },
+        progress = { level.toFloat().div(total) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = horizontalPadding, vertical = verticalPadding)
             .height(10.dp)
             .clip(MaterialTheme.shapes.medium),
-        color = if (type == 0) getBatteryLevelColor(level) else getMemoryLevelColor(level)
+        color = if (type == 0) getBatteryLevelColor(level) else getMemoryLevelColor(((level.toDouble() / total.toDouble()) * 100).toLong())
     )
 }

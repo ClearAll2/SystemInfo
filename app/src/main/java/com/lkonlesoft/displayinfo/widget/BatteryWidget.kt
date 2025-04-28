@@ -2,7 +2,6 @@ package com.lkonlesoft.displayinfo.widget
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -10,6 +9,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
 import androidx.glance.LocalSize
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
@@ -72,18 +72,22 @@ class BatteryWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .fillMaxSize()
                 .padding(vertical = 10.dp, horizontal = 10.dp)
-                .background(MaterialTheme.colorScheme.background)
+                .background(GlanceTheme.colors.background)
                 .clickable(onClick = actionStartActivity(intent)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "🔋 Cycle Count", modifier = GlanceModifier.padding(vertical = 10.dp, horizontal = 5.dp),
                 style = TextStyle(
+                    color = GlanceTheme.colors.onBackground,
                     fontSize = titleFontSize,
                     fontWeight = FontWeight.Medium)
             )
             Text(text = if (cycleCount == -1) "N/A" else cycleCount.toString(),
                 modifier = GlanceModifier.padding(vertical = 10.dp, horizontal = 10.dp),
-                style = TextStyle(fontSize = countFontSize, fontWeight = FontWeight.Bold)
+                style = TextStyle(
+                    color = GlanceTheme.colors.onBackground,
+                    fontSize = countFontSize,
+                    fontWeight = FontWeight.Bold)
                 )
         }
     }

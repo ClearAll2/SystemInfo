@@ -38,7 +38,7 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
     val totalRAM = remember(refreshKey) { StorageUtils.getTotalRAM(context) }
     val availableRAM = remember(refreshKey) { StorageUtils.getAvailableRAM(context) }
     val usedRAM = totalRAM - availableRAM
-
+    val percent = ((usedRAM.toDouble() / totalRAM.toDouble()) * 100).toInt()
 
     Card(
         modifier = Modifier
@@ -49,11 +49,10 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
     ) {
         Column(Modifier.padding(16.dp)) {
             HeaderForDashboard(title = stringResource(R.string.memory), icon = R.drawable.outline_memory_24)
-
             Spacer(Modifier.height(12.dp))
             GeneralProgressBar(usedRAM, totalRAM, 1)
             Spacer(modifier = Modifier.height(12.dp))
-
+            GeneralStatRow(stringResource(R.string.used), "$percent%")
             GeneralStatRow(stringResource(R.string.total_ram), "$totalRAM MB")
             GeneralStatRow(stringResource(R.string.used_ram), "$usedRAM MB")
             GeneralStatRow(stringResource(R.string.available_ram), "$availableRAM MB")
@@ -74,6 +73,7 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
 
     val (totalStorage, freeStorage) = remember(refreshKey) { StorageUtils.getInternalStorageStats() }
     val usedStorage = totalStorage - freeStorage
+    val percent = ((usedStorage.toDouble() / totalStorage.toDouble()) * 100).toInt()
 
     Card(
         modifier = Modifier
@@ -87,7 +87,7 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
             Spacer(Modifier.height(12.dp))
             GeneralProgressBar(usedStorage, totalStorage, 1)
             Spacer(modifier = Modifier.height(12.dp))
-
+            GeneralStatRow(stringResource(R.string.used), "$percent%")
             GeneralStatRow(stringResource(R.string.total), StorageUtils.formatSize(totalStorage))
             GeneralStatRow(stringResource(R.string.used), StorageUtils.formatSize(usedStorage))
             GeneralStatRow(stringResource(R.string.free), StorageUtils.formatSize(freeStorage))

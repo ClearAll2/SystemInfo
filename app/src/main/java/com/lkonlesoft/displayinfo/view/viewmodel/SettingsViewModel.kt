@@ -1,6 +1,7 @@
 package com.lkonlesoft.displayinfo.view.viewmodel
 
 import android.content.Context
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lkonlesoft.displayinfo.helper.SettingsManager
@@ -26,8 +27,14 @@ class SettingsViewModel(context: Context) : ViewModel() {
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _useNewDashboard.emit(settingsManager.getSettingLogic("useNewDashboard"))
-            _appColor.emit(settingsManager.getSettingsInt("appColor"))
             _useDynamicColors.emit(settingsManager.getSettingLogic("useDynamicColors"))
+            val appColor = settingsManager.getSettingsInt("appColor")
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && appColor == 0){
+                _appColor.emit(2)
+            }
+            else {
+                _appColor.emit(appColor)
+            }
         }
     }
 

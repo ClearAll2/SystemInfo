@@ -441,6 +441,12 @@ fun NetworkScreen(paddingValues: PaddingValues) {
 fun DisplayScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
     val resources = context.resources
+    var widevineInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    var clearKeyInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    LaunchedEffect(Unit) {
+        widevineInfo = DisplayUtils.getWidevineInfo()
+        clearKeyInfo = DisplayUtils.getClearKeyInfo()
+    }
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(400.dp),
@@ -473,11 +479,11 @@ fun DisplayScreen(paddingValues: PaddingValues) {
             item {IndividualLine(tittle = stringResource(R.string.refresh_rate), info = DisplayUtils.getDisplayRefreshRate(context).toString() + " Hz")}
         }
         header { HeaderLine(tittle = stringResource(R.string.widevine)) }
-        items(DisplayUtils.getWidevineInfo().toList()){
+        items(widevineInfo.toList()){
             IndividualLine(tittle = it.first, info = it.second)
         }
         header { HeaderLine(tittle = stringResource(R.string.clearkey)) }
-        items(DisplayUtils.getClearKeyInfo().toList()){
+        items(clearKeyInfo.toList()){
             IndividualLine(tittle = it.first, info = it.second)
         }
     }
@@ -880,10 +886,10 @@ fun StorageScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
 
-    // Auto-refresh every 60 seconds
+    // Auto-refresh every 10 seconds
     LaunchedEffect(Unit) {
         while (true) {
-            delay(60000L)
+            delay(10000L)
             refreshKey++ // Triggers recomposition
         }
     }
@@ -1079,20 +1085,22 @@ fun SettingsScreen(
                 }
             )
         }
-        item {
-            CommonSwitchOption(
-                text = R.string.material_you,
-                subText = R.string.material_you_details,
-                extra = "",
-                horizontalPadding = 30.dp,
-                checked = isDynamicColors,
-                onClick = {
-                    settings.setUseDynamicColors(!isDynamicColors)
-                },
-                onSwitch = {
-                    settings.setUseDynamicColors(it)
-                }
-            )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            item {
+                CommonSwitchOption(
+                    text = R.string.material_you,
+                    subText = R.string.material_you_details,
+                    extra = "",
+                    horizontalPadding = 30.dp,
+                    checked = isDynamicColors,
+                    onClick = {
+                        settings.setUseDynamicColors(!isDynamicColors)
+                    },
+                    onSwitch = {
+                        settings.setUseDynamicColors(it)
+                    }
+                )
+            }
         }
         item {
             CommonSwitchOption(
@@ -1217,11 +1225,14 @@ fun ThemeSelector(
     onThemeSelected: (Int) -> Unit,
     paddingValues: Dp = 20.dp
 ) {
-    val themeOptions = listOf(
+    val themeOptions = mutableListOf(
         AppTheme.System,
         AppTheme.Light,
         AppTheme.Dark
     )
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
+        themeOptions.remove(AppTheme.System)
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()

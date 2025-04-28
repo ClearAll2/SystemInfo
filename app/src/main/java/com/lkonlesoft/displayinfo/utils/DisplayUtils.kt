@@ -6,6 +6,8 @@ import android.media.MediaDrm
 import android.os.Build
 import android.util.Base64
 import androidx.annotation.RequiresApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.UUID
 
 object DisplayUtils {
@@ -74,14 +76,13 @@ object DisplayUtils {
     }
 
 
-    fun getWidevineInfo(): Map<String, String> {
+    suspend fun getWidevineInfo(): Map<String, String> = withContext(Dispatchers.IO) {
         val widevineUUID = UUID.fromString("edef8ba9-79d6-4ace-a3c8-27dcd51d21ed")
         val info = mutableMapOf<String, String>()
 
         try {
             val mediaDrm = MediaDrm(widevineUUID)
 
-            // Direct string for security level (no constant available)
             val customProps = listOf(
                 "vendor",
                 "version",
@@ -98,7 +99,6 @@ object DisplayUtils {
                 info[prop] = value
             }
 
-            // Special handling for byte array props
             val uniqueId = try {
                 val bytes = mediaDrm.getPropertyByteArray("deviceUniqueId")
                 Base64.encodeToString(bytes, Base64.NO_WRAP)
@@ -114,16 +114,16 @@ object DisplayUtils {
             info["error"] = e.message ?: "Error accessing MediaDrm"
         }
 
-        return info
+        info
     }
 
-    fun getClearKeyInfo(): Map<String, String> {
+    suspend fun getClearKeyInfo(): Map<String, String> = withContext(Dispatchers.IO) {
         val clearKeyUUID = UUID.fromString("e2719d58-a985-b3c9-781a-b030af78d30e")
         val info = mutableMapOf<String, String>()
+
         try {
             val mediaDrm = MediaDrm(clearKeyUUID)
 
-            // Direct string for security level (no constant available)
             val customProps = listOf(
                 "vendor",
                 "version"
@@ -138,20 +138,21 @@ object DisplayUtils {
                 info[prop] = value
             }
 
-            // Special handling for byte array props
             val uniqueId = try {
                 val bytes = mediaDrm.getPropertyByteArray("deviceUniqueId")
                 Base64.encodeToString(bytes, Base64.NO_WRAP)
             } catch (_: Exception) {
                 "Unavailable"
             }
+            info["deviceUniqueId"] = uniqueId
+
             mediaDrm.close()
 
         } catch (e: Exception) {
             info["error"] = e.message ?: "Error accessing MediaDrm"
         }
 
-        return info
+        info
     }
 
 }

@@ -61,8 +61,8 @@ fun getBatteryLevelColor(level: Long): Color {
 
 fun getMemoryLevelColor(level: Long): Color {
     return when {
-        level <= 50 -> Color(0xFF4CAF50)
-        level <= 80 -> Color(0xFFFFC107)
+        level < 40 -> Color(0xFF4CAF50)
+        level in 40..80 -> Color(0xFFFFC107)
         else -> Color(0xFFF44336)
     }
 }
