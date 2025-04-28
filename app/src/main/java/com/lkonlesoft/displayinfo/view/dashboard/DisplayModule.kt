@@ -52,7 +52,8 @@ fun DisplayDashboard(onClick: () -> Unit) {
             HeaderForDashboard(title = stringResource(R.string.display), icon = R.drawable.outline_smartphone_24)
             Spacer(modifier = Modifier.height(12.dp))
 
-            GeneralStatRow(stringResource(R.string.display_pixels), "${DisplayUtils.getHeightPx(resources)}" + " • " +  "${DisplayUtils.getWidthPx(resources)}")
+            GeneralStatRow(stringResource(R.string.display_pixels), "${DisplayUtils.getHeightPx(resources)}" + " x " +  "${DisplayUtils.getWidthPx(resources)}")
+            GeneralStatRow(stringResource(R.string.size), "%.2f\"".format(DisplayUtils.calculateScreenSizeInInches(context)))
             GeneralStatRow(stringResource(R.string.smallest_dp), "${DisplayUtils.getSmallestDp(resources)}")
             GeneralStatRow(stringResource(R.string.xdpi), "${DisplayUtils.getXDpi(resources)}")
             GeneralStatRow(stringResource(R.string.ydpi), "${DisplayUtils.getYDpi(resources)}")

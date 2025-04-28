@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 23
+val buildCode = 24
 val buildName = "2.0"
 
 android {
@@ -52,6 +52,7 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.window:window:1.3.0")
     implementation ("androidx.glance:glance-appwidget:1.1.1")
     implementation ("androidx.glance:glance-material3:1.1.1")
     implementation("androidx.compose.material:material")

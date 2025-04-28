@@ -457,6 +457,9 @@ fun DisplayScreen(paddingValues: PaddingValues) {
 
     ) {
         header { HeaderLine(tittle = stringResource(R.string.display)) }
+        item {IndividualLine(tittle = stringResource(R.string.size), info = "%.2f inches".format(DisplayUtils.calculateScreenSizeInInches(context)))}
+        item {IndividualLine(tittle = stringResource(R.string.width_px), info = DisplayUtils.getWidthPx(resources).toString())}
+        item {IndividualLine(tittle = stringResource(R.string.height_px), info = DisplayUtils.getHeightPx(resources).toString())}
         item {IndividualLine(tittle = stringResource(R.string.smallest_dp), info = DisplayUtils.getSmallestDp(resources).toString())}
         item {IndividualLine(tittle = stringResource(R.string.screen_dpi), info = DisplayUtils.getDensity(resources).toString())}
         item {IndividualLine(tittle = stringResource(R.string.scale_density), info = DisplayUtils.getScaleDensity(resources).toString())}
@@ -465,8 +468,6 @@ fun DisplayScreen(paddingValues: PaddingValues) {
         item {IndividualLine(tittle = stringResource(R.string.width_dp), info = DisplayUtils.getWidthDp(resources).toString())}
         item {IndividualLine(tittle = stringResource(R.string.height_dp), info = DisplayUtils.getHeightDp(resources).toString())}
         item {IndividualLine(tittle = stringResource(R.string.orientation), info = if (DisplayUtils.getOrientation(resources) == 1) stringResource(R.string.portrait) else stringResource(R.string.landscape))}
-        item {IndividualLine(tittle = stringResource(R.string.width_px), info = DisplayUtils.getWidthPx(resources).toString())}
-        item {IndividualLine(tittle = stringResource(R.string.height_px), info = DisplayUtils.getHeightPx(resources).toString())}
         item {IndividualLine(tittle = stringResource(R.string.touch_screen), info = if (DisplayUtils.getTouchScreen(resources) == 1) stringResource(R.string.no_touch) else stringResource(R.string.finger))}
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {

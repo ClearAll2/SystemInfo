@@ -5,10 +5,14 @@ import android.content.res.Resources
 import android.media.MediaDrm
 import android.os.Build
 import android.util.Base64
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import androidx.annotation.RequiresApi
+import androidx.window.layout.WindowMetricsCalculator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
+import kotlin.math.sqrt
 
 object DisplayUtils {
     fun getSmallestDp(resources: Resources): Int{
@@ -153,6 +157,44 @@ object DisplayUtils {
         }
 
         info
+    }
+
+    fun calculateScreenSizeInInches(context: Context): Float {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val displayMetrics = DisplayMetrics()
+
+        val widthPixels: Int
+        val heightPixels: Int
+        val xdpi: Float
+        val ydpi: Float
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Android 11+ (API 30+)
+            val windowMetrics = WindowMetricsCalculator.getOrCreate()
+                .computeCurrentWindowMetrics(context)
+
+            val bounds = windowMetrics.bounds
+            widthPixels = bounds.width()
+            heightPixels = bounds.height()
+
+            val metrics = context.resources.displayMetrics
+            xdpi = metrics.xdpi
+            ydpi = metrics.ydpi
+        } else {
+            // Older Android (API < 30)
+            @Suppress("DEPRECATION")
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+
+            widthPixels = displayMetrics.widthPixels
+            heightPixels = displayMetrics.heightPixels
+            xdpi = displayMetrics.xdpi
+            ydpi = displayMetrics.ydpi
+        }
+
+        val widthInches = widthPixels / xdpi
+        val heightInches = heightPixels / ydpi
+
+        return sqrt((widthInches * widthInches + heightInches * heightInches))
     }
 
 }
