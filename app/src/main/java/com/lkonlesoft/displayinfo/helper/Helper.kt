@@ -1,8 +1,13 @@
 package com.lkonlesoft.displayinfo.helper
 
 import android.bluetooth.BluetoothProfile
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.ui.graphics.Color
+import androidx.core.content.ContextCompat
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -45,8 +50,8 @@ fun getStatusColor(value: String): Color {
 
 fun getTemperatureColor(temp: Float): Color {
     return when {
-        temp < 30f -> Color(0xFF4CAF50)
-        temp in 30f..40f -> Color(0xFFFFC107)
+        temp < 35f -> Color(0xFF4CAF50)
+        temp in 35f..42f -> Color(0xFFFFC107)
         else -> Color(0xFFF44336)
     }
 }
@@ -65,6 +70,19 @@ fun getMemoryLevelColor(level: Long): Color {
         level in 40..80 -> Color(0xFFFFC107)
         else -> Color(0xFFF44336)
     }
+}
+
+fun Context.hasPermission(permission: String): Boolean {
+    return ContextCompat.checkSelfPermission(
+        this,
+        permission
+    ) == PackageManager.PERMISSION_GRANTED
+}
+
+fun Context.copyTextToClipboard(text: String) {
+    val clipboard = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText("Cp", text)
+    clipboard.setPrimaryClip(clip)
 }
 
 

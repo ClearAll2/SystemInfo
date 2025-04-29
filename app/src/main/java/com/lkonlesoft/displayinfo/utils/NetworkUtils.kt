@@ -11,6 +11,7 @@ import android.os.Build
 import android.telephony.TelephonyManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.NetworkInfo
 
 object NetworkUtils {
@@ -66,12 +67,12 @@ object NetworkUtils {
         if (connectivityManager is ConnectivityManager && connectivityManager.activeNetwork != null) {
             val link: LinkProperties =  connectivityManager.getLinkProperties(connectivityManager.activeNetwork) as LinkProperties
             netInfo.ip = link.linkAddresses.joinToString("\n")
-            netInfo.domain = link.domains.toString()
+            netInfo.domain = if (link.domains != null) link.domains.toString() else context.getString(R.string.n_a)
             netInfo.interfaces = link.interfaceName.toString()
             netInfo.dnsServer = link.dnsServers.joinToString("\n")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 netInfo.isPrivateDNSActive = link.isPrivateDnsActive
-                netInfo.privateDNS = link.privateDnsServerName.toString()
+                netInfo.privateDNS = if (link.privateDnsServerName != null) link.privateDnsServerName.toString() else context.getString(R.string.n_a)
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 netInfo.dhcpServer = link.dhcpServerAddress?.hostAddress.toString()

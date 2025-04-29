@@ -99,7 +99,7 @@
     <string name="core">Core %s</string>
     <string name="min_freq">Minimum Freq: %s</string>
     <string name="max_freq">Maximum Freq: %s</string>
-    <string name="governor">Governor: %s</string>
+    <string name="governor">Governor</string>
     <string name="cpu_usage">CPU usage</string>
     <string name="gpu_info">GPU info</string>
     <string name="gles_version">glEs version</string>
@@ -137,10 +137,17 @@
     <string name="usd_debug">USB debugging</string>
     <string name="SELinux">SELinux</string>
     <string name="treble">Treble</string>
-    <string name="seamless_update">Seamless Updates</string>
+    <string name="seamless_update">Seamless updates</string>
     <string name="active_slot">Active slot</string>
-    <string name="root">Root</string>
+    <string name="root">Rooted</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="size">Size</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="cancel">Cancel</string>
+    <string name="permission_denied_details">Please allow permission in Settings</string>
+    <string name="copied_to_clipboard">Copied</string>
+    <string name="long_press_to_copy">Long press to copy</string>
+    <string name="long_press_to_copy_details">Copy items\' value by long pressing them</string>
+    <string name="general">General</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.lkonlesoft.displayinfo.view.viewmodel
+package com.lkonlesoft.displayinfo.viewmodel
 
 import android.content.Context
 import android.os.Build

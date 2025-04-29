@@ -12,8 +12,10 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -29,6 +31,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -55,6 +58,7 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -72,6 +76,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
@@ -93,6 +98,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -102,6 +108,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.pm.ShortcutInfoCompat
@@ -119,6 +126,8 @@ import androidx.navigation.navDeepLink
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.CameraInfo
 import com.lkonlesoft.displayinfo.helper.connectionStateToString
+import com.lkonlesoft.displayinfo.helper.copyTextToClipboard
+import com.lkonlesoft.displayinfo.helper.hasPermission
 import com.lkonlesoft.displayinfo.`object`.AboutItem
 import com.lkonlesoft.displayinfo.`object`.AppTheme
 import com.lkonlesoft.displayinfo.`object`.NavigationItem
@@ -139,7 +148,7 @@ import com.lkonlesoft.displayinfo.view.dashboard.NetworkDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.SoCDashBoard
 import com.lkonlesoft.displayinfo.view.dashboard.StorageDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.SystemDashboard
-import com.lkonlesoft.displayinfo.view.viewmodel.SettingsViewModel
+import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -322,7 +331,6 @@ fun SystemScreen(paddingValues: PaddingValues) {
         item { IndividualLine(tittle = stringResource(R.string.seamless_update), info = if (SystemUtils.isSeamlessUpdateSupported()) stringResource(R.string.supported) else stringResource(R.string.not_supported)) }
         item { IndividualLine(tittle = stringResource(R.string.active_slot), info = SystemUtils.getActiveSlot()) }
         item { IndividualLine(tittle = stringResource(R.string.root), info = if (SystemUtils.isDeviceRooted()) stringResource(R.string.yes) else stringResource(R.string.no)) }
-        header { HeaderLine(tittle = stringResource(R.string.device_features)) }
         item { IndividualLine(tittle = stringResource(R.string.device_features), info = SystemUtils.getAllSystemFeatures(context).joinToString("\n")) }
     }
 }
@@ -367,12 +375,15 @@ fun AndroidScreen(paddingValues: PaddingValues) {
 @Composable
 fun NetworkScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
+    var showWarningPopup by remember { mutableStateOf(false) }
+    var hasPermission by remember { mutableStateOf(context.hasPermission(Manifest.permission.READ_PHONE_STATE)) }
     var networkType by remember{
         mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils.getNetwork(context) else NetworkUtils.getNetworkOldApi(context))
     }
     var networkInfo by remember { mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) NetworkUtils.getNetInfo(context) else null) }
-    val startForResult = rememberLauncherForActivityResult(
+    val startForPermissionResult = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()) {isGranted ->
+        hasPermission = isGranted
         if (isGranted){
             Toast.makeText(context, context.getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
             networkType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils.getNetwork(context) else NetworkUtils.getNetworkOldApi(context)
@@ -380,7 +391,39 @@ fun NetworkScreen(paddingValues: PaddingValues) {
         }
         else{
             Toast.makeText(context, context.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
+            showWarningPopup = !showWarningPopup
         }
+    }
+    val startSettingForResult = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        hasPermission = context.hasPermission(Manifest.permission.READ_PHONE_STATE)
+    }
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        data = Uri.fromParts("package", context.packageName, null)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    AnimatedVisibility(visible = showWarningPopup,
+        enter = fadeIn(
+            animationSpec = tween(220, delayMillis = 100)
+        ) + scaleIn(
+            initialScale = 0.92f,
+            animationSpec = tween(220, delayMillis = 100)
+        ),
+        exit = fadeOut(animationSpec = tween(100))
+    ) {
+        ConfirmActionPopup(
+            content = {},
+            mainText = stringResource(id = R.string.permission_denied),
+            subText = stringResource(id = R.string.permission_denied_details),
+            confirmText = stringResource(id = R.string.settings),
+            cancelText = stringResource(id = R.string.cancel),
+            onDismiss = {
+                showWarningPopup = !showWarningPopup
+            },
+            onClick = {
+                showWarningPopup = !showWarningPopup
+                startSettingForResult.launch(intent)
+            }
+        )
     }
     LaunchedEffect(Unit) {
         while (true){
@@ -399,15 +442,11 @@ fun NetworkScreen(paddingValues: PaddingValues) {
             contentPadding = paddingValues
         ) {
             item {IndividualLine(tittle = stringResource(R.string.network_type), info = networkType,
-                canClick = true,
+                canClick = !hasPermission,
                 onClick = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                        if (ActivityCompat.checkSelfPermission(
-                                context,
-                                Manifest.permission.READ_PHONE_STATE
-                            ) != PackageManager.PERMISSION_GRANTED
-                        ) {
-                            startForResult.launch(Manifest.permission.READ_PHONE_STATE)
+                        if (!context.hasPermission(Manifest.permission.READ_PHONE_STATE)) {
+                            startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
                         }
                     }
                 })}
@@ -933,14 +972,14 @@ fun StorageScreen(paddingValues: PaddingValues) {
 fun HardwareScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
     val coreNum = SocUtils.getNumberOfCores()
-    var cpuGovernors by remember { mutableStateOf(listOf<String>()) }
+    var cpuGovernor by remember { mutableStateOf(SocUtils.getCpuGovernor()) }
     //val cpuName = remember { getCpuName() }
     var cpuFreqs by remember { mutableStateOf(listOf<Int>()) }
 
     LaunchedEffect(Unit) {
         while (true) {
             cpuFreqs = SocUtils.getAllCpuFrequencies()
-            cpuGovernors = SocUtils.getAllGovernors()
+
             delay(1000L) // Update every 1 second
         }
     }
@@ -952,16 +991,15 @@ fun HardwareScreen(paddingValues: PaddingValues) {
         contentPadding = paddingValues
     ) {
         header { HeaderLine(tittle = stringResource(R.string.cpu_info)) }
-        //item { IndividualLine(tittle = "Name", info = cpuName) }
+        //item { IndividualLine(tittle = stringResource(R.string.model), info = SocUtils.getCpuModelName()) }
         item { IndividualLine(tittle = stringResource(R.string.cores), info = coreNum.toString()) }
+        item { IndividualLine(tittle = stringResource(R.string.governor), info = cpuGovernor) }
         items(coreNum) {
             val coreValue = SocUtils.getMinMaxFreq(it)
-            val governor = cpuGovernors.getOrNull(it) ?: "Unknown"
             IndividualLine(
                 tittle = stringResource(R.string.core, "${it+1}"),
                 info = stringResource(R.string.min_freq, "${coreValue.first} MHz"),
-                info2 = stringResource(R.string.max_freq, "${coreValue.second} MHz"),
-                info3 =  stringResource(R.string.governor, governor)
+                info2 = stringResource(R.string.max_freq, "${coreValue.second} MHz")
             )
         }
         header { HeaderLine(tittle = stringResource(R.string.cpu_usage))}
@@ -1005,15 +1043,36 @@ fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
 
 
 @Composable
-fun IndividualLine(tittle: String, info: String, info2: String = "", info3: String = "", canClick: Boolean = false, onClick: () -> Unit = { }){
+fun IndividualLine(
+    tittle: String,
+    info: String,
+    info2: String = "",
+    info3: String = "",
+    canClick: Boolean = false,
+    onClick: () -> Unit = { },
+    canLongPress: Boolean = true
+){
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(enabled = canClick, onClick = onClick)
+            .pointerInput(canLongPress){
+                detectTapGestures(
+                    onLongPress = {
+                        context.copyTextToClipboard(buildString {
+                            append(tittle)
+                            append("\n")
+                            append(info)
+                        })
+                        Toast.makeText(context, context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
             .padding(
                 horizontal = 30.dp,
                 vertical = 10.dp
-            )
-            .clickable(enabled = canClick, onClick = onClick),
+            ),
         horizontalAlignment = Alignment.Start,
     ){
         Text(text = tittle, fontSize = 18.sp, fontWeight = FontWeight.Medium,  modifier = Modifier.padding(vertical = 5.dp))
@@ -1269,6 +1328,51 @@ fun ThemeSelector(
     }
 
 }
+
+@Composable
+fun ConfirmActionPopup(
+    content: @Composable () -> Unit = { },
+    mainText: String = stringResource(id = R.string.are_you_sure),
+    subText: String = stringResource(id = R.string.n_a),
+    confirmText: String = stringResource(id = R.string.yes),
+    cancelText: String = stringResource(id = R.string.no),
+    onDismiss: () -> Unit,
+    onClick: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            tonalElevation = 10.dp,
+            shape = RoundedCornerShape(25.dp)
+        ) {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Text(text = mainText, style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(horizontal = 30.dp, vertical = 20.dp))
+                content()
+                Text(text = subText, modifier = Modifier.padding(horizontal = 30.dp))
+                Spacer(modifier = Modifier.padding(15.dp))
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 5.dp)
+                ) {
+                    TextButton(onClick = onDismiss, modifier = Modifier.padding(5.dp)) {
+                        Text(text = cancelText, modifier = Modifier.padding(5.dp))
+                    }
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    TextButton(onClick = onClick, modifier = Modifier.padding(5.dp)) {
+                        Text(text = confirmText, modifier = Modifier.padding(5.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun MainNavigation(

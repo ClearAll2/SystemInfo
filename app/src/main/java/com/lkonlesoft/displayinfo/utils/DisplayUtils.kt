@@ -142,14 +142,6 @@ object DisplayUtils {
                 info[prop] = value
             }
 
-            val uniqueId = try {
-                val bytes = mediaDrm.getPropertyByteArray("deviceUniqueId")
-                Base64.encodeToString(bytes, Base64.NO_WRAP)
-            } catch (_: Exception) {
-                "Unavailable"
-            }
-            info["deviceUniqueId"] = uniqueId
-
             mediaDrm.close()
 
         } catch (e: Exception) {
