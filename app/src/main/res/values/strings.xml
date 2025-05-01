@@ -134,7 +134,7 @@
     <string name="camera">Camera</string>
     <string name="connectivity">Connectivity</string>
     <string name="extra">Extra</string>
-    <string name="usd_debug">USB debugging</string>
+    <string name="usb_debug">USB debugging</string>
     <string name="SELinux">SELinux</string>
     <string name="treble">Treble</string>
     <string name="seamless_update">Seamless updates</string>
@@ -150,4 +150,21 @@
     <string name="long_press_to_copy">Long press to copy</string>
     <string name="long_press_to_copy_details">Copy items\' value by long pressing them</string>
     <string name="general">General</string>
+    <string name="plug_type">Plug type</string>
+    <string name="good">Good</string>
+    <string name="overheat">Overheat</string>
+    <string name="dead">Dead</string>
+    <string name="over_voltage">Over voltage</string>
+    <string name="failure">Failure</string>
+    <string name="cold">Cold</string>
+    <string name="other">Other</string>
+    <string name="charging">Charging</string>
+    <string name="discharging">Discharging</string>
+    <string name="full">Full</string>
+    <string name="not_charging">Not charging</string>
+    <string name="ac">AC</string>
+    <string name="usb">USB</string>
+    <string name="wireless">Wireless</string>
+    <string name="unplugged">Unplugged</string>
+    <string name="require_permission">Requires permission</string>
 </resources>

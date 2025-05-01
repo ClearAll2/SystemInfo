@@ -5,34 +5,75 @@ import android.os.Build
 import android.os.SystemClock
 import android.provider.Settings
 import androidx.annotation.RequiresApi
+import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-object SystemUtils {
+class SystemUtils(private val context: Context) {
+
+    fun getDeviceData(): List<DeviceInfo>{
+        return listOf(
+            DeviceInfo(R.string.model, getModel()),
+            DeviceInfo(R.string.product, getProduct()),
+            DeviceInfo(R.string.device, getDevice()),
+            DeviceInfo(R.string.board, getBoard()),
+            DeviceInfo(R.string.manufacturer, getManufacturer()),
+            DeviceInfo(R.string.brand, getBrand()),
+            DeviceInfo(R.string.sku, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) getSku() else context.getString(R.string.unknown)),
+            DeviceInfo(R.string.radio, getRadio()),
+            DeviceInfo(R.string.instruction_sets, getInstructions()),
+            DeviceInfo(R.string.up_time, getUptime()),
+            DeviceInfo(R.string.boot_time, getBootTime()),
+        )
+    }
+
+    fun getExtraData(): List<DeviceInfo>{
+        return listOf(
+            DeviceInfo(R.string.usb_debug, if (isUsbDebuggingEnabled()) context.getString(R.string.enabled) else context.getString(R.string.disabled)),
+            DeviceInfo(R.string.treble, if (isTrebleSupported()) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.seamless_update, if (isSeamlessUpdateSupported()) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.active_slot, if (isSeamlessUpdateSupported() && getActiveSlot() != context.getString(R.string.unknown)) getActiveSlot() else context.getString(R.string.n_a)),
+            DeviceInfo(R.string.root, if (isDeviceRooted()) context.getString(R.string.yes) else context.getString(R.string.no)),
+            DeviceInfo(R.string.device_features, getAllSystemFeatures().joinToString("\n")),
+        )
+    }
+
+    fun getDashboardData(): List<DeviceInfo>{
+        return listOf(
+            DeviceInfo(R.string.model, getModel()),
+            DeviceInfo(R.string.product, getProduct()),
+            DeviceInfo(R.string.device, getDevice()),
+            DeviceInfo(R.string.manufacturer, getManufacturer()),
+            DeviceInfo(R.string.up_time, getUptime()),
+        )
+    }
+
+
     fun getModel(): String {
-        return Build.MODEL ?: "Unknown"
+        return Build.MODEL ?: context.getString(R.string.unknown)
     }
 
     fun getProduct(): String {
-        return Build.PRODUCT ?: "Unknown"
+        return Build.PRODUCT ?: context.getString(R.string.unknown)
     }
 
     fun getDevice(): String {
-        return Build.DEVICE ?: "Unknown"
+        return Build.DEVICE ?: context.getString(R.string.unknown)
     }
 
     fun getBoard(): String {
-        return Build.BOARD ?: "Unknown"
+        return Build.BOARD ?: context.getString(R.string.unknown)
     }
 
     fun getManufacturer(): String {
-        return Build.MANUFACTURER ?: "Unknown"
+        return Build.MANUFACTURER ?: context.getString(R.string.unknown)
     }
 
     fun getBrand(): String {
-        return Build.BRAND ?: "Unknown"
+        return Build.BRAND ?: context.getString(R.string.unknown)
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -41,12 +82,12 @@ object SystemUtils {
     }
 
     fun getRadio(): String {
-        return Build.getRadioVersion() ?: "Unknown"
+        return Build.getRadioVersion() ?: context.getString(R.string.unknown)
     }
 
     fun getInstructions(): String {
         val supportedABIS = Build.SUPPORTED_ABIS
-        return supportedABIS?.joinToString(", ") ?: "Unknown"
+        return supportedABIS?.joinToString(", ") ?: context.getString(R.string.unknown)
     }
 
     fun getUptime(): String {
@@ -66,7 +107,7 @@ object SystemUtils {
         return format.format(date)
     }
 
-    fun getAllSystemFeatures(context: Context): List<String> {
+    fun getAllSystemFeatures(): List<String> {
         val pm = context.packageManager
         return pm.systemAvailableFeatures
             .mapNotNull { it?.name }  // filter out nulls (some features don't have a name)
@@ -82,7 +123,7 @@ object SystemUtils {
         }
     }
 
-    fun isUsbDebuggingEnabled(context: Context): Boolean {
+    fun isUsbDebuggingEnabled(): Boolean {
         return Settings.Global.getInt(
             context.contentResolver,
             Settings.Global.ADB_ENABLED, 0
@@ -142,7 +183,7 @@ object SystemUtils {
         return try {
             getSystemProperty("ro.boot.slot_suffix") ?: "Unknown"
         } catch (_: Exception) {
-            "Unknown"
+            context.getString(R.string.unknown)
         }
     }
 

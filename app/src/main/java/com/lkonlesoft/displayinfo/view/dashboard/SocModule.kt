@@ -11,10 +11,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
@@ -23,14 +25,16 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SoCDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
-    var cpuFreqs by remember { mutableStateOf(listOf<Int>()) }
+    val context = LocalContext.current
+    var refreshKey by remember { mutableIntStateOf(0) }
+    val cpuUsageInfo by remember(refreshKey) { mutableStateOf(SocUtils(context).getCPUUsage()) }
 
 
     // Auto-refresh every 2 seconds
     LaunchedEffect(Unit) {
         while (true) {
-            cpuFreqs = SocUtils.getAllCpuFrequencies()
             delay(intervalMillis)
+            refreshKey++
         }
     }
 
@@ -45,11 +49,9 @@ fun SoCDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
             HeaderForDashboard(title = stringResource(R.string.cpu_usage), icon = R.drawable.outline_developer_board_24)
 
             Spacer(modifier = Modifier.height(12.dp))
-
-            cpuFreqs.forEachIndexed { index, freq ->
-                GeneralStatRow(stringResource(R.string.core, "${index+1}"), "$freq MHz")
+            cpuUsageInfo.forEach {
+                GeneralStatRow(label = stringResource(it.name, it.value), value = it.extra)
             }
-
         }
     }
 }

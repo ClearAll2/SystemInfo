@@ -5,26 +5,70 @@ import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.os.Environment
 import android.os.StatFs
+import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import java.io.File
 
-object StorageUtils {
+class StorageUtils (private val context: Context) {
 
-    fun getTotalRAM(context: Context): Long {
+    fun getRAMInfo(): List<DeviceInfo>{
+        val totalRAM = getTotalRAM()
+        val availableRAM = getAvailableRAM()
+        val usedRAM = totalRAM - availableRAM
+        val percentageUsed = (usedRAM.toDouble() / totalRAM.toDouble() * 100).toInt()
+        return listOf(
+            DeviceInfo(R.string.used, percentageUsed, "%", 1),
+            DeviceInfo(R.string.available_ram, availableRAM, " MB"),
+            DeviceInfo(R.string.used_ram, usedRAM, " MB"),
+            DeviceInfo(R.string.total_ram, totalRAM, " MB")
+        )
+    }
+
+    fun getInternalStorageInfo(): List<DeviceInfo>{
+        val internalTotal = getInternalStorageStats().first
+        val internalFree = getInternalStorageStats().second
+        val usedInternal = internalTotal - internalFree
+        val percentageUsed = (usedInternal.toDouble() / internalTotal.toDouble() * 100).toInt()
+        return listOf(
+            DeviceInfo(R.string.used, percentageUsed, "%", 1),
+            DeviceInfo(R.string.free, internalFree, formatSize(internalFree)),
+            DeviceInfo(R.string.used, usedInternal, formatSize(usedInternal)),
+            DeviceInfo(R.string.total, internalTotal, formatSize(internalTotal)),
+        )
+    }
+
+    fun getExternalStorageInfo(): List<DeviceInfo>{
+        val externalTotal = getExternalStorageStats().first
+        if (externalTotal == -1L)
+            return emptyList()
+        val externalFree = getExternalStorageStats().second
+        val usedExternal = externalTotal - externalFree
+        val percentageUsed = (usedExternal.toDouble() / externalTotal.toDouble() * 100).toInt()
+        return listOf(
+            DeviceInfo(R.string.used, percentageUsed, "%", 1),
+            DeviceInfo(R.string.free, externalFree, formatSize(externalFree)),
+            DeviceInfo(R.string.used, usedExternal, formatSize(usedExternal)),
+            DeviceInfo(R.string.total, externalTotal, formatSize(externalTotal)),
+        )
+    }
+
+
+    fun getTotalRAM(): Long {
         val reader = File("/proc/meminfo").bufferedReader().readLine()
         val totalKb = reader.replace(Regex("[^0-9]"), "").toLong()
         return totalKb / 1024 // MB
     }
 
-    fun getAvailableRAM(context: Context): Long {
+    fun getAvailableRAM(): Long {
         val am = context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
         val info = ActivityManager.MemoryInfo()
         am.getMemoryInfo(info)
         return info.availMem / 1024 / 1024 // MB
     }
 
-    fun getUsedRAM(context: Context): Long {
-        val total = getTotalRAM(context)
-        val free = getAvailableRAM(context)
+    fun getUsedRAM(): Long {
+        val total = getTotalRAM()
+        val free = getAvailableRAM()
         return total - free
     }
 
@@ -53,7 +97,7 @@ object StorageUtils {
         }
     }
 
-    fun getExternalStorageStats(context: Context): Pair<Long, Long> {
+    fun getExternalStorageStats(): Pair<Long, Long> {
         val externalFiles = context.getExternalFilesDirs(null)
         if (externalFiles.size > 1 && externalFiles[0] != null && externalFiles[1] != null){
             return getStorageStats(externalFiles[1])
@@ -61,13 +105,13 @@ object StorageUtils {
         return Pair(-1,-1)
     }
 
-    fun getAppStorageUsage(context: Context): Long {
+    fun getAppStorageUsage(): Long {
         return context.filesDir?.let {
             File(it.absolutePath).walkTopDown().map { file -> file.length() }.sum()
         } ?: 0L
     }
 
-    fun getCacheStorageUsage(context: Context): Long {
+    fun getCacheStorageUsage(): Long {
         return context.cacheDir?.let {
             File(it.absolutePath).walkTopDown().map { file -> file.length() }.sum()
         } ?: 0L

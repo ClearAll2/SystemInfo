@@ -31,7 +31,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -54,7 +54,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -85,7 +84,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -98,7 +96,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -125,6 +122,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.CameraInfo
+import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.connectionStateToString
 import com.lkonlesoft.displayinfo.helper.copyTextToClipboard
 import com.lkonlesoft.displayinfo.helper.hasPermission
@@ -299,9 +297,12 @@ fun ScaffoldContext(){
 }
 
 @Composable
-fun SystemScreen(paddingValues: PaddingValues) {
+fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
-
+    val deviceInfoList by remember { mutableStateOf<List<DeviceInfo>>(
+        SystemUtils(context).getDeviceData()) }
+    val extraInfoList by remember { mutableStateOf<List<DeviceInfo>>(
+        SystemUtils(context).getExtraData()) }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(400.dp),
         modifier = Modifier
@@ -311,33 +312,20 @@ fun SystemScreen(paddingValues: PaddingValues) {
 
     ) {
         header { HeaderLine(tittle = stringResource(R.string.device)) }
-        item { IndividualLine(tittle = stringResource(R.string.model), info = SystemUtils.getModel()) }
-        item { IndividualLine(tittle = stringResource(R.string.product), info = SystemUtils.getProduct()) }
-        item { IndividualLine(tittle = stringResource(R.string.device), info = SystemUtils.getDevice()) }
-        item { IndividualLine(tittle = stringResource(R.string.board), info = SystemUtils.getBoard()) }
-        item { IndividualLine(tittle = stringResource(R.string.brand), info = SystemUtils.getBrand()) }
-        item { IndividualLine(tittle = stringResource(R.string.manufacturer), info = SystemUtils.getManufacturer()) }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            item { IndividualLine(tittle = stringResource(R.string.sku), info = SystemUtils.getSku()) }
+        items(deviceInfoList){
+            IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
         }
-        item { IndividualLine(tittle = stringResource(R.string.radio), info = SystemUtils.getRadio()) }
-        item { IndividualLine(tittle = stringResource(R.string.instruction_sets), info = SystemUtils.getInstructions()) }
-        item { IndividualLine(tittle = stringResource(R.string.up_time), info = SystemUtils.getUptime()) }
-        item { IndividualLine(tittle = stringResource(R.string.boot_time), info = SystemUtils.getBootTime()) }
-        //item { IndividualLine(tittle = stringResource(R.string.SELinux), info = SystemUtils.getSelinuxStatus()) }
         header { HeaderLine(tittle = stringResource(R.string.extra)) }
-        item { IndividualLine(tittle = stringResource(R.string.usd_debug), info = if (SystemUtils.isUsbDebuggingEnabled(context)) stringResource(R.string.enabled) else stringResource(R.string.disabled)) }
-        item { IndividualLine(tittle = stringResource(R.string.treble), info = if (SystemUtils.isTrebleSupported()) stringResource(R.string.supported) else stringResource(R.string.not_supported)) }
-        item { IndividualLine(tittle = stringResource(R.string.seamless_update), info = if (SystemUtils.isSeamlessUpdateSupported()) stringResource(R.string.supported) else stringResource(R.string.not_supported)) }
-        item { IndividualLine(tittle = stringResource(R.string.active_slot), info = SystemUtils.getActiveSlot()) }
-        item { IndividualLine(tittle = stringResource(R.string.root), info = if (SystemUtils.isDeviceRooted()) stringResource(R.string.yes) else stringResource(R.string.no)) }
-        item { IndividualLine(tittle = stringResource(R.string.device_features), info = SystemUtils.getAllSystemFeatures(context).joinToString("\n")) }
+        items(extraInfoList){
+            IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
+        }
     }
 }
 
 @Composable
-fun AndroidScreen(paddingValues: PaddingValues) {
+fun AndroidScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
+    val infoList = AndroidUtils(context).getAllData()
     LazyVerticalGrid(
         columns = GridCells.Adaptive(400.dp),
         modifier = Modifier
@@ -346,48 +334,28 @@ fun AndroidScreen(paddingValues: PaddingValues) {
         contentPadding = paddingValues
 
     ) {
-        item { IndividualLine(tittle = stringResource(R.string.android_version), info = AndroidUtils.getAndroidVersion()) }
-        item {IndividualLine(tittle = stringResource(R.string.api_level), info = AndroidUtils.getApiLevel().toString())}
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            item { IndividualLine(tittle = stringResource(R.string.security_patch), info = AndroidUtils.getSecurityPatch())}
-            item { IndividualLine(tittle = stringResource(R.string.sdk), info = AndroidUtils.getSdkName()) }
+        items(infoList){
+            IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
         }
-        item { IndividualLine(tittle = stringResource(R.string.id), info = AndroidUtils.getId()) }
-        item { IndividualLine(tittle = stringResource(R.string.build_id), info = AndroidUtils.getDisplay()) }
-        item { IndividualLine(tittle = stringResource(R.string.incremental), info = AndroidUtils.getIncremental()) }
-        item { IndividualLine(tittle = stringResource(R.string.codename), info = AndroidUtils.getCodename()) }
-        item { IndividualLine(tittle = stringResource(R.string.type), info = AndroidUtils.getType()) }
-        item { IndividualLine(tittle = stringResource(R.string.tags), info = AndroidUtils.getTags()) }
-        item { IndividualLine(tittle = stringResource(R.string.fingerprint), info = AndroidUtils.getFingerprint()) }
-        item { IndividualLine(tittle = stringResource(R.string.kernel), info = AndroidUtils.getKernel()) }
-        item { IndividualLine(tittle = stringResource(R.string.bootloader), info = AndroidUtils.getBootloader()) }
-        item { IndividualLine(tittle = stringResource(R.string.hardware), info = AndroidUtils.getHardware())}
-        item { IndividualLine(tittle = stringResource(R.string.host), info = AndroidUtils.getHost()) }
-        item { IndividualLine(tittle = stringResource(R.string.board), info = AndroidUtils.getBoard()) }
-        item {IndividualLine(tittle = stringResource(R.string.google_play_service), info = AndroidUtils.getGmsVersion(context))}
-        item {IndividualLine(tittle = stringResource(R.string.performance_class), info = AndroidUtils.getPerformanceClass().toString())}
-        item {IndividualLine(tittle = stringResource(R.string.device_language), info = AndroidUtils.getDeviceLanguage())}
-        item {IndividualLine(tittle = stringResource(R.string.device_locale), info = AndroidUtils.getDeviceLocale())}
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NetworkScreen(paddingValues: PaddingValues) {
+fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var showWarningPopup by remember { mutableStateOf(false) }
     var hasPermission by remember { mutableStateOf(context.hasPermission(Manifest.permission.READ_PHONE_STATE)) }
-    var networkType by remember{
-        mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils.getNetwork(context) else NetworkUtils.getNetworkOldApi(context))
+    var refreshKey by remember { mutableIntStateOf(0) }
+    val networkType by remember(refreshKey) {
+        mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils(context).getNetwork() else NetworkUtils(context).getNetworkOldApi())
     }
-    var networkInfo by remember { mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) NetworkUtils.getNetInfo(context) else null) }
+    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(NetworkUtils(context).getAllData()) }
     val startForPermissionResult = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()) {isGranted ->
         hasPermission = isGranted
         if (isGranted){
             Toast.makeText(context, context.getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
-            networkType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils.getNetwork(context) else NetworkUtils.getNetworkOldApi(context)
-            networkInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) NetworkUtils.getNetInfo(context) else null
         }
         else{
             Toast.makeText(context, context.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
@@ -428,8 +396,7 @@ fun NetworkScreen(paddingValues: PaddingValues) {
     LaunchedEffect(Unit) {
         while (true){
             delay(4000L)
-            networkType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils.getNetwork(context) else NetworkUtils.getNetworkOldApi(context)
-            networkInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) NetworkUtils.getNetInfo(context) else null
+            refreshKey++
         }
     }
     Box (modifier = Modifier
@@ -441,34 +408,21 @@ fun NetworkScreen(paddingValues: PaddingValues) {
                 .consumeWindowInsets(paddingValues),
             contentPadding = paddingValues
         ) {
-            item {IndividualLine(tittle = stringResource(R.string.network_type), info = networkType,
-                canClick = !hasPermission,
-                onClick = {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                        if (!context.hasPermission(Manifest.permission.READ_PHONE_STATE)) {
-                            startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
+            item {
+                IndividualLine(tittle = stringResource(R.string.network_type), info = networkType,
+                    onClick = {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                            if (!context.hasPermission(Manifest.permission.READ_PHONE_STATE)) {
+                                startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
+                            }
                         }
-                    }
-                })}
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                header { HeaderLine(tittle = stringResource(R.string.details)) }
-                if (networkInfo != null){
-                    item { IndividualLine(tittle = stringResource(R.string.interfaces), info = networkInfo?.interfaces.toString()) }
-                    item { IndividualLine(tittle = stringResource(R.string.ip_address), info = networkInfo?.ip.toString()) }
-                    item { IndividualLine(tittle = stringResource(R.string.domain), info = networkInfo?.domain.toString()) }
-                    item { IndividualLine(tittle = stringResource(R.string.dns), info = networkInfo?.dnsServer?.replace("/", "").toString()) }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        item { IndividualLine(tittle = stringResource(R.string.dhcp_server), info = networkInfo?.dhcpServer.toString()) }
-                        item { IndividualLine(tittle = stringResource(R.string.wake_on_lan_sp), info = if (networkInfo?.wakeOnLanSupported == true) stringResource(R.string.supported) else stringResource(R.string.not_supported)) }
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                        item { IndividualLine(tittle = stringResource(R.string.is_private_dns_on), info = if (networkInfo?.isPrivateDNSActive == true) stringResource(R.string.enabled) else stringResource(R.string.disabled)) }
-                        item { IndividualLine(tittle = stringResource(R.string.private_dns_server), info = networkInfo?.privateDNS.toString()) }
-                    }
-                }
-                else {
-                    item { IndividualLine(tittle = stringResource(R.string.n_a), info = "")}
-                }
+                    },
+                    canLongPress = longPressCopy
+                )
+            }
+            header { HeaderLine(tittle = stringResource(R.string.details)) }
+            items(infoList){
+                IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
             }
         }
     }
@@ -477,15 +431,22 @@ fun NetworkScreen(paddingValues: PaddingValues) {
 
 
 @Composable
-fun DisplayScreen(paddingValues: PaddingValues) {
+fun DisplayScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val resources = context.resources
+    var refreshKey by remember { mutableIntStateOf(0) }
     var widevineInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
     var clearKeyInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    var infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(DisplayUtils(context, resources).getAllData()) }
     LaunchedEffect(Unit) {
-        widevineInfo = DisplayUtils.getWidevineInfo()
-        clearKeyInfo = DisplayUtils.getClearKeyInfo()
+        widevineInfo = DisplayUtils(context, resources).getWidevineInfo()
+        clearKeyInfo = DisplayUtils(context, resources).getClearKeyInfo()
+        while (true){
+            delay(1000L)
+            refreshKey++
+        }
     }
+
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(400.dp),
@@ -496,35 +457,16 @@ fun DisplayScreen(paddingValues: PaddingValues) {
 
     ) {
         header { HeaderLine(tittle = stringResource(R.string.display)) }
-        item {IndividualLine(tittle = stringResource(R.string.size), info = "%.2f inches".format(DisplayUtils.calculateScreenSizeInInches(context)))}
-        item {IndividualLine(tittle = stringResource(R.string.width_px), info = DisplayUtils.getWidthPx(resources).toString())}
-        item {IndividualLine(tittle = stringResource(R.string.height_px), info = DisplayUtils.getHeightPx(resources).toString())}
-        item {IndividualLine(tittle = stringResource(R.string.smallest_dp), info = DisplayUtils.getSmallestDp(resources).toString())}
-        item {IndividualLine(tittle = stringResource(R.string.screen_dpi), info = DisplayUtils.getDensity(resources).toString())}
-        item {IndividualLine(tittle = stringResource(R.string.scale_density), info = DisplayUtils.getScaleDensity(resources).toString())}
-        item {IndividualLine(tittle = stringResource(R.string.xdpi), info = DisplayUtils.getXDpi(resources).toString())}
-        item {IndividualLine(tittle = stringResource(R.string.ydpi), info = DisplayUtils.getYDpi(resources).toString())}
-        item {IndividualLine(tittle = stringResource(R.string.width_dp), info = DisplayUtils.getWidthDp(resources).toString())}
-        item {IndividualLine(tittle = stringResource(R.string.height_dp), info = DisplayUtils.getHeightDp(resources).toString())}
-        item {IndividualLine(tittle = stringResource(R.string.orientation), info = if (DisplayUtils.getOrientation(resources) == 1) stringResource(R.string.portrait) else stringResource(R.string.landscape))}
-        item {IndividualLine(tittle = stringResource(R.string.touch_screen), info = if (DisplayUtils.getTouchScreen(resources) == 1) stringResource(R.string.no_touch) else stringResource(R.string.finger))}
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        {
-            item {IndividualLine(tittle = stringResource(R.string.hdr), info = if (DisplayUtils.getIsHdr(resources)) stringResource(R.string.supported) else stringResource(R.string.not_supported))}
-            item {IndividualLine(tittle = stringResource(R.string.wcg), info = if (DisplayUtils.getIsScreenWideColorGamut(resources)) stringResource(R.string.supported) else stringResource(R.string.not_supported))}
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-        {
-            item {IndividualLine(tittle = stringResource(R.string.display_type), info = DisplayUtils.getDisPlayType(context))}
-            item {IndividualLine(tittle = stringResource(R.string.refresh_rate), info = DisplayUtils.getDisplayRefreshRate(context).toString() + " Hz")}
+        items(infoList){
+            IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
         }
         header { HeaderLine(tittle = stringResource(R.string.widevine)) }
         items(widevineInfo.toList()){
-            IndividualLine(tittle = it.first, info = it.second)
+            IndividualLine(tittle = it.first, info = it.second, canLongPress = longPressCopy)
         }
         header { HeaderLine(tittle = stringResource(R.string.clearkey)) }
         items(clearKeyInfo.toList()){
-            IndividualLine(tittle = it.first, info = it.second)
+            IndividualLine(tittle = it.first, info = it.second, canLongPress = longPressCopy)
         }
     }
 }
@@ -675,25 +617,14 @@ fun BluetoothStatusScreen(onClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BatteryScreen(paddingValues: PaddingValues) {
+fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
-    var health by remember { mutableStateOf(BatteryUtils.getBatteryHealth(context)) }
-    var capacity by remember { mutableIntStateOf(BatteryUtils.getBatteryCapacity(context).toInt()) }
-    var chargeStatus by remember { mutableStateOf(BatteryUtils.getBatteryStatus(context)) }
-    var temper by remember { mutableFloatStateOf(BatteryUtils.getBatteryTemperature(context)) }
-    var currentInMilliAmps by remember { mutableIntStateOf(BatteryUtils.getDischargeCurrent(context)) }
-    var voltage by remember { mutableFloatStateOf(BatteryUtils.getChargingVoltage(context)) }
-    var batteryPercent by remember { mutableIntStateOf(BatteryUtils.getBatteryPercentage(context)) }
-    var cycleCount by remember { mutableIntStateOf(BatteryUtils.getBatteryCycleCount(context)) }
-    var tech by remember { mutableStateOf(BatteryUtils.getBatteryTechnology(context)) }
+    var refreshKey by remember { mutableIntStateOf(0) }
+    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(BatteryUtils(context).getAllData()) }
     LaunchedEffect(Unit) {
         while (true){
-            chargeStatus = BatteryUtils.getBatteryStatus(context)
-            temper = BatteryUtils.getBatteryTemperature(context)
-            voltage = BatteryUtils.getChargingVoltage(context)
-            batteryPercent = BatteryUtils.getBatteryPercentage(context)
-            currentInMilliAmps = BatteryUtils.getDischargeCurrent(context)
             delay(1000L)
+            refreshKey++
         }
     }
     LazyVerticalGrid(
@@ -703,15 +634,9 @@ fun BatteryScreen(paddingValues: PaddingValues) {
             .consumeWindowInsets(paddingValues),
         contentPadding = paddingValues
     ) {
-        item { IndividualLine(tittle = stringResource(R.string.status), info = chargeStatus)}
-        item { IndividualLine(tittle = stringResource(R.string.battery_level), info = "$batteryPercent%")}
-        item { IndividualLine(tittle = stringResource(R.string.health), info = health)}
-        item { IndividualLine(tittle = stringResource(R.string.capacity), info = if (capacity > 0) ("$capacity mAh") else "Unknown")}
-        item { IndividualLine(tittle = stringResource(R.string.cycle_count), info = if (cycleCount >= 0) cycleCount.toString() else "N/A")}
-        item { IndividualLine(tittle = stringResource(R.string.current), info = "$currentInMilliAmps mA")}
-        item { IndividualLine(tittle = stringResource(R.string.temperature), info = if (temper >= 0) ("$temper °C") else "N/A") }
-        item { IndividualLine(tittle = stringResource(R.string.voltage), info = if (voltage >= 0) ("$voltage V") else "N/A") }
-        item { IndividualLine(tittle = stringResource(R.string.technology), info = tech) }
+        items(infoList){
+            IndividualLine(tittle = stringResource(it.name), info = it.value.toString() + it.extra.toString(), canLongPress = longPressCopy)
+        }
     }
 }
 
@@ -887,10 +812,10 @@ fun CameraInfoScreen(onClick: () -> Unit) {
 }
 
 @Composable
-fun MemoryScreen(paddingValues: PaddingValues) {
+fun MemoryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-
+    val ramInfo by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(StorageUtils(context).getRAMInfo()) }
     // Auto-refresh every 2 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -898,11 +823,6 @@ fun MemoryScreen(paddingValues: PaddingValues) {
             refreshKey++ // Triggers recomposition
         }
     }
-
-    val totalRAM = remember(refreshKey) { StorageUtils.getTotalRAM(context) }
-    val availableRAM = remember(refreshKey) { StorageUtils.getAvailableRAM(context) }
-    val usedRAM = totalRAM - availableRAM
-    val percentage = (usedRAM.toDouble() / totalRAM.toDouble() * 100).toInt()
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(400.dp),
@@ -913,19 +833,19 @@ fun MemoryScreen(paddingValues: PaddingValues) {
 
     ) {
 
-        item { IndividualLine(tittle = stringResource(R.string.used), info = "${percentage}%")}
-        item {GeneralProgressBar(usedRAM, totalRAM, 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
-        item { IndividualLine(tittle = stringResource(R.string.available_ram), info = "$availableRAM MB")}
-        item { IndividualLine(tittle = stringResource(R.string.used_ram), info = "$usedRAM MB")}
-        item { IndividualLine(tittle = stringResource(R.string.total_ram), info = "$totalRAM MB")}
+        item {GeneralProgressBar((ramInfo[2].value as Number).toLong(), (ramInfo[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
+        items(ramInfo) {
+            IndividualLine(tittle = stringResource(it.name), info = it.value.toString() + it.extra.toString(), canLongPress = longPressCopy)
+        }
     }
 }
 
 @Composable
-fun StorageScreen(paddingValues: PaddingValues) {
+fun StorageScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-
+    val internalStorageStats = remember(refreshKey) { StorageUtils(context).getInternalStorageInfo() }
+    val externalStorageStats = remember(refreshKey) { StorageUtils(context).getExternalStorageInfo() }
     // Auto-refresh every 10 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -934,13 +854,6 @@ fun StorageScreen(paddingValues: PaddingValues) {
         }
     }
 
-    val (totalStorage, freeStorage) = remember(refreshKey) { StorageUtils.getInternalStorageStats() }
-    val usedStorage = totalStorage - freeStorage
-    val usedPercent = (usedStorage.toDouble() / totalStorage.toDouble() * 100).toInt()
-
-    val (extTotal, extFree) = remember(refreshKey) { StorageUtils.getExternalStorageStats(context) }
-    val usedExtStorage = extTotal - extFree
-    val usedExtPercent = (usedExtStorage.toDouble() / extTotal.toDouble() * 100).toInt()
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(400.dp),
@@ -951,36 +864,32 @@ fun StorageScreen(paddingValues: PaddingValues) {
 
     ) {
         header { HeaderLine(tittle = stringResource(R.string.internal_storage)) }
-        item { IndividualLine(tittle = stringResource(R.string.used), info = "${usedPercent}%")}
-        item {GeneralProgressBar(usedStorage, totalStorage, 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
-        item { IndividualLine(tittle = stringResource(R.string.total), info = StorageUtils.formatSize(totalStorage)) }
-        item { IndividualLine(tittle = stringResource(R.string.free), info = StorageUtils.formatSize(freeStorage)) }
-        item { IndividualLine(tittle = stringResource(R.string.used), info = StorageUtils.formatSize(usedStorage)) }
+        item {GeneralProgressBar((internalStorageStats[2].value as Number).toLong(), (internalStorageStats[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
+        items(internalStorageStats) {
+            IndividualLine(tittle = stringResource(it.name), info = if (it.type == 0) it.extra.toString() else it.value.toString() + it.extra, canLongPress = longPressCopy)
+        }
 
-        if (extTotal > 0) {
+        if (externalStorageStats.isNotEmpty()) {
             header { HeaderLine(tittle = stringResource(R.string.external_storage)) }
-            item { IndividualLine(tittle = stringResource(R.string.used), info = "${usedExtPercent}%")}
-            item {GeneralProgressBar(usedExtStorage, extTotal, 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
-            item { IndividualLine(tittle = stringResource(R.string.total), info = StorageUtils.formatSize(extTotal)) }
-            item { IndividualLine(tittle = stringResource(R.string.free), info = StorageUtils.formatSize(extFree)) }
-            item { IndividualLine(tittle = stringResource(R.string.used), info = StorageUtils.formatSize(usedExtStorage)) }
+            item {GeneralProgressBar((externalStorageStats[2].value as Number).toLong(), (externalStorageStats[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
+            items(externalStorageStats) {
+                IndividualLine(tittle = stringResource(it.name), info = if (it.type == 0) it.extra.toString() else it.value.toString() + it.extra, canLongPress = longPressCopy)
+            }
         }
     }
 }
 
 @Composable
-fun HardwareScreen(paddingValues: PaddingValues) {
+fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
-    val coreNum = SocUtils.getNumberOfCores()
-    var cpuGovernor by remember { mutableStateOf(SocUtils.getCpuGovernor()) }
-    //val cpuName = remember { getCpuName() }
-    var cpuFreqs by remember { mutableStateOf(listOf<Int>()) }
-
+    var refreshKey by remember { mutableIntStateOf(0) }
+    val glEs by remember(refreshKey) { mutableStateOf(SocUtils(context).getGlEsVersion()) }
+    val cpuInfoList by remember { mutableStateOf(SocUtils(context).getCPUInfo()) }
+    val cpuUsageInfo by remember(refreshKey) { mutableStateOf(SocUtils(context).getCPUUsage()) }
     LaunchedEffect(Unit) {
         while (true) {
-            cpuFreqs = SocUtils.getAllCpuFrequencies()
-
             delay(1000L) // Update every 1 second
+            refreshKey++
         }
     }
     LazyVerticalGrid(
@@ -991,24 +900,19 @@ fun HardwareScreen(paddingValues: PaddingValues) {
         contentPadding = paddingValues
     ) {
         header { HeaderLine(tittle = stringResource(R.string.cpu_info)) }
-        //item { IndividualLine(tittle = stringResource(R.string.model), info = SocUtils.getCpuModelName()) }
-        item { IndividualLine(tittle = stringResource(R.string.cores), info = coreNum.toString()) }
-        item { IndividualLine(tittle = stringResource(R.string.governor), info = cpuGovernor) }
-        items(coreNum) {
-            val coreValue = SocUtils.getMinMaxFreq(it)
-            IndividualLine(
-                tittle = stringResource(R.string.core, "${it+1}"),
-                info = stringResource(R.string.min_freq, "${coreValue.first} MHz"),
-                info2 = stringResource(R.string.max_freq, "${coreValue.second} MHz")
-            )
+        items(cpuInfoList) {
+            if (it.type == 1)
+                IndividualLine(tittle = stringResource(it.name, it.value), info = it.extra.toString(), canLongPress = longPressCopy)
+            else
+                IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
         }
         header { HeaderLine(tittle = stringResource(R.string.cpu_usage))}
-        itemsIndexed (cpuFreqs) { index: Int, freq: Int ->
-            IndividualLine(tittle = stringResource(R.string.core, "${index+1}"), info = "$freq MHz")
+        items(cpuUsageInfo){
+            IndividualLine(tittle = stringResource(it.name, it.value), info = it.extra.toString(), canLongPress = longPressCopy)
         }
         //item { IndividualLine(tittle = "Raw Info", info = getSocRawInfo()) }
         header { HeaderLine(tittle = stringResource(R.string.gpu_info)) }
-        item { IndividualLine(tittle = stringResource(R.string.gles_version), info = SocUtils.getGlEsVersion(context)) }
+        item { IndividualLine(tittle = stringResource(R.string.gles_version), info = glEs, canLongPress = longPressCopy) }
         //item { IndividualLine(tittle = stringResource(R.string.gpu_renderer), info = SocUtils.getGpuRenderer()) }
         //item { IndividualLine(tittle = stringResource(R.string.gpu_vendor), info = SocUtils.getGpuVendor()) }
 
@@ -1048,7 +952,6 @@ fun IndividualLine(
     info: String,
     info2: String = "",
     info3: String = "",
-    canClick: Boolean = false,
     onClick: () -> Unit = { },
     canLongPress: Boolean = true
 ){
@@ -1056,19 +959,38 @@ fun IndividualLine(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(enabled = canClick, onClick = onClick)
-            .pointerInput(canLongPress){
-                detectTapGestures(
-                    onLongPress = {
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = {
+                    if (canLongPress){
                         context.copyTextToClipboard(buildString {
                             append(tittle)
                             append("\n")
                             append(info)
+                            append("\n")
+                            append(info2)
                         })
                         Toast.makeText(context, context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
                     }
+                },
+            )
+            //.clickable(enabled = canClick, onClick = onClick)
+            /*.pointerInput(canLongPress){
+                detectTapGestures(
+                    onLongPress = {
+                        if (canLongPress){
+                        context.copyTextToClipboard(buildString {
+                            append(tittle)
+                            append("\n")
+                            append(info)
+                            append("\n")
+                            append(info2)
+                        })
+                        Toast.makeText(context, context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
+                            }
+                    }
                 )
-            }
+            }*/
             .padding(
                 horizontal = 30.dp,
                 vertical = 10.dp
@@ -1115,6 +1037,7 @@ fun HeaderLine(tittle: String, horizontalPadding: Dp = 30.dp, verticalPadding: D
 @Composable
 fun SettingsScreen(
     useNewDashboard: Boolean,
+    longPressCopy: Boolean,
     appColor: Int,
     isDynamicColors: Boolean,
     settings: SettingsViewModel,
@@ -1174,6 +1097,22 @@ fun SettingsScreen(
                 },
                 onSwitch = {
                     settings.setUseNewDashboard(it)
+                }
+            )
+        }
+        header { HeaderLine(tittle = stringResource(R.string.general)) }
+        item {
+            CommonSwitchOption(
+                text = R.string.long_press_to_copy,
+                subText = R.string.long_press_to_copy_details,
+                extra = "",
+                horizontalPadding = 30.dp,
+                checked = longPressCopy,
+                onClick = {
+                    settings.setLongPressCopy(!longPressCopy)
+                },
+                onSwitch = {
+                    settings.setLongPressCopy(it)
                 }
             )
         }
@@ -1384,6 +1323,7 @@ fun MainNavigation(
     paddingValues: PaddingValues
 ) {
     val useNewDashboard by settings.useNewDashboard.collectAsStateWithLifecycle()
+    val longPressCopy by settings.longPressCopy.collectAsStateWithLifecycle()
     NavHost(navController, startDestination = NavigationItem.Home.route,
         enterTransition = {
             fadeIn(
@@ -1417,6 +1357,7 @@ fun MainNavigation(
             SettingsScreen(
                 settings= settings,
                 useNewDashboard = useNewDashboard,
+                longPressCopy = longPressCopy,
                 paddingValues = paddingValues,
                 appColor = appColor,
                 isDynamicColors = isDynamicColors
@@ -1437,7 +1378,7 @@ fun MainNavigation(
                     uriPattern = "si://info/system"
                 }
             )){
-            SystemScreen(paddingValues = paddingValues)
+            SystemScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
         }
         composable(route = NavigationItem.Android.route,
             deepLinks = listOf(
@@ -1445,7 +1386,7 @@ fun MainNavigation(
                     uriPattern = "si://info/android"
                 }
             )){
-            AndroidScreen (paddingValues = paddingValues)
+            AndroidScreen (paddingValues = paddingValues, longPressCopy = longPressCopy)
         }
         composable(route = NavigationItem.SOC.route,
             deepLinks = listOf(
@@ -1453,7 +1394,7 @@ fun MainNavigation(
                     uriPattern = "si://info/soc"
                 }
             )){
-            HardwareScreen(paddingValues = paddingValues)
+            HardwareScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
         }
         composable(route = NavigationItem.Display.route,
             deepLinks = listOf(
@@ -1461,7 +1402,7 @@ fun MainNavigation(
                     uriPattern = "si://info/display"
                 }
             )){
-           DisplayScreen (paddingValues = paddingValues)
+           DisplayScreen (paddingValues = paddingValues, longPressCopy = longPressCopy)
         }
         composable(route = NavigationItem.Battery.route,
             deepLinks = listOf(
@@ -1469,7 +1410,7 @@ fun MainNavigation(
                     uriPattern = "si://info/battery"
                 }
             )){
-            BatteryScreen (paddingValues = paddingValues)
+            BatteryScreen (paddingValues = paddingValues, longPressCopy = longPressCopy)
         }
         composable(route = NavigationItem.Memory.route,
             deepLinks = listOf(
@@ -1477,7 +1418,7 @@ fun MainNavigation(
                     uriPattern = "si://info/memory"
                 }
             )){
-            MemoryScreen(paddingValues = paddingValues)
+            MemoryScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
         }
         composable(route = NavigationItem.Storage.route,
             deepLinks = listOf(
@@ -1485,7 +1426,7 @@ fun MainNavigation(
                     uriPattern = "si://info/storage"
                 })
         ){
-            StorageScreen(paddingValues = paddingValues)
+            StorageScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
         }
         composable(route = NavigationItem.Network.route,
             deepLinks = listOf(
@@ -1493,7 +1434,7 @@ fun MainNavigation(
                     uriPattern = "si://info/network"
                 }
             )){
-            NetworkScreen(paddingValues = paddingValues)
+            NetworkScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
         }
         composable(route = NavigationItem.Camera.route, deepLinks = listOf(
             navDeepLink {

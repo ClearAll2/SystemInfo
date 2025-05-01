@@ -24,6 +24,9 @@ class SettingsViewModel(context: Context) : ViewModel() {
     private val _useDynamicColors = MutableStateFlow(true)
     val useDynamicColors = _useDynamicColors.asStateFlow()
 
+    private val _longPressCopy = MutableStateFlow(true)
+    val longPressCopy = _longPressCopy.asStateFlow()
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _useNewDashboard.emit(settingsManager.getSettingLogic("useNewDashboard"))
@@ -35,6 +38,7 @@ class SettingsViewModel(context: Context) : ViewModel() {
             else {
                 _appColor.emit(appColor)
             }
+            _longPressCopy.emit(settingsManager.getSettingLogic("longPressCopy"))
         }
     }
 
@@ -64,6 +68,15 @@ class SettingsViewModel(context: Context) : ViewModel() {
 
     fun getUseDynamicColors(): Boolean {
         return settingsManager.getSettingLogic("useDynamicColors")
+    }
+
+    fun setLongPressCopy(longPressCopy: Boolean) {
+        settingsManager.saveSettingLogic("longPressCopy", longPressCopy)
+        _longPressCopy.value = longPressCopy
+    }
+
+    fun getLongPressCopy(): Boolean {
+        return settingsManager.getSettingLogic("longPressCopy")
     }
 
 }

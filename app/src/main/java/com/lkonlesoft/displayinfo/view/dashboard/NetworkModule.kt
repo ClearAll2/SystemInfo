@@ -1,6 +1,5 @@
 package com.lkonlesoft.displayinfo.view.dashboard
 
-import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.NetworkUtils
 import kotlinx.coroutines.delay
 
@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
 fun NetworkDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-
+    var infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(NetworkUtils(context).getDashboardData()) }
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -36,8 +36,6 @@ fun NetworkDashboard(onClick: () -> Unit) {
             refreshKey++ // Triggers recomposition
         }
     }
-    var networkInfo by remember(refreshKey) { mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) NetworkUtils.getNetInfo(context) else null) }
-
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -48,14 +46,8 @@ fun NetworkDashboard(onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(title = stringResource(R.string.network), icon = R.drawable.outline_network_cell_24)
             Spacer(modifier = Modifier.height(12.dp))
-
-            if (networkInfo != null){
-                GeneralStatRow(stringResource(R.string.interfaces), networkInfo?.interfaces.toString())
-                GeneralStatRow(stringResource(R.string.ip_address), networkInfo?.ip.toString())
-                GeneralStatRow(stringResource(R.string.dns), networkInfo?.dnsServer?.replace("/", "").toString())
-            }
-            else{
-                GeneralStatRow(stringResource(R.string.n_a), "")
+            infoList.forEach {
+                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra.toString())
             }
         }
     }

@@ -9,73 +9,75 @@ import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.window.layout.WindowMetricsCalculator
+import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
 import kotlin.math.sqrt
 
-object DisplayUtils {
-    fun getSmallestDp(resources: Resources): Int{
+class DisplayUtils (private val context: Context, private val resources: Resources) {
+    fun getSmallestDp(): Int{
         return resources.configuration.smallestScreenWidthDp
     }
 
-    fun getDensity(resources: Resources): Int{
+    fun getDensity(): Int{
         return resources.displayMetrics.densityDpi
     }
 
-    fun getScaleDensity(resources: Resources): Int{
+    fun getScaleDensity(): Int{
         return resources.displayMetrics.densityDpi
     }
 
-    fun getXDpi(resources: Resources): Int{
+    fun getXDpi(): Int{
         return resources.displayMetrics.xdpi.toInt()
     }
 
-    fun getYDpi(resources: Resources): Int{
+    fun getYDpi(): Int{
         return resources.displayMetrics.ydpi.toInt()
     }
 
-    fun getOrientation(resources: Resources): Int{
+    fun getOrientation(): Int{
         return resources.configuration.orientation
     }
 
-    fun getHeightPx(resources: Resources): Int{
+    fun getHeightPx(): Int{
         return resources.displayMetrics.heightPixels
     }
 
-    fun getWidthPx(resources: Resources): Int{
+    fun getWidthPx(): Int{
         return resources.displayMetrics.widthPixels
     }
 
-    fun getHeightDp(resources: Resources): Int{
+    fun getHeightDp(): Int{
         return resources.configuration.screenHeightDp
     }
 
-    fun getWidthDp(resources: Resources): Int{
+    fun getWidthDp(): Int{
         return resources.configuration.screenWidthDp
     }
 
-    fun getTouchScreen(resources: Resources): Int{
+    fun getTouchScreen(): Int{
         return resources.configuration.touchscreen
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getIsHdr(resources: Resources): Boolean{
+    fun getIsHdr(): Boolean{
         return resources.configuration.isScreenHdr
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getIsScreenWideColorGamut(resources: Resources): Boolean{
+    fun getIsScreenWideColorGamut(): Boolean{
         return resources.configuration.isScreenWideColorGamut
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    fun getDisPlayType(context: Context): String{
+    fun getDisPlayType(): String{
         return context.display.name
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    fun getDisplayRefreshRate(context: Context): Int{
+    fun getDisplayRefreshRate(): Int{
         return context.display.refreshRate.toInt()
     }
 
@@ -151,7 +153,7 @@ object DisplayUtils {
         info
     }
 
-    fun calculateScreenSizeInInches(context: Context): Float {
+    fun calculateScreenSizeInInches(): Float {
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val displayMetrics = DisplayMetrics()
 
@@ -187,6 +189,40 @@ object DisplayUtils {
         val heightInches = heightPixels / ydpi
 
         return sqrt((widthInches * widthInches + heightInches * heightInches))
+    }
+
+    fun getAllData(): List<DeviceInfo>{
+        return listOf(
+            DeviceInfo(R.string.size, "%.2f".format(calculateScreenSizeInInches()), " inches"),
+            DeviceInfo(R.string.height_px, getHeightPx().toString()),
+            DeviceInfo(R.string.width_px, getWidthPx().toString()),
+            DeviceInfo(R.string.smallest_dp, getSmallestDp().toString()),
+            DeviceInfo(R.string.screen_dpi, getDensity().toString()),
+            DeviceInfo(R.string.scale_density, getScaleDensity().toString()),
+            DeviceInfo(R.string.xdpi, getXDpi().toString()),
+            DeviceInfo(R.string.ydpi, getYDpi().toString()),
+            DeviceInfo(R.string.orientation, if (getOrientation() == 1) context.getString(R.string.portrait) else context.getString(R.string.landscape)),
+            DeviceInfo(R.string.height_dp, getHeightDp().toString()),
+            DeviceInfo(R.string.width_dp, getWidthDp().toString()),
+            DeviceInfo(R.string.touch_screen, if (getTouchScreen() == 1) context.getString(R.string.no_touch) else context.getString(R.string.finger)),
+            DeviceInfo(R.string.hdr, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && getIsHdr()) resources.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.wcg, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && getIsScreenWideColorGamut()) resources.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.display_type, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getDisPlayType() else context.getString(R.string.unknown)),
+            DeviceInfo(R.string.refresh_rate, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getDisplayRefreshRate().toString() else context.getString(R.string.unknown)),
+        )
+    }
+
+    fun getDashboardData(): List<DeviceInfo>{
+        return listOf(
+            DeviceInfo(R.string.display_pixels, "${getHeightPx()} x ${getWidthPx()}"),
+            DeviceInfo(R.string.size, "%.2f".format(calculateScreenSizeInInches()), "\""),
+            DeviceInfo(R.string.smallest_dp, getSmallestDp().toString()),
+            DeviceInfo(R.string.xdpi, getXDpi().toString()),
+            DeviceInfo(R.string.ydpi, getYDpi().toString()),
+            DeviceInfo(R.string.height_dp, getHeightDp().toString()),
+            DeviceInfo(R.string.width_dp, getWidthDp().toString()),
+            DeviceInfo(R.string.refresh_rate, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getDisplayRefreshRate().toString() else context.getString(R.string.unknown), " Hz"),
+        )
     }
 
 }

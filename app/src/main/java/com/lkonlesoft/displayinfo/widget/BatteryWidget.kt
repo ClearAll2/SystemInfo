@@ -53,7 +53,7 @@ class BatteryWidget : GlanceAppWidget() {
     @Composable
     fun BatteryInfoContent(context: Context) {
         val size = LocalSize.current
-        val cycleCount = BatteryUtils.getBatteryCycleCount(context)
+        val cycleCount = BatteryUtils(context).getBatteryCycleCount()
         val titleFontSize = when {
             size.height >= 50.dp && size.height < 100.dp -> 14.sp
             size.height >= 100.dp && size.height < 150.dp -> 16.sp

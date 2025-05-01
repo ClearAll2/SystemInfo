@@ -4,12 +4,14 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.opengl.GLES10
+import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import java.io.File
 import java.io.RandomAccessFile
 
-object SocUtils {
+class SocUtils(private val context: Context) {
 
-    private const val CPU_INFO_DIR = "/sys/devices/system/cpu/"
+    private val CPU_INFO_DIR = "/sys/devices/system/cpu/"
 
     fun getCpuGovernor(core: Int = 0): String {
         val path = "/sys/devices/system/cpu/cpu$core/cpufreq/scaling_governor"
@@ -59,7 +61,7 @@ object SocUtils {
         }
     }
 
-    fun getGlEsVersion(context: Context): String{
+    fun getGlEsVersion(): String{
         val activityManager: ActivityManager = context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
         return activityManager.deviceConfigurationInfo.glEsVersion
     }
@@ -79,6 +81,28 @@ object SocUtils {
             //Timber.e("getMinMaxFreq() - cannot read file")
             Pair(-1, -1)
         }
+    }
+
+    fun getCPUInfo(): List<DeviceInfo>{
+        val numCores = getNumberOfCores()
+        val governor = getCpuGovernor(0)
+
+        val minMaxFrequencies = (0 until numCores).map { getMinMaxFreq(it) }
+        val retList = minMaxFrequencies.mapIndexed { index, freq ->
+            DeviceInfo(R.string.core, "${index+1}", "${freq.first} - ${freq.second} MHz", 1)
+        }
+        return listOf(
+            DeviceInfo(R.string.cores, numCores.toString()),
+            DeviceInfo(R.string.governor, governor)
+        ) + retList
+    }
+
+    fun getCPUUsage(): List<DeviceInfo>{
+        val frequencies = getAllCpuFrequencies()
+        val retList = frequencies.mapIndexed { index, freq ->
+            DeviceInfo(R.string.core, "${index+1}", "$freq MHz")
+        }
+        return retList
     }
 
 }

@@ -18,10 +18,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,29 +37,30 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.getBatteryLevelColor
 import com.lkonlesoft.displayinfo.helper.getMemoryLevelColor
-import com.lkonlesoft.displayinfo.helper.getStatusColor
-import com.lkonlesoft.displayinfo.helper.getTemperatureColor
 import com.lkonlesoft.displayinfo.utils.BatteryUtils
 import kotlinx.coroutines.delay
 
 @Composable
 fun BatteryDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
-    val batteryPercentage = remember { mutableIntStateOf(0) }
-    val batteryHealth = remember { mutableStateOf("Unknown") }
+    var refreshKey by remember { mutableIntStateOf(0) }
+    var infoList by remember { mutableStateOf<List<DeviceInfo>>(BatteryUtils(context).getDashboardData()) }
+    /*val batteryHealth = remember { mutableStateOf("Unknown") }
     val batteryStatus = remember { mutableStateOf("Unknown") }
     val batteryTemperature = remember { mutableFloatStateOf(0f) }
-    val batteryCycles = remember { mutableIntStateOf(-1) }
+    val batteryCycles = remember { mutableIntStateOf(-1) }*/
 
     LaunchedEffect(Unit) {
         while (true) {
-            batteryPercentage.intValue = BatteryUtils.getBatteryPercentage(context)
+            /*batteryPercentage.intValue = BatteryUtils.getBatteryPercentage(context)
             batteryHealth.value = BatteryUtils.getBatteryHealth(context)
             batteryStatus.value = BatteryUtils.getBatteryStatus(context)
             batteryTemperature.floatValue = BatteryUtils.getBatteryTemperature(context)
-            batteryCycles.intValue = BatteryUtils.getBatteryCycleCount(context)
+            batteryCycles.intValue = BatteryUtils.getBatteryCycleCount(context)*/
+            refreshKey++
             delay(2000L)
         }
     }
@@ -73,14 +75,13 @@ fun BatteryDashboard(onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(title = stringResource(R.string.battery), icon = R.drawable.outline_battery_4_bar_24)
             Spacer(modifier = Modifier.height(12.dp))
-            GeneralProgressBar(batteryPercentage.intValue.toLong(), 100L)
+            GeneralProgressBar((infoList[0].value as Number).toLong(), 100L)
             Spacer(modifier = Modifier.height(12.dp))
-
-            GeneralStatRow(stringResource(R.string.battery_level), "${batteryPercentage.intValue} %")
-            GeneralStatRow(stringResource(R.string.health), batteryHealth.value, getStatusColor(batteryHealth.value))
-            GeneralStatRow(stringResource(R.string.status), batteryStatus.value)
-            GeneralStatRow(stringResource(R.string.cycle_count), if (batteryCycles.intValue >= 0) "${batteryCycles.intValue}" else "N/A")
-            GeneralStatRow(stringResource(R.string.temperature), "${batteryTemperature.floatValue} °C", getTemperatureColor(batteryTemperature.floatValue))
+            infoList.forEach {
+                GeneralStatRow(stringResource(it.name),
+                    it.value.toString() + it.extra.toString()
+                )
+            }
         }
     }
 }

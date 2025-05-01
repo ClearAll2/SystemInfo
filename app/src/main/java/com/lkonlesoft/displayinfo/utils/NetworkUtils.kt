@@ -12,12 +12,37 @@ import android.telephony.TelephonyManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.NetworkInfo
 
-object NetworkUtils {
+class NetworkUtils(private val context: Context) {
+
+    fun getAllData(): List<DeviceInfo>{
+        val netInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getNetInfo() else null
+        return listOf(
+            DeviceInfo(R.string.interfaces, netInfo?.interfaces?.toString() ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.ip_address, netInfo?.ip?.toString() ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.domain, netInfo?.domain?.toString() ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.dns, netInfo?.dnsServer?.replace("/", "") ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.dhcp_server, netInfo?.dhcpServer?.toString() ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.is_private_dns_on, if (netInfo?.isPrivateDNSActive == true) context.getString(R.string.enabled) else context.getString(R.string.disabled)),
+            DeviceInfo(R.string.private_dns_server, netInfo?.privateDNS?.toString() ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.wake_on_lan_sp, if (netInfo?.wakeOnLanSupported == true) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+        )
+    }
+
+    fun getDashboardData(): List<DeviceInfo>{
+        val netInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getNetInfo() else null
+        return listOf(
+            DeviceInfo(R.string.interfaces, netInfo?.interfaces?.toString() ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.ip_address, netInfo?.ip?.toString() ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.dns, netInfo?.dnsServer?.replace("/", "") ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.dhcp_server, netInfo?.dhcpServer?.toString() ?: context.getString(R.string.n_a))
+        )
+    }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    fun getNetwork(context: Context): String {
+    fun getNetwork(): String {
         val connectivityManager =
             context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val nw = connectivityManager.activeNetwork ?: return "-"
@@ -32,7 +57,7 @@ object NetworkUtils {
                         Manifest.permission.READ_PHONE_STATE
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    return "Requires permission"
+                    return context.getString(R.string.require_permission)
                 }
                 when (tm.dataNetworkType) {
                     TelephonyManager.NETWORK_TYPE_GPRS,
@@ -61,7 +86,7 @@ object NetworkUtils {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    fun getNetInfo(context: Context): NetworkInfo? {
+    fun getNetInfo(): NetworkInfo? {
         val netInfo = NetworkInfo()
         val connectivityManager = context.getSystemService(CONNECTIVITY_SERVICE)
         if (connectivityManager is ConnectivityManager && connectivityManager.activeNetwork != null) {
@@ -84,7 +109,7 @@ object NetworkUtils {
     }
 
     @Suppress("DEPRECATION")
-    fun getNetworkOldApi(context: Context): String {
+    fun getNetworkOldApi(): String {
         // ConnectionManager instance
         val mConnectivityManager = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val mInfo = mConnectivityManager.activeNetworkInfo
