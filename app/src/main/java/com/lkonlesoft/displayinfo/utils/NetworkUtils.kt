@@ -100,7 +100,7 @@ class NetworkUtils(private val context: Context) {
                 netInfo.privateDNS = if (link.privateDnsServerName != null) link.privateDnsServerName.toString() else context.getString(R.string.n_a)
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                netInfo.dhcpServer = link.dhcpServerAddress?.hostAddress.toString()
+                netInfo.dhcpServer = if (link.dhcpServerAddress?.hostAddress != null) link.dhcpServerAddress?.hostAddress.toString() else context.getString(R.string.n_a)
                 netInfo.wakeOnLanSupported = link.isWakeOnLanSupported
             }
             return netInfo

@@ -54,7 +54,10 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -276,7 +279,7 @@ fun ScaffoldContext(){
                                         imageVector = ImageVector.vectorResource(
                                             R.drawable.rounded_settings_24
                                         ), contentDescription = "Settings",
-                                        modifier = Modifier.size(32.dp)
+                                        modifier = Modifier.size(24.dp)
                                     )
                                 }
                             }
@@ -458,15 +461,15 @@ fun DisplayScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     ) {
         header { HeaderLine(tittle = stringResource(R.string.display)) }
         items(infoList){
-            IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
+            IndividualLine(tittle = stringResource(it.name), info = it.value.toString() + it.extra.toString(), canLongPress = longPressCopy)
         }
         header { HeaderLine(tittle = stringResource(R.string.widevine)) }
         items(widevineInfo.toList()){
-            IndividualLine(tittle = it.first, info = it.second, canLongPress = longPressCopy)
+            IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() }, info = it.second, canLongPress = longPressCopy)
         }
         header { HeaderLine(tittle = stringResource(R.string.clearkey)) }
         items(clearKeyInfo.toList()){
-            IndividualLine(tittle = it.first, info = it.second, canLongPress = longPressCopy)
+            IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() }, info = it.second, canLongPress = longPressCopy)
         }
     }
 }
@@ -646,7 +649,7 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, currentRoute: String?, paddingValues: PaddingValues) {
     val width = LocalConfiguration.current.screenWidthDp.dp
     var index by rememberSaveable { mutableIntStateOf(0) }
-    val state = rememberLazyGridState(initialFirstVisibleItemIndex = 0)
+    val state = rememberLazyStaggeredGridState(initialFirstVisibleItemIndex = 0)
     val listScreen = listOf(
         NavigationItem.System,
         NavigationItem.Android,
@@ -666,10 +669,10 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
             index = latest
         }
     }
-    LazyVerticalGrid(
+    LazyVerticalStaggeredGrid (
         state = state,
-        columns = if (width < 600.dp) GridCells.Fixed(if (!useNewDashboard) 2 else 1)
-        else GridCells.Adaptive(
+        columns = if (width < 600.dp) StaggeredGridCells.Fixed(if (!useNewDashboard) 2 else 1)
+        else StaggeredGridCells.Adaptive(
             400.dp
         ),
         contentPadding = paddingValues,
@@ -967,30 +970,11 @@ fun IndividualLine(
                             append(tittle)
                             append("\n")
                             append(info)
-                            append("\n")
-                            append(info2)
                         })
                         Toast.makeText(context, context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
                     }
                 },
             )
-            //.clickable(enabled = canClick, onClick = onClick)
-            /*.pointerInput(canLongPress){
-                detectTapGestures(
-                    onLongPress = {
-                        if (canLongPress){
-                        context.copyTextToClipboard(buildString {
-                            append(tittle)
-                            append("\n")
-                            append(info)
-                            append("\n")
-                            append(info2)
-                        })
-                        Toast.makeText(context, context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
-                            }
-                    }
-                )
-            }*/
             .padding(
                 horizontal = 30.dp,
                 vertical = 10.dp
@@ -1013,6 +997,7 @@ fun LazyGridScope.header(
 ) {
     item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
 }
+
 
 @Composable
 fun HeaderLine(tittle: String, horizontalPadding: Dp = 30.dp, verticalPadding: Dp = 10.dp) {

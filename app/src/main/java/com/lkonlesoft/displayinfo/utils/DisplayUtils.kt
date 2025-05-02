@@ -208,7 +208,7 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
             DeviceInfo(R.string.hdr, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && getIsHdr()) resources.getString(R.string.supported) else context.getString(R.string.not_supported)),
             DeviceInfo(R.string.wcg, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && getIsScreenWideColorGamut()) resources.getString(R.string.supported) else context.getString(R.string.not_supported)),
             DeviceInfo(R.string.display_type, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getDisPlayType() else context.getString(R.string.unknown)),
-            DeviceInfo(R.string.refresh_rate, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getDisplayRefreshRate().toString() else context.getString(R.string.unknown)),
+            DeviceInfo(R.string.refresh_rate, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getDisplayRefreshRate().toString() else 60, " Hz"),
         )
     }
 
@@ -221,7 +221,7 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
             DeviceInfo(R.string.ydpi, getYDpi().toString()),
             DeviceInfo(R.string.height_dp, getHeightDp().toString()),
             DeviceInfo(R.string.width_dp, getWidthDp().toString()),
-            DeviceInfo(R.string.refresh_rate, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getDisplayRefreshRate().toString() else context.getString(R.string.unknown), " Hz"),
+            DeviceInfo(R.string.refresh_rate, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getDisplayRefreshRate().toString() else 60, " Hz"),
         )
     }
 
