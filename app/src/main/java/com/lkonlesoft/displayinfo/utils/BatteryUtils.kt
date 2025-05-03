@@ -124,12 +124,13 @@ class BatteryUtils (private val context: Context) {
     }
 
     fun getAllData(): List<DeviceInfo> {
+        val cycleCount = getBatteryCycleCount()
         return listOf(
-            DeviceInfo(R.string.status, getBatteryStatus()),
-            DeviceInfo(R.string.capacity, getBatteryCapacity().toInt(), " mAh"),
             DeviceInfo(R.string.battery_level, getBatteryPercentage(), "%"),
+            DeviceInfo(R.string.status, getBatteryStatus()),
             DeviceInfo(R.string.health, getBatteryHealth()),
-            DeviceInfo(R.string.cycle_count, getBatteryCycleCount()),
+            DeviceInfo(R.string.cycle_count, if (cycleCount >= 0) cycleCount else context.getString(R.string.unknown)),
+            DeviceInfo(R.string.capacity, getBatteryCapacity().toInt(), " mAh"),
             DeviceInfo(R.string.temperature, getBatteryTemperature(), " °C"),
             DeviceInfo(R.string.current, getDischargeCurrent(), " mA"),
             DeviceInfo(R.string.voltage, getChargingVoltage(), " V"),
@@ -139,11 +140,12 @@ class BatteryUtils (private val context: Context) {
     }
 
     fun getDashboardData(): List<DeviceInfo> {
+        val cycleCount = getBatteryCycleCount()
         return listOf(
             DeviceInfo(R.string.battery_level, getBatteryPercentage(), "%"),
             DeviceInfo(R.string.status, getBatteryStatus()),
             DeviceInfo(R.string.current, getDischargeCurrent(), " mA"),
-            DeviceInfo(R.string.cycle_count, getBatteryCycleCount()),
+            DeviceInfo(R.string.cycle_count, if (cycleCount >= 0) cycleCount else context.getString(R.string.unknown)),
             DeviceInfo(R.string.temperature, getBatteryTemperature(), " °C"),
         )
     }

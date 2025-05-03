@@ -637,6 +637,7 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
             .consumeWindowInsets(paddingValues),
         contentPadding = paddingValues
     ) {
+        item {GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
         items(infoList){
             IndividualLine(tittle = stringResource(it.name), info = it.value.toString() + it.extra.toString(), canLongPress = longPressCopy)
         }

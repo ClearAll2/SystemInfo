@@ -4,6 +4,7 @@
     android:updatePeriodMillis="21600"
     android:description="@string/appwidget_description"
     android:initialLayout="@layout/appwidget_preview"
+    android:previewImage="@drawable/widget_preview"
     android:resizeMode="vertical|horizontal"
     android:widgetCategory="home_screen">
 </appwidget-provider>

@@ -37,7 +37,6 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
         }
     }
 
-
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -51,7 +50,7 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
             GeneralProgressBar((ramInfoList[2].value as Number).toLong(), (ramInfoList[3].value as Number).toLong(), 1)
             Spacer(modifier = Modifier.height(12.dp))
             ramInfoList.forEach {
-                GeneralStatRow(stringResource(it.name), if (it.type == 0) it.extra.toString() else it.value.toString() + it.extra)
+                GeneralStatRow(stringResource(it.name), it.value.toString() + it.extra)
             }
         }
     }

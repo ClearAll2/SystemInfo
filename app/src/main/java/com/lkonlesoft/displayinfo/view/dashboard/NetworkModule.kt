@@ -25,14 +25,14 @@ import com.lkonlesoft.displayinfo.utils.NetworkUtils
 import kotlinx.coroutines.delay
 
 @Composable
-fun NetworkDashboard(onClick: () -> Unit) {
+fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    var infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(NetworkUtils(context).getDashboardData()) }
+    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(NetworkUtils(context).getDashboardData()) }
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
-            delay(5000L)
+            delay(intervalMillis)
             refreshKey++ // Triggers recomposition
         }
     }

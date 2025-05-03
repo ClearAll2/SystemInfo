@@ -25,15 +25,15 @@ import com.lkonlesoft.displayinfo.utils.DisplayUtils
 import kotlinx.coroutines.delay
 
 @Composable
-fun DisplayDashboard(onClick: () -> Unit) {
+fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
     val context = LocalContext.current
     val resources = context.resources
     var refreshKey by remember { mutableIntStateOf(0) }
-    var infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(DisplayUtils(context, resources).getDashboardData()) }
+    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(DisplayUtils(context, resources).getDashboardData()) }
 
     LaunchedEffect(Unit) {
         while (true) {
-            delay(1000L)
+            delay(intervalMillis)
             refreshKey++
         }
     }

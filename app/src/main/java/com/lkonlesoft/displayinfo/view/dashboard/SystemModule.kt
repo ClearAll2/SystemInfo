@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -24,7 +23,7 @@ import com.lkonlesoft.displayinfo.utils.SystemUtils
 @Composable
 fun SystemDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
-    var infoList by remember { mutableStateOf<List<DeviceInfo>>(
+    val infoList by remember { mutableStateOf<List<DeviceInfo>>(
         SystemUtils(context).getDashboardData()) }
     Card(
         modifier = Modifier

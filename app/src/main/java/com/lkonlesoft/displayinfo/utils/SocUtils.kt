@@ -86,10 +86,11 @@ class SocUtils(private val context: Context) {
     fun getCPUInfo(): List<DeviceInfo>{
         val numCores = getNumberOfCores()
         val governor = getCpuGovernor(0)
-
         val minMaxFrequencies = (0 until numCores).map { getMinMaxFreq(it) }
         val retList = minMaxFrequencies.mapIndexed { index, freq ->
-            DeviceInfo(R.string.core, "${index+1}", "${freq.first} - ${freq.second} MHz", 1)
+            val minFreq = freq.first
+            val maxFreq = freq.second
+            DeviceInfo(R.string.core, "${index+1}", if (minFreq != -1L && maxFreq != -1L) "${freq.first} - ${freq.second} MHz" else context.getString(R.string.unknown), 1)
         }
         return listOf(
             DeviceInfo(R.string.cores, numCores.toString()),
@@ -100,7 +101,7 @@ class SocUtils(private val context: Context) {
     fun getCPUUsage(): List<DeviceInfo>{
         val frequencies = getAllCpuFrequencies()
         val retList = frequencies.mapIndexed { index, freq ->
-            DeviceInfo(R.string.core, "${index+1}", "$freq MHz")
+            DeviceInfo(R.string.core, "${index+1}", if (freq != -1) "$freq MHz" else context.getString(R.string.unknown))
         }
         return retList
     }

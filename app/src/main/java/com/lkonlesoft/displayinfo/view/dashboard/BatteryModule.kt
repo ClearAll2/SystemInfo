@@ -44,24 +44,14 @@ import com.lkonlesoft.displayinfo.utils.BatteryUtils
 import kotlinx.coroutines.delay
 
 @Composable
-fun BatteryDashboard(onClick: () -> Unit) {
+fun BatteryDashboard(intervalMillis: Long = 2000L,onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    var infoList by remember { mutableStateOf<List<DeviceInfo>>(BatteryUtils(context).getDashboardData()) }
-    /*val batteryHealth = remember { mutableStateOf("Unknown") }
-    val batteryStatus = remember { mutableStateOf("Unknown") }
-    val batteryTemperature = remember { mutableFloatStateOf(0f) }
-    val batteryCycles = remember { mutableIntStateOf(-1) }*/
-
+    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(BatteryUtils(context).getDashboardData()) }
     LaunchedEffect(Unit) {
         while (true) {
-            /*batteryPercentage.intValue = BatteryUtils.getBatteryPercentage(context)
-            batteryHealth.value = BatteryUtils.getBatteryHealth(context)
-            batteryStatus.value = BatteryUtils.getBatteryStatus(context)
-            batteryTemperature.floatValue = BatteryUtils.getBatteryTemperature(context)
-            batteryCycles.intValue = BatteryUtils.getBatteryCycleCount(context)*/
+            delay(intervalMillis)
             refreshKey++
-            delay(2000L)
         }
     }
 

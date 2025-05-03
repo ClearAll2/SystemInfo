@@ -3,13 +3,37 @@
     android:layout_width="200.dp"
     android:layout_height="100.dp"
     android:orientation="vertical"
-    android:layout_centerVertical="true"
-    android:layout_centerHorizontal="true"
-    android:visibility="visible">
+    android:visibility="visible"
+    android:background="@drawable/bg_card_rounded"
+    android:padding="12dp"
+    >
 
-    <ImageView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleType="center"
-        android:src="@mipmap/appicon_round" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/outline_battery_4_bar_24"
+        android:contentDescription="@string/cycle_count"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/cycle_count"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="10"
+        android:textSize="24sp"
+        android:textStyle="bold"/>
 </LinearLayout>
