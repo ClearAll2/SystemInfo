@@ -8,25 +8,29 @@ import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.NetworkInfo
+import com.lkonlesoft.displayinfo.helper.SimInfo
+import com.lkonlesoft.displayinfo.helper.hasPermission
 
 class NetworkUtils(private val context: Context) {
 
-    fun getAllData(): List<DeviceInfo>{
+    fun getDetailsInfo(): List<DeviceInfo>{
         val netInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getNetInfo() else null
         return listOf(
-            DeviceInfo(R.string.interfaces, netInfo?.interfaces?.toString() ?: context.getString(R.string.n_a)),
-            DeviceInfo(R.string.ip_address, netInfo?.ip?.toString() ?: context.getString(R.string.n_a)),
-            DeviceInfo(R.string.domain, netInfo?.domain?.toString() ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.interfaces, netInfo?.interfaces ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.ip_address, netInfo?.ip ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.domain, netInfo?.domain ?: context.getString(R.string.n_a)),
             DeviceInfo(R.string.dns, netInfo?.dnsServer?.replace("/", "") ?: context.getString(R.string.n_a)),
-            DeviceInfo(R.string.dhcp_server, netInfo?.dhcpServer?.toString() ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.dhcp_server, netInfo?.dhcpServer ?: context.getString(R.string.n_a)),
             DeviceInfo(R.string.is_private_dns_on, if (netInfo?.isPrivateDNSActive == true) context.getString(R.string.enabled) else context.getString(R.string.disabled)),
-            DeviceInfo(R.string.private_dns_server, netInfo?.privateDNS?.toString() ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.private_dns_server, netInfo?.privateDNS ?: context.getString(R.string.n_a)),
             DeviceInfo(R.string.wake_on_lan_sp, if (netInfo?.wakeOnLanSupported == true) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
         )
     }
@@ -34,11 +38,30 @@ class NetworkUtils(private val context: Context) {
     fun getDashboardData(): List<DeviceInfo>{
         val netInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getNetInfo() else null
         return listOf(
-            DeviceInfo(R.string.interfaces, netInfo?.interfaces?.toString() ?: context.getString(R.string.n_a)),
-            DeviceInfo(R.string.ip_address, netInfo?.ip?.toString() ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.interfaces, netInfo?.interfaces ?: context.getString(R.string.n_a)),
+            DeviceInfo(R.string.ip_address, netInfo?.ip ?: context.getString(R.string.n_a)),
             DeviceInfo(R.string.dns, netInfo?.dnsServer?.replace("/", "") ?: context.getString(R.string.n_a)),
-            DeviceInfo(R.string.dhcp_server, netInfo?.dhcpServer?.toString() ?: context.getString(R.string.n_a))
+            DeviceInfo(R.string.dhcp_server, netInfo?.dhcpServer ?: context.getString(R.string.n_a))
         )
+    }
+
+    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    fun getSimInfo(): List<DeviceInfo> {
+        val simInfoList = getDualSimInfo(context)
+        if (simInfoList.isNotEmpty()) {
+            simInfoList.map { simInfo ->
+                return listOf(
+                    DeviceInfo(R.string.sim_slot, simInfo.slot),
+                    DeviceInfo(R.string.carrier_name, simInfo.carrierName),
+                    DeviceInfo(R.string.sim_display_name, simInfo.displayName),
+                    DeviceInfo(R.string.country_iso, simInfo.countryIso),
+                    DeviceInfo(R.string.icc_id, simInfo.iccId),
+                    DeviceInfo(R.string.subscription_id, simInfo.subscriptionId)
+                )
+            }
+        }
+        return emptyList()
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -132,5 +155,33 @@ class NetworkUtils(private val context: Context) {
         }
         return "?"
     }
+
+    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    fun getDualSimInfo(context: Context): List<SimInfo> {
+        val simInfoList = mutableListOf<SimInfo>()
+        if (context.hasPermission(Manifest.permission.READ_PHONE_STATE)) {
+            val subscriptionManager =
+                context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
+            val activeSims = subscriptionManager.activeSubscriptionInfoList
+
+            activeSims?.forEach { info ->
+                simInfoList.add(
+                    SimInfo(
+                        slot = info.simSlotIndex,
+                        carrierName = info.carrierName.toString(),
+                        displayName = info.displayName.toString(),
+                        countryIso = info.countryIso,
+                        iccId = info.iccId ?: "N/A",
+                        subscriptionId = info.subscriptionId
+                    )
+                )
+            }
+
+            return simInfoList
+        }
+        return emptyList()
+    }
+
 
 }

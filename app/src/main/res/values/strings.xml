@@ -167,4 +167,10 @@
     <string name="wireless">Wireless</string>
     <string name="unplugged">Unplugged</string>
     <string name="require_permission">Requires permission</string>
+    <string name="sim_slot">SIM slot</string>
+    <string name="carrier_name">Carrier name</string>
+    <string name="sim_display_name">SIM display name</string>
+    <string name="country_iso">Country ISO</string>
+    <string name="icc_id">ICCID</string>
+    <string name="subscription_id">Subscription ID</string>
 </resources>

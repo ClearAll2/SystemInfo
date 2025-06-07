@@ -1,6 +1,7 @@
 package com.lkonlesoft.displayinfo.view
 
 import android.Manifest
+import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
@@ -23,6 +24,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -116,6 +118,8 @@ import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -157,12 +161,17 @@ import kotlinx.coroutines.flow.debounce
 
 
 class MainActivity : ComponentActivity() {
+
+    private val settings: SettingsViewModel by viewModels{
+        SettingsModelFactory(application)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         enableEdgeToEdge()
         setContent {
-            ScaffoldContext()
+            ScaffoldContext(settings = settings)
         }
         val shortcutAndroid = ShortcutInfoCompat.Builder(this, "android")
             .setShortLabel(getString(R.string.android))
@@ -203,6 +212,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+class SettingsModelFactory(private val application: Application) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return modelClass.cast(SettingsViewModel(application))!!
+    }
+}
+
 fun NavHostController.returnToHome(){
     popBackStack()
     navigate(NavigationItem.Home.route) {
@@ -212,9 +227,7 @@ fun NavHostController.returnToHome(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldContext(){
-    val context = LocalContext.current
-    val settings = SettingsViewModel(context)
+fun ScaffoldContext(settings: SettingsViewModel){
     val appColor by settings.appColor.collectAsStateWithLifecycle()
     val useDynamicColors by settings.useDynamicColors.collectAsStateWithLifecycle()
     val state = rememberTopAppBarState()
@@ -353,7 +366,7 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val networkType by remember(refreshKey) {
         mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils(context).getNetwork() else NetworkUtils(context).getNetworkOldApi())
     }
-    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(NetworkUtils(context).getAllData()) }
+    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(NetworkUtils(context).getDetailsInfo()) }
     val startForPermissionResult = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()) {isGranted ->
         hasPermission = isGranted
@@ -637,7 +650,7 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
             .consumeWindowInsets(paddingValues),
         contentPadding = paddingValues
     ) {
-        item {GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
+        header {GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
         items(infoList){
             IndividualLine(tittle = stringResource(it.name), info = it.value.toString() + it.extra.toString(), canLongPress = longPressCopy)
         }
@@ -837,7 +850,7 @@ fun MemoryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 
     ) {
 
-        item {GeneralProgressBar((ramInfo[2].value as Number).toLong(), (ramInfo[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
+        header {GeneralProgressBar((ramInfo[2].value as Number).toLong(), (ramInfo[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
         items(ramInfo) {
             IndividualLine(tittle = stringResource(it.name), info = it.value.toString() + it.extra.toString(), canLongPress = longPressCopy)
         }
@@ -868,14 +881,14 @@ fun StorageScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 
     ) {
         header { HeaderLine(tittle = stringResource(R.string.internal_storage)) }
-        item {GeneralProgressBar((internalStorageStats[2].value as Number).toLong(), (internalStorageStats[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
+        header {GeneralProgressBar((internalStorageStats[2].value as Number).toLong(), (internalStorageStats[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
         items(internalStorageStats) {
             IndividualLine(tittle = stringResource(it.name), info = if (it.type == 0) it.extra.toString() else it.value.toString() + it.extra, canLongPress = longPressCopy)
         }
 
         if (externalStorageStats.isNotEmpty()) {
             header { HeaderLine(tittle = stringResource(R.string.external_storage)) }
-            item {GeneralProgressBar((externalStorageStats[2].value as Number).toLong(), (externalStorageStats[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
+            header {GeneralProgressBar((externalStorageStats[2].value as Number).toLong(), (externalStorageStats[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
             items(externalStorageStats) {
                 IndividualLine(tittle = stringResource(it.name), info = if (it.type == 0) it.extra.toString() else it.value.toString() + it.extra, canLongPress = longPressCopy)
             }

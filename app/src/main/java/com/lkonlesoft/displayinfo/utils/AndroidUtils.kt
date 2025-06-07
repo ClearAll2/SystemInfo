@@ -109,36 +109,36 @@ class AndroidUtils (private val context: Context) {
 
     fun getAllData(): List<DeviceInfo> {
         return listOf(
-            DeviceInfo(R.string.android_version, getAndroidVersion().toString()),
+            DeviceInfo(R.string.android_version, getAndroidVersion()),
             DeviceInfo(R.string.api_level, getApiLevel().toString()),
-            DeviceInfo(R.string.security_patch,  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getSecurityPatch().toString() else context.getString(R.string.n_a)),
-            DeviceInfo(R.string.sdk, getSdkName().toString()),
-            DeviceInfo(R.string.id, getId().toString()),
-            DeviceInfo(R.string.display, getDisplay().toString()),
-            DeviceInfo(R.string.incremental, getIncremental().toString()),
-            DeviceInfo(R.string.codename, getCodename().toString()),
-            DeviceInfo(R.string.type, getType().toString()),
-            DeviceInfo(R.string.tags, getTags().toString()),
-            DeviceInfo(R.string.fingerprint, getFingerprint().toString()),
-            DeviceInfo(R.string.host, getHost().toString()),
-            DeviceInfo(R.string.hardware, getHardware().toString()),
-            DeviceInfo(R.string.board, getBoard().toString()),
-            DeviceInfo(R.string.bootloader, getBootloader().toString()),
-            DeviceInfo(R.string.kernel, getKernel().toString()),
+            DeviceInfo(R.string.security_patch,  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getSecurityPatch() else context.getString(R.string.n_a)),
+            DeviceInfo(R.string.sdk, getSdkName()),
+            DeviceInfo(R.string.id, getId()),
+            DeviceInfo(R.string.build_id, getDisplay()),
+            DeviceInfo(R.string.incremental, getIncremental()),
+            DeviceInfo(R.string.codename, getCodename()),
+            DeviceInfo(R.string.type, getType()),
+            DeviceInfo(R.string.tags, getTags()),
+            DeviceInfo(R.string.fingerprint, getFingerprint()),
+            DeviceInfo(R.string.host, getHost()),
+            DeviceInfo(R.string.hardware, getHardware()),
+            DeviceInfo(R.string.board, getBoard()),
+            DeviceInfo(R.string.bootloader, getBootloader()),
+            DeviceInfo(R.string.kernel, getKernel()),
             DeviceInfo(R.string.performance_class, if (getPerformanceClass() > 0) getPerformanceClass().toString() else context.getString(R.string.n_a)),
-            DeviceInfo(R.string.google_play_service, getGmsVersion().toString()),
-            DeviceInfo(R.string.device_language, getDeviceLanguage().toString()),
-            DeviceInfo(R.string.device_locale, getDeviceLocale().toString()),
+            DeviceInfo(R.string.google_play_service, getGmsVersion()),
+            DeviceInfo(R.string.device_language, getDeviceLanguage()),
+            DeviceInfo(R.string.device_locale, getDeviceLocale()),
         )
     }
 
     fun getDashboardData(): List<DeviceInfo> {
         return listOf(
-            DeviceInfo(R.string.android_version, getAndroidVersion().toString()),
-            DeviceInfo(R.string.google_play_service, getGmsVersion().toString()),
+            DeviceInfo(R.string.android_version, getAndroidVersion()),
+            DeviceInfo(R.string.google_play_service, getGmsVersion()),
             DeviceInfo(R.string.api_level, getApiLevel().toString()),
-            DeviceInfo(R.string.security_patch,  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getSecurityPatch().toString() else context.getString(R.string.n_a)),
-            DeviceInfo(R.string.sdk, getSdkName().toString()),
+            DeviceInfo(R.string.security_patch,  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getSecurityPatch() else context.getString(R.string.n_a)),
+            DeviceInfo(R.string.sdk, getSdkName()),
         )
     }
 

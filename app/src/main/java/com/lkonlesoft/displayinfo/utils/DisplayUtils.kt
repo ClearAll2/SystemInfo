@@ -2,11 +2,10 @@ package com.lkonlesoft.displayinfo.utils
 
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Rect
 import android.media.MediaDrm
 import android.os.Build
 import android.util.Base64
-import android.util.DisplayMetrics
-import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.window.layout.WindowMetricsCalculator
 import com.lkonlesoft.displayinfo.R
@@ -14,19 +13,28 @@ import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 class DisplayUtils (private val context: Context, private val resources: Resources) {
+    private val calculator = WindowMetricsCalculator.getOrCreate()
+    private val maxWindowMetrics = calculator.computeMaximumWindowMetrics(context)
+    private val bounds: Rect = maxWindowMetrics.bounds
+
     fun getSmallestDp(): Int{
-        return resources.configuration.smallestScreenWidthDp
+        return minOf(getWidthDp(), getHeightDp())
     }
 
-    fun getDensity(): Int{
+    fun getDensity(): Float{
+        return resources.displayMetrics.density
+    }
+
+    fun getScreenDpi(): Int{
         return resources.displayMetrics.densityDpi
     }
 
-    fun getScaleDensity(): Int{
-        return resources.displayMetrics.densityDpi
+    fun getScaleDensity(): Float {
+        return context.resources.configuration.fontScale * getDensity()
     }
 
     fun getXDpi(): Int{
@@ -42,19 +50,19 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
     }
 
     fun getHeightPx(): Int{
-        return resources.displayMetrics.heightPixels
+        return bounds.height()
     }
 
     fun getWidthPx(): Int{
-        return resources.displayMetrics.widthPixels
+        return bounds.width()
     }
 
     fun getHeightDp(): Int{
-        return resources.configuration.screenHeightDp
+        return (getHeightPx() / getDensity()).toInt()
     }
 
     fun getWidthDp(): Int{
-        return resources.configuration.screenWidthDp
+        return (getWidthPx() / getDensity()).toInt()
     }
 
     fun getTouchScreen(): Int{
@@ -153,42 +161,15 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
         info
     }
 
-    fun calculateScreenSizeInInches(): Float {
-        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val displayMetrics = DisplayMetrics()
-
-        val widthPixels: Int
-        val heightPixels: Int
-        val xdpi: Float
-        val ydpi: Float
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // Android 11+ (API 30+)
-            val windowMetrics = WindowMetricsCalculator.getOrCreate()
-                .computeCurrentWindowMetrics(context)
-
-            val bounds = windowMetrics.bounds
-            widthPixels = bounds.width()
-            heightPixels = bounds.height()
-
-            val metrics = context.resources.displayMetrics
-            xdpi = metrics.xdpi
-            ydpi = metrics.ydpi
-        } else {
-            // Older Android (API < 30)
-            @Suppress("DEPRECATION")
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-
-            widthPixels = displayMetrics.widthPixels
-            heightPixels = displayMetrics.heightPixels
-            xdpi = displayMetrics.xdpi
-            ydpi = displayMetrics.ydpi
-        }
-
-        val widthInches = widthPixels / xdpi
-        val heightInches = heightPixels / ydpi
-
-        return sqrt((widthInches * widthInches + heightInches * heightInches))
+    fun calculateScreenSizeInInches(): Double {
+        val widthPixels = getWidthPx()
+        val heightPixels = getHeightPx()
+        val xDpi = getXDpi()
+        val yDpi = getYDpi()
+        val widthInches = widthPixels.toDouble() / xDpi
+        val heightInches = heightPixels.toDouble() / yDpi
+        val diagonalInches = sqrt(widthInches.pow(2) + heightInches.pow(2))
+        return (diagonalInches * 100).toInt().toDouble() / 100
     }
 
     fun getAllData(): List<DeviceInfo>{
@@ -197,8 +178,8 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
             DeviceInfo(R.string.height_px, getHeightPx().toString()),
             DeviceInfo(R.string.width_px, getWidthPx().toString()),
             DeviceInfo(R.string.smallest_dp, getSmallestDp().toString()),
-            DeviceInfo(R.string.screen_dpi, getDensity().toString()),
-            DeviceInfo(R.string.scale_density, getScaleDensity().toString()),
+            DeviceInfo(R.string.screen_dpi, getScreenDpi().toString()),
+            DeviceInfo(R.string.scale_density, "%.2f".format(getScaleDensity())),
             DeviceInfo(R.string.xdpi, getXDpi().toString()),
             DeviceInfo(R.string.ydpi, getYDpi().toString()),
             DeviceInfo(R.string.orientation, if (getOrientation() == 1) context.getString(R.string.portrait) else context.getString(R.string.landscape)),

@@ -30,7 +30,6 @@ fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
     val resources = context.resources
     var refreshKey by remember { mutableIntStateOf(0) }
     val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(DisplayUtils(context, resources).getDashboardData()) }
-
     LaunchedEffect(Unit) {
         while (true) {
             delay(intervalMillis)
