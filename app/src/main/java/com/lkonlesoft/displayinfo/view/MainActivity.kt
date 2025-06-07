@@ -291,8 +291,7 @@ fun ScaffoldContext(settings: SettingsViewModel){
                                     Icon(
                                         imageVector = ImageVector.vectorResource(
                                             R.drawable.rounded_settings_24
-                                        ), contentDescription = "Settings",
-                                        modifier = Modifier.size(24.dp)
+                                        ), contentDescription = "Settings"
                                     )
                                 }
                             }
