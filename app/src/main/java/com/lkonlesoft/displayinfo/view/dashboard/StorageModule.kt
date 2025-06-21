@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,12 +38,12 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
         }
     }
 
-    Card(
+    OutlinedCard(
         modifier = Modifier
             .padding(10.dp)
+            .clip(RoundedCornerShape(10.dp))
             .fillMaxWidth()
-            .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            .clickable { onClick() }
     ) {
         Column(Modifier.padding(16.dp)) {
             HeaderForDashboard(title = stringResource(R.string.memory), icon = R.drawable.outline_memory_24)
@@ -69,12 +70,12 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
         }
     }
 
-    Card(
+    OutlinedCard(
         modifier = Modifier
             .padding(10.dp)
+            .clip(RoundedCornerShape(10.dp))
             .fillMaxWidth()
-            .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            .clickable { onClick() }
     ) {
         Column(Modifier.padding(16.dp)) {
             HeaderForDashboard(title = stringResource(R.string.storage), icon = R.drawable.outline_storage_24)

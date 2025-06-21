@@ -6,13 +6,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,12 +26,12 @@ fun SystemDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
     val infoList by remember { mutableStateOf<List<DeviceInfo>>(
         SystemUtils(context).getDashboardData()) }
-    Card(
+    OutlinedCard(
         modifier = Modifier
             .padding(10.dp)
+            .clip(RoundedCornerShape(10.dp))
             .fillMaxWidth()
-            .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            .clickable { onClick() }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(title = stringResource(R.string.system), icon = R.drawable.outline_settings_24)

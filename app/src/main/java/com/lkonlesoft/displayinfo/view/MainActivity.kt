@@ -258,7 +258,8 @@ fun ScaffoldContext(settings: SettingsViewModel){
                         ),
                         title = {
                             Text(
-                                text = currentRoute.toString().replaceFirstChar { it.uppercase() },
+                                text = if (currentRoute != NavigationItem.Home.route)
+                                    currentRoute.toString().replaceFirstChar { it.uppercase() } else "",
                                 color = MaterialTheme.colorScheme.primary,
                             )
                         },
@@ -359,13 +360,14 @@ fun AndroidScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 @Composable
 fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
-    var showWarningPopup by remember { mutableStateOf(false) }
-    var hasPermission by remember { mutableStateOf(context.hasPermission(Manifest.permission.READ_PHONE_STATE)) }
     var refreshKey by remember { mutableIntStateOf(0) }
+    var showWarningPopup by remember { mutableStateOf(false) }
+    var hasPermission by remember(refreshKey) { mutableStateOf(context.hasPermission(Manifest.permission.READ_PHONE_STATE)) }
     val networkType by remember(refreshKey) {
         mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils(context).getNetwork() else NetworkUtils(context).getNetworkOldApi())
     }
     val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(NetworkUtils(context).getDetailsInfo()) }
+    val simInfoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(NetworkUtils(context).getSimInfo()) }
     val startForPermissionResult = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()) {isGranted ->
         hasPermission = isGranted
@@ -434,6 +436,30 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                     },
                     canLongPress = longPressCopy
                 )
+            }
+            header { HeaderLine(tittle = stringResource(R.string.sim_info)) }
+            if (simInfoList.isNotEmpty() && hasPermission) {
+                items(simInfoList) {
+                    IndividualLine(
+                        tittle = stringResource(it.name),
+                        info = it.value.toString(),
+                        canLongPress = longPressCopy
+                    )
+                }
+            }
+            else{
+                item {
+                    IndividualLine(tittle = stringResource(R.string.sim_info), info = stringResource(R.string.require_permission),
+                        onClick = {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                                if (!context.hasPermission(Manifest.permission.READ_PHONE_STATE)) {
+                                    startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
+                                }
+                            }
+                        },
+                        canLongPress = longPressCopy
+                    )
+                }
             }
             header { HeaderLine(tittle = stringResource(R.string.details)) }
             items(infoList){
@@ -943,8 +969,7 @@ fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
             .clip(RoundedCornerShape(10.dp))
             .clickable {
                 onClick()
-            },
-
+            }
     ){
         Column(
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -975,6 +1000,7 @@ fun IndividualLine(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(shape = MaterialTheme.shapes.large)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = {
@@ -1135,6 +1161,7 @@ fun AboutMenuItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(shape = MaterialTheme.shapes.large)
             .clickable(onClick = onItemClick)
             .padding(
                 horizontal = 30.dp,
@@ -1162,6 +1189,7 @@ fun CommonSwitchOption(
 ) {
     Row(modifier = Modifier
         .fillMaxWidth()
+        .clip(shape = MaterialTheme.shapes.large)
         .clickable(enabled = clickable) {
             onClick()
         }

@@ -18,7 +18,7 @@ class SocUtils(private val context: Context) {
         return try {
             File(path).readText().trim()
         } catch (_: Exception) {
-            "Unavailable"
+            context.getString(R.string.unknown)
         }
     }
 
@@ -47,17 +47,17 @@ class SocUtils(private val context: Context) {
 
     fun getGpuRenderer(): String {
         return try {
-            GLES10.glGetString(GLES10.GL_RENDERER) ?: "Unknown"
+            GLES10.glGetString(GLES10.GL_RENDERER) ?: context.getString(R.string.unknown)
         } catch (_: Exception) {
-            "Unavailable"
+            context.getString(R.string.unknown)
         }
     }
 
     fun getGpuVendor(): String {
         return try {
-            GLES10.glGetString(GLES10.GL_VENDOR) ?: "Unknown"
+            GLES10.glGetString(GLES10.GL_VENDOR) ?: context.getString(R.string.unknown)
         } catch (_: Exception) {
-            "Unavailable"
+            context.getString(R.string.unknown)
         }
     }
 

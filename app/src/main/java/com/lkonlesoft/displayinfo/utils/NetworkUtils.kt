@@ -17,7 +17,6 @@ import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.NetworkInfo
 import com.lkonlesoft.displayinfo.helper.SimInfo
-import com.lkonlesoft.displayinfo.helper.hasPermission
 
 class NetworkUtils(private val context: Context) {
 
@@ -45,20 +44,22 @@ class NetworkUtils(private val context: Context) {
         )
     }
 
-    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+
     fun getSimInfo(): List<DeviceInfo> {
-        val simInfoList = getDualSimInfo(context)
-        if (simInfoList.isNotEmpty()) {
-            simInfoList.map { simInfo ->
-                return listOf(
-                    DeviceInfo(R.string.sim_slot, simInfo.slot),
-                    DeviceInfo(R.string.carrier_name, simInfo.carrierName),
-                    DeviceInfo(R.string.sim_display_name, simInfo.displayName),
-                    DeviceInfo(R.string.country_iso, simInfo.countryIso),
-                    DeviceInfo(R.string.icc_id, simInfo.iccId),
-                    DeviceInfo(R.string.subscription_id, simInfo.subscriptionId)
-                )
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            val simInfoList = getDualSimInfo()
+            if (simInfoList.isNotEmpty()) {
+                simInfoList.map { simInfo ->
+                    return listOf(
+                        DeviceInfo(R.string.sim_slot, simInfo.slot),
+                        DeviceInfo(R.string.carrier_name, simInfo.carrierName),
+                        DeviceInfo(R.string.sim_display_name, simInfo.displayName),
+                        DeviceInfo(R.string.country_iso, simInfo.countryIso),
+                        DeviceInfo(R.string.icc_id, simInfo.iccId),
+                        DeviceInfo(R.string.subscription_id, simInfo.subscriptionId)
+                    )
+                }
             }
         }
         return emptyList()
@@ -101,10 +102,10 @@ class NetworkUtils(private val context: Context) {
                     TelephonyManager.NETWORK_TYPE_LTE,
                     TelephonyManager.NETWORK_TYPE_IWLAN -> return "4G"
                     TelephonyManager.NETWORK_TYPE_NR -> return "5G"
-                    else -> return "?"
+                    else -> return context.getString(R.string.unknown)
                 }
             }
-            else -> return "?"
+            else -> return context.getString(R.string.unknown)
         }
     }
 
@@ -150,37 +151,32 @@ class NetworkUtils(private val context: Context) {
                 TelephonyManager.NETWORK_TYPE_UMTS, TelephonyManager.NETWORK_TYPE_EVDO_0, TelephonyManager.NETWORK_TYPE_EVDO_A, TelephonyManager.NETWORK_TYPE_HSDPA, TelephonyManager.NETWORK_TYPE_HSUPA, TelephonyManager.NETWORK_TYPE_HSPA, TelephonyManager.NETWORK_TYPE_EVDO_B, TelephonyManager.NETWORK_TYPE_EHRPD, TelephonyManager.NETWORK_TYPE_HSPAP, TelephonyManager.NETWORK_TYPE_TD_SCDMA -> "3G"
                 TelephonyManager.NETWORK_TYPE_LTE, TelephonyManager.NETWORK_TYPE_IWLAN, 19 -> "4G"
                 TelephonyManager.NETWORK_TYPE_NR -> "5G"
-                else -> "?"
+                else -> context.getString(R.string.unknown)
             }
         }
-        return "?"
+        return context.getString(R.string.unknown)
     }
 
     @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
-    fun getDualSimInfo(context: Context): List<SimInfo> {
+    fun getDualSimInfo(): List<SimInfo> {
         val simInfoList = mutableListOf<SimInfo>()
-        if (context.hasPermission(Manifest.permission.READ_PHONE_STATE)) {
-            val subscriptionManager =
-                context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
-            val activeSims = subscriptionManager.activeSubscriptionInfoList
-
-            activeSims?.forEach { info ->
-                simInfoList.add(
-                    SimInfo(
-                        slot = info.simSlotIndex,
-                        carrierName = info.carrierName.toString(),
-                        displayName = info.displayName.toString(),
-                        countryIso = info.countryIso,
-                        iccId = info.iccId ?: "N/A",
-                        subscriptionId = info.subscriptionId
-                    )
+        val subscriptionManager =
+            context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
+        val activeSims = subscriptionManager.activeSubscriptionInfoList
+        activeSims?.forEach { info ->
+            simInfoList.add(
+                SimInfo(
+                    slot = info.simSlotIndex,
+                    carrierName = info.carrierName.toString(),
+                    displayName = info.displayName.toString(),
+                    countryIso = info.countryIso,
+                    iccId = if (info.iccId != "") info.iccId else context.getString(R.string.unknown),
+                    subscriptionId = info.subscriptionId,
                 )
-            }
-
-            return simInfoList
+            )
         }
-        return emptyList()
+        return simInfoList
     }
 
 

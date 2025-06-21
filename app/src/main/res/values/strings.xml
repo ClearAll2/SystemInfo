@@ -173,4 +173,5 @@
     <string name="country_iso">Country ISO</string>
     <string name="icc_id">ICCID</string>
     <string name="subscription_id">Subscription ID</string>
+    <string name="sim_info">SIM info</string>
 </resources>
