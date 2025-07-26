@@ -3,7 +3,7 @@ package com.lkonlesoft.displayinfo.`object`
 import androidx.annotation.StringRes
 import com.lkonlesoft.displayinfo.R
 
-sealed class AboutItem(@StringRes val title: Int, @StringRes val text: Int, @StringRes val url: Int){
+sealed class AboutItem(@param:StringRes val title: Int, @param:StringRes val text: Int, @param:StringRes val url: Int){
     object AppVer: AboutItem(R.string.app_version,
         R.string.app_ver,
         R.string.rate_link
