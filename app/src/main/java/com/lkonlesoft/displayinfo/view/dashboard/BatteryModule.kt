@@ -84,7 +84,7 @@ fun HeaderForDashboard(title: String, icon: Int) {
             contentDescription = title,
             modifier = Modifier.size(48.dp).padding(end = 10.dp),
             tint = MaterialTheme.colorScheme.primary)
-        Text(title, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Text(title, fontSize = 20.sp, fontWeight = FontWeight.Medium)
     }
 }
 

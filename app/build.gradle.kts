@@ -6,15 +6,16 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 30
+val buildCode = 31
 val buildName = "3.0"
+val appId = "com.lkonlesoft.displayinfo"
 
 android {
-    namespace = "com.lkonlesoft.displayinfo"
+    namespace = appId
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.lkonlesoft.displayinfo"
+        applicationId = appId
         minSdk = 21
         targetSdk = 36
         versionCode = buildCode
@@ -46,9 +47,6 @@ android {
     buildFeatures {
         compose = true
     }
-    /*composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
-    }*/
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"

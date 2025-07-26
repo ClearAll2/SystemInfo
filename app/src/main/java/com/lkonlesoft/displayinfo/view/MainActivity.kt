@@ -137,7 +137,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.CameraInfo
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.connectionStateToString
 import com.lkonlesoft.displayinfo.helper.copyTextToClipboard
 import com.lkonlesoft.displayinfo.helper.hasPermission
@@ -248,7 +247,6 @@ fun ScaffoldContext(settings: SettingsViewModel){
         durationMillis = 300,
         easing = FastOutSlowInEasing
     )
-
     // Animation spec for sliding (used for slideInHorizontally/slideOutHorizontally)
     val slideAnimationSpec: FiniteAnimationSpec<IntOffset> = tween(
         durationMillis = 300,
@@ -287,16 +285,16 @@ fun ScaffoldContext(settings: SettingsViewModel){
                                 Text(
                                     text = if (currentRoute != NavigationItem.Home.route)
                                         currentRoute.toString().replaceFirstChar { it.uppercase() } else stringResource(R.string.system_info),
-                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Medium,
                                     modifier = Modifier
                                         .padding(horizontal = 10.dp)
-                                        // Ensure stable width to avoid layout shifts
                                         .fillMaxWidth()
                                 )
                             }
                         },
                         navigationIcon = {
                             AnimatedContent(
+                                contentAlignment = Alignment.Center,
                                 targetState = currentRoute == NavigationItem.Home.route,
                                 transitionSpec = {
                                     // Slide and fade for navigation icon transitions
@@ -363,9 +361,9 @@ fun ScaffoldContext(settings: SettingsViewModel){
 @Composable
 fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
-    val deviceInfoList by remember { mutableStateOf<List<DeviceInfo>>(
+    val deviceInfoList by remember { mutableStateOf(
         SystemUtils(context).getDeviceData()) }
-    val extraInfoList by remember { mutableStateOf<List<DeviceInfo>>(
+    val extraInfoList by remember { mutableStateOf(
         SystemUtils(context).getExtraData()) }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(320.dp),
@@ -385,10 +383,10 @@ fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         isLast = deviceInfoList.last() == it,
-                        topStart = if (deviceInfoList.first() == it) 25.dp else 5.dp,
-                        topEnd = if (deviceInfoList.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (deviceInfoList.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (deviceInfoList.last() == it) 25.dp else 5.dp
+                        topStart = if (deviceInfoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (deviceInfoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (deviceInfoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (deviceInfoList.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -401,10 +399,10 @@ fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         isLast = extraInfoList.last() == it,
-                        topStart = if (extraInfoList.first() == it) 25.dp else 5.dp,
-                        topEnd = if (extraInfoList.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (extraInfoList.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (extraInfoList.last() == it) 25.dp else 5.dp
+                        topStart = if (extraInfoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (extraInfoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (extraInfoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (extraInfoList.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -432,10 +430,10 @@ fun AndroidScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         isLast = infoList.last() == it,
-                        topStart = if (infoList.first() == it) 25.dp else 5.dp,
-                        topEnd = if (infoList.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (infoList.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (infoList.last() == it) 25.dp else 5.dp
+                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -453,8 +451,8 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val networkType by remember(refreshKey) {
         mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils(context).getNetwork() else NetworkUtils(context).getNetworkOldApi())
     }
-    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(NetworkUtils(context).getDetailsInfo()) }
-    val simInfoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(NetworkUtils(context).getSimInfo()) }
+    val infoList by remember(refreshKey) { mutableStateOf(NetworkUtils(context).getDetailsInfo()) }
+    val simInfoList by remember(refreshKey) { mutableStateOf(NetworkUtils(context).getSimInfo()) }
     val startForPermissionResult = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()) {isGranted ->
         hasPermission = isGranted
@@ -525,10 +523,10 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         }
                     },
                     canLongPress = longPressCopy,
-                    topStart = 25.dp,
-                    topEnd = 25.dp,
-                    bottomStart = 25.dp,
-                    bottomEnd = 25.dp,
+                    topStart = 20.dp,
+                    topEnd = 20.dp,
+                    bottomStart = 20.dp,
+                    bottomEnd = 20.dp,
                     isLast = true
                 )
             }
@@ -543,10 +541,10 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                             info = it.value.toString(),
                             canLongPress = longPressCopy,
                             isLast = simInfoList.last() == it,
-                            topStart = if (simInfoList.first() == it) 25.dp else 5.dp,
-                            topEnd = if (simInfoList.first() == it) 25.dp else 5.dp,
-                            bottomStart = if (simInfoList.last() == it) 25.dp else 5.dp,
-                            bottomEnd = if (simInfoList.last() == it) 25.dp else 5.dp
+                            topStart = if (simInfoList.first() == it) 20.dp else 5.dp,
+                            topEnd = if (simInfoList.first() == it) 20.dp else 5.dp,
+                            bottomStart = if (simInfoList.last() == it) 20.dp else 5.dp,
+                            bottomEnd = if (simInfoList.last() == it) 20.dp else 5.dp
                         )
                     }
                 }
@@ -560,10 +558,10 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                             }
                         },
                         canLongPress = longPressCopy,
-                        topStart = 25.dp,
-                        topEnd = 25.dp,
-                        bottomStart = 25.dp,
-                        bottomEnd = 25.dp,
+                        topStart = 20.dp,
+                        topEnd = 20.dp,
+                        bottomStart = 20.dp,
+                        bottomEnd = 20.dp,
                         isLast = true
                     )
                 }
@@ -577,10 +575,10 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         isLast = infoList.last() == it,
-                        topStart = if (infoList.first() == it) 25.dp else 5.dp,
-                        topEnd = if (infoList.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (infoList.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (infoList.last() == it) 25.dp else 5.dp
+                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -596,7 +594,7 @@ fun DisplayScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     var refreshKey by remember { mutableIntStateOf(0) }
     var widevineInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
     var clearKeyInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
-    var infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(DisplayUtils(context, resources).getAllData()) }
+    var infoList by remember(refreshKey) { mutableStateOf(DisplayUtils(context, resources).getAllData()) }
     LaunchedEffect(Unit) {
         widevineInfo = DisplayUtils(context, resources).getWidevineInfo()
         clearKeyInfo = DisplayUtils(context, resources).getClearKeyInfo()
@@ -624,10 +622,10 @@ fun DisplayScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         isLast = infoList.last() == it,
-                        topStart = if (infoList.first() == it) 25.dp else 5.dp,
-                        topEnd = if (infoList.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (infoList.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (infoList.last() == it) 25.dp else 5.dp
+                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -641,10 +639,10 @@ fun DisplayScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = it.second,
                         canLongPress = longPressCopy,
                         isLast = widevineList.last() == it,
-                        topStart = if (widevineList.first() == it) 25.dp else 5.dp,
-                        topEnd = if (widevineList.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (widevineList.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (widevineList.last() == it) 25.dp else 5.dp
+                        topStart = if (widevineList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (widevineList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (widevineList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (widevineList.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -658,10 +656,10 @@ fun DisplayScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = it.second,
                         canLongPress = longPressCopy,
                         isLast = clearKeyList.last() == it,
-                        topStart = if (clearKeyList.first() == it) 25.dp else 5.dp,
-                        topEnd = if (clearKeyList.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (clearKeyList.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (clearKeyList.last() == it) 25.dp else 5.dp
+                        topStart = if (clearKeyList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (clearKeyList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (clearKeyList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (clearKeyList.last() == it) 20.dp else 5.dp
                     )
                 }
 
@@ -819,7 +817,7 @@ fun BluetoothStatusScreen(onClick: () -> Unit) {
 fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(BatteryUtils(context).getAllData()) }
+    val infoList by remember(refreshKey) { mutableStateOf(BatteryUtils(context).getAllData()) }
     LaunchedEffect(Unit) {
         while (true){
             delay(1000L)
@@ -843,10 +841,10 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         isLast = infoList.last() == it,
-                        topStart = if (infoList.first() == it) 25.dp else 5.dp,
-                        topEnd = if (infoList.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (infoList.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (infoList.last() == it) 25.dp else 5.dp
+                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -1029,7 +1027,7 @@ fun CameraInfoScreen(onClick: () -> Unit) {
 fun MemoryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val ramInfo by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(StorageUtils(context).getRAMInfo()) }
+    val ramInfo by remember(refreshKey) { mutableStateOf(StorageUtils(context).getRAMInfo()) }
     // Auto-refresh every 2 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -1058,10 +1056,10 @@ fun MemoryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         isLast = ramInfo.last() == it,
-                        topStart = if (ramInfo.first() == it) 25.dp else 5.dp,
-                        topEnd = if (ramInfo.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (ramInfo.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (ramInfo.last() == it) 25.dp else 5.dp
+                        topStart = if (ramInfo.first() == it) 20.dp else 5.dp,
+                        topEnd = if (ramInfo.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (ramInfo.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (ramInfo.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -1105,10 +1103,10 @@ fun StorageScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         isLast = internalStorageStats.last() == it,
-                        topStart = if (internalStorageStats.first() == it) 25.dp else 5.dp,
-                        topEnd = if (internalStorageStats.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (internalStorageStats.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (internalStorageStats.last() == it) 25.dp else 5.dp
+                        topStart = if (internalStorageStats.first() == it) 20.dp else 5.dp,
+                        topEnd = if (internalStorageStats.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (internalStorageStats.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (internalStorageStats.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -1131,10 +1129,10 @@ fun StorageScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                             info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
                             canLongPress = longPressCopy,
                             isLast = externalStorageStats.last() == it,
-                            topStart = if (externalStorageStats.first() == it) 25.dp else 5.dp,
-                            topEnd = if (externalStorageStats.first() == it) 25.dp else 5.dp,
-                            bottomStart = if (externalStorageStats.last() == it) 25.dp else 5.dp,
-                            bottomEnd = if (externalStorageStats.last() == it) 25.dp else 5.dp
+                            topStart = if (externalStorageStats.first() == it) 20.dp else 5.dp,
+                            topEnd = if (externalStorageStats.first() == it) 20.dp else 5.dp,
+                            bottomStart = if (externalStorageStats.last() == it) 20.dp else 5.dp,
+                            bottomEnd = if (externalStorageStats.last() == it) 20.dp else 5.dp
                         )
                     }
                 }
@@ -1173,10 +1171,10 @@ fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = if (it.type == 1) it.extra else it.value.toString(),
                         canLongPress = longPressCopy,
                         isLast = cpuInfoList.last() == it,
-                        topStart = if (cpuInfoList.first() == it) 25.dp else 5.dp,
-                        topEnd = if (cpuInfoList.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (cpuInfoList.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (cpuInfoList.last() == it) 25.dp else 5.dp
+                        topStart = if (cpuInfoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (cpuInfoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (cpuInfoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (cpuInfoList.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -1189,10 +1187,10 @@ fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         info = it.extra,
                         canLongPress = longPressCopy,
                         isLast = cpuUsageInfo.last() == it,
-                        topStart = if (cpuUsageInfo.first() == it) 25.dp else 5.dp,
-                        topEnd = if (cpuUsageInfo.first() == it) 25.dp else 5.dp,
-                        bottomStart = if (cpuUsageInfo.last() == it) 25.dp else 5.dp,
-                        bottomEnd = if (cpuUsageInfo.last() == it) 25.dp else 5.dp
+                        topStart = if (cpuUsageInfo.first() == it) 20.dp else 5.dp,
+                        topEnd = if (cpuUsageInfo.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (cpuUsageInfo.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (cpuUsageInfo.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -1204,10 +1202,10 @@ fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                     info = glEs,
                     canLongPress = longPressCopy,
                     isLast = true,
-                    topStart = 25.dp,
-                    topEnd = 25.dp,
-                    bottomStart = 25.dp,
-                    bottomEnd = 25.dp
+                    topStart = 20.dp,
+                    topEnd = 20.dp,
+                    bottomStart = 20.dp,
+                    bottomEnd = 20.dp
                 )
             }
         }
@@ -1231,11 +1229,13 @@ fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
             Spacer(modifier = Modifier.padding(10.dp))
             Icon(imageVector = ImageVector.vectorResource(icon), contentDescription = title, modifier = Modifier
                 .padding(10.dp)
-                .size(40.dp), tint = MaterialTheme.colorScheme.primary)
+                .size(40.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
             Text(text = title, fontSize = 25.sp, modifier = Modifier.padding(10.dp))
 
         }
-    Spacer(modifier = Modifier.padding(10.dp))
+        Spacer(modifier = Modifier.padding(10.dp))
     }
 }
 
@@ -1307,11 +1307,11 @@ fun IndividualLine(
                 modifier = Modifier.padding(vertical = 5.dp)
             )
             if (info.isNotEmpty())
-                Text(text = info, fontSize = 14.sp, modifier = Modifier.padding(vertical = 5.dp))
+                Text(text = info, fontSize = 15.sp, modifier = Modifier.padding(vertical = 5.dp))
             if (info2.isNotEmpty())
-                Text(text = info2, fontSize = 14.sp, modifier = Modifier.padding(vertical = 5.dp))
+                Text(text = info2, fontSize = 15.sp, modifier = Modifier.padding(vertical = 5.dp))
             if (info3.isNotEmpty())
-                Text(text = info3, fontSize = 14.sp, modifier = Modifier.padding(vertical = 5.dp))
+                Text(text = info3, fontSize = 15.sp, modifier = Modifier.padding(vertical = 5.dp))
 
         }
         if (!isLast) {
@@ -1451,10 +1451,10 @@ fun SettingsScreen(
                             uriHandler.openUri(url)
                         },
                         isLast = items.last() == item,
-                        topStart = if (items.first() == item) 25.dp else 5.dp,
-                        topEnd = if (items.first() == item) 25.dp else 5.dp,
-                        bottomStart = if (items.last() == item) 25.dp else 5.dp,
-                        bottomEnd = if (items.last() == item) 25.dp else 5.dp
+                        topStart = if (items.first() == item) 20.dp else 5.dp,
+                        topEnd = if (items.first() == item) 20.dp else 5.dp,
+                        bottomStart = if (items.last() == item) 20.dp else 5.dp,
+                        bottomEnd = if (items.last() == item) 20.dp else 5.dp
                     )
                 }
             }
@@ -1506,7 +1506,8 @@ fun AboutMenuItem(
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 5.dp)
             )
-            Text(text = text, modifier = Modifier.padding(vertical = 5.dp))
+            Text(text = text, modifier = Modifier.padding(vertical = 5.dp),
+                fontSize = 15.sp)
         }
         if (!isLast) {
             HorizontalDivider(
@@ -1528,10 +1529,10 @@ fun CommonSwitchOption(
     separator: Boolean = false,
     checked: Boolean,
     horizontalPadding: Dp = 20.dp,
-    topStart: Dp = 25.dp,
-    topEnd: Dp = 25.dp,
-    bottomStart: Dp = 25.dp,
-    bottomEnd: Dp = 25.dp,
+    topStart: Dp = 20.dp,
+    topEnd: Dp = 20.dp,
+    bottomStart: Dp = 20.dp,
+    bottomEnd: Dp = 20.dp,
     isLast: Boolean = false,
     onClick: () -> Unit,
     onSwitch: (Boolean) -> Unit
@@ -1621,10 +1622,10 @@ fun CommonSwitchOption(
 fun ThemeSelector(
     selectedTheme: Int,
     onThemeSelected: (Int) -> Unit,
-    topStart: Dp = 25.dp,
-    topEnd: Dp = 25.dp,
-    bottomStart: Dp = 25.dp,
-    bottomEnd: Dp = 25.dp,
+    topStart: Dp = 20.dp,
+    topEnd: Dp = 20.dp,
+    bottomStart: Dp = 20.dp,
+    bottomEnd: Dp = 20.dp,
     paddingValues: Dp = 20.dp,
     isLast: Boolean = false
 ) {
@@ -1664,10 +1665,12 @@ fun ThemeSelector(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier
+                    .padding(top = 5.dp)
                     .padding(vertical = 10.dp)
             )
             Row(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .horizontalScroll(rememberScrollState())
                     .padding(bottom = 5.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -1682,7 +1685,7 @@ fun ThemeSelector(
                         },
                         selected = selectedTheme == theme.value,
                         onClick = { onThemeSelected(theme.value) },
-                        label = { Text(stringResource(theme.title), fontSize = 14.sp) }
+                        label = { Text(stringResource(theme.title), fontSize = 15.sp) }
                     )
                 }
             }
@@ -1712,7 +1715,7 @@ fun ConfirmActionPopup(
         Surface(
             modifier = Modifier.fillMaxWidth(),
             tonalElevation = 10.dp,
-            shape = RoundedCornerShape(25.dp)
+            shape = RoundedCornerShape(20.dp)
         ) {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
