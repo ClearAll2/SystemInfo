@@ -56,8 +56,10 @@ class NetworkUtils(private val context: Context) {
                         DeviceInfo(R.string.carrier_name, simInfo.carrierName),
                         DeviceInfo(R.string.sim_display_name, simInfo.displayName),
                         DeviceInfo(R.string.country_iso, simInfo.countryIso),
-                        DeviceInfo(R.string.icc_id, simInfo.iccId),
-                        DeviceInfo(R.string.subscription_id, simInfo.subscriptionId)
+                        //DeviceInfo(R.string.icc_id, simInfo.iccId),
+                        DeviceInfo(R.string.subscription_id, simInfo.subscriptionId),
+                        DeviceInfo(R.string.enabled, if (simInfo.isActive) context.getString(R.string.yes)
+                        else context.getString(R.string.no))
                     )
                 }
             }
@@ -83,6 +85,7 @@ class NetworkUtils(private val context: Context) {
                 ) {
                     return context.getString(R.string.require_permission)
                 }
+                @Suppress("DEPRECATION")
                 when (tm.dataNetworkType) {
                     TelephonyManager.NETWORK_TYPE_GPRS,
                     TelephonyManager.NETWORK_TYPE_EDGE,
@@ -161,9 +164,16 @@ class NetworkUtils(private val context: Context) {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     fun getDualSimInfo(): List<SimInfo> {
         val simInfoList = mutableListOf<SimInfo>()
-        val subscriptionManager =
-            context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
+        val subscriptionManager = context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
         val activeSims = subscriptionManager.activeSubscriptionInfoList
+        // Get TelephonyManager to check SIM slot count and states
+        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        val simSlotCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            telephonyManager.supportedModemCount
+        } else {
+            // Fallback for older APIs: assume at least 1 slot, check active subscriptions
+            maxOf(1, activeSims?.size ?: 0)
+        }
         activeSims?.forEach { info ->
             simInfoList.add(
                 SimInfo(
@@ -173,10 +183,50 @@ class NetworkUtils(private val context: Context) {
                     countryIso = info.countryIso,
                     iccId = if (info.iccId != "") info.iccId else context.getString(R.string.unknown),
                     subscriptionId = info.subscriptionId,
+                    isActive = true
                 )
             )
         }
-        return simInfoList
+
+        // Check for inactive SIM slots (e.g., slots with no active subscription)
+        for (slotIndex in 0 until simSlotCount) {
+            if (simInfoList.none { it.slot == slotIndex }) {
+                // Query SIM state for the slot
+                val simState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    telephonyManager.getSimState(slotIndex)
+                } else {
+                    telephonyManager.simState // Fallback for single SIM state
+                }
+
+                // Consider SIM present if it's in a usable or potentially usable state
+                val isSimPresent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    simState == TelephonyManager.SIM_STATE_READY ||
+                            simState == TelephonyManager.SIM_STATE_NOT_READY ||
+                            simState == TelephonyManager.SIM_STATE_PIN_REQUIRED ||
+                            simState == TelephonyManager.SIM_STATE_PUK_REQUIRED ||
+                            simState == TelephonyManager.SIM_STATE_CARD_RESTRICTED
+                } else {
+                    simState == TelephonyManager.SIM_STATE_READY ||
+                            simState == TelephonyManager.SIM_STATE_PIN_REQUIRED ||
+                            simState == TelephonyManager.SIM_STATE_PUK_REQUIRED
+                }
+                if (isSimPresent) {
+                    simInfoList.add(
+                        SimInfo(
+                            slot = slotIndex,
+                            carrierName = context.getString(R.string.unknown),
+                            displayName = "SIM $slotIndex",
+                            countryIso = context.getString(R.string.unknown),
+                            iccId = context.getString(R.string.unknown),
+                            subscriptionId = -1, // No subscription ID for inactive SIM
+                            isActive = false
+                        )
+                    )
+                }
+            }
+        }
+
+        return simInfoList.sortedBy { it.slot }
     }
 
 

@@ -69,7 +69,7 @@ fun BatteryDashboard(intervalMillis: Long = 2000L,onClick: () -> Unit) {
             Spacer(modifier = Modifier.height(12.dp))
             infoList.forEach {
                 GeneralStatRow(stringResource(it.name),
-                    it.value.toString() + it.extra.toString()
+                    it.value.toString() + it.extra
                 )
             }
         }
@@ -102,14 +102,14 @@ fun GeneralStatRow(label: String, value: String, valueColor: Color = Color.Unspe
 }
 
 @Composable
-fun GeneralProgressBar(level: Long, total: Long, type: Int = 0, horizontalPadding: Dp = 0.dp, verticalPadding: Dp = 0.dp) {
+fun GeneralProgressBar(level: Long, total: Long, type: Int = 0, height: Dp = 10.dp, horizontalPadding: Dp = 0.dp, verticalPadding: Dp = 0.dp) {
     LinearProgressIndicator(
         progress = { level.toFloat().div(total) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = horizontalPadding, vertical = verticalPadding)
-            .height(10.dp)
-            .clip(MaterialTheme.shapes.medium),
+            .height(height)
+            .clip(MaterialTheme.shapes.small),
         color = if (type == 0) getBatteryLevelColor(level) else getMemoryLevelColor(((level.toDouble() / total.toDouble()) * 100).toLong())
     )
 }

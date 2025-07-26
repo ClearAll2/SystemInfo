@@ -25,19 +25,23 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -61,6 +65,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
@@ -71,8 +76,10 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
@@ -81,10 +88,10 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -108,6 +115,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -231,10 +239,21 @@ fun ScaffoldContext(settings: SettingsViewModel){
     val appColor by settings.appColor.collectAsStateWithLifecycle()
     val useDynamicColors by settings.useDynamicColors.collectAsStateWithLifecycle()
     val state = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(state)
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state)
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    // Animation spec for fading (used for fadeIn/fadeOut)
+    val fadeAnimationSpec: FiniteAnimationSpec<Float> = tween(
+        durationMillis = 300,
+        easing = FastOutSlowInEasing
+    )
+
+    // Animation spec for sliding (used for slideInHorizontally/slideOutHorizontally)
+    val slideAnimationSpec: FiniteAnimationSpec<IntOffset> = tween(
+        durationMillis = 300,
+        easing = FastOutSlowInEasing
+    )
     ScreenInfoTheme (
         darkTheme = when(appColor) {
             0 -> isSystemInDarkTheme()
@@ -251,30 +270,59 @@ fun ScaffoldContext(settings: SettingsViewModel){
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
-                    TopAppBar(
+                    LargeTopAppBar(
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.background,
                             scrolledContainerColor = MaterialTheme.colorScheme.background
                         ),
                         title = {
-                            Text(
-                                text = if (currentRoute != NavigationItem.Home.route)
-                                    currentRoute.toString().replaceFirstChar { it.uppercase() } else "",
-                                color = MaterialTheme.colorScheme.primary,
-                            )
+                            AnimatedContent(
+                                targetState = currentRoute,
+                                transitionSpec = {
+                                    // Crossfade for title text changes
+                                    fadeIn(fadeAnimationSpec) togetherWith fadeOut(fadeAnimationSpec)
+                                },
+                                label = "TitleAnimation"
+                            ) { route ->
+                                Text(
+                                    text = if (currentRoute != NavigationItem.Home.route)
+                                        currentRoute.toString().replaceFirstChar { it.uppercase() } else stringResource(R.string.system_info),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier
+                                        .padding(horizontal = 10.dp)
+                                        // Ensure stable width to avoid layout shifts
+                                        .fillMaxWidth()
+                                )
+                            }
                         },
                         navigationIcon = {
-                            AnimatedVisibility(visible = currentRoute == NavigationItem.Home.route){
-                                Spacer(modifier = Modifier.padding(horizontal = 24.dp))
-                            }
-                            AnimatedVisibility(visible = currentRoute != NavigationItem.Home.route,
-                                enter = slideInHorizontally() + fadeIn(),
-                                exit = slideOutHorizontally() + fadeOut()
-                            ){
-                                IconButton(onClick = {
-                                    navController.navigateUp()
-                                }) {
-                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
+                            AnimatedContent(
+                                targetState = currentRoute == NavigationItem.Home.route,
+                                transitionSpec = {
+                                    // Slide and fade for navigation icon transitions
+                                    (slideInHorizontally(slideAnimationSpec) { -it } + fadeIn(fadeAnimationSpec)) togetherWith
+                                            (slideOutHorizontally(slideAnimationSpec) { -it } + fadeOut(fadeAnimationSpec))
+                                },
+                                label = "NavIconAnimation"
+                            ) { isHomeRoute ->
+                                if (isHomeRoute) {
+                                    Spacer(modifier = Modifier.padding(start = 20.dp))
+                                } else {
+                                    IconButton(
+                                        modifier = Modifier
+                                            .padding(start = 20.dp)
+                                            .background(
+                                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                                shape = CircleShape
+                                            ),
+                                        onClick = { navController.navigateUp() }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "backIcon",
+                                            tint = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
                                 }
                             }
                         },
@@ -320,20 +368,46 @@ fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val extraInfoList by remember { mutableStateOf<List<DeviceInfo>>(
         SystemUtils(context).getExtraData()) }
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(400.dp),
+        columns = GridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues),
-        contentPadding = paddingValues
-
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        header { HeaderLine(tittle = stringResource(R.string.device)) }
-        items(deviceInfoList){
-            IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.device))
+                deviceInfoList.forEach {
+                    IndividualLine(
+                        tittle = stringResource(it.name),
+                        info = it.value.toString(),
+                        canLongPress = longPressCopy,
+                        isLast = deviceInfoList.last() == it,
+                        topStart = if (deviceInfoList.first() == it) 25.dp else 5.dp,
+                        topEnd = if (deviceInfoList.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (deviceInfoList.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (deviceInfoList.last() == it) 25.dp else 5.dp
+                    )
+                }
+            }
         }
-        header { HeaderLine(tittle = stringResource(R.string.extra)) }
-        items(extraInfoList){
-            IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.extra))
+                extraInfoList.forEach {
+                    IndividualLine(tittle = stringResource(it.name),
+                        info = it.value.toString(),
+                        canLongPress = longPressCopy,
+                        isLast = extraInfoList.last() == it,
+                        topStart = if (extraInfoList.first() == it) 25.dp else 5.dp,
+                        topEnd = if (extraInfoList.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (extraInfoList.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (extraInfoList.last() == it) 25.dp else 5.dp
+                    )
+                }
+            }
         }
     }
 }
@@ -343,15 +417,28 @@ fun AndroidScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val infoList = AndroidUtils(context).getAllData()
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(400.dp),
+        columns = GridCells.Fixed(1),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues),
-        contentPadding = paddingValues
-
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        //horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        items(infoList){
-            IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
+        item {
+            Column {
+                infoList.forEach {
+                    IndividualLine(tittle = stringResource(it.name),
+                        info = it.value.toString(),
+                        canLongPress = longPressCopy,
+                        isLast = infoList.last() == it,
+                        topStart = if (infoList.first() == it) 25.dp else 5.dp,
+                        topEnd = if (infoList.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (infoList.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (infoList.last() == it) 25.dp else 5.dp
+                    )
+                }
+            }
         }
     }
 }
@@ -416,16 +503,19 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
             refreshKey++
         }
     }
-    Box (modifier = Modifier
-        .fillMaxSize()) {
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(400.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .consumeWindowInsets(paddingValues),
-            contentPadding = paddingValues
-        ) {
-            item {
+
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(320.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        item {
+            Column {
+                Spacer(modifier = Modifier.padding(vertical = 10.dp))
                 IndividualLine(tittle = stringResource(R.string.network_type), info = networkType,
                     onClick = {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -434,21 +524,33 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                             }
                         }
                     },
-                    canLongPress = longPressCopy
+                    canLongPress = longPressCopy,
+                    topStart = 25.dp,
+                    topEnd = 25.dp,
+                    bottomStart = 25.dp,
+                    bottomEnd = 25.dp,
+                    isLast = true
                 )
             }
-            header { HeaderLine(tittle = stringResource(R.string.sim_info)) }
-            if (simInfoList.isNotEmpty() && hasPermission) {
-                items(simInfoList) {
-                    IndividualLine(
-                        tittle = stringResource(it.name),
-                        info = it.value.toString(),
-                        canLongPress = longPressCopy
-                    )
+        }
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.sim_info))
+                if (simInfoList.isNotEmpty() && hasPermission) {
+                    simInfoList.forEach {
+                        IndividualLine(
+                            tittle = stringResource(it.name),
+                            info = it.value.toString(),
+                            canLongPress = longPressCopy,
+                            isLast = simInfoList.last() == it,
+                            topStart = if (simInfoList.first() == it) 25.dp else 5.dp,
+                            topEnd = if (simInfoList.first() == it) 25.dp else 5.dp,
+                            bottomStart = if (simInfoList.last() == it) 25.dp else 5.dp,
+                            bottomEnd = if (simInfoList.last() == it) 25.dp else 5.dp
+                        )
+                    }
                 }
-            }
-            else{
-                item {
+                else {
                     IndividualLine(tittle = stringResource(R.string.sim_info), info = stringResource(R.string.require_permission),
                         onClick = {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -457,17 +559,33 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                                 }
                             }
                         },
-                        canLongPress = longPressCopy
+                        canLongPress = longPressCopy,
+                        topStart = 25.dp,
+                        topEnd = 25.dp,
+                        bottomStart = 25.dp,
+                        bottomEnd = 25.dp,
+                        isLast = true
                     )
                 }
             }
-            header { HeaderLine(tittle = stringResource(R.string.details)) }
-            items(infoList){
-                IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
+        }
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.details))
+                infoList.forEach {
+                    IndividualLine(tittle = stringResource(it.name),
+                        info = it.value.toString(),
+                        canLongPress = longPressCopy,
+                        isLast = infoList.last() == it,
+                        topStart = if (infoList.first() == it) 25.dp else 5.dp,
+                        topEnd = if (infoList.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (infoList.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (infoList.last() == it) 25.dp else 5.dp
+                    )
+                }
             }
         }
     }
-
 }
 
 
@@ -489,25 +607,65 @@ fun DisplayScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     }
 
 
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(400.dp),
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues),
-        contentPadding = paddingValues
-
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        header { HeaderLine(tittle = stringResource(R.string.display)) }
-        items(infoList){
-            IndividualLine(tittle = stringResource(it.name), info = it.value.toString() + it.extra.toString(), canLongPress = longPressCopy)
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.display))
+                infoList.forEach {
+                    IndividualLine(tittle = stringResource(it.name),
+                        info = it.value.toString() + it.extra,
+                        canLongPress = longPressCopy,
+                        isLast = infoList.last() == it,
+                        topStart = if (infoList.first() == it) 25.dp else 5.dp,
+                        topEnd = if (infoList.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (infoList.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (infoList.last() == it) 25.dp else 5.dp
+                    )
+                }
+            }
         }
-        header { HeaderLine(tittle = stringResource(R.string.widevine)) }
-        items(widevineInfo.toList()){
-            IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() }, info = it.second, canLongPress = longPressCopy)
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.widevine))
+                val widevineList = widevineInfo.toList()
+                widevineList.forEach {
+                    IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() },
+                        info = it.second,
+                        canLongPress = longPressCopy,
+                        isLast = widevineList.last() == it,
+                        topStart = if (widevineList.first() == it) 25.dp else 5.dp,
+                        topEnd = if (widevineList.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (widevineList.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (widevineList.last() == it) 25.dp else 5.dp
+                    )
+                }
+            }
         }
-        header { HeaderLine(tittle = stringResource(R.string.clearkey)) }
-        items(clearKeyInfo.toList()){
-            IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() }, info = it.second, canLongPress = longPressCopy)
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.clearkey))
+                val clearKeyList = clearKeyInfo.toList()
+                clearKeyList.forEach {
+                    IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() },
+                        info = it.second,
+                        canLongPress = longPressCopy,
+                        isLast = clearKeyList.last() == it,
+                        topStart = if (clearKeyList.first() == it) 25.dp else 5.dp,
+                        topEnd = if (clearKeyList.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (clearKeyList.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (clearKeyList.last() == it) 25.dp else 5.dp
+                    )
+                }
+
+            }
         }
     }
 }
@@ -669,15 +827,29 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
         }
     }
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(400.dp),
+        columns = GridCells.Fixed(1),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues),
-        contentPadding = paddingValues
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        header {GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
-        items(infoList){
-            IndividualLine(tittle = stringResource(it.name), info = it.value.toString() + it.extra.toString(), canLongPress = longPressCopy)
+        header {GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)}
+        item {
+            Column {
+                infoList.forEach {
+                    IndividualLine(tittle = stringResource(it.name),
+                        info = it.value.toString() + it.extra,
+                        canLongPress = longPressCopy,
+                        isLast = infoList.last() == it,
+                        topStart = if (infoList.first() == it) 25.dp else 5.dp,
+                        topEnd = if (infoList.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (infoList.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (infoList.last() == it) 25.dp else 5.dp
+                    )
+                }
+            }
         }
     }
 }
@@ -688,7 +860,7 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, currentRoute: String?, paddingValues: PaddingValues) {
     val width = LocalConfiguration.current.screenWidthDp.dp
     var index by rememberSaveable { mutableIntStateOf(0) }
-    val state = rememberLazyStaggeredGridState(initialFirstVisibleItemIndex = 0)
+    val state = rememberLazyStaggeredGridState(initialFirstVisibleItemIndex = index)
     val listScreen = listOf(
         NavigationItem.System,
         NavigationItem.Android,
@@ -867,17 +1039,32 @@ fun MemoryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     }
 
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(400.dp),
+        columns = GridCells.Fixed(1),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues),
-        contentPadding = paddingValues
-
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
-        header {GeneralProgressBar((ramInfo[2].value as Number).toLong(), (ramInfo[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
-        items(ramInfo) {
-            IndividualLine(tittle = stringResource(it.name), info = it.value.toString() + it.extra.toString(), canLongPress = longPressCopy)
+        header {GeneralProgressBar((ramInfo[2].value as Number).toLong(), (ramInfo[3].value as Number).toLong(), 1,
+            height = 30.dp,
+            verticalPadding = 15.dp)}
+        item {
+            Column {
+                ramInfo.forEach {
+                    IndividualLine(tittle = stringResource(it.name),
+                        info = it.value.toString() + it.extra,
+                        canLongPress = longPressCopy,
+                        isLast = ramInfo.last() == it,
+                        topStart = if (ramInfo.first() == it) 25.dp else 5.dp,
+                        topEnd = if (ramInfo.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (ramInfo.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (ramInfo.last() == it) 25.dp else 5.dp
+                    )
+                }
+            }
         }
     }
 }
@@ -898,24 +1085,59 @@ fun StorageScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 
 
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(400.dp),
+        columns = GridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues),
-        contentPadding = paddingValues
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
 
     ) {
-        header { HeaderLine(tittle = stringResource(R.string.internal_storage)) }
-        header {GeneralProgressBar((internalStorageStats[2].value as Number).toLong(), (internalStorageStats[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
-        items(internalStorageStats) {
-            IndividualLine(tittle = stringResource(it.name), info = if (it.type == 0) it.extra.toString() else it.value.toString() + it.extra, canLongPress = longPressCopy)
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.internal_storage))
+                GeneralProgressBar((internalStorageStats[2].value as Number).toLong(), (internalStorageStats[3].value as Number).toLong(), 1,
+                height = 30.dp, verticalPadding = 5.dp)
+                Spacer(modifier = Modifier.padding(10.dp))
+                internalStorageStats.forEach {
+                    IndividualLine(tittle = stringResource(it.name),
+                        info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
+                        canLongPress = longPressCopy,
+                        isLast = internalStorageStats.last() == it,
+                        topStart = if (internalStorageStats.first() == it) 25.dp else 5.dp,
+                        topEnd = if (internalStorageStats.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (internalStorageStats.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (internalStorageStats.last() == it) 25.dp else 5.dp
+                    )
+                }
+            }
         }
-
         if (externalStorageStats.isNotEmpty()) {
-            header { HeaderLine(tittle = stringResource(R.string.external_storage)) }
-            header {GeneralProgressBar((externalStorageStats[2].value as Number).toLong(), (externalStorageStats[3].value as Number).toLong(), 1, horizontalPadding = 30.dp, verticalPadding = 5.dp)}
-            items(externalStorageStats) {
-                IndividualLine(tittle = stringResource(it.name), info = if (it.type == 0) it.extra.toString() else it.value.toString() + it.extra, canLongPress = longPressCopy)
+            item {
+                Column {
+                    HeaderLine(tittle = stringResource(R.string.external_storage))
+                    GeneralProgressBar(
+                        (externalStorageStats[2].value as Number).toLong(),
+                        (externalStorageStats[3].value as Number).toLong(),
+                        1,
+                        height = 30.dp,
+                        verticalPadding = 5.dp
+                    )
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    externalStorageStats.forEach {
+                        IndividualLine(
+                            tittle = stringResource(it.name),
+                            info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
+                            canLongPress = longPressCopy,
+                            isLast = externalStorageStats.last() == it,
+                            topStart = if (externalStorageStats.first() == it) 25.dp else 5.dp,
+                            topEnd = if (externalStorageStats.first() == it) 25.dp else 5.dp,
+                            bottomStart = if (externalStorageStats.last() == it) 25.dp else 5.dp,
+                            bottomEnd = if (externalStorageStats.last() == it) 25.dp else 5.dp
+                        )
+                    }
+                }
             }
         }
     }
@@ -934,30 +1156,61 @@ fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
             refreshKey++
         }
     }
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(400.dp),
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues),
-        contentPadding = paddingValues
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        header { HeaderLine(tittle = stringResource(R.string.cpu_info)) }
-        items(cpuInfoList) {
-            if (it.type == 1)
-                IndividualLine(tittle = stringResource(it.name, it.value), info = it.extra.toString(), canLongPress = longPressCopy)
-            else
-                IndividualLine(tittle = stringResource(it.name), info = it.value.toString(), canLongPress = longPressCopy)
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.cpu_info))
+                cpuInfoList.forEach {
+                    IndividualLine(tittle = if (it.type == 1) stringResource(it.name, it.value) else stringResource(it.name),
+                        info = if (it.type == 1) it.extra else it.value.toString(),
+                        canLongPress = longPressCopy,
+                        isLast = cpuInfoList.last() == it,
+                        topStart = if (cpuInfoList.first() == it) 25.dp else 5.dp,
+                        topEnd = if (cpuInfoList.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (cpuInfoList.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (cpuInfoList.last() == it) 25.dp else 5.dp
+                    )
+                }
+            }
         }
-        header { HeaderLine(tittle = stringResource(R.string.cpu_usage))}
-        items(cpuUsageInfo){
-            IndividualLine(tittle = stringResource(it.name, it.value), info = it.extra.toString(), canLongPress = longPressCopy)
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.cpu_usage))
+                cpuUsageInfo.forEach {
+                    IndividualLine(tittle = stringResource(it.name, it.value),
+                        info = it.extra,
+                        canLongPress = longPressCopy,
+                        isLast = cpuUsageInfo.last() == it,
+                        topStart = if (cpuUsageInfo.first() == it) 25.dp else 5.dp,
+                        topEnd = if (cpuUsageInfo.first() == it) 25.dp else 5.dp,
+                        bottomStart = if (cpuUsageInfo.last() == it) 25.dp else 5.dp,
+                        bottomEnd = if (cpuUsageInfo.last() == it) 25.dp else 5.dp
+                    )
+                }
+            }
         }
-        //item { IndividualLine(tittle = "Raw Info", info = getSocRawInfo()) }
-        header { HeaderLine(tittle = stringResource(R.string.gpu_info)) }
-        item { IndividualLine(tittle = stringResource(R.string.gles_version), info = glEs, canLongPress = longPressCopy) }
-        //item { IndividualLine(tittle = stringResource(R.string.gpu_renderer), info = SocUtils.getGpuRenderer()) }
-        //item { IndividualLine(tittle = stringResource(R.string.gpu_vendor), info = SocUtils.getGpuVendor()) }
-
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.gpu_info))
+                IndividualLine(tittle = stringResource(R.string.gles_version),
+                    info = glEs,
+                    canLongPress = longPressCopy,
+                    isLast = true,
+                    topStart = 25.dp,
+                    topEnd = 25.dp,
+                    bottomStart = 25.dp,
+                    bottomEnd = 25.dp
+                )
+            }
+        }
     }
 }
 
@@ -994,39 +1247,79 @@ fun IndividualLine(
     info2: String = "",
     info3: String = "",
     onClick: () -> Unit = { },
-    canLongPress: Boolean = true
+    canLongPress: Boolean = true,
+    topStart: Dp = 5.dp,
+    topEnd: Dp = 5.dp,
+    bottomStart: Dp = 5.dp,
+    bottomEnd: Dp = 5.dp,
+    isLast: Boolean = false
 ){
     val context = LocalContext.current
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape = MaterialTheme.shapes.large)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = {
-                    if (canLongPress){
-                        context.copyTextToClipboard(buildString {
-                            append(tittle)
-                            append("\n")
-                            append(info)
-                        })
-                        Toast.makeText(context, context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
-                    }
-                },
-            )
-            .padding(
-                horizontal = 30.dp,
-                vertical = 10.dp
-            ),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
-    ){
-        Text(text = tittle, fontSize = 18.sp, fontWeight = FontWeight.Medium,  modifier = Modifier.padding(vertical = 5.dp))
-        if (info.isNotEmpty())
-            Text(text = info, modifier = Modifier.padding(vertical = 5.dp))
-        if (info2.isNotEmpty())
-            Text(text = info2, modifier = Modifier.padding(vertical = 5.dp))
-        if (info3.isNotEmpty())
-            Text(text = info3, modifier = Modifier.padding(vertical = 5.dp))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(
+                    shape = RoundedCornerShape(
+                        topStart = topStart,
+                        topEnd = topEnd,
+                        bottomStart = bottomStart,
+                        bottomEnd = bottomEnd
+                    )
+                )
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                    shape = RoundedCornerShape(
+                        topStart = topStart,
+                        topEnd = topEnd,
+                        bottomStart = bottomStart,
+                        bottomEnd = bottomEnd
+                    )
+                )
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = {
+                        if (canLongPress) {
+                            context.copyTextToClipboard(buildString {
+                                append(tittle)
+                                append("\n")
+                                append(info)
+                            })
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.copied_to_clipboard),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
+                )
+                .padding(horizontal = 20.dp, vertical = 10.dp),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            Text(
+                text = tittle,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(vertical = 5.dp)
+            )
+            if (info.isNotEmpty())
+                Text(text = info, fontSize = 14.sp, modifier = Modifier.padding(vertical = 5.dp))
+            if (info2.isNotEmpty())
+                Text(text = info2, fontSize = 14.sp, modifier = Modifier.padding(vertical = 5.dp))
+            if (info3.isNotEmpty())
+                Text(text = info3, fontSize = 14.sp, modifier = Modifier.padding(vertical = 5.dp))
+
+        }
+        if (!isLast) {
+            HorizontalDivider(
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.background
+            )
+        }
     }
 }
 
@@ -1039,7 +1332,7 @@ fun LazyGridScope.header(
 
 
 @Composable
-fun HeaderLine(tittle: String, horizontalPadding: Dp = 30.dp, verticalPadding: Dp = 10.dp) {
+fun HeaderLine(tittle: String, horizontalPadding: Dp = 10.dp, verticalPadding: Dp = 10.dp) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1074,81 +1367,97 @@ fun SettingsScreen(
         AboutItem.More,
         AboutItem.Contact
     )
-    LazyVerticalGrid (
-        columns = GridCells.Adaptive(400.dp),
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues),
-        contentPadding = paddingValues
-
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        header { HeaderLine(tittle = stringResource(R.string.display)) }
         item {
-            ThemeSelector(
-                paddingValues = 30.dp,
-                selectedTheme = appColor,
-                onThemeSelected = {
-                    settings.setAppColor(it)
-                }
-            )
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.display))
+                ThemeSelector(
+                    selectedTheme = appColor,
+                    onThemeSelected = {
+                        settings.setAppColor(it)
+                    },
+                    bottomStart = 5.dp,
+                    bottomEnd = 5.dp
+                )
                 CommonSwitchOption(
                     text = R.string.material_you,
                     subText = R.string.material_you_details,
                     extra = "",
-                    horizontalPadding = 30.dp,
-                    checked = isDynamicColors,
+                    checked = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) isDynamicColors else false,
                     onClick = {
                         settings.setUseDynamicColors(!isDynamicColors)
                     },
                     onSwitch = {
                         settings.setUseDynamicColors(it)
-                    }
+                    },
+                    topStart = 5.dp,
+                    topEnd = 5.dp,
+                    bottomStart = 5.dp,
+                    bottomEnd = 5.dp,
+                    enabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
+                    clickable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                )
+                CommonSwitchOption(
+                    text = R.string.use_details_dashboard,
+                    subText = R.string.use_new_dashboard_details,
+                    extra = "",
+                    checked = useNewDashboard,
+                    onClick = {
+                        settings.setUseNewDashboard(!useNewDashboard)
+                    },
+                    onSwitch = {
+                        settings.setUseNewDashboard(it)
+                    },
+                    topStart = 5.dp,
+                    topEnd = 5.dp,
+                    isLast = true
                 )
             }
         }
         item {
-            CommonSwitchOption(
-                text = R.string.use_details_dashboard,
-                subText = R.string.use_new_dashboard_details,
-                extra = "",
-                horizontalPadding = 30.dp,
-                checked = useNewDashboard,
-                onClick = {
-                    settings.setUseNewDashboard(!useNewDashboard)
-                },
-                onSwitch = {
-                    settings.setUseNewDashboard(it)
-                }
-            )
+            Column {
+                HeaderLine(tittle = stringResource(R.string.general))
+                CommonSwitchOption(
+                    text = R.string.long_press_to_copy,
+                    subText = R.string.long_press_to_copy_details,
+                    extra = "",
+                    checked = longPressCopy,
+                    onClick = {
+                        settings.setLongPressCopy(!longPressCopy)
+                    },
+                    onSwitch = {
+                        settings.setLongPressCopy(it)
+                    },
+                    isLast = true
+                )
+            }
         }
-        header { HeaderLine(tittle = stringResource(R.string.general)) }
         item {
-            CommonSwitchOption(
-                text = R.string.long_press_to_copy,
-                subText = R.string.long_press_to_copy_details,
-                extra = "",
-                horizontalPadding = 30.dp,
-                checked = longPressCopy,
-                onClick = {
-                    settings.setLongPressCopy(!longPressCopy)
-                },
-                onSwitch = {
-                    settings.setLongPressCopy(it)
+            Column {
+                HeaderLine(tittle = stringResource(R.string.about))
+                items.forEach { item ->
+                    val url = stringResource(id = item.url)
+                    AboutMenuItem(tittle = stringResource(id = item.title),
+                        text = stringResource(id = item.text),
+                        onItemClick = {
+                            uriHandler.openUri(url)
+                        },
+                        isLast = items.last() == item,
+                        topStart = if (items.first() == item) 25.dp else 5.dp,
+                        topEnd = if (items.first() == item) 25.dp else 5.dp,
+                        bottomStart = if (items.last() == item) 25.dp else 5.dp,
+                        bottomEnd = if (items.last() == item) 25.dp else 5.dp
+                    )
                 }
-            )
-        }
-        header { HeaderLine(tittle = stringResource(R.string.about)) }
-        items(items){ item ->
-            val url = stringResource(id = item.url)
-            AboutMenuItem(tittle = stringResource(id = item.title),
-                text = stringResource(id = item.text),
-                onItemClick = {
-                    uriHandler.openUri(url)
-                }
-            )
+            }
         }
     }
 }
@@ -1157,21 +1466,56 @@ fun SettingsScreen(
 fun AboutMenuItem(
     tittle: String,
     text: String,
+    topStart: Dp = 5.dp,
+    topEnd: Dp = 5.dp,
+    bottomStart: Dp = 5.dp,
+    bottomEnd: Dp = 5.dp,
+    isLast: Boolean = false,
     onItemClick: () -> Unit){
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape = MaterialTheme.shapes.large)
-            .clickable(onClick = onItemClick)
-            .padding(
-                horizontal = 30.dp,
-                vertical = 10.dp
-            ),
-        horizontalAlignment = Alignment.Start,
-    ){
-        Text(text = tittle, fontSize = 18.sp, fontWeight = FontWeight.Medium,  modifier = Modifier.padding(vertical = 5.dp))
-        Text(text = text, modifier = Modifier.padding(vertical = 5.dp))
+    Column {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(
+                    shape = RoundedCornerShape(
+                        topStart = topStart,
+                        topEnd = topEnd,
+                        bottomStart = bottomStart,
+                        bottomEnd = bottomEnd
+                    )
+                )
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                    shape = RoundedCornerShape(
+                        topStart = topStart,
+                        topEnd = topEnd,
+                        bottomStart = bottomStart,
+                        bottomEnd = bottomEnd
+                    )
+                )
+                .clickable(onClick = onItemClick)
+                .padding(
+                    horizontal = 20.dp,
+                    vertical = 10.dp
+                ),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            Text(
+                text = tittle,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(vertical = 5.dp)
+            )
+            Text(text = text, modifier = Modifier.padding(vertical = 5.dp))
+        }
+        if (!isLast) {
+            HorizontalDivider(
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.background
+            )
+        }
     }
+
 }
 
 @Composable
@@ -1183,64 +1527,93 @@ fun CommonSwitchOption(
     enabled: Boolean = true,
     separator: Boolean = false,
     checked: Boolean,
-    horizontalPadding: Dp = 30.dp,
+    horizontalPadding: Dp = 20.dp,
+    topStart: Dp = 25.dp,
+    topEnd: Dp = 25.dp,
+    bottomStart: Dp = 25.dp,
+    bottomEnd: Dp = 25.dp,
+    isLast: Boolean = false,
     onClick: () -> Unit,
     onSwitch: (Boolean) -> Unit
 ) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .clip(shape = MaterialTheme.shapes.large)
-        .clickable(enabled = clickable) {
-            onClick()
-        }
-        .height(IntrinsicSize.Min)
-        .padding(horizontal = horizontalPadding),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(modifier = Modifier.weight(0.7f),
-            verticalAlignment = Alignment.CenterVertically) {
-            //Spacer(modifier = Modifier.width(30.dp))
-           /* Icon(imageVector = ImageVector.vectorResource(id = iconId),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(vertical = 10.dp),
-                tint = if (enabled) MaterialTheme.colorScheme.onBackground else Color.Gray
-            )*/
-            Column(modifier = Modifier.padding(vertical = 10.dp)) {
-                Text(
-                    text = stringResource(id = text),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(vertical = 5.dp),
-                    color = if (enabled) MaterialTheme.colorScheme.onBackground else Color.Gray
+    Column {
+        Row(
+            modifier = Modifier
+            .fillMaxWidth()
+            .clip(
+                shape = RoundedCornerShape(
+                    topStart = topStart,
+                    topEnd = topEnd,
+                    bottomStart = bottomStart,
+                    bottomEnd = bottomEnd
                 )
-                if (subText != -1)
-                    Text(text = stringResource(id = subText, extra), fontSize = 15.sp)
+            )
+            .background(
+                color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                shape = RoundedCornerShape(
+                    topStart = topStart,
+                    topEnd = topEnd,
+                    bottomStart = bottomStart,
+                    bottomEnd = bottomEnd
+                )
+            )
+            .clickable(enabled = clickable) {
+                onClick()
             }
-        }
-        if (separator){
-            VerticalDivider(
-                color = Color.Gray,
+            .height(IntrinsicSize.Min)
+            .padding(horizontal = horizontalPadding),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                modifier = Modifier.weight(0.7f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.padding(vertical = 10.dp)) {
+                    Text(
+                        text = stringResource(id = text),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(vertical = 5.dp),
+                        color = if (enabled) MaterialTheme.colorScheme.onBackground else Color.Gray
+                    )
+                    if (subText != -1)
+                        Text(text = stringResource(id = subText, extra),
+                            fontSize = 15.sp,
+                            color = if (enabled) MaterialTheme.colorScheme.onBackground else Color.Gray
+                        )
+                }
+            }
+            if (separator) {
+                VerticalDivider(
+                    color = Color.Gray,
+                    modifier = Modifier
+                        .height(30.dp)
+                        .width(1.dp)
+                )
+            }
+            Switch(
                 modifier = Modifier
-                    .height(30.dp)
-                    .width(1.dp)
+                    .weight(0.2f)
+                    .padding(start = 15.dp),
+                enabled = enabled,
+                checked = checked,
+                onCheckedChange = onSwitch,
+                thumbContent = {
+                    Icon(
+                        imageVector = if (checked) Icons.Outlined.Check else Icons.Outlined.Close,
+                        contentDescription = null,
+                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                    )
+                }
             )
         }
-        Switch(modifier = Modifier
-            .weight(0.2f)
-            .padding(start = 15.dp),
-            enabled = enabled,
-            checked = checked,
-            onCheckedChange = onSwitch,
-            thumbContent = {
-                Icon(
-                    imageVector =  if (checked) Icons.Outlined.Check else Icons.Outlined.Close,
-                    contentDescription = null,
-                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                )
-            }
-        )
+        if (!isLast) {
+            HorizontalDivider(
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.background
+            )
+        }
     }
 }
 
@@ -1248,7 +1621,12 @@ fun CommonSwitchOption(
 fun ThemeSelector(
     selectedTheme: Int,
     onThemeSelected: (Int) -> Unit,
-    paddingValues: Dp = 20.dp
+    topStart: Dp = 25.dp,
+    topEnd: Dp = 25.dp,
+    bottomStart: Dp = 25.dp,
+    bottomEnd: Dp = 25.dp,
+    paddingValues: Dp = 20.dp,
+    isLast: Boolean = false
 ) {
     val themeOptions = mutableListOf(
         AppTheme.System,
@@ -1258,40 +1636,64 @@ fun ThemeSelector(
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
         themeOptions.remove(AppTheme.System)
     }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = paddingValues)
-    ) {
-        Text(
-            text = stringResource(R.string.app_color),
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Medium,
+    Column {
+        Column(
             modifier = Modifier
-                .padding(vertical = 5.dp)
-                .padding(bottom = 5.dp)
-        )
-        Row(
-            modifier = Modifier
-                .horizontalScroll(rememberScrollState())
-                .padding(bottom = 5.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            themeOptions.forEach { theme ->
-                FilterChip(
-                    leadingIcon = {
-                        Icon(imageVector = ImageVector.vectorResource(theme.icon),
-                            contentDescription = null
-                        )
-                    },
-                    selected = selectedTheme == theme.value,
-                    onClick = { onThemeSelected(theme.value) },
-                    label = { Text(stringResource(theme.title)) }
+                .fillMaxWidth()
+                .clip(
+                    shape = RoundedCornerShape(
+                        topStart = topStart,
+                        topEnd = topEnd,
+                        bottomStart = bottomStart,
+                        bottomEnd = bottomEnd
+                    )
                 )
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                    shape = RoundedCornerShape(
+                        topStart = topStart,
+                        topEnd = topEnd,
+                        bottomStart = bottomStart,
+                        bottomEnd = bottomEnd
+                    )
+                )
+                .padding(horizontal = paddingValues)
+        ) {
+            Text(
+                text = stringResource(R.string.app_color),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier
+                    .padding(vertical = 10.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+                    .padding(bottom = 5.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                themeOptions.forEach { theme ->
+                    FilterChip(
+                        leadingIcon = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(theme.icon),
+                                contentDescription = null
+                            )
+                        },
+                        selected = selectedTheme == theme.value,
+                        onClick = { onThemeSelected(theme.value) },
+                        label = { Text(stringResource(theme.title), fontSize = 14.sp) }
+                    )
+                }
             }
         }
+        if (!isLast) {
+            HorizontalDivider(
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.background
+            )
+        }
     }
-
 }
 
 @Composable

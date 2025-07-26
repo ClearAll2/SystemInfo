@@ -1,6 +1,7 @@
 package com.lkonlesoft.displayinfo.utils
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.SystemClock
 import android.provider.Settings
@@ -8,6 +9,7 @@ import androidx.annotation.RequiresApi
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import java.io.File
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -37,6 +39,8 @@ class SystemUtils(private val context: Context) {
             DeviceInfo(R.string.seamless_update, if (isSeamlessUpdateSupported()) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
             DeviceInfo(R.string.active_slot, if (isSeamlessUpdateSupported() && getActiveSlot() != context.getString(R.string.unknown)) getActiveSlot() else context.getString(R.string.n_a)),
             DeviceInfo(R.string.root, if (isDeviceRooted()) context.getString(R.string.yes) else context.getString(R.string.no)),
+            DeviceInfo(R.string.has_magisk, if (isMagiskPresent()) context.getString(R.string.yes) else context.getString(R.string.not_found_or_hidden)),
+            DeviceInfo(R.string.has_magisk_properties, if (hasMagiskProperties()) context.getString(R.string.yes) else context.getString(R.string.not_found_or_hidden)),
             DeviceInfo(R.string.device_features, getAllSystemFeatures().joinToString("\n")),
         )
     }
@@ -188,12 +192,65 @@ class SystemUtils(private val context: Context) {
     }
 
     fun isDeviceRooted(): Boolean {
-        val paths = arrayOf(
-            "/system/bin/su", "/system/xbin/su", "/sbin/su",
-            "/system/su", "/system/bin/.ext/.su", "/system/usr/we-need-root/su"
+        // Check common su binary paths
+        val suPaths = listOf(
+            "/system/bin/su",
+            "/system/xbin/su",
+            "/sbin/su",
+            "/system/su",
+            "/system/bin/.ext/.su",
+            "/system/usr/we-need-root/su",
+            "/data/local/xbin/su",
+            "/data/local/bin/su",
+            "/data/local/su",
+            "/su/bin/su"
         )
-        return paths.any { path -> File(path).exists() }
+
+        // Check for su binary existence
+        val hasSuBinary = suPaths.any { path ->
+            try {
+                File(path).exists()
+            } catch (_: SecurityException) {
+                false // Handle permission denied gracefully
+            }
+        }
+
+        // Additional root detection checks
+        val isTestKeys = Build.TAGS?.contains("test-keys") == true
+        val hasSuperuserApk = try {
+            File("/system/app/Superuser.apk").exists() || File("/system/app/SuperSU.apk").exists()
+        } catch (_: SecurityException) {
+            false
+        }
+
+        val canExecuteSu = try {
+            Runtime.getRuntime().exec(arrayOf("which", "su")).waitFor() == 0
+        } catch (_: IOException) {
+            false
+        } catch (_: SecurityException) {
+            false
+        }
+
+        return hasSuBinary || isTestKeys || hasSuperuserApk || canExecuteSu
     }
 
+    fun isMagiskPresent(): Boolean {
+        val pm = context.packageManager
+        return try {
+            pm.getPackageInfo("com.topjohnwu.magisk", 0)
+            true
+        } catch (_: PackageManager.NameNotFoundException) {
+            false
+        }
+    }
+
+    fun hasMagiskProperties(): Boolean {
+        return try {
+            val props = Runtime.getRuntime().exec("getprop").inputStream.bufferedReader().readText()
+            props.contains("magisk") || props.contains("init.magisk")
+        } catch (_: IOException) {
+            false
+        }
+    }
 
 }

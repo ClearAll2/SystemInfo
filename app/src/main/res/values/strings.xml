@@ -174,4 +174,7 @@
     <string name="icc_id">ICCID</string>
     <string name="subscription_id">Subscription ID</string>
     <string name="sim_info">SIM info</string>
+    <string name="has_magisk">Magisk App installed</string>
+    <string name="has_magisk_properties">Magisk Properties installed</string>
+    <string name="not_found_or_hidden">Not found or Hidden</string>
 </resources>

@@ -6,5 +6,6 @@ data class SimInfo (
     val displayName: String,
     val countryIso: String,
     val iccId: String,
-    val subscriptionId: Int
+    val subscriptionId: Int,
+    val isActive: Boolean = true
 )
