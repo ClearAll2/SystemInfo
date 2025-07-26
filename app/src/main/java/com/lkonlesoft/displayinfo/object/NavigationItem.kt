@@ -3,7 +3,7 @@ package com.lkonlesoft.displayinfo.`object`
 import androidx.annotation.StringRes
 import com.lkonlesoft.displayinfo.R
 
-sealed class NavigationItem (@StringRes val name: Int, val route: String, val icon: Int){
+sealed class NavigationItem (@param:StringRes val name: Int, val route: String, val icon: Int){
     data object Home: NavigationItem(name = R.string.system_info, route = "home", R.drawable.outline_info_24)
     data object System: NavigationItem(name = R.string.system, route = "system", R.drawable.outline_settings_24)
     data object Android: NavigationItem(name = R.string.android, route = "android", R.drawable.outline_android_24)
