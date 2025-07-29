@@ -6,8 +6,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 31
-val buildName = "3.0"
+val buildCode = 32
+val buildName = "3.1"
 val appId = "com.lkonlesoft.displayinfo"
 
 android {
@@ -55,6 +55,8 @@ android {
 }
 
 dependencies {
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
+    implementation("com.google.android.play:app-update:2.1.0")
     implementation ("androidx.window:window:1.4.0")
     implementation ("androidx.glance:glance-appwidget:1.1.1")
     implementation ("androidx.glance:glance-material3:1.1.1")

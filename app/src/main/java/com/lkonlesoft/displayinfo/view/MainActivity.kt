@@ -60,8 +60,11 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridItemScope
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
@@ -129,12 +132,20 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.CameraInfo
 import com.lkonlesoft.displayinfo.helper.connectionStateToString
@@ -165,16 +176,73 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var appUpdateManager: AppUpdateManager
+    private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+        if (result.resultCode != RESULT_OK){
+            Toast.makeText(applicationContext, getString(R.string.update_not_download), Toast.LENGTH_LONG).show()
+        }
+        if (result.resultCode == RESULT_OK){
+            Toast.makeText(applicationContext, getString(R.string.downloading_update), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private val installStateUpdatedListener = InstallStateUpdatedListener { state ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            Toast.makeText(
+                applicationContext,
+                getString(R.string.download_update_complete),
+                Toast.LENGTH_SHORT
+            ).show()
+            lifecycleScope.launch {
+                delay(3000)
+                appUpdateManager.completeUpdate()
+            }
+        }
+    }
+
+    private fun checkForAppUpdates(){
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)){
+                appUpdateManager.startUpdateFlowForResult(
+                    info,
+                    activityResultLauncher,
+                    AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
+            }
+        }
+    }
 
     private val settings: SettingsViewModel by viewModels{
         SettingsModelFactory(application)
     }
 
+    override fun onResume() {
+        super.onResume()
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+            if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                appUpdateManager.startUpdateFlowForResult(
+                    info,
+                    activityResultLauncher,
+                    AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        appUpdateManager.unregisterListener(installStateUpdatedListener)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        appUpdateManager = AppUpdateManagerFactory.create(applicationContext).apply {
+            registerListener(installStateUpdatedListener)
+        }
+        checkForAppUpdates()
         installSplashScreen()
         enableEdgeToEdge()
         setContent {
@@ -833,7 +901,8 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
         contentPadding = paddingValues,
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        header {GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)}
+
+        item {GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)}
         item {
             Column {
                 infoList.forEach {
@@ -848,6 +917,12 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                     )
                 }
             }
+        }
+        item {
+            GeneralWarning(
+                title = R.string.battery_notice_title,
+                text = R.string.battery_notice
+            )
         }
     }
 }
@@ -1209,6 +1284,12 @@ fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                 )
             }
         }
+        staggeredHeader {
+            GeneralWarning(
+                title = R.string.soc_notice_title,
+                text = R.string.soc_notice
+            )
+        }
     }
 }
 
@@ -1272,7 +1353,7 @@ fun IndividualLine(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -1330,6 +1411,14 @@ fun LazyGridScope.header(
     item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
 }
 
+fun LazyStaggeredGridScope.staggeredHeader(
+    content: @Composable LazyStaggeredGridItemScope.() -> Unit
+) {
+    item(
+        span = StaggeredGridItemSpan.FullLine, // Use this to span the full width
+        content = content
+    )
+}
 
 @Composable
 fun HeaderLine(tittle: String, horizontalPadding: Dp = 10.dp, verticalPadding: Dp = 10.dp) {
@@ -1485,7 +1574,7 @@ fun AboutMenuItem(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -1550,7 +1639,7 @@ fun CommonSwitchOption(
                 )
             )
             .background(
-                color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                color = MaterialTheme.colorScheme.surfaceContainer,
                 shape = RoundedCornerShape(
                     topStart = topStart,
                     topEnd = topEnd,
@@ -1650,7 +1739,7 @@ fun ThemeSelector(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -1696,6 +1785,44 @@ fun ThemeSelector(
                 color = MaterialTheme.colorScheme.background
             )
         }
+    }
+}
+
+@Composable
+fun GeneralWarning(
+    canClick: Boolean = false,
+    title: Int,
+    text: Int,
+    icon: Int = R.drawable.outline_comment_24,
+    onClick: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 20.dp)
+            .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(
+                color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp).copy(.5f),
+                shape = RoundedCornerShape(20.dp)
+            )
+            .clickable(canClick) { onClick() }
+            .padding(vertical = 10.dp, horizontal = 20.dp),
+    ) {
+        Row (modifier = Modifier.padding(vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Icon(imageVector = ImageVector.vectorResource(icon),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+            Text(text = stringResource(title))
+        }
+
+        Text(text = stringResource(text),
+            fontSize = 14.sp,
+            modifier = Modifier
+                .padding(vertical = 10.dp)
+        )
     }
 }
 
