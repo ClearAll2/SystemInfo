@@ -180,8 +180,9 @@
     <string name="battery_notice">Please be aware that battery information for this device may be hidden or made publicly available at the discretion of the vendor. Some vendors choose to display detailed battery specifications, such as capacity, type, or performance metrics, while others may restrict access to this information for proprietary or competitive reasons.</string>
     <string name="battery_notice_title">Battery Information Notice</string>
     <string name="soc_notice_title">CPU/SoC Information Notice</string>
-    <string name="soc_notice">Details about the CPU or System on a Chip (SoC) for this product may be publicly available or hidden, based on the vendor\'s discretion. We collect CPU/SoC information entirely offline, directly from the device, without relying on internet sources. For accurate specifications, refer to the vendor’s official documentation or contact their support.</string>
+    <string name="soc_notice">Details about the CPU or System on a Chip (SoC) for this device may be publicly available or hidden, based on the vendor\'s discretion. We collect CPU/SoC information entirely offline, directly from the device, without relying on internet sources. For accurate specifications, refer to the vendor’s official documentation or contact their support.</string>
     <string name="update_not_download">Discarded update</string>
     <string name="downloading_update">Downloading update</string>
     <string name="download_update_complete">Update is ready, restart app in 3 seconds.</string>
+    <string name="root_status">Root status</string>
 </resources>

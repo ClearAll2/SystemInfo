@@ -50,8 +50,8 @@ class NetworkUtils(private val context: Context) {
             && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             val simInfoList = getDualSimInfo()
             if (simInfoList.isNotEmpty()) {
-                simInfoList.map { simInfo ->
-                    return listOf(
+                return simInfoList.flatMap  { simInfo ->
+                     listOf(
                         DeviceInfo(R.string.sim_slot, simInfo.slot),
                         DeviceInfo(R.string.carrier_name, simInfo.carrierName),
                         DeviceInfo(R.string.sim_display_name, simInfo.displayName),

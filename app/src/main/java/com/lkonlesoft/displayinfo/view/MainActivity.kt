@@ -27,8 +27,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -148,6 +148,7 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.CameraInfo
+import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.connectionStateToString
 import com.lkonlesoft.displayinfo.helper.copyTextToClipboard
 import com.lkonlesoft.displayinfo.helper.hasPermission
@@ -312,13 +313,13 @@ fun ScaffoldContext(settings: SettingsViewModel){
     val currentRoute = navBackStackEntry?.destination?.route
     // Animation spec for fading (used for fadeIn/fadeOut)
     val fadeAnimationSpec: FiniteAnimationSpec<Float> = tween(
-        durationMillis = 300,
-        easing = FastOutSlowInEasing
+        durationMillis = 250,
+        easing = LinearEasing
     )
     // Animation spec for sliding (used for slideInHorizontally/slideOutHorizontally)
     val slideAnimationSpec: FiniteAnimationSpec<IntOffset> = tween(
-        durationMillis = 300,
-        easing = FastOutSlowInEasing
+        durationMillis = 250,
+        easing = LinearEasing
     )
     ScreenInfoTheme (
         darkTheme = when(appColor) {
@@ -431,8 +432,12 @@ fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val deviceInfoList by remember { mutableStateOf(
         SystemUtils(context).getDeviceData()) }
+    var rootInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
     val extraInfoList by remember { mutableStateOf(
         SystemUtils(context).getExtraData()) }
+    LaunchedEffect(Unit) {
+        rootInfoList = SystemUtils(context).getRootData()
+    }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(320.dp),
         modifier = Modifier
@@ -455,6 +460,22 @@ fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         topEnd = if (deviceInfoList.first() == it) 20.dp else 5.dp,
                         bottomStart = if (deviceInfoList.last() == it) 20.dp else 5.dp,
                         bottomEnd = if (deviceInfoList.last() == it) 20.dp else 5.dp
+                    )
+                }
+            }
+        }
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.root_status))
+                rootInfoList.forEach {
+                    IndividualLine(tittle = stringResource(it.name),
+                        info = it.value.toString(),
+                        canLongPress = longPressCopy,
+                        isLast = rootInfoList.last() == it,
+                        topStart = if (rootInfoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (rootInfoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (rootInfoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (rootInfoList.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -1434,6 +1455,7 @@ fun HeaderLine(tittle: String, horizontalPadding: Dp = 10.dp, verticalPadding: D
         Text(
             text = tittle,
             fontSize = 15.sp,
+            fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(vertical = 10.dp)
         )

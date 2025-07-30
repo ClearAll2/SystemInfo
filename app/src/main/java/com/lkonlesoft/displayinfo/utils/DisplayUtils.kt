@@ -108,7 +108,13 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
                 "vendor",
                 "version",
                 "securityLevel",
-                "algorithms"
+                "algorithms",
+                "hdcpLevel",
+                "maxHdcpLevel",
+                "usageReportingSupport",
+                "maxNumberOfSessions",
+                "numberOfOpenSessions",
+                "systemId"
             )
 
             for (prop in customProps) {
@@ -129,7 +135,12 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
 
             info["deviceUniqueId"] = uniqueId
 
-            mediaDrm.close()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                mediaDrm.close()
+            } else {
+                @Suppress("DEPRECATION")
+                mediaDrm.release()
+            }
 
         } catch (e: Exception) {
             info["error"] = e.message ?: "Error accessing MediaDrm"
@@ -159,7 +170,12 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
                 info[prop] = value
             }
 
-            mediaDrm.close()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                mediaDrm.close()
+            } else {
+                @Suppress("DEPRECATION")
+                mediaDrm.release()
+            }
 
         } catch (e: Exception) {
             info["error"] = e.message ?: "Error accessing MediaDrm"
