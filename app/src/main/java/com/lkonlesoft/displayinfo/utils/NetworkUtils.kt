@@ -45,12 +45,12 @@ class NetworkUtils(private val context: Context) {
     }
 
 
-    fun getSimInfo(): List<DeviceInfo> {
+    fun getSimInfo(): List<List<DeviceInfo>> {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
             && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             val simInfoList = getDualSimInfo()
             if (simInfoList.isNotEmpty()) {
-                return simInfoList.flatMap  { simInfo ->
+                return simInfoList.map  { simInfo ->
                      listOf(
                         DeviceInfo(R.string.sim_slot, simInfo.slot),
                         DeviceInfo(R.string.carrier_name, simInfo.carrierName),

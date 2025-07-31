@@ -11,8 +11,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -27,6 +25,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -66,6 +65,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -118,7 +118,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -147,7 +146,6 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.CameraInfo
 import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.connectionStateToString
 import com.lkonlesoft.displayinfo.helper.copyTextToClipboard
@@ -158,6 +156,7 @@ import com.lkonlesoft.displayinfo.`object`.NavigationItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
 import com.lkonlesoft.displayinfo.utils.AndroidUtils
 import com.lkonlesoft.displayinfo.utils.BatteryUtils
+import com.lkonlesoft.displayinfo.utils.CameraUtils
 import com.lkonlesoft.displayinfo.utils.DisplayUtils
 import com.lkonlesoft.displayinfo.utils.NetworkUtils
 import com.lkonlesoft.displayinfo.utils.SocUtils
@@ -304,6 +303,7 @@ fun NavHostController.returnToHome(){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldContext(settings: SettingsViewModel){
+    val useNewDashboard by settings.useNewDashboard.collectAsStateWithLifecycle()
     val appColor by settings.appColor.collectAsStateWithLifecycle()
     val useDynamicColors by settings.useDynamicColors.collectAsStateWithLifecycle()
     val state = rememberTopAppBarState()
@@ -313,11 +313,6 @@ fun ScaffoldContext(settings: SettingsViewModel){
     val currentRoute = navBackStackEntry?.destination?.route
     // Animation spec for fading (used for fadeIn/fadeOut)
     val fadeAnimationSpec: FiniteAnimationSpec<Float> = tween(
-        durationMillis = 250,
-        easing = LinearEasing
-    )
-    // Animation spec for sliding (used for slideInHorizontally/slideOutHorizontally)
-    val slideAnimationSpec: FiniteAnimationSpec<IntOffset> = tween(
         durationMillis = 250,
         easing = LinearEasing
     )
@@ -343,12 +338,9 @@ fun ScaffoldContext(settings: SettingsViewModel){
                             scrolledContainerColor = MaterialTheme.colorScheme.background
                         ),
                         title = {
-                            AnimatedContent(
+                            Crossfade(
                                 targetState = currentRoute,
-                                transitionSpec = {
-                                    // Crossfade for title text changes
-                                    fadeIn(fadeAnimationSpec) togetherWith fadeOut(fadeAnimationSpec)
-                                },
+                                animationSpec = fadeAnimationSpec,
                                 label = "TitleAnimation"
                             ) { route ->
                                 Text(
@@ -366,9 +358,8 @@ fun ScaffoldContext(settings: SettingsViewModel){
                                 contentAlignment = Alignment.Center,
                                 targetState = currentRoute == NavigationItem.Home.route,
                                 transitionSpec = {
-                                    // Slide and fade for navigation icon transitions
-                                    (slideInHorizontally(slideAnimationSpec) { -it } + fadeIn(fadeAnimationSpec)) togetherWith
-                                            (slideOutHorizontally(slideAnimationSpec) { -it } + fadeOut(fadeAnimationSpec))
+                                    fadeIn() + slideInHorizontally(initialOffsetX = { -it  }) togetherWith
+                                            fadeOut() + slideOutHorizontally(targetOffsetX = { -it  })
                                 },
                                 label = "NavIconAnimation"
                             ) { isHomeRoute ->
@@ -396,20 +387,35 @@ fun ScaffoldContext(settings: SettingsViewModel){
                         scrollBehavior = scrollBehavior,
                         actions = {
                             AnimatedVisibility(visible = currentRoute == NavigationItem.Home.route,
-                                enter = fadeIn(),
-                                exit = fadeOut()
+                                enter = fadeIn() + slideInHorizontally(initialOffsetX = { it  }),
+                                exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it  })
                             ) {
-                                IconButton(
-                                    modifier = Modifier.padding(end = 5.dp),
-                                    onClick = {
-                                        navController.navigate(NavigationItem.Settings.route)
-                                    }) {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(
-                                            R.drawable.rounded_settings_24
-                                        ), contentDescription = "Settings"
-                                    )
+                                Row (
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    IconButton(
+                                        onClick = {
+                                            settings.setUseNewDashboard(!useNewDashboard)
+                                        }) {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(
+                                                if (!useNewDashboard) R.drawable.outline_dashboard_24 else R.drawable.outline_tile_small_24
+                                            ), contentDescription = "View"
+                                        )
+                                    }
+                                    IconButton(
+                                        modifier = Modifier.padding(end = 5.dp),
+                                        onClick = {
+                                            navController.navigate(NavigationItem.Settings.route)
+                                        }) {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(
+                                                R.drawable.rounded_settings_24
+                                            ), contentDescription = "Settings"
+                                        )
+                                    }
                                 }
+
                             }
                         }
                     )
@@ -419,6 +425,7 @@ fun ScaffoldContext(settings: SettingsViewModel){
                     settings = settings,
                     navController = navController,
                     currentRoute = currentRoute,
+                    useNewDashboard = useNewDashboard,
                     appColor = appColor,
                     isDynamicColors = useDynamicColors,
                     paddingValues = paddingValues)
@@ -438,8 +445,8 @@ fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     LaunchedEffect(Unit) {
         rootInfoList = SystemUtils(context).getRootData()
     }
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(320.dp),
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
@@ -620,24 +627,29 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                 )
             }
         }
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.sim_info))
-                if (simInfoList.isNotEmpty() && hasPermission) {
-                    simInfoList.forEach {
+        if (simInfoList.isNotEmpty() && hasPermission) {
+            itemsIndexed(simInfoList) { index, simInfo ->
+                Column {
+                    HeaderLine(tittle = "SIM #${index+1}")
+                    simInfo.forEach {
                         IndividualLine(
                             tittle = stringResource(it.name),
                             info = it.value.toString(),
                             canLongPress = longPressCopy,
-                            isLast = simInfoList.last() == it,
-                            topStart = if (simInfoList.first() == it) 20.dp else 5.dp,
-                            topEnd = if (simInfoList.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (simInfoList.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (simInfoList.last() == it) 20.dp else 5.dp
+                            isLast = simInfo.last() == it,
+                            topStart = if (simInfo.first() == it) 20.dp else 5.dp,
+                            topEnd = if (simInfo.first() == it) 20.dp else 5.dp,
+                            bottomStart = if (simInfo.last() == it) 20.dp else 5.dp,
+                            bottomEnd = if (simInfo.last() == it) 20.dp else 5.dp
                         )
                     }
                 }
-                else {
+            }
+        }
+        else{
+            item {
+                Column {
+                    HeaderLine(tittle = stringResource(R.string.sim_info))
                     IndividualLine(tittle = stringResource(R.string.sim_info), info = stringResource(R.string.require_permission),
                         onClick = {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -692,8 +704,6 @@ fun DisplayScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
             refreshKey++
         }
     }
-
-
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
@@ -753,6 +763,12 @@ fun DisplayScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                 }
 
             }
+        }
+        item {
+            GeneralWarning(
+                title = R.string.drm_notice_title,
+                text = R.string.drm_notice,
+            )
         }
     }
 }
@@ -913,8 +929,8 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
             refreshKey++
         }
     }
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
@@ -922,8 +938,9 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
         contentPadding = paddingValues,
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-
-        item {GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)}
+        staggeredHeader {
+            GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)
+        }
         item {
             Column {
                 infoList.forEach {
@@ -938,6 +955,13 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                     )
                 }
             }
+        }
+        item {
+            GeneralWarning(
+                title = R.string.cycle_count,
+                text = R.string.battery_notice_2,
+                icon = R.drawable.outline_info_24
+            )
         }
         item {
             GeneralWarning(
@@ -964,7 +988,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
         NavigationItem.Memory,
         NavigationItem.Storage,
         NavigationItem.Network,
-        //NavigationItem.Camera,
+        NavigationItem.Camera,
         //NavigationItem.Connectivity
     )
     LaunchedEffect(state) {
@@ -1036,85 +1060,44 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
 }
 
 @Composable
-fun CameraInfoScreen(onClick: () -> Unit) {
+fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean) {
     val context = LocalContext.current
-    var cameraInfoList by remember { mutableStateOf<List<CameraInfo>>(emptyList()) }
-    BackHandler {
-        onClick()
-    }
-    // Retrieve camera info once when the composable enters the composition.
+    var cameraInfoList by remember { mutableStateOf<List<List<DeviceInfo>>>(emptyList()) }
     LaunchedEffect(Unit) {
-        val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-        val infoList = cameraManager.cameraIdList.map { cameraId ->
-            val characteristics = cameraManager.getCameraCharacteristics(cameraId)
-            // Determine which way the camera faces.
-            val lensFacingValue = characteristics.get(CameraCharacteristics.LENS_FACING)
-            val lensFacing = when (lensFacingValue) {
-                CameraCharacteristics.LENS_FACING_FRONT -> "Front"
-                CameraCharacteristics.LENS_FACING_BACK -> "Back"
-                CameraCharacteristics.LENS_FACING_EXTERNAL -> "External"
-                else -> "Unknown"
-            }
-            // Retrieve sensor orientation.
-            val sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0
-            // Determine supported hardware level.
-            val hardwareLevelInt = characteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL)
-            val hardwareLevel = when (hardwareLevelInt) {
-                CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY -> "Legacy"
-                CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED -> "Limited"
-                CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL -> "Full"
-                CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_3 -> "Level 3"
-                else -> "Unknown"
-            }
-            // Compute megapixels from sensor pixel array size.
-            val pixelArraySize = characteristics.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE)
-            val megapixels = pixelArraySize?.let {
-                it.width.toLong() * it.height.toLong() / 1_000_000.0
-            }
-
-            // Retrieve available aperture(s) and use the smallest f-number as maximum aperture.
-            val apertures = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES)
-            val maxAperture = apertures?.minOrNull() // Lower f-number: larger aperture
-
-            // Retrieve focal length, usually the first value is selected.
-            val focalLengths = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)
-            val focalLength = focalLengths?.firstOrNull()
-            // Attempt to get physical camera IDs if available (API 28+).
-            val physicalCameraIds = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                characteristics.physicalCameraIds
-            } else {
-                emptySet()
-            }
-            CameraInfo(
-                id = cameraId,
-                lensFacing = lensFacing,
-                sensorOrientation = sensorOrientation,
-                hardwareLevel = hardwareLevel,
-                megapixels = megapixels,
-                maxAperture = maxAperture,
-                focalLength = focalLength,
-                physicalCameraIds = physicalCameraIds
-            )
-        }
-        cameraInfoList = infoList
+       cameraInfoList = CameraUtils(context).getAllData()
     }
 
     // Display the list of camera details.
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(400.dp),
-        modifier = Modifier.fillMaxSize()
-
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(320.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        cameraInfoList.forEach { info ->
-            header { HeaderLine(tittle = "Camera ${info.id}") }
-            item {IndividualLine(tittle = "Lens", info = info.lensFacing)}
-            item {IndividualLine(tittle = "Sensor Orientation", info = info.sensorOrientation.toString())}
-            item {IndividualLine(tittle = "Hardware Level", info = info.hardwareLevel)}
-            item {IndividualLine(tittle = "Megapixels", info = info.megapixels.toString())}
-            item {IndividualLine(tittle = "Max Aperture", info = info.maxAperture.toString())}
-            item {IndividualLine(tittle = "Focal Length", info = info.focalLength.toString())}
-            if (info.physicalCameraIds.isNotEmpty())
-                item {IndividualLine(tittle = "Physical Camera ID", info = info.physicalCameraIds.joinToString(","))}
+        itemsIndexed(cameraInfoList) { index, cameraItemList ->
+            Column {
+                HeaderLine(tittle = "#${index+1}")
+                cameraItemList.forEach {
+                    IndividualLine(tittle = stringResource(it.name),
+                        info = it.value.toString() + it.extra,
+                        canLongPress = longPressCopy,
+                        isLast = cameraItemList.last() == it,
+                        topStart = if (cameraItemList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (cameraItemList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (cameraItemList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (cameraItemList.last() == it) 20.dp else 5.dp
+                    )
+                }
+            }
+        }
+        staggeredHeader {
+            GeneralWarning(
+                title = R.string.camera_notice_title,
+                text = R.string.camera_notice
+            )
         }
     }
 }
@@ -1464,7 +1447,6 @@ fun HeaderLine(tittle: String, horizontalPadding: Dp = 10.dp, verticalPadding: D
 
 @Composable
 fun SettingsScreen(
-    useNewDashboard: Boolean,
     longPressCopy: Boolean,
     appColor: Int,
     isDynamicColors: Boolean,
@@ -1511,25 +1493,9 @@ fun SettingsScreen(
                     },
                     topStart = 5.dp,
                     topEnd = 5.dp,
-                    bottomStart = 5.dp,
-                    bottomEnd = 5.dp,
+                    isLast = true,
                     enabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
                     clickable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                )
-                CommonSwitchOption(
-                    text = R.string.use_details_dashboard,
-                    subText = R.string.use_new_dashboard_details,
-                    extra = "",
-                    checked = useNewDashboard,
-                    onClick = {
-                        settings.setUseNewDashboard(!useNewDashboard)
-                    },
-                    onSwitch = {
-                        settings.setUseNewDashboard(it)
-                    },
-                    topStart = 5.dp,
-                    topEnd = 5.dp,
-                    isLast = true
                 )
             }
         }
@@ -1820,7 +1786,7 @@ fun GeneralWarning(
 ) {
     Column(
         modifier = Modifier
-            .padding(vertical = 20.dp)
+            .padding(top = 20.dp)
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(20.dp))
             .background(
@@ -1899,10 +1865,10 @@ fun MainNavigation(
     navController: NavHostController,
     currentRoute: String?,
     appColor: Int,
+    useNewDashboard: Boolean,
     isDynamicColors: Boolean,
     paddingValues: PaddingValues
 ) {
-    val useNewDashboard by settings.useNewDashboard.collectAsStateWithLifecycle()
     val longPressCopy by settings.longPressCopy.collectAsStateWithLifecycle()
     NavHost(navController, startDestination = NavigationItem.Home.route,
         enterTransition = {
@@ -1936,7 +1902,6 @@ fun MainNavigation(
             )){
             SettingsScreen(
                 settings= settings,
-                useNewDashboard = useNewDashboard,
                 longPressCopy = longPressCopy,
                 paddingValues = paddingValues,
                 appColor = appColor,
@@ -2021,9 +1986,7 @@ fun MainNavigation(
                 uriPattern = "si://info/camera"
             }
         )){
-            CameraInfoScreen{
-                navController.returnToHome()
-            }
+            CameraInfoScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
         }
         composable(route = NavigationItem.Connectivity.route, deepLinks = listOf(
             navDeepLink {
