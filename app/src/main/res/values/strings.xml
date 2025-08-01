@@ -3,7 +3,9 @@
     <string name="app_ver" translatable="false">x.x.x</string>
     <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="privacy_text">Read our policy</string>
-    <string name="privacy_link">https://clearall2.github.io/SmartSleepApp/privacy.html#display-info-app</string>
+    <string name="terms_text">Read our terms</string>
+    <string name="privacy_link">https://clearall2.github.io/SmartSleepApp/terms.html#display-info-app</string>
+    <string name="term_link">https://clearall2.github.io/SmartSleepApp/privacy.html#display-info-app</string>
     <string name="more_app_link">https://play.google.com/store/apps/developer?id=LKONLE</string>
     <string name="more_app_text">Get more apps from us</string>
     <string name="contact_text">Contact us</string>
@@ -105,7 +107,8 @@
     <string name="gles_version">GLES version</string>
     <string name="gpu_renderer">GPU renderer</string>
     <string name="gpu_vendor">GPU vendor</string>
-    <string name="privacy_policy">Privacy policy</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms">Terms of Service</string>
     <string name="more_app">More apps</string>
     <string name="copy_right">© 2025 LKONLE</string>
     <string name="light">Light</string>
@@ -203,9 +206,19 @@
     <string name="has_flash">Flash</string>
     <string name="max_zoom_ratio">Max zoom ratio</string>
     <string name="min_zoom_ratio">Min zoom ratio</string>
-    <string name="is_stabilization_supported">Stabilization Support</string>
+    <string name="is_stabilization_supported">Stabilization</string>
     <string name="stabilization_modes">Stabilization Modes</string>
     <string name="battery_notice_2">Battery cycle count is available starting with Android 14, but accuracy may vary across different vendors.</string>
     <string name="drm_notice_title">DRM Certification Notice</string>
-    <string name="drm_notice">Please be aware that the Digital Rights Management (DRM) information on this device may not be certified by Netflix or other streaming applications.</string>
+    <string name="drm_notice">Please be aware that the Digital Rights Management (DRM) information on this device may not be certified by streaming applications.</string>
+    <string name="wifi">WIFI</string>
+    <string name="ethernet">ETHERNET</string>
+    <string name="eis">EIS</string>
+    <string name="ois">OIS</string>
+    <string name="show_warning_notice">Show Information Notice</string>
+    <string name="show_warning_notice_details">Additional information notice for you</string>
+    <string name="rate_app">Rate app</string>
+    <string name="rate_text">Tell me your thought!</string>
+    <string name="legal_info">Legal Info</string>
+    <string name="app_info">App Info</string>
 </resources>

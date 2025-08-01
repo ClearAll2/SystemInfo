@@ -7,7 +7,6 @@ import android.os.Build
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.CameraInfo
 import com.lkonlesoft.displayinfo.helper.DeviceInfo
-import com.lkonlesoft.displayinfo.helper.VideoStabilizationMode
 
 class CameraUtils (private val context: Context) {
     private val cameraManager by lazy {
@@ -28,7 +27,7 @@ class CameraUtils (private val context: Context) {
                 DeviceInfo(R.string.has_flash, if (camera.hasFlash) context.getString(R.string.yes) else context.getString(R.string.no)),
                 DeviceInfo(R.string.max_zoom_ratio, camera.maxZoomRatio?.toString() ?: context.getString(R.string.unknown)),
                 DeviceInfo(R.string.min_zoom_ratio, camera.minZoomRatio?.toString() ?: context.getString(R.string.unknown)),
-                DeviceInfo(R.string.is_stabilization_supported, if (camera.isVideoStabilizationSupported) context.getString(R.string.yes) else context.getString(R.string.no)),
+                DeviceInfo(R.string.is_stabilization_supported, if (camera.isVideoStabilizationSupported) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
                 DeviceInfo(R.string.stabilization_modes, camera.videoStabilizationModes.joinToString(", ")),
                 if (camera.physicalCameraIds.isNotEmpty())
                     DeviceInfo(R.string.physical_camera_id, camera.physicalCameraIds.joinToString(",")) else
@@ -78,7 +77,7 @@ class CameraUtils (private val context: Context) {
             )?.contains(CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_ON) ?: false
             val videoStabilizationModes = characteristics.get(
                 CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES
-            )?.map { VideoStabilizationMode.fromCamera2Mode(it) }?.filter { it != VideoStabilizationMode.UNKNOWN } ?: emptyList()
+            )?.map { fromCamera2Mode(it) } ?: emptyList()
 
             // Retrieve available aperture(s) and use the smallest f-number as maximum aperture.
             val apertures = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES)
@@ -110,5 +109,11 @@ class CameraUtils (private val context: Context) {
             )
         }
         return infoList
+    }
+
+    fun fromCamera2Mode(mode: Int): String = when (mode) {
+        CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_ON -> context.getString(R.string.eis)
+        CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_PREVIEW_STABILIZATION -> context.getString(R.string.ois)
+        else -> context.getString(R.string.unknown)
     }
 }

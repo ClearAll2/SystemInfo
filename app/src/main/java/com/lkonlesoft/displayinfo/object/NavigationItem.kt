@@ -5,6 +5,7 @@ import com.lkonlesoft.displayinfo.R
 
 sealed class NavigationItem (@param:StringRes val name: Int, val route: String, val icon: Int){
     data object Home: NavigationItem(name = R.string.system_info, route = "home", R.drawable.outline_info_24)
+    data object About: NavigationItem(name = R.string.about, route = "about", R.drawable.outline_info_24)
     data object System: NavigationItem(name = R.string.system, route = "system", R.drawable.outline_settings_24)
     data object Android: NavigationItem(name = R.string.android, route = "android", R.drawable.outline_android_24)
     data object Display: NavigationItem(name = R.string.display, route = "display", R.drawable.outline_smartphone_24)

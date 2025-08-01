@@ -8,9 +8,22 @@ sealed class AboutItem(@param:StringRes val title: Int, @param:StringRes val tex
         R.string.app_ver,
         R.string.rate_link
     )
+
+    object Rate: AboutItem(
+        R.string.rate_app,
+        R.string.rate_text,
+        R.string.rate_link
+    )
+
     object Privacy: AboutItem(R.string.privacy_policy,
         R.string.privacy_text,
         R.string.privacy_link
+    )
+
+    object Terms: AboutItem(
+        R.string.terms,
+        R.string.terms_text,
+        R.string.term_link
     )
 
     object More: AboutItem(R.string.more_app,

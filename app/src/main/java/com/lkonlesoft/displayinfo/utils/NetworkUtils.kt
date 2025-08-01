@@ -74,8 +74,8 @@ class NetworkUtils(private val context: Context) {
         val nw = connectivityManager.activeNetwork ?: return "-"
         val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return "-"
         when {
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return "WIFI"
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return "ETHERNET"
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return context.getString(R.string.wifi)
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return context.getString(R.string.ethernet)
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
                 val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
                 if (ActivityCompat.checkSelfPermission(
@@ -145,7 +145,7 @@ class NetworkUtils(private val context: Context) {
         if ((mInfo == null) || !mInfo.isConnected) return "-"
 
         // If Connected to Wifi
-        if (mInfo.type == ConnectivityManager.TYPE_WIFI) return "WIFI"
+        if (mInfo.type == ConnectivityManager.TYPE_WIFI) return context.getString(R.string.wifi)
 
         // If Connected to Mobile
         if (mInfo.type == ConnectivityManager.TYPE_MOBILE) {

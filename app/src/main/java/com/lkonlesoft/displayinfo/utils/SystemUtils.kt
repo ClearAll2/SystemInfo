@@ -190,7 +190,7 @@ class SystemUtils(private val context: Context) {
 
     fun getActiveSlot(): String {
         return try {
-            getSystemProperty("ro.boot.slot_suffix") ?: "Unknown"
+            getSystemProperty("ro.boot.slot_suffix") ?: context.getString(R.string.unknown)
         } catch (_: Exception) {
             context.getString(R.string.unknown)
         }

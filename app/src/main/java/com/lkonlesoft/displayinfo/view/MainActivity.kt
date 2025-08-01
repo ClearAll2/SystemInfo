@@ -26,8 +26,6 @@ import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -311,11 +309,6 @@ fun ScaffoldContext(settings: SettingsViewModel){
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    // Animation spec for fading (used for fadeIn/fadeOut)
-    val fadeAnimationSpec: FiniteAnimationSpec<Float> = tween(
-        durationMillis = 250,
-        easing = LinearEasing
-    )
     ScreenInfoTheme (
         darkTheme = when(appColor) {
             0 -> isSystemInDarkTheme()
@@ -338,20 +331,13 @@ fun ScaffoldContext(settings: SettingsViewModel){
                             scrolledContainerColor = MaterialTheme.colorScheme.background
                         ),
                         title = {
-                            Crossfade(
-                                targetState = currentRoute,
-                                animationSpec = fadeAnimationSpec,
-                                label = "TitleAnimation"
-                            ) { route ->
-                                Text(
-                                    text = if (currentRoute != NavigationItem.Home.route)
-                                        currentRoute.toString().replaceFirstChar { it.uppercase() } else stringResource(R.string.system_info),
-                                    fontWeight = FontWeight.Medium,
-                                    modifier = Modifier
-                                        .padding(horizontal = 10.dp)
-                                        .fillMaxWidth()
-                                )
-                            }
+                            Text(
+                                text = currentRoute.toString().replaceFirstChar { it.uppercase() },
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier
+                                    .padding(horizontal = 10.dp)
+                                    .fillMaxWidth()
+                            )
                         },
                         navigationIcon = {
                             AnimatedContent(
@@ -397,11 +383,21 @@ fun ScaffoldContext(settings: SettingsViewModel){
                                         onClick = {
                                             settings.setUseNewDashboard(!useNewDashboard)
                                         }) {
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(
-                                                if (!useNewDashboard) R.drawable.outline_dashboard_24 else R.drawable.outline_tile_small_24
-                                            ), contentDescription = "View"
-                                        )
+                                        Crossfade(
+                                            targetState = useNewDashboard,
+                                            label = "TitleAnimation"
+                                        ) { new ->
+                                            if (new) {
+                                                Icon(
+                                                    imageVector = ImageVector.vectorResource(R.drawable.outline_tile_small_24), contentDescription = "OldView"
+                                                )
+                                            }
+                                            else {
+                                                Icon(
+                                                    imageVector = ImageVector.vectorResource(R.drawable.outline_dashboard_24), contentDescription = "NewView"
+                                                )
+                                            }
+                                        }
                                     }
                                     IconButton(
                                         modifier = Modifier.padding(end = 5.dp),
@@ -440,10 +436,10 @@ fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val deviceInfoList by remember { mutableStateOf(
         SystemUtils(context).getDeviceData()) }
     var rootInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
-    val extraInfoList by remember { mutableStateOf(
-        SystemUtils(context).getExtraData()) }
+    var extraInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
     LaunchedEffect(Unit) {
         rootInfoList = SystemUtils(context).getRootData()
+        extraInfoList = SystemUtils(context).getExtraData()
     }
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
@@ -689,7 +685,7 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 
 
 @Composable
-fun DisplayScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
+fun DisplayScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val resources = context.resources
     var refreshKey by remember { mutableIntStateOf(0) }
@@ -764,11 +760,13 @@ fun DisplayScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 
             }
         }
-        item {
-            GeneralWarning(
-                title = R.string.drm_notice_title,
-                text = R.string.drm_notice,
-            )
+        if (showNotice){
+            item {
+                GeneralWarning(
+                    title = R.string.drm_notice_title,
+                    text = R.string.drm_notice,
+                )
+            }
         }
     }
 }
@@ -919,7 +917,7 @@ fun BluetoothStatusScreen(onClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
+fun BatteryScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val infoList by remember(refreshKey) { mutableStateOf(BatteryUtils(context).getAllData()) }
@@ -941,7 +939,7 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
         staggeredHeader {
             GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)
         }
-        item {
+        staggeredHeader {
             Column {
                 infoList.forEach {
                     IndividualLine(tittle = stringResource(it.name),
@@ -956,18 +954,20 @@ fun BatteryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                 }
             }
         }
-        item {
-            GeneralWarning(
-                title = R.string.cycle_count,
-                text = R.string.battery_notice_2,
-                icon = R.drawable.outline_info_24
-            )
-        }
-        item {
-            GeneralWarning(
-                title = R.string.battery_notice_title,
-                text = R.string.battery_notice
-            )
+        if (showNotice){
+            item {
+                GeneralWarning(
+                    title = R.string.cycle_count,
+                    text = R.string.battery_notice_2,
+                    icon = R.drawable.outline_info_24
+                )
+            }
+            item {
+                GeneralWarning(
+                    title = R.string.battery_notice_title,
+                    text = R.string.battery_notice
+                )
+            }
         }
     }
 }
@@ -998,69 +998,94 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
             index = latest
         }
     }
-    LazyVerticalStaggeredGrid (
-        state = state,
-        columns = if (width < 600.dp) StaggeredGridCells.Fixed(if (!useNewDashboard) 2 else 1)
-        else StaggeredGridCells.Adaptive(
-            400.dp
-        ),
-        contentPadding = paddingValues,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 7.5.dp)
-            .consumeWindowInsets(paddingValues)
-    ) {
-        if (!useNewDashboard) {
-            items(listScreen) { item ->
-                val isSelected = currentRoute == item.route
-                BigTitle(title = stringResource(item.name), icon = item.icon) {
-                    if (!isSelected) {
-                        navController.navigate(item.route) {
-                            launchSingleTop = true
-                        }
-                    }
+    AnimatedContent(targetState = useNewDashboard,
+        transitionSpec = {
+            if (targetState && !initialState) {
+                slideInHorizontally(initialOffsetX = { -it }) + fadeIn() togetherWith
+                        slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
+            } else {
+                slideInHorizontally(initialOffsetX = { it }) + fadeIn() togetherWith
+                        slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+            }
+        }
+    ) { it ->
+        if (it){
+            LazyVerticalStaggeredGrid (
+                state = state,
+                columns = if (width < 600.dp) StaggeredGridCells.Fixed(if (!useNewDashboard) 2 else 1)
+                else StaggeredGridCells.Adaptive(
+                    400.dp
+                ),
+                contentPadding = paddingValues,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 7.5.dp)
+                    .consumeWindowInsets(paddingValues)
+            ) {
+                item {
+                    SystemDashboard(
+                        onClick = { navController.navigate(NavigationItem.System.route) })
+                }
+                item {
+                    AndroidDashboard(
+                        onClick = { navController.navigate(NavigationItem.Android.route) })
+                }
+                item {
+                    SoCDashBoard(
+                        onClick = { navController.navigate(NavigationItem.SOC.route) })
+                }
+                item {
+                    BatteryDashboard(
+                        onClick = { navController.navigate(NavigationItem.Battery.route) })
+                }
+                item {
+                    DisplayDashboard(
+                        onClick = { navController.navigate(NavigationItem.Display.route) })
+                }
+                item {
+                    MemoryDashBoard(
+                        onClick = { navController.navigate(NavigationItem.Memory.route) })
+                }
+                item {
+                    StorageDashboard(
+                        onClick = { navController.navigate(NavigationItem.Storage.route) })
+                }
+                item {
+                    NetworkDashboard(
+                        onClick = { navController.navigate(NavigationItem.Network.route) })
                 }
             }
         }
-        if (useNewDashboard){
-            item {
-                SystemDashboard(
-                    onClick = { navController.navigate(NavigationItem.System.route) })
-            }
-            item {
-                AndroidDashboard(
-                    onClick = { navController.navigate(NavigationItem.Android.route) })
-            }
-            item {
-                SoCDashBoard(
-                    onClick = { navController.navigate(NavigationItem.SOC.route) })
-            }
-            item {
-                BatteryDashboard(
-                    onClick = { navController.navigate(NavigationItem.Battery.route) })
-            }
-            item {
-                DisplayDashboard(
-                    onClick = { navController.navigate(NavigationItem.Display.route) })
-            }
-            item {
-                MemoryDashBoard(
-                    onClick = { navController.navigate(NavigationItem.Memory.route) })
-            }
-            item {
-                StorageDashboard(
-                    onClick = { navController.navigate(NavigationItem.Storage.route) })
-            }
-            item {
-                NetworkDashboard(
-                    onClick = { navController.navigate(NavigationItem.Network.route) })
+        else {
+            LazyVerticalStaggeredGrid (
+                state = state,
+                columns = if (width < 600.dp) StaggeredGridCells.Fixed(if (!useNewDashboard) 2 else 1)
+                else StaggeredGridCells.Adaptive(
+                    400.dp
+                ),
+                contentPadding = paddingValues,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 7.5.dp)
+                    .consumeWindowInsets(paddingValues)
+            ) {
+                items(listScreen) { item ->
+                    val isSelected = currentRoute == item.route
+                    BigTitle(title = stringResource(item.name), icon = item.icon) {
+                        if (!isSelected) {
+                            navController.navigate(item.route) {
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean) {
+fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, showNotice: Boolean) {
     val context = LocalContext.current
     var cameraInfoList by remember { mutableStateOf<List<List<DeviceInfo>>>(emptyList()) }
     LaunchedEffect(Unit) {
@@ -1093,11 +1118,13 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean) {
                 }
             }
         }
-        staggeredHeader {
-            GeneralWarning(
-                title = R.string.camera_notice_title,
-                text = R.string.camera_notice
-            )
+        if (showNotice) {
+            staggeredHeader {
+                GeneralWarning(
+                    title = R.string.camera_notice_title,
+                    text = R.string.camera_notice
+                )
+            }
         }
     }
 }
@@ -1221,7 +1248,7 @@ fun StorageScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 }
 
 @Composable
-fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
+fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues, showNotice: Boolean) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val glEs by remember(refreshKey) { mutableStateOf(SocUtils(context).getGlEsVersion()) }
@@ -1288,11 +1315,13 @@ fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                 )
             }
         }
-        staggeredHeader {
-            GeneralWarning(
-                title = R.string.soc_notice_title,
-                text = R.string.soc_notice
-            )
+        if (showNotice) {
+            staggeredHeader {
+                GeneralWarning(
+                    title = R.string.soc_notice_title,
+                    text = R.string.soc_notice
+                )
+            }
         }
     }
 }
@@ -1446,20 +1475,80 @@ fun HeaderLine(tittle: String, horizontalPadding: Dp = 10.dp, verticalPadding: D
 }
 
 @Composable
+fun AboutScreen(paddingValues: PaddingValues) {
+    val uriHandler = LocalUriHandler.current
+    val appInfoItems = listOf(
+        AboutItem.AppVer,
+        AboutItem.Rate,
+        AboutItem.More,
+        AboutItem.Contact,
+
+        )
+    val legalInfoItems = listOf(
+        AboutItem.Privacy,
+        AboutItem.Terms
+    )
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(320.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.app_info))
+                appInfoItems.forEach { item ->
+                    val url = stringResource(id = item.url)
+                    AboutMenuItem(tittle = stringResource(id = item.title),
+                        text = stringResource(id = item.text),
+                        onItemClick = {
+                            uriHandler.openUri(url)
+                        },
+                        isLast = appInfoItems.last() == item,
+                        topStart = if (appInfoItems.first() == item) 20.dp else 5.dp,
+                        topEnd = if (appInfoItems.first() == item) 20.dp else 5.dp,
+                        bottomStart = if (appInfoItems.last() == item) 20.dp else 5.dp,
+                        bottomEnd = if (appInfoItems.last() == item) 20.dp else 5.dp
+                    )
+                }
+            }
+        }
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.legal_info))
+                legalInfoItems.forEach { item ->
+                    val url = stringResource(id = item.url)
+                    AboutMenuItem(tittle = stringResource(id = item.title),
+                        text = stringResource(id = item.text),
+                        onItemClick = {
+                            uriHandler.openUri(url)
+                        },
+                        isLast = legalInfoItems.last() == item,
+                        topStart = if (legalInfoItems.first() == item) 20.dp else 5.dp,
+                        topEnd = if (legalInfoItems.first() == item) 20.dp else 5.dp,
+                        bottomStart = if (legalInfoItems.last() == item) 20.dp else 5.dp,
+                        bottomEnd = if (legalInfoItems.last() == item) 20.dp else 5.dp
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun SettingsScreen(
     longPressCopy: Boolean,
+    showNotice: Boolean,
     appColor: Int,
     isDynamicColors: Boolean,
     settings: SettingsViewModel,
+    onAboutClick: () -> Unit,
     paddingValues: PaddingValues
 ) {
-    val uriHandler = LocalUriHandler.current
-    val items = listOf(
-        AboutItem.AppVer,
-        AboutItem.Privacy,
-        AboutItem.More,
-        AboutItem.Contact
-    )
+
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
@@ -1493,9 +1582,26 @@ fun SettingsScreen(
                     },
                     topStart = 5.dp,
                     topEnd = 5.dp,
-                    isLast = true,
+                    bottomStart = 5.dp,
+                    bottomEnd = 5.dp,
+                    isLast = false,
                     enabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
                     clickable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                )
+                CommonSwitchOption(
+                    text = R.string.show_warning_notice,
+                    subText = R.string.show_warning_notice_details,
+                    extra = "",
+                    checked = showNotice,
+                    onClick = {
+                        settings.setShowNotice(!showNotice)
+                    },
+                    onSwitch = {
+                        settings.setShowNotice(it)
+                    },
+                    topStart = 5.dp,
+                    topEnd = 5.dp,
+                    isLast = true
                 )
             }
         }
@@ -1520,20 +1626,15 @@ fun SettingsScreen(
         item {
             Column {
                 HeaderLine(tittle = stringResource(R.string.about))
-                items.forEach { item ->
-                    val url = stringResource(id = item.url)
-                    AboutMenuItem(tittle = stringResource(id = item.title),
-                        text = stringResource(id = item.text),
-                        onItemClick = {
-                            uriHandler.openUri(url)
-                        },
-                        isLast = items.last() == item,
-                        topStart = if (items.first() == item) 20.dp else 5.dp,
-                        topEnd = if (items.first() == item) 20.dp else 5.dp,
-                        bottomStart = if (items.last() == item) 20.dp else 5.dp,
-                        bottomEnd = if (items.last() == item) 20.dp else 5.dp
-                    )
-                }
+                AboutMenuItem(tittle = stringResource(R.string.app_info),
+                    text = stringResource(id = R.string.app_ver),
+                    onItemClick = onAboutClick,
+                    isLast = true,
+                    topStart = 20.dp,
+                    topEnd = 20.dp,
+                    bottomStart = 20.dp,
+                    bottomEnd = 20.dp
+                )
             }
         }
     }
@@ -1617,29 +1718,29 @@ fun CommonSwitchOption(
     Column {
         Row(
             modifier = Modifier
-            .fillMaxWidth()
-            .clip(
-                shape = RoundedCornerShape(
-                    topStart = topStart,
-                    topEnd = topEnd,
-                    bottomStart = bottomStart,
-                    bottomEnd = bottomEnd
+                .fillMaxWidth()
+                .clip(
+                    shape = RoundedCornerShape(
+                        topStart = topStart,
+                        topEnd = topEnd,
+                        bottomStart = bottomStart,
+                        bottomEnd = bottomEnd
+                    )
                 )
-            )
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                shape = RoundedCornerShape(
-                    topStart = topStart,
-                    topEnd = topEnd,
-                    bottomStart = bottomStart,
-                    bottomEnd = bottomEnd
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = RoundedCornerShape(
+                        topStart = topStart,
+                        topEnd = topEnd,
+                        bottomStart = bottomStart,
+                        bottomEnd = bottomEnd
+                    )
                 )
-            )
-            .clickable(enabled = clickable) {
-                onClick()
-            }
-            .height(IntrinsicSize.Min)
-            .padding(horizontal = horizontalPadding),
+                .clickable(enabled = clickable) {
+                    onClick()
+                }
+                .height(IntrinsicSize.Min)
+                .padding(horizontal = horizontalPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -1870,6 +1971,7 @@ fun MainNavigation(
     paddingValues: PaddingValues
 ) {
     val longPressCopy by settings.longPressCopy.collectAsStateWithLifecycle()
+    val showNotice by settings.showNotice.collectAsStateWithLifecycle()
     NavHost(navController, startDestination = NavigationItem.Home.route,
         enterTransition = {
             fadeIn(
@@ -1903,10 +2005,22 @@ fun MainNavigation(
             SettingsScreen(
                 settings= settings,
                 longPressCopy = longPressCopy,
+                showNotice = showNotice,
                 paddingValues = paddingValues,
                 appColor = appColor,
-                isDynamicColors = isDynamicColors
+                isDynamicColors = isDynamicColors,
+                onAboutClick = {
+                    navController.navigate(NavigationItem.About.route)
+                }
             )
+        }
+        composable(route = NavigationItem.About.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "si://info/about"
+                }
+            )){
+            AboutScreen(paddingValues = paddingValues)
         }
 
         composable(route = NavigationItem.Home.route,
@@ -1939,7 +2053,7 @@ fun MainNavigation(
                     uriPattern = "si://info/soc"
                 }
             )){
-            HardwareScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
+            HardwareScreen(paddingValues = paddingValues, longPressCopy = longPressCopy, showNotice = showNotice)
         }
         composable(route = NavigationItem.Display.route,
             deepLinks = listOf(
@@ -1947,7 +2061,7 @@ fun MainNavigation(
                     uriPattern = "si://info/display"
                 }
             )){
-           DisplayScreen (paddingValues = paddingValues, longPressCopy = longPressCopy)
+           DisplayScreen (paddingValues = paddingValues, longPressCopy = longPressCopy, showNotice = showNotice)
         }
         composable(route = NavigationItem.Battery.route,
             deepLinks = listOf(
@@ -1955,7 +2069,7 @@ fun MainNavigation(
                     uriPattern = "si://info/battery"
                 }
             )){
-            BatteryScreen (paddingValues = paddingValues, longPressCopy = longPressCopy)
+            BatteryScreen (paddingValues = paddingValues, longPressCopy = longPressCopy, showNotice = showNotice)
         }
         composable(route = NavigationItem.Memory.route,
             deepLinks = listOf(
@@ -1986,7 +2100,7 @@ fun MainNavigation(
                 uriPattern = "si://info/camera"
             }
         )){
-            CameraInfoScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
+            CameraInfoScreen(paddingValues = paddingValues, longPressCopy = longPressCopy, showNotice = showNotice)
         }
         composable(route = NavigationItem.Connectivity.route, deepLinks = listOf(
             navDeepLink {

@@ -27,6 +27,9 @@ class SettingsViewModel(context: Context) : ViewModel() {
     private val _longPressCopy = MutableStateFlow(true)
     val longPressCopy = _longPressCopy.asStateFlow()
 
+    private val _showNotice = MutableStateFlow(true)
+    val showNotice = _showNotice.asStateFlow()
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _useNewDashboard.emit(settingsManager.getSettingLogic("useNewDashboard"))
@@ -39,6 +42,7 @@ class SettingsViewModel(context: Context) : ViewModel() {
                 _appColor.emit(appColor)
             }
             _longPressCopy.emit(settingsManager.getSettingLogic("longPressCopy"))
+            _showNotice.emit(settingsManager.getSettingLogic("showNotice"))
         }
     }
 
@@ -77,6 +81,15 @@ class SettingsViewModel(context: Context) : ViewModel() {
 
     fun getLongPressCopy(): Boolean {
         return settingsManager.getSettingLogic("longPressCopy")
+    }
+
+    fun setShowNotice(showNotice: Boolean) {
+        settingsManager.saveSettingLogic("showNotice", showNotice)
+        _showNotice.value = showNotice
+    }
+
+    fun getShowNotice(): Boolean {
+        return settingsManager.getSettingLogic("showNotice")
     }
 
 }
