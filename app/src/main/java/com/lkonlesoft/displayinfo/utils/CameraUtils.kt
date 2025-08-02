@@ -18,22 +18,24 @@ class CameraUtils (private val context: Context) {
         return cameraInfo.map { camera ->
             listOf(
                 DeviceInfo(R.string.id, camera.id),
+                DeviceInfo(R.string.physical_camera_id,
+                    if (camera.physicalCameraIds.isNotEmpty()) camera.physicalCameraIds.joinToString(", ")
+                    else context.getString(R.string.n_a)
+                ),
                 DeviceInfo(R.string.lens_facing, camera.lensFacing),
-                DeviceInfo(R.string.sensor_orientation, camera.sensorOrientation.toString()),
+                DeviceInfo(R.string.sensor_orientation, camera.sensorOrientation.toString(), "°"),
                 DeviceInfo(R.string.hardware_level, camera.hardwareLevel),
-                DeviceInfo(R.string.megapixels, camera.megapixels?.toString() ?: context.getString(R.string.unknown)),
-                DeviceInfo(R.string.max_aperture, camera.maxAperture?.toString() ?: context.getString(R.string.unknown)),
-                DeviceInfo(R.string.focal_length, camera.focalLength?.toString() ?: context.getString(R.string.unknown)),
+                DeviceInfo(R.string.resolution, "%.2f".format(camera.megapixels), " MP"),
+                DeviceInfo(R.string.max_aperture, "f/%.2f".format(camera.maxAperture)),
+                DeviceInfo(R.string.focal_length, "%.2f".format(camera.focalLength), " mm"),
                 DeviceInfo(R.string.has_flash, if (camera.hasFlash) context.getString(R.string.yes) else context.getString(R.string.no)),
-                DeviceInfo(R.string.max_zoom_ratio, camera.maxZoomRatio?.toString() ?: context.getString(R.string.unknown)),
-                DeviceInfo(R.string.min_zoom_ratio, camera.minZoomRatio?.toString() ?: context.getString(R.string.unknown)),
+                DeviceInfo(R.string.max_zoom_ratio, "%.2f".format(camera.maxZoomRatio)),
                 DeviceInfo(R.string.is_stabilization_supported, if (camera.isVideoStabilizationSupported) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
-                DeviceInfo(R.string.stabilization_modes, camera.videoStabilizationModes.joinToString(", ")),
-                if (camera.physicalCameraIds.isNotEmpty())
-                    DeviceInfo(R.string.physical_camera_id, camera.physicalCameraIds.joinToString(",")) else
-                    DeviceInfo(R.string.physical_camera_id, context.getString(R.string.unknown))
+                DeviceInfo(R.string.stabilization_modes,
+                    if (camera.videoStabilizationModes.isNotEmpty()) camera.videoStabilizationModes.joinToString(", ")
+                    else context.getString(R.string.n_a)
+                )
             )
-
         }
     }
 
@@ -71,13 +73,12 @@ class CameraUtils (private val context: Context) {
             val maxZoomRatio = characteristics.get(
                 CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM
             )
-            val minZoomRatio = if (maxZoomRatio != null) 1.0f else null
             val isVideoStabilizationSupported = characteristics.get(
                 CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES
             )?.contains(CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_ON) ?: false
             val videoStabilizationModes = characteristics.get(
                 CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES
-            )?.map { fromCamera2Mode(it) } ?: emptyList()
+            )?.map { fromCamera2Mode(it) }?.filter { it != context.getString(R.string.unknown) } ?: emptyList()
 
             // Retrieve available aperture(s) and use the smallest f-number as maximum aperture.
             val apertures = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES)
@@ -102,7 +103,6 @@ class CameraUtils (private val context: Context) {
                 focalLength = focalLength,
                 hasFlash = hasFlash,
                 maxZoomRatio = maxZoomRatio,
-                minZoomRatio = minZoomRatio,
                 isVideoStabilizationSupported = isVideoStabilizationSupported,
                 videoStabilizationModes = videoStabilizationModes,
                 physicalCameraIds = physicalCameraIds
@@ -112,8 +112,9 @@ class CameraUtils (private val context: Context) {
     }
 
     fun fromCamera2Mode(mode: Int): String = when (mode) {
+        CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_OFF -> context.getString(R.string.unknown)
         CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_ON -> context.getString(R.string.eis)
         CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_PREVIEW_STABILIZATION -> context.getString(R.string.ois)
-        else -> context.getString(R.string.unknown)
+        else -> context.getString(R.string.n_a)
     }
 }

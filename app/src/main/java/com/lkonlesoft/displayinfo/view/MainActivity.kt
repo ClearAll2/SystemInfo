@@ -954,14 +954,14 @@ fun BatteryScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: Pa
                 }
             }
         }
+        item {
+            GeneralWarning(
+                title = R.string.cycle_count,
+                text = R.string.battery_notice_2,
+                icon = R.drawable.outline_info_24
+            )
+        }
         if (showNotice){
-            item {
-                GeneralWarning(
-                    title = R.string.cycle_count,
-                    text = R.string.battery_notice_2,
-                    icon = R.drawable.outline_info_24
-                )
-            }
             item {
                 GeneralWarning(
                     title = R.string.battery_notice_title,
@@ -1548,7 +1548,6 @@ fun SettingsScreen(
     onAboutClick: () -> Unit,
     paddingValues: PaddingValues
 ) {
-
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier

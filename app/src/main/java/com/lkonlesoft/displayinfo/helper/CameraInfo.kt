@@ -11,7 +11,6 @@ data class CameraInfo(
     val focalLength: Float?,
     val hasFlash: Boolean,
     val maxZoomRatio: Float?,
-    val minZoomRatio: Float?,
     val isVideoStabilizationSupported: Boolean,
     val videoStabilizationModes: List<String> = emptyList(),
     val physicalCameraIds: Set<String> = emptySet()

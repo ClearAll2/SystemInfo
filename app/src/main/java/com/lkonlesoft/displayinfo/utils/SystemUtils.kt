@@ -35,13 +35,15 @@ class SystemUtils(private val context: Context) {
     fun getRootData(): List<DeviceInfo>{
         return listOf(
             DeviceInfo(R.string.root, if (isDeviceRooted()) context.getString(R.string.yes) else context.getString(R.string.no)),
-            DeviceInfo(R.string.has_magisk, if (isMagiskPresent()) context.getString(R.string.yes) else context.getString(R.string.not_found_or_hidden)),
-            DeviceInfo(R.string.has_magisk_properties, if (hasMagiskProperties()) context.getString(R.string.yes) else context.getString(R.string.not_found_or_hidden))
+            DeviceInfo(R.string.has_magisk, if (isMagiskPresent()) context.getString(R.string.yes) else context.getString(R.string.not_detected)),
+            DeviceInfo(R.string.has_magisk_properties, if (hasMagiskProperties()) context.getString(R.string.yes) else context.getString(R.string.not_detected))
         )
     }
 
     fun getExtraData(): List<DeviceInfo>{
         return listOf(
+            DeviceInfo(R.string.java_runtime_version, getJavaRuntimeVersion()),
+            DeviceInfo(R.string.jvm_version, getJvmVersion()),
             DeviceInfo(R.string.usb_debug, if (isUsbDebuggingEnabled()) context.getString(R.string.enabled) else context.getString(R.string.disabled)),
             DeviceInfo(R.string.treble, if (isTrebleSupported()) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
             DeviceInfo(R.string.seamless_update, if (isSeamlessUpdateSupported()) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
@@ -256,6 +258,14 @@ class SystemUtils(private val context: Context) {
         } catch (_: IOException) {
             false
         }
+    }
+
+    fun getJavaRuntimeVersion(): String {
+        return System.getProperty("java.runtime.version") ?: context.getString(R.string.unknown)
+    }
+
+    fun getJvmVersion(): String {
+        return System.getProperty("java.vm.version") ?: context.getString(R.string.unknown)
     }
 
 }
