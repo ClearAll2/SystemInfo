@@ -2,11 +2,11 @@ package com.lkonlesoft.displayinfo.utils
 
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Point
 import android.graphics.Rect
 import android.media.MediaDrm
 import android.os.Build
 import android.util.Base64
-import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.window.layout.WindowMetricsCalculator
@@ -15,12 +15,13 @@ import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
-import kotlin.math.pow
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
+import kotlin.math.hypot
 
 class DisplayUtils (private val context: Context, private val resources: Resources) {
     private val calculator = WindowMetricsCalculator.getOrCreate()
+    private val windowManager by lazy {
+        context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    }
     private val maxWindowMetrics by lazy {
         calculator.computeMaximumWindowMetrics(context)
     }
@@ -191,53 +192,24 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
         val yDpi = getYDpi()
         val widthInches = widthPixels.toDouble() / xDpi
         val heightInches = heightPixels.toDouble() / yDpi
-        val diagonalInches = sqrt(widthInches.pow(2) + heightInches.pow(2))
-        return (diagonalInches * 100).roundToInt() / 100.0
+        return hypot(widthInches, heightInches)
     }
 
     fun calculateScreenSizeInInches2(): Double {
-        try {
-            // Initialize display metrics
-            val displayMetrics = DisplayMetrics()
-            val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            var widthPixels: Int
-            var heightPixels: Int
-            var xDpi: Float
-            var yDpi: Float
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                // API 30+: Use WindowMetricsCalculator for accurate screen bounds
-                widthPixels = getWidthPx()
-                heightPixels = getHeightPx()
-                xDpi = getXDpi()
-                yDpi = getYDpi()
-            } else {
-                // Pre-API 30: Use DisplayMetrics
-                @Suppress("DEPRECATION")
-                windowManager.defaultDisplay.getMetrics(displayMetrics)
-                widthPixels = displayMetrics.widthPixels
-                heightPixels = displayMetrics.heightPixels
-                xDpi = displayMetrics.xdpi
-                yDpi = displayMetrics.ydpi
-            }
-
-            // Validate inputs
-            if (widthPixels <= 0 || heightPixels <= 0 || xDpi <= 0 || yDpi <= 0) {
-                return 0.0
-            }
-
-            // Calculate physical dimensions in inches
-            val widthInches = widthPixels.toDouble() / xDpi
-            val heightInches = heightPixels.toDouble() / yDpi
-
-            // Calculate diagonal size using Pythagorean theorem
-            val diagonalInches = sqrt(widthInches * widthInches + heightInches * heightInches)
-
-            // Round to two decimal places
-            return (diagonalInches * 100).roundToInt() / 100.0
-        } catch (_: Exception) {
-            return 0.0
+        val displayMetrics = resources.displayMetrics
+        val (width, height) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val bounds = bounds
+            Pair(bounds.width(), bounds.height())
+        } else {
+            val size = Point()
+            @Suppress("DEPRECATION")
+            windowManager.defaultDisplay.getRealSize(size)
+            Pair(size.x, size.y)
         }
+        val widthInInches = width.toDouble() / displayMetrics.xdpi
+        val heightInInches = height.toDouble() / displayMetrics.ydpi
+        // Calculate diagonal using hypot to avoid overflow/underflow
+        return hypot(widthInInches, heightInInches)
     }
 
     fun getAllData(): List<DeviceInfo>{

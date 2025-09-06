@@ -37,7 +37,7 @@ class BatteryUtils (private val context: Context) {
     fun getBatteryHealth(): String {
         val intent = getBatteryIntent()
         val health = intent?.getIntExtra(BatteryManager.EXTRA_HEALTH, -1) ?: -1
-        return healthMap[health] ?: context.getString(R.string.other)
+        return healthMap[health] ?: context.getString(R.string.unknown)
     }
 
     fun getBatteryTechnology(): String {
@@ -125,12 +125,13 @@ class BatteryUtils (private val context: Context) {
 
     fun getAllData(): List<DeviceInfo> {
         val cycleCount = getBatteryCycleCount()
+        val capacity = getBatteryCapacity().toInt()
         return listOf(
             DeviceInfo(R.string.battery_level, getBatteryPercentage(), "%"),
             DeviceInfo(R.string.status, getBatteryStatus()),
             DeviceInfo(R.string.health, getBatteryHealth()),
             DeviceInfo(R.string.cycle_count, if (cycleCount >= 0) cycleCount else context.getString(R.string.unknown)),
-            DeviceInfo(R.string.capacity, getBatteryCapacity().toInt(), " mAh"),
+            DeviceInfo(R.string.capacity, if (capacity > 0) capacity else context.getString(R.string.unknown), " mAh"),
             DeviceInfo(R.string.temperature, getBatteryTemperature(), " °C"),
             DeviceInfo(R.string.current, getDischargeCurrent(), " mA"),
             DeviceInfo(R.string.voltage, getChargingVoltage(), " V"),

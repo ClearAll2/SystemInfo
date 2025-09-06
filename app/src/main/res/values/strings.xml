@@ -222,4 +222,5 @@
     <string name="app_info">App Info</string>
     <string name="java_runtime_version">Java runtime version</string>
     <string name="jvm_version">Java VM version</string>
+    <string name="add_battery_widget">Add Widget to Homescreen</string>
 </resources>

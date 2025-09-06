@@ -2,11 +2,13 @@ package com.lkonlesoft.displayinfo.view
 
 import android.Manifest
 import android.app.Application
+import android.appwidget.AppWidgetManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -170,6 +172,7 @@ import com.lkonlesoft.displayinfo.view.dashboard.SoCDashBoard
 import com.lkonlesoft.displayinfo.view.dashboard.StorageDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.SystemDashboard
 import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
+import com.lkonlesoft.displayinfo.widget.BatReceiver
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -958,7 +961,21 @@ fun BatteryScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: Pa
             GeneralWarning(
                 title = R.string.cycle_count,
                 text = R.string.battery_notice_2,
-                icon = R.drawable.outline_info_24
+                icon = R.drawable.outline_info_24,
+                extra = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        val appWidgetManager = AppWidgetManager.getInstance(context)
+                        val widgetProvider = ComponentName(context, BatReceiver::class.java)
+                        Button(
+                            modifier = Modifier.padding(bottom = 10.dp),
+                            onClick = {
+                                appWidgetManager.requestPinAppWidget(widgetProvider, null, null)
+                            }
+                        ) {
+                            Text(stringResource(R.string.add_battery_widget))
+                        }
+                    }
+                }
             )
         }
         if (showNotice){
@@ -1882,7 +1899,8 @@ fun GeneralWarning(
     title: Int,
     text: Int,
     icon: Int = R.drawable.outline_comment_24,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    extra: @Composable () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -1911,6 +1929,7 @@ fun GeneralWarning(
             modifier = Modifier
                 .padding(vertical = 10.dp)
         )
+        extra()
     }
 }
 

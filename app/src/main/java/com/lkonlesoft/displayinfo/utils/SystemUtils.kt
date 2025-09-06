@@ -34,7 +34,7 @@ class SystemUtils(private val context: Context) {
 
     fun getRootData(): List<DeviceInfo>{
         return listOf(
-            DeviceInfo(R.string.root, if (isDeviceRooted()) context.getString(R.string.yes) else context.getString(R.string.no)),
+            DeviceInfo(R.string.root, if (isDeviceRooted()) context.getString(R.string.yes) else context.getString(R.string.not_detected)),
             DeviceInfo(R.string.has_magisk, if (isMagiskPresent()) context.getString(R.string.yes) else context.getString(R.string.not_detected)),
             DeviceInfo(R.string.has_magisk_properties, if (hasMagiskProperties()) context.getString(R.string.yes) else context.getString(R.string.not_detected))
         )
