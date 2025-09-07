@@ -6,7 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 36
+val buildCode = 37
 val buildName = "3.2"
 val appId = "com.lkonlesoft.displayinfo"
 

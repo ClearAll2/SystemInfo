@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.Rect
+import android.hardware.display.DisplayManager
 import android.media.MediaDrm
 import android.os.Build
 import android.util.Base64
@@ -21,6 +22,9 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
     private val calculator = WindowMetricsCalculator.getOrCreate()
     private val windowManager by lazy {
         context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    }
+    private val displayManager by lazy {
+        context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
     }
     private val maxWindowMetrics by lazy {
         calculator.computeMaximumWindowMetrics(context)
@@ -212,6 +216,30 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
         return hypot(widthInInches, heightInInches)
     }
 
+    @Suppress("DEPRECATION")
+    private fun getDisplayCapacity(): List<String> {
+        val displays = displayManager.displays
+        val displayCapacities = mutableListOf<String>()
+        for (display in displays) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val supportedModes = display.supportedModes
+                for (mode in supportedModes) {
+                    val width = mode.physicalWidth
+                    val height = mode.physicalHeight
+                    val refreshRate = mode.refreshRate.toInt()
+                    displayCapacities.add("$width x $height @ $refreshRate Hz")
+                }
+            }
+            else {
+                val displayWidth = display.width
+                val displayHeight = display.height
+                val displayRefreshRate = display.refreshRate.toInt()
+                displayCapacities.add("$displayWidth x $displayHeight @ $displayRefreshRate Hz")
+            }
+        }
+        return displayCapacities
+    }
+
     fun getAllData(): List<DeviceInfo>{
         return listOf(
             DeviceInfo(R.string.size, "%.2f".format(calculateScreenSizeInInches()), " inches"),
@@ -230,6 +258,7 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
             DeviceInfo(R.string.wcg, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && getIsScreenWideColorGamut()) resources.getString(R.string.supported) else context.getString(R.string.not_supported)),
             DeviceInfo(R.string.display_type, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getDisPlayType() else context.getString(R.string.unknown)),
             DeviceInfo(R.string.refresh_rate, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getDisplayRefreshRate().toString() else 60, " Hz"),
+            DeviceInfo(R.string.capacity, getDisplayCapacity().joinToString("\n")),
         )
     }
 
