@@ -72,10 +72,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -365,7 +361,7 @@ fun ScaffoldContext(settings: SettingsViewModel){
                                         onClick = { navController.navigateUp() }
                                     ) {
                                         Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_arrow_back_24),
                                             contentDescription = "backIcon",
                                             tint = MaterialTheme.colorScheme.onSurface
                                         )
@@ -1796,7 +1792,7 @@ fun CommonSwitchOption(
                 onCheckedChange = onSwitch,
                 thumbContent = {
                     Icon(
-                        imageVector = if (checked) Icons.Outlined.Check else Icons.Outlined.Close,
+                        imageVector = ImageVector.vectorResource(if (checked) R.drawable.baseline_check_24 else R.drawable.baseline_close_24),
                         contentDescription = null,
                         modifier = Modifier.size(SwitchDefaults.IconSize),
                     )
