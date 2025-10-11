@@ -116,7 +116,19 @@ class AndroidUtils (private val context: Context) {
         return Build.BOOTLOADER ?: context.getString(R.string.unknown)
     }
 
-    fun getAllData(): List<DeviceInfo> {
+    fun getExtraInfo(): List<DeviceInfo> {
+        return listOf(
+            DeviceInfo(R.string.hardware, getHardware()),
+            DeviceInfo(R.string.board, getBoard()),
+            DeviceInfo(R.string.performance_class, if (getPerformanceClass() > 0) getPerformanceClass().toString() else context.getString(R.string.n_a)),
+            DeviceInfo(R.string.google_play_service, getGmsVersion()),
+            DeviceInfo(R.string.google_play_store, getPlayStoreVersion()),
+            DeviceInfo(R.string.device_language, getDeviceLanguage()),
+            DeviceInfo(R.string.device_locale, getDeviceLocale()),
+        )
+    }
+
+    fun getAndroidInfo(): List<DeviceInfo> {
         return listOf(
             DeviceInfo(R.string.android_version, getAndroidVersion()),
             DeviceInfo(R.string.api_level, getApiLevel().toString()),
@@ -130,15 +142,8 @@ class AndroidUtils (private val context: Context) {
             DeviceInfo(R.string.tags, getTags()),
             DeviceInfo(R.string.fingerprint, getFingerprint()),
             DeviceInfo(R.string.host, getHost()),
-            DeviceInfo(R.string.hardware, getHardware()),
-            DeviceInfo(R.string.board, getBoard()),
             DeviceInfo(R.string.bootloader, getBootloader()),
             DeviceInfo(R.string.kernel, getKernel()),
-            DeviceInfo(R.string.performance_class, if (getPerformanceClass() > 0) getPerformanceClass().toString() else context.getString(R.string.n_a)),
-            DeviceInfo(R.string.google_play_service, getGmsVersion()),
-            DeviceInfo(R.string.google_play_store, getPlayStoreVersion()),
-            DeviceInfo(R.string.device_language, getDeviceLanguage()),
-            DeviceInfo(R.string.device_locale, getDeviceLocale()),
         )
     }
 

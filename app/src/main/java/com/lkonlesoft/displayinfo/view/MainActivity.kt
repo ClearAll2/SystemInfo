@@ -505,27 +505,45 @@ fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 @Composable
 fun AndroidScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
-    val infoList = AndroidUtils(context).getAllData()
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
+    val androidInfoList = AndroidUtils(context).getAndroidInfo()
+    val extraInfoList = AndroidUtils(context).getExtraInfo()
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),
         contentPadding = paddingValues,
-        //horizontalArrangement = Arrangement.spacedBy(20.dp)
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {
             Column {
-                infoList.forEach {
+                HeaderLine(tittle = stringResource(R.string.android))
+                androidInfoList.forEach {
                     IndividualLine(tittle = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
-                        isLast = infoList.last() == it,
-                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
+                        isLast = androidInfoList.last() == it,
+                        topStart = if (androidInfoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (androidInfoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (androidInfoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (androidInfoList.last() == it) 20.dp else 5.dp
+                    )
+                }
+            }
+        }
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.extra))
+                extraInfoList.forEach {
+                    IndividualLine(tittle = stringResource(it.name),
+                        info = it.value.toString(),
+                        canLongPress = longPressCopy,
+                        isLast = extraInfoList.last() == it,
+                        topStart = if (extraInfoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (extraInfoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (extraInfoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (extraInfoList.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -1865,13 +1883,12 @@ fun ThemeSelector(
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier
                     .padding(top = 5.dp)
-                    .padding(vertical = 10.dp)
+                    .padding(vertical = 5.dp)
             )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(bottom = 5.dp),
+                    .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 themeOptions.forEach { theme ->
@@ -1888,6 +1905,7 @@ fun ThemeSelector(
                     )
                 }
             }
+            Spacer(modifier = Modifier.padding(5.dp))
         }
         if (!isLast) {
             HorizontalDivider(
