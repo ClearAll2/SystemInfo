@@ -35,6 +35,15 @@ class AndroidUtils (private val context: Context) {
         }
     }
 
+    fun getPlayStoreVersion(): String {
+        return try {
+            val packageInfo = context.packageManager.getPackageInfo("com.android.vending", 0)
+            packageInfo.versionName ?: context.getString(R.string.unknown)
+        } catch (_: Exception) {
+            context.getString(R.string.n_a)
+        }
+    }
+
 
     fun getAndroidVersion(): String {
         return Build.VERSION.RELEASE ?: context.getString(R.string.unknown)
@@ -127,6 +136,7 @@ class AndroidUtils (private val context: Context) {
             DeviceInfo(R.string.kernel, getKernel()),
             DeviceInfo(R.string.performance_class, if (getPerformanceClass() > 0) getPerformanceClass().toString() else context.getString(R.string.n_a)),
             DeviceInfo(R.string.google_play_service, getGmsVersion()),
+            DeviceInfo(R.string.google_play_store, getPlayStoreVersion()),
             DeviceInfo(R.string.device_language, getDeviceLanguage()),
             DeviceInfo(R.string.device_locale, getDeviceLocale()),
         )
@@ -135,10 +145,11 @@ class AndroidUtils (private val context: Context) {
     fun getDashboardData(): List<DeviceInfo> {
         return listOf(
             DeviceInfo(R.string.android_version, getAndroidVersion()),
-            DeviceInfo(R.string.google_play_service, getGmsVersion()),
             DeviceInfo(R.string.api_level, getApiLevel().toString()),
             DeviceInfo(R.string.security_patch,  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getSecurityPatch() else context.getString(R.string.n_a)),
             DeviceInfo(R.string.sdk, getSdkName()),
+            DeviceInfo(R.string.google_play_service, getGmsVersion()),
+            DeviceInfo(R.string.google_play_store, getPlayStoreVersion())
         )
     }
 

@@ -223,4 +223,7 @@
     <string name="java_runtime_version">Java runtime version</string>
     <string name="jvm_version">Java VM version</string>
     <string name="add_battery_widget">Add Widget to Homescreen</string>
+    <string name="google_play_store">Google Play store</string>
+    <string name="storage_notice_title">Storage Information Note</string>
+    <string name="storage_notice">Please be aware that the total internal capacity does not include the size of OS and system files.</string>
 </resources>

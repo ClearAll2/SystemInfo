@@ -2,6 +2,7 @@ package com.lkonlesoft.displayinfo.helper
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 class SettingsManager private constructor(context: Context) {
 
@@ -22,9 +23,9 @@ class SettingsManager private constructor(context: Context) {
 
     // Save settings (example: save a boolean value)
     fun saveSettingLogic(key: String, value: Boolean) {
-        with(sharedPreferences.edit()) {
+        sharedPreferences.edit {
             putBoolean(key, value)
-            apply()  // or commit() for synchronous saving
+            // or commit() for synchronous saving
         }
     }
 
@@ -34,9 +35,9 @@ class SettingsManager private constructor(context: Context) {
     }
 
     fun saveSettingsInt(key: String, value: Int) {
-        with(sharedPreferences.edit()) {
+        sharedPreferences.edit {
             putInt(key, value)
-            apply()  // or commit() for synchronous saving
+            // or commit() for synchronous saving
         }
     }
 

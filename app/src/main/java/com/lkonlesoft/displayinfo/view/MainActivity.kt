@@ -109,6 +109,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -686,7 +687,7 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 @Composable
 fun DisplayScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
-    val resources = context.resources
+    val resources = LocalResources.current
     var refreshKey by remember { mutableIntStateOf(0) }
     var widevineInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
     var clearKeyInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
@@ -1187,7 +1188,7 @@ fun MemoryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 }
 
 @Composable
-fun StorageScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
+fun StorageScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val internalStorageStats = remember(refreshKey) { StorageUtils(context).getInternalStorageInfo() }
@@ -1255,6 +1256,14 @@ fun StorageScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         )
                     }
                 }
+            }
+        }
+        if (showNotice){
+            item {
+                GeneralWarning(
+                    title = R.string.storage_notice_title,
+                    text = R.string.storage_notice
+                )
             }
         }
     }
@@ -2099,7 +2108,7 @@ fun MainNavigation(
                     uriPattern = "si://info/storage"
                 })
         ){
-            StorageScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
+            StorageScreen(paddingValues = paddingValues, longPressCopy = longPressCopy, showNotice = showNotice)
         }
         composable(route = NavigationItem.Network.route,
             deepLinks = listOf(
