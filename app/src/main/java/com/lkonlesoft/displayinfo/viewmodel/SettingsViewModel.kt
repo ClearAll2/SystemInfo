@@ -30,6 +30,9 @@ class SettingsViewModel(context: Context) : ViewModel() {
     private val _showNotice = MutableStateFlow(true)
     val showNotice = _showNotice.asStateFlow()
 
+    private val _copyTitle = MutableStateFlow(true)
+    val copyTitle = _copyTitle.asStateFlow()
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _useNewDashboard.emit(settingsManager.getSettingLogic("useNewDashboard"))
@@ -42,8 +45,18 @@ class SettingsViewModel(context: Context) : ViewModel() {
                 _appColor.emit(appColor)
             }
             _longPressCopy.emit(settingsManager.getSettingLogic("longPressCopy"))
+            _copyTitle.emit(settingsManager.getSettingLogic("copyTitle"))
             _showNotice.emit(settingsManager.getSettingLogic("showNotice"))
         }
+    }
+
+    fun setCopyTitle(copyTitle: Boolean) {
+        settingsManager.saveSettingLogic("copyTitle", copyTitle)
+        _copyTitle.value = copyTitle
+    }
+
+    fun getCopyTitle(): Boolean {
+        return settingsManager.getSettingLogic("copyTitle")
     }
 
     fun setUseNewDashboard(useNewDashboard: Boolean) {
@@ -58,7 +71,6 @@ class SettingsViewModel(context: Context) : ViewModel() {
     fun setAppColor(color: Int) {
         settingsManager.saveSettingsInt("appColor", color)
         _appColor.value = color
-
     }
 
     fun getAppColor(): Int {

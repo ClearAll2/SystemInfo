@@ -150,7 +150,7 @@
     <string name="cancel">Cancel</string>
     <string name="permission_denied_details">Please allow permission in Settings</string>
     <string name="copied_to_clipboard">Copied</string>
-    <string name="long_press_to_copy">Long press to copy</string>
+    <string name="long_press_to_copy">Long Press To Copy</string>
     <string name="long_press_to_copy_details">Copy items\' value by long pressing them</string>
     <string name="general">General</string>
     <string name="plug_type">Plug type</string>
@@ -226,4 +226,6 @@
     <string name="google_play_store">Google Play store</string>
     <string name="storage_notice_title">Storage Information Note</string>
     <string name="storage_notice">Please be aware that the total internal capacity does not include the size of OS and system files.</string>
+    <string name="copy_title">Copy Title</string>
+    <string name="copy_title_details">Copy both title and item value</string>
 </resources>

@@ -431,7 +431,7 @@ fun ScaffoldContext(settings: SettingsViewModel){
 }
 
 @Composable
-fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
+fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val deviceInfoList by remember { mutableStateOf(
         SystemUtils(context).getDeviceData()) }
@@ -458,6 +458,7 @@ fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         tittle = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = deviceInfoList.last() == it,
                         topStart = if (deviceInfoList.first() == it) 20.dp else 5.dp,
                         topEnd = if (deviceInfoList.first() == it) 20.dp else 5.dp,
@@ -474,6 +475,7 @@ fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                     IndividualLine(tittle = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = rootInfoList.last() == it,
                         topStart = if (rootInfoList.first() == it) 20.dp else 5.dp,
                         topEnd = if (rootInfoList.first() == it) 20.dp else 5.dp,
@@ -503,7 +505,7 @@ fun SystemScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 }
 
 @Composable
-fun AndroidScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
+fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val androidInfoList = AndroidUtils(context).getAndroidInfo()
     val extraInfoList = AndroidUtils(context).getExtraInfo()
@@ -518,11 +520,12 @@ fun AndroidScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
     ) {
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.android))
+                HeaderLine(tittle = stringResource(R.string.general))
                 androidInfoList.forEach {
                     IndividualLine(tittle = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = androidInfoList.last() == it,
                         topStart = if (androidInfoList.first() == it) 20.dp else 5.dp,
                         topEnd = if (androidInfoList.first() == it) 20.dp else 5.dp,
@@ -534,11 +537,12 @@ fun AndroidScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.extra))
+                HeaderLine(tittle = stringResource(R.string.other))
                 extraInfoList.forEach {
                     IndividualLine(tittle = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = extraInfoList.last() == it,
                         topStart = if (extraInfoList.first() == it) 20.dp else 5.dp,
                         topEnd = if (extraInfoList.first() == it) 20.dp else 5.dp,
@@ -553,7 +557,7 @@ fun AndroidScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
+fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
     var showWarningPopup by remember { mutableStateOf(false) }
@@ -633,6 +637,7 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                         }
                     },
                     canLongPress = longPressCopy,
+                    copyTitle = copyTitle,
                     topStart = 20.dp,
                     topEnd = 20.dp,
                     bottomStart = 20.dp,
@@ -650,6 +655,7 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                             tittle = stringResource(it.name),
                             info = it.value.toString(),
                             canLongPress = longPressCopy,
+                            copyTitle = copyTitle,
                             isLast = simInfo.last() == it,
                             topStart = if (simInfo.first() == it) 20.dp else 5.dp,
                             topEnd = if (simInfo.first() == it) 20.dp else 5.dp,
@@ -673,6 +679,7 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                             }
                         },
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         topStart = 20.dp,
                         topEnd = 20.dp,
                         bottomStart = 20.dp,
@@ -689,6 +696,7 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                     IndividualLine(tittle = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = infoList.last() == it,
                         topStart = if (infoList.first() == it) 20.dp else 5.dp,
                         topEnd = if (infoList.first() == it) 20.dp else 5.dp,
@@ -703,7 +711,7 @@ fun NetworkScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 
 
 @Composable
-fun DisplayScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
+fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val resources = LocalResources.current
     var refreshKey by remember { mutableIntStateOf(0) }
@@ -734,6 +742,7 @@ fun DisplayScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: Pa
                     IndividualLine(tittle = stringResource(it.name),
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = infoList.last() == it,
                         topStart = if (infoList.first() == it) 20.dp else 5.dp,
                         topEnd = if (infoList.first() == it) 20.dp else 5.dp,
@@ -751,6 +760,7 @@ fun DisplayScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: Pa
                     IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() },
                         info = it.second,
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = widevineList.last() == it,
                         topStart = if (widevineList.first() == it) 20.dp else 5.dp,
                         topEnd = if (widevineList.first() == it) 20.dp else 5.dp,
@@ -768,6 +778,7 @@ fun DisplayScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: Pa
                     IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() },
                         info = it.second,
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = clearKeyList.last() == it,
                         topStart = if (clearKeyList.first() == it) 20.dp else 5.dp,
                         topEnd = if (clearKeyList.first() == it) 20.dp else 5.dp,
@@ -935,7 +946,7 @@ fun BluetoothStatusScreen(onClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BatteryScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
+fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val infoList by remember(refreshKey) { mutableStateOf(BatteryUtils(context).getAllData()) }
@@ -954,15 +965,14 @@ fun BatteryScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: Pa
         contentPadding = paddingValues,
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        staggeredHeader {
-            GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)
-        }
-        staggeredHeader {
+        item {
             Column {
+                GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)
                 infoList.forEach {
                     IndividualLine(tittle = stringResource(it.name),
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = infoList.last() == it,
                         topStart = if (infoList.first() == it) 20.dp else 5.dp,
                         topEnd = if (infoList.first() == it) 20.dp else 5.dp,
@@ -1044,10 +1054,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
         if (it){
             LazyVerticalStaggeredGrid (
                 state = state,
-                columns = if (width < 600.dp) StaggeredGridCells.Fixed(if (!useNewDashboard) 2 else 1)
-                else StaggeredGridCells.Adaptive(
-                    400.dp
-                ),
+                columns = if (width < 600.dp) StaggeredGridCells.Fixed(1) else StaggeredGridCells.Adaptive(400.dp),
                 contentPadding = paddingValues,
                 modifier = Modifier
                     .fillMaxSize()
@@ -1091,10 +1098,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
         else {
             LazyVerticalStaggeredGrid (
                 state = state,
-                columns = if (width < 600.dp) StaggeredGridCells.Fixed(if (!useNewDashboard) 2 else 1)
-                else StaggeredGridCells.Adaptive(
-                    400.dp
-                ),
+                columns = if (width < 600.dp) StaggeredGridCells.Fixed(2) else StaggeredGridCells.Adaptive(240.dp),
                 contentPadding = paddingValues,
                 modifier = Modifier
                     .fillMaxSize()
@@ -1117,7 +1121,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
 }
 
 @Composable
-fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, showNotice: Boolean) {
+fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean) {
     val context = LocalContext.current
     var cameraInfoList by remember { mutableStateOf<List<List<DeviceInfo>>>(emptyList()) }
     LaunchedEffect(Unit) {
@@ -1141,6 +1145,7 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, showN
                     IndividualLine(tittle = stringResource(it.name),
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = cameraItemList.last() == it,
                         topStart = if (cameraItemList.first() == it) 20.dp else 5.dp,
                         topEnd = if (cameraItemList.first() == it) 20.dp else 5.dp,
@@ -1162,7 +1167,7 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, showN
 }
 
 @Composable
-fun MemoryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
+fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val ramInfo by remember(refreshKey) { mutableStateOf(StorageUtils(context).getRAMInfo()) }
@@ -1193,6 +1198,7 @@ fun MemoryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
                     IndividualLine(tittle = stringResource(it.name),
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = ramInfo.last() == it,
                         topStart = if (ramInfo.first() == it) 20.dp else 5.dp,
                         topEnd = if (ramInfo.first() == it) 20.dp else 5.dp,
@@ -1206,7 +1212,7 @@ fun MemoryScreen(longPressCopy: Boolean, paddingValues: PaddingValues) {
 }
 
 @Composable
-fun StorageScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
+fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val internalStorageStats = remember(refreshKey) { StorageUtils(context).getInternalStorageInfo() }
@@ -1240,6 +1246,7 @@ fun StorageScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: Pa
                     IndividualLine(tittle = stringResource(it.name),
                         info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = internalStorageStats.last() == it,
                         topStart = if (internalStorageStats.first() == it) 20.dp else 5.dp,
                         topEnd = if (internalStorageStats.first() == it) 20.dp else 5.dp,
@@ -1266,6 +1273,7 @@ fun StorageScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: Pa
                             tittle = stringResource(it.name),
                             info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
                             canLongPress = longPressCopy,
+                            copyTitle = copyTitle,
                             isLast = externalStorageStats.last() == it,
                             topStart = if (externalStorageStats.first() == it) 20.dp else 5.dp,
                             topEnd = if (externalStorageStats.first() == it) 20.dp else 5.dp,
@@ -1288,7 +1296,7 @@ fun StorageScreen(longPressCopy: Boolean, showNotice: Boolean, paddingValues: Pa
 }
 
 @Composable
-fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues, showNotice: Boolean) {
+fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues, showNotice: Boolean) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val glEs by remember(refreshKey) { mutableStateOf(SocUtils(context).getGlEsVersion()) }
@@ -1316,6 +1324,7 @@ fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues, showNot
                     IndividualLine(tittle = if (it.type == 1) stringResource(it.name, it.value) else stringResource(it.name),
                         info = if (it.type == 1) it.extra else it.value.toString(),
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = cpuInfoList.last() == it,
                         topStart = if (cpuInfoList.first() == it) 20.dp else 5.dp,
                         topEnd = if (cpuInfoList.first() == it) 20.dp else 5.dp,
@@ -1332,6 +1341,7 @@ fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues, showNot
                     IndividualLine(tittle = stringResource(it.name, it.value),
                         info = it.extra,
                         canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
                         isLast = cpuUsageInfo.last() == it,
                         topStart = if (cpuUsageInfo.first() == it) 20.dp else 5.dp,
                         topEnd = if (cpuUsageInfo.first() == it) 20.dp else 5.dp,
@@ -1347,6 +1357,7 @@ fun HardwareScreen(longPressCopy: Boolean, paddingValues: PaddingValues, showNot
                 IndividualLine(tittle = stringResource(R.string.gles_version),
                     info = glEs,
                     canLongPress = longPressCopy,
+                    copyTitle = copyTitle,
                     isLast = true,
                     topStart = 20.dp,
                     topEnd = 20.dp,
@@ -1402,6 +1413,7 @@ fun IndividualLine(
     info3: String = "",
     onClick: () -> Unit = { },
     canLongPress: Boolean = true,
+    copyTitle: Boolean = true,
     topStart: Dp = 5.dp,
     topEnd: Dp = 5.dp,
     bottomStart: Dp = 5.dp,
@@ -1438,11 +1450,16 @@ fun IndividualLine(
                     onClick = onClick,
                     onLongClick = {
                         if (canLongPress) {
-                            context.copyTextToClipboard(buildString {
-                                append(tittle)
-                                append("\n")
-                                append(info)
-                            })
+                            if (copyTitle) {
+                                context.copyTextToClipboard(buildString {
+                                    append(tittle)
+                                    append("\n")
+                                    append(info)
+                                })
+                            }
+                            else {
+                                context.copyTextToClipboard(info)
+                            }
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.copied_to_clipboard),
@@ -1455,7 +1472,7 @@ fun IndividualLine(
             horizontalAlignment = Alignment.Start,
         ) {
             Text(
-                text = tittle,
+                text = tittle.split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } },
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 5.dp)
@@ -1581,6 +1598,7 @@ fun AboutScreen(paddingValues: PaddingValues) {
 @Composable
 fun SettingsScreen(
     longPressCopy: Boolean,
+    copyTitle: Boolean,
     showNotice: Boolean,
     appColor: Int,
     isDynamicColors: Boolean,
@@ -1658,6 +1676,25 @@ fun SettingsScreen(
                     onSwitch = {
                         settings.setLongPressCopy(it)
                     },
+                    bottomStart = 5.dp,
+                    bottomEnd = 5.dp,
+                    isLast = false
+                )
+                CommonSwitchOption(
+                    text = R.string.copy_title,
+                    subText = R.string.copy_title_details,
+                    extra = "",
+                    checked = copyTitle,
+                    onClick = {
+                        settings.setCopyTitle(!copyTitle)
+                    },
+                    onSwitch = {
+                        settings.setCopyTitle(it)
+                    },
+                    topStart = 5.dp,
+                    topEnd = 5.dp,
+                    enabled = longPressCopy,
+                    clickable = longPressCopy,
                     isLast = true
                 )
             }
@@ -2012,6 +2049,7 @@ fun MainNavigation(
     paddingValues: PaddingValues
 ) {
     val longPressCopy by settings.longPressCopy.collectAsStateWithLifecycle()
+    val copyTitle by settings.copyTitle.collectAsStateWithLifecycle()
     val showNotice by settings.showNotice.collectAsStateWithLifecycle()
     NavHost(navController, startDestination = NavigationItem.Home.route,
         enterTransition = {
@@ -2046,6 +2084,7 @@ fun MainNavigation(
             SettingsScreen(
                 settings= settings,
                 longPressCopy = longPressCopy,
+                copyTitle = copyTitle,
                 showNotice = showNotice,
                 paddingValues = paddingValues,
                 appColor = appColor,
@@ -2070,7 +2109,11 @@ fun MainNavigation(
                     uriPattern = "si://info/home"
                 }
             )){
-            HomeScreen(navController = navController, currentRoute = currentRoute, useNewDashboard = useNewDashboard, paddingValues = paddingValues)
+            HomeScreen(navController = navController,
+                currentRoute = currentRoute,
+                useNewDashboard = useNewDashboard,
+                paddingValues = paddingValues
+            )
         }
         composable(route = NavigationItem.System.route,
             deepLinks = listOf(
@@ -2078,7 +2121,10 @@ fun MainNavigation(
                     uriPattern = "si://info/system"
                 }
             )){
-            SystemScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
+            SystemScreen(paddingValues = paddingValues,
+                longPressCopy = longPressCopy,
+                copyTitle = copyTitle
+            )
         }
         composable(route = NavigationItem.Android.route,
             deepLinks = listOf(
@@ -2086,7 +2132,10 @@ fun MainNavigation(
                     uriPattern = "si://info/android"
                 }
             )){
-            AndroidScreen (paddingValues = paddingValues, longPressCopy = longPressCopy)
+            AndroidScreen (paddingValues = paddingValues,
+                longPressCopy = longPressCopy,
+                copyTitle = copyTitle
+            )
         }
         composable(route = NavigationItem.SOC.route,
             deepLinks = listOf(
@@ -2094,7 +2143,10 @@ fun MainNavigation(
                     uriPattern = "si://info/soc"
                 }
             )){
-            HardwareScreen(paddingValues = paddingValues, longPressCopy = longPressCopy, showNotice = showNotice)
+            HardwareScreen(paddingValues = paddingValues,
+                longPressCopy = longPressCopy,
+                copyTitle = copyTitle,
+                showNotice = showNotice)
         }
         composable(route = NavigationItem.Display.route,
             deepLinks = listOf(
@@ -2102,7 +2154,10 @@ fun MainNavigation(
                     uriPattern = "si://info/display"
                 }
             )){
-           DisplayScreen (paddingValues = paddingValues, longPressCopy = longPressCopy, showNotice = showNotice)
+           DisplayScreen (paddingValues = paddingValues,
+               longPressCopy = longPressCopy,
+               copyTitle = copyTitle,
+               showNotice = showNotice)
         }
         composable(route = NavigationItem.Battery.route,
             deepLinks = listOf(
@@ -2110,7 +2165,10 @@ fun MainNavigation(
                     uriPattern = "si://info/battery"
                 }
             )){
-            BatteryScreen (paddingValues = paddingValues, longPressCopy = longPressCopy, showNotice = showNotice)
+            BatteryScreen (paddingValues = paddingValues,
+                longPressCopy = longPressCopy,
+                copyTitle = copyTitle,
+                showNotice = showNotice)
         }
         composable(route = NavigationItem.Memory.route,
             deepLinks = listOf(
@@ -2118,7 +2176,10 @@ fun MainNavigation(
                     uriPattern = "si://info/memory"
                 }
             )){
-            MemoryScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
+            MemoryScreen(paddingValues = paddingValues,
+                longPressCopy = longPressCopy,
+                copyTitle = copyTitle
+            )
         }
         composable(route = NavigationItem.Storage.route,
             deepLinks = listOf(
@@ -2126,7 +2187,10 @@ fun MainNavigation(
                     uriPattern = "si://info/storage"
                 })
         ){
-            StorageScreen(paddingValues = paddingValues, longPressCopy = longPressCopy, showNotice = showNotice)
+            StorageScreen(paddingValues = paddingValues,
+                longPressCopy = longPressCopy,
+                copyTitle = copyTitle,
+                showNotice = showNotice)
         }
         composable(route = NavigationItem.Network.route,
             deepLinks = listOf(
@@ -2134,14 +2198,21 @@ fun MainNavigation(
                     uriPattern = "si://info/network"
                 }
             )){
-            NetworkScreen(paddingValues = paddingValues, longPressCopy = longPressCopy)
+            NetworkScreen(paddingValues = paddingValues,
+                longPressCopy = longPressCopy,
+                copyTitle = copyTitle
+            )
         }
         composable(route = NavigationItem.Camera.route, deepLinks = listOf(
             navDeepLink {
                 uriPattern = "si://info/camera"
             }
         )){
-            CameraInfoScreen(paddingValues = paddingValues, longPressCopy = longPressCopy, showNotice = showNotice)
+            CameraInfoScreen(paddingValues = paddingValues,
+                longPressCopy = longPressCopy,
+                copyTitle = copyTitle,
+                showNotice = showNotice
+            )
         }
         composable(route = NavigationItem.Connectivity.route, deepLinks = listOf(
             navDeepLink {
