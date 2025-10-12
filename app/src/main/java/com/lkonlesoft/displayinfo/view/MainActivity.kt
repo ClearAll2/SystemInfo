@@ -1755,7 +1755,7 @@ fun AboutMenuItem(
             horizontalAlignment = Alignment.Start,
         ) {
             Text(
-                text = tittle,
+                text = tittle.split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } },
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 5.dp)
