@@ -60,7 +60,7 @@ class BatteryWidget : GlanceAppWidget() {
             else -> 18.sp
         }
         val countFontSize = when {
-            size.height < 100.dp -> 20.sp
+            size.height < 100.dp -> 16.sp
             size.height < 150.dp -> 24.sp
             else -> 26.sp
         }
@@ -76,14 +76,14 @@ class BatteryWidget : GlanceAppWidget() {
                 .clickable(onClick = actionStartActivity(intent)),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "🔋 Cycle Count", modifier = GlanceModifier.padding(vertical = 10.dp, horizontal = 5.dp),
+            Text(text = "🔋 Cycle Count", modifier = GlanceModifier.padding(horizontal = 5.dp).padding(top = 10.dp, bottom = 5.dp),
                 style = TextStyle(
                     color = GlanceTheme.colors.onBackground,
                     fontSize = titleFontSize,
                     fontWeight = FontWeight.Medium)
             )
             Text(text = if (cycleCount == -1) "N/A" else cycleCount.toString(),
-                modifier = GlanceModifier.padding(vertical = 10.dp, horizontal = 10.dp),
+                modifier = GlanceModifier.padding(horizontal = 5.dp).padding(top = 10.dp, bottom = 5.dp),
                 style = TextStyle(
                     color = GlanceTheme.colors.onBackground,
                     fontSize = countFontSize,

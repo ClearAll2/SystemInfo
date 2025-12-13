@@ -228,4 +228,19 @@
     <string name="storage_notice">Please be aware that the total internal capacity does not include the size of OS and system files.</string>
     <string name="copy_title">Copy Title</string>
     <string name="copy_title_details">Copy both title and item value</string>
+    <string name="language">Language</string>
+    <string name="fr">French</string>
+    <string name="nl">Dutch</string>
+    <string name="de">German</string>
+    <string name="it">Italian</string>
+    <string name="pt">Portuguese</string>
+    <string name="es">Spanish</string>
+    <string name="ru">Russian</string>
+    <string name="ja">Japanese</string>
+    <string name="ko">Korean</string>
+    <string name="zh">Chinese</string>
+    <string name="en">English</string>
+    <string name="vi">Vietnamese</string>
+    <string name="system_default">System default</string>
+    <string name="OK">OK</string>
 </resources>

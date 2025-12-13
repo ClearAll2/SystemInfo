@@ -18,20 +18,26 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -53,12 +59,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridItemScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -98,19 +107,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -124,6 +132,7 @@ import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
+import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -172,12 +181,10 @@ import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
 import com.lkonlesoft.displayinfo.widget.BatReceiver
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var appUpdateManager: AppUpdateManager
     private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
@@ -332,7 +339,19 @@ fun ScaffoldContext(settings: SettingsViewModel){
                         ),
                         title = {
                             Text(
-                                text = currentRoute.toString().replaceFirstChar { it.uppercase() },
+                                text = when(currentRoute){
+                                    NavigationItem.SOC.route -> stringResource(NavigationItem.SOC.name)
+                                    NavigationItem.Battery.route -> stringResource(NavigationItem.Battery.name)
+                                    NavigationItem.Memory.route -> stringResource(NavigationItem.Memory.name)
+                                    NavigationItem.Display.route -> stringResource(NavigationItem.Display.name)
+                                    NavigationItem.Storage.route -> stringResource(NavigationItem.Storage.name)
+                                    NavigationItem.Android.route -> stringResource(NavigationItem.Android.name)
+                                    NavigationItem.Network.route -> stringResource(NavigationItem.Network.name)
+                                    NavigationItem.System.route -> stringResource(NavigationItem.System.name)
+                                    NavigationItem.About.route -> stringResource(NavigationItem.About.name)
+                                    NavigationItem.Settings.route -> stringResource(NavigationItem.Settings.name)
+                                    else -> "Home"
+                                },
                                 fontWeight = FontWeight.Medium,
                                 modifier = Modifier
                                     .padding(horizontal = 10.dp)
@@ -559,6 +578,7 @@ fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
 @Composable
 fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
+    val resource = LocalResources.current
     var refreshKey by remember { mutableIntStateOf(0) }
     var showWarningPopup by remember { mutableStateOf(false) }
     var hasPermission by remember(refreshKey) { mutableStateOf(context.hasPermission(Manifest.permission.READ_PHONE_STATE)) }
@@ -571,10 +591,10 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
         ActivityResultContracts.RequestPermission()) {isGranted ->
         hasPermission = isGranted
         if (isGranted){
-            Toast.makeText(context, context.getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, resource.getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
         }
         else{
-            Toast.makeText(context, context.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, resource.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
             showWarningPopup = !showWarningPopup
         }
     }
@@ -630,11 +650,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                 Spacer(modifier = Modifier.padding(vertical = 10.dp))
                 IndividualLine(tittle = stringResource(R.string.network_type), info = networkType,
                     onClick = {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                            if (!context.hasPermission(Manifest.permission.READ_PHONE_STATE)) {
-                                startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
-                            }
-                        }
+                        startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
                     },
                     canLongPress = longPressCopy,
                     copyTitle = copyTitle,
@@ -672,11 +688,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                     HeaderLine(tittle = stringResource(R.string.sim_info))
                     IndividualLine(tittle = stringResource(R.string.sim_info), info = stringResource(R.string.require_permission),
                         onClick = {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                                if (!context.hasPermission(Manifest.permission.READ_PHONE_STATE)) {
-                                    startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
-                                }
-                            }
+                            startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
                         },
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
@@ -852,12 +864,7 @@ fun BluetoothStatusScreen(onClick: () -> Unit) {
     var a2dpConnectionState by remember { mutableIntStateOf(BluetoothProfile.STATE_DISCONNECTED) }
 
     // Obtain the default Bluetooth adapter.
-    val bluetoothManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        localContext.getSystemService(BluetoothManager::class.java)
-    }
-    else {
-        TODO("VERSION.SDK_INT < M")
-    }
+    val bluetoothManager = localContext.getSystemService(BluetoothManager::class.java)
     val bluetoothAdapter = bluetoothManager?.adapter
     // State variable to hold the list of connected Bluetooth devices.
     var connectedDevices by remember { mutableStateOf<List<BluetoothDevice>>(emptyList()) }
@@ -1018,9 +1025,8 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
 @OptIn(FlowPreview::class)
 @Composable
 fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, currentRoute: String?, paddingValues: PaddingValues) {
-    val width = LocalConfiguration.current.screenWidthDp.dp
-    var index by rememberSaveable { mutableIntStateOf(0) }
-    val state = rememberLazyStaggeredGridState(initialFirstVisibleItemIndex = index)
+    val width = LocalWindowInfo.current.containerDpSize.width
+    val state = rememberLazyStaggeredGridState()
     val listScreen = listOf(
         NavigationItem.System,
         NavigationItem.Android,
@@ -1033,13 +1039,6 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
         NavigationItem.Camera,
         //NavigationItem.Connectivity
     )
-    LaunchedEffect(state) {
-        snapshotFlow {
-            state.firstVisibleItemIndex
-        }.debounce(500L).collectLatest{ latest ->
-            index = latest
-        }
-    }
     AnimatedContent(targetState = useNewDashboard,
         transitionSpec = {
             if (targetState && !initialState) {
@@ -1050,7 +1049,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
                         slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
             }
         }
-    ) { it ->
+    ) {
         if (it){
             LazyVerticalStaggeredGrid (
                 state = state,
@@ -1421,6 +1420,7 @@ fun IndividualLine(
     isLast: Boolean = false
 ){
     val context = LocalContext.current
+    val resource = LocalResources.current
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -1462,7 +1462,7 @@ fun IndividualLine(
                             }
                             Toast.makeText(
                                 context,
-                                context.getString(R.string.copied_to_clipboard),
+                                resource.getString(R.string.copied_to_clipboard),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -1596,6 +1596,74 @@ fun AboutScreen(paddingValues: PaddingValues) {
 }
 
 @Composable
+fun LanguageSelectionPopup(
+    modifier: Modifier,
+    currentLang: String,
+    onClick: (String) -> Unit,
+    onDismiss: () -> Unit) {
+    val height = LocalWindowInfo.current.containerDpSize.height
+    val localeOptions = mapOf(
+        "default" to R.string.system_default,
+        "vi" to R.string.vi,
+        "ru" to R.string.ru,
+        "zh" to R.string.zh,
+        "ja" to R.string.ja,
+        "ko" to R.string.ko,
+        "en" to R.string.en,
+        "fr" to R.string.fr,
+        "nl" to R.string.nl,
+        "de" to R.string.de,
+        "it" to R.string.it,
+        "pt" to R.string.pt,
+        "es" to R.string.es
+    )
+    var selectLang by remember { mutableStateOf(currentLang) }
+    val firstIndex = localeOptions.entries.toList().indexOfFirst { it.key == currentLang } -1
+    val state = rememberLazyListState(initialFirstVisibleItemIndex = if (firstIndex >= 0) firstIndex else 0)
+    Dialog(
+        onDismissRequest = onDismiss
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            tonalElevation = 10.dp,
+            shape = RoundedCornerShape(25.dp)
+        ) {
+            Column(
+                modifier = modifier.verticalScroll(rememberScrollState())
+            ) {
+                Text(text = stringResource(id = R.string.language), fontSize = 25.sp, modifier = Modifier.padding(horizontal = 30.dp, vertical = 20.dp))
+                LazyColumn(state = state, modifier = Modifier
+                    .fillMaxWidth()
+                    .height(height.times(0.4f))){
+                    items(localeOptions.entries.toList()) { item ->
+                        PopupSelectionLine(
+                            name = stringResource(item.value),
+                            onSelected = selectLang == item.key,
+                            onItemClick = {
+                                selectLang = item.key
+                            }
+                        )
+                    }
+                }
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 5.dp)
+                ) {
+                    TextButton(onClick = onDismiss, modifier = Modifier.padding(5.dp)) {
+                        Text(text = stringResource(id = R.string.cancel), modifier = Modifier.padding(5.dp))
+                    }
+                    TextButton(onClick = { onClick(selectLang) }, modifier = Modifier.padding(5.dp)) {
+                        Text(text = stringResource(id = R.string.OK), modifier = Modifier.padding(5.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun SettingsScreen(
     longPressCopy: Boolean,
     copyTitle: Boolean,
@@ -1606,6 +1674,52 @@ fun SettingsScreen(
     onAboutClick: () -> Unit,
     paddingValues: PaddingValues
 ) {
+    var showLangDialog by remember { mutableStateOf(false) }
+    var currentLang by remember { mutableStateOf("")}
+    val localeOptions = mapOf(
+        "default" to R.string.system_default,
+        "vi" to R.string.vi,
+        "ru" to R.string.ru,
+        "zh" to R.string.zh,
+        "ja" to R.string.ja,
+        "ko" to R.string.ko,
+        "en" to R.string.en,
+        "fr" to R.string.fr,
+        "nl" to R.string.nl,
+        "de" to R.string.de,
+        "it" to R.string.it,
+        "pt" to R.string.pt,
+        "es" to R.string.es
+    )
+    LaunchedEffect(Unit) {
+        currentLang = getCurrentLanguage()
+    }
+    AnimatedVisibility(visible = showLangDialog,
+        enter = fadeIn(
+            animationSpec = tween(220, delayMillis = 100)
+        ) + scaleIn(
+            initialScale = 0.92f,
+            animationSpec = tween(220, delayMillis = 100)
+        ),
+        exit = fadeOut(animationSpec = tween(100))
+    ) {
+        LanguageSelectionPopup(
+            modifier = Modifier.fillMaxWidth(),
+            currentLang = currentLang,
+            onDismiss = {
+                showLangDialog = !showLangDialog
+            },
+            onClick = { newLang ->
+                if (currentLang != newLang){
+                    currentLang = newLang
+                    if (newLang == "default")
+                        AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
+                    else
+                        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(currentLang))
+                }
+            }
+        )
+    }
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
@@ -1615,6 +1729,23 @@ fun SettingsScreen(
         contentPadding = paddingValues,
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.language))
+                AboutMenuItem(tittle = stringResource(R.string.language),
+                    text = stringResource(localeOptions.entries.firstOrNull { it.key == currentLang }?.value
+                        ?: R.string.system_default),
+                    onItemClick = {
+                        showLangDialog = !showLangDialog
+                    },
+                    isLast = true,
+                    topStart = 20.dp,
+                    topEnd = 20.dp,
+                    bottomStart = 20.dp,
+                    bottomEnd = 20.dp
+                )
+            }
+        }
         item {
             Column {
                 HeaderLine(tittle = stringResource(R.string.display))
@@ -1771,6 +1902,76 @@ fun AboutMenuItem(
         }
     }
 
+}
+
+fun getCurrentLanguage(): String {
+    val currentLocales = AppCompatDelegate.getApplicationLocales()
+    return if (!currentLocales.isEmpty) {
+        currentLocales[0]?.language
+            ?: "default"
+    }
+    else {
+        "default"
+    }
+}
+
+@Composable
+fun PopupSelectionLine(name: String, onSelected: Boolean, onItemClick: () -> Unit) {
+    // Animate scale with keyframes for a bouncy effect
+    val scale by animateFloatAsState(
+        targetValue = 1.0f, // Always return to 1.0f
+        animationSpec = if (onSelected) {
+            keyframes {
+                durationMillis = 400 // Faster animation (400ms total)
+                1.0f at 0 // Start at normal scale
+                1.3f at 150 // Peak scale (bouncy overshoot)
+                0.9f at 300 // Slight undershoot for bounce
+                1.0f at 400 // Settle back to normal
+            }
+        } else {
+            keyframes {
+                durationMillis = 400 // Fast animation (400ms)
+                1.0f at 0 // Start at normal scale
+                0.8f at 150 // Scale down for unselection
+                1.4f at 300 // Slight overshoot for bounce
+                1.0f at 400 // Settle back to normal
+            }
+        }
+    )
+    val cornerRadius by animateDpAsState(
+        targetValue = if (onSelected) 16.dp else 40.dp,
+        animationSpec = spring(
+            dampingRatio = 0.3f,
+            stiffness = 300f
+        )
+    )
+    Row(verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+            .clip(shape = RoundedCornerShape(cornerRadius))
+            .scale(scale)
+            .background(if (!onSelected) Color.Transparent else MaterialTheme.colorScheme.outlineVariant)
+            .clickable {
+                onItemClick()
+            }
+            .padding(horizontal = 20.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = name, modifier = Modifier
+            .padding(vertical = 20.dp))
+        AnimatedVisibility (visible = onSelected,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut()
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.baseline_check_circle_24),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(horizontal = 5.dp))
+        }
+
+    }
 }
 
 @Composable
