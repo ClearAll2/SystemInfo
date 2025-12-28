@@ -19,7 +19,9 @@ import java.util.UUID
 import kotlin.math.hypot
 
 class DisplayUtils (private val context: Context, private val resources: Resources) {
-    private val calculator = WindowMetricsCalculator.getOrCreate()
+    private val calculator by lazy {
+        WindowMetricsCalculator.getOrCreate()
+    }
     private val windowManager by lazy {
         context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
@@ -221,20 +223,12 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
         val displays = displayManager.displays
         val displayCapacities = mutableListOf<String>()
         for (display in displays) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val supportedModes = display.supportedModes
-                for (mode in supportedModes) {
-                    val width = mode.physicalWidth
-                    val height = mode.physicalHeight
-                    val refreshRate = mode.refreshRate.toInt()
-                    displayCapacities.add("$width x $height @ $refreshRate Hz")
-                }
-            }
-            else {
-                val displayWidth = display.width
-                val displayHeight = display.height
-                val displayRefreshRate = display.refreshRate.toInt()
-                displayCapacities.add("$displayWidth x $displayHeight @ $displayRefreshRate Hz")
+            val supportedModes = display.supportedModes
+            for (mode in supportedModes) {
+                val width = mode.physicalWidth
+                val height = mode.physicalHeight
+                val refreshRate = mode.refreshRate.toInt()
+                displayCapacities.add("$width x $height @ $refreshRate Hz")
             }
         }
         return displayCapacities

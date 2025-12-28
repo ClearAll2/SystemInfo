@@ -11,6 +11,14 @@ import java.io.File
 
 class StorageUtils (private val context: Context) {
 
+    private val am by lazy {
+        context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+    }
+
+    private val info by lazy {
+        ActivityManager.MemoryInfo()
+    }
+
     fun getRAMInfo(): List<DeviceInfo>{
         val totalRAM = getTotalRAM()
         val availableRAM = getAvailableRAM()
@@ -60,16 +68,8 @@ class StorageUtils (private val context: Context) {
     }
 
     fun getAvailableRAM(): Long {
-        val am = context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
-        val info = ActivityManager.MemoryInfo()
         am.getMemoryInfo(info)
         return info.availMem / 1024 / 1024 // MB
-    }
-
-    fun getUsedRAM(): Long {
-        val total = getTotalRAM()
-        val free = getAvailableRAM()
-        return total - free
     }
 
     private fun getStorageStats(path: File): Pair<Long, Long> {
@@ -104,18 +104,4 @@ class StorageUtils (private val context: Context) {
         }
         return Pair(-1,-1)
     }
-
-    fun getAppStorageUsage(): Long {
-        return context.filesDir?.let {
-            File(it.absolutePath).walkTopDown().map { file -> file.length() }.sum()
-        } ?: 0L
-    }
-
-    fun getCacheStorageUsage(): Long {
-        return context.cacheDir?.let {
-            File(it.absolutePath).walkTopDown().map { file -> file.length() }.sum()
-        } ?: 0L
-    }
-
-
 }

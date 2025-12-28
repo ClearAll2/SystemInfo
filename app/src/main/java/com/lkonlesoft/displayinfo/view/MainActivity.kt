@@ -80,7 +80,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -574,7 +573,7 @@ fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+
 @Composable
 fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
@@ -951,7 +950,7 @@ fun BluetoothStatusScreen(onClick: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+
 @Composable
 fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
@@ -1654,7 +1653,13 @@ fun LanguageSelectionPopup(
                     TextButton(onClick = onDismiss, modifier = Modifier.padding(5.dp)) {
                         Text(text = stringResource(id = R.string.cancel), modifier = Modifier.padding(5.dp))
                     }
-                    TextButton(onClick = { onClick(selectLang) }, modifier = Modifier.padding(5.dp)) {
+                    TextButton(
+                        onClick = {
+                            onClick(selectLang)
+                            onDismiss()
+                        },
+                        modifier = Modifier.padding(5.dp)
+                    ) {
                         Text(text = stringResource(id = R.string.OK), modifier = Modifier.padding(5.dp))
                     }
                 }
@@ -1870,7 +1875,7 @@ fun AboutMenuItem(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -2005,7 +2010,7 @@ fun CommonSwitchOption(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -2059,6 +2064,7 @@ fun CommonSwitchOption(
                     Icon(
                         imageVector = ImageVector.vectorResource(if (checked) R.drawable.baseline_check_24 else R.drawable.baseline_close_24),
                         contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.size(SwitchDefaults.IconSize),
                     )
                 }
@@ -2105,7 +2111,7 @@ fun ThemeSelector(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,

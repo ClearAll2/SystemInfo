@@ -2,7 +2,6 @@ package com.lkonlesoft.displayinfo.utils
 
 import android.content.Context
 import android.os.Build
-import androidx.annotation.RequiresApi
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.getKernelVersion
@@ -53,7 +52,6 @@ class AndroidUtils (private val context: Context) {
         return Build.VERSION.SDK_INT
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     fun getSecurityPatch(): String {
         return Build.VERSION.SECURITY_PATCH ?: context.getString(R.string.unknown)
     }
@@ -132,7 +130,7 @@ class AndroidUtils (private val context: Context) {
         return listOf(
             DeviceInfo(R.string.android_version, getAndroidVersion()),
             DeviceInfo(R.string.api_level, getApiLevel().toString()),
-            DeviceInfo(R.string.security_patch,  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getSecurityPatch() else context.getString(R.string.n_a)),
+            DeviceInfo(R.string.security_patch,  getSecurityPatch()),
             DeviceInfo(R.string.sdk, getSdkName()),
             DeviceInfo(R.string.id, getId()),
             DeviceInfo(R.string.build_id, getDisplay()),
@@ -151,7 +149,7 @@ class AndroidUtils (private val context: Context) {
         return listOf(
             DeviceInfo(R.string.android_version, getAndroidVersion()),
             DeviceInfo(R.string.api_level, getApiLevel().toString()),
-            DeviceInfo(R.string.security_patch,  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getSecurityPatch() else context.getString(R.string.n_a)),
+            DeviceInfo(R.string.security_patch,  getSecurityPatch()),
             DeviceInfo(R.string.sdk, getSdkName()),
             DeviceInfo(R.string.google_play_service, getGmsVersion()),
             DeviceInfo(R.string.google_play_store, getPlayStoreVersion())

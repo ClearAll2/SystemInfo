@@ -112,7 +112,6 @@ class NetworkUtils(private val context: Context) {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     fun getNetInfo(): NetworkInfo? {
         val netInfo = NetworkInfo()
         val connectivityManager = context.getSystemService(CONNECTIVITY_SERVICE)
@@ -161,7 +160,6 @@ class NetworkUtils(private val context: Context) {
     }
 
     @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     fun getDualSimInfo(): List<SimInfo> {
         val simInfoList = mutableListOf<SimInfo>()
         val subscriptionManager = context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager

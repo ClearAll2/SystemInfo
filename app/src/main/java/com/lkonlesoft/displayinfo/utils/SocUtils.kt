@@ -3,7 +3,6 @@ package com.lkonlesoft.displayinfo.utils
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
-import android.opengl.GLES10
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import java.io.File
@@ -43,22 +42,6 @@ class SocUtils(private val context: Context) {
     fun getAllCpuFrequencies(): List<Int> {
         val cpuCount = Runtime.getRuntime().availableProcessors()
         return (0 until cpuCount).map { getCpuClockSpeed(it) }
-    }
-
-    fun getGpuRenderer(): String {
-        return try {
-            GLES10.glGetString(GLES10.GL_RENDERER) ?: context.getString(R.string.unknown)
-        } catch (_: Exception) {
-            context.getString(R.string.unknown)
-        }
-    }
-
-    fun getGpuVendor(): String {
-        return try {
-            GLES10.glGetString(GLES10.GL_VENDOR) ?: context.getString(R.string.unknown)
-        } catch (_: Exception) {
-            context.getString(R.string.unknown)
-        }
     }
 
     fun getGlEsVersion(): String{
