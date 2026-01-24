@@ -3,22 +3,14 @@ package com.lkonlesoft.displayinfo.view
 import android.Manifest
 import android.app.Application
 import android.appwidget.AppWidgetManager
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothProfile
-import android.content.BroadcastReceiver
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -34,10 +26,12 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -65,7 +59,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridItemScope
@@ -100,12 +93,12 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -125,7 +118,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
@@ -152,7 +144,6 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.DeviceInfo
-import com.lkonlesoft.displayinfo.helper.connectionStateToString
 import com.lkonlesoft.displayinfo.helper.copyTextToClipboard
 import com.lkonlesoft.displayinfo.helper.hasPermission
 import com.lkonlesoft.displayinfo.`object`.AboutItem
@@ -161,6 +152,7 @@ import com.lkonlesoft.displayinfo.`object`.NavigationItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
 import com.lkonlesoft.displayinfo.utils.AndroidUtils
 import com.lkonlesoft.displayinfo.utils.BatteryUtils
+import com.lkonlesoft.displayinfo.utils.BluetoothUtils
 import com.lkonlesoft.displayinfo.utils.CameraUtils
 import com.lkonlesoft.displayinfo.utils.DisplayUtils
 import com.lkonlesoft.displayinfo.utils.NetworkUtils
@@ -169,6 +161,7 @@ import com.lkonlesoft.displayinfo.utils.StorageUtils
 import com.lkonlesoft.displayinfo.utils.SystemUtils
 import com.lkonlesoft.displayinfo.view.dashboard.AndroidDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.BatteryDashboard
+import com.lkonlesoft.displayinfo.view.dashboard.BluetoothDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.DisplayDashboard
 import com.lkonlesoft.displayinfo.view.dashboard.GeneralProgressBar
 import com.lkonlesoft.displayinfo.view.dashboard.MemoryDashBoard
@@ -297,13 +290,6 @@ class SettingsModelFactory(private val application: Application) : ViewModelProv
     }
 }
 
-fun NavHostController.returnToHome(){
-    popBackStack()
-    navigate(NavigationItem.Home.route) {
-        launchSingleTop = true
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldContext(settings: SettingsViewModel){
@@ -347,6 +333,7 @@ fun ScaffoldContext(settings: SettingsViewModel){
                                     NavigationItem.Android.route -> stringResource(NavigationItem.Android.name)
                                     NavigationItem.Network.route -> stringResource(NavigationItem.Network.name)
                                     NavigationItem.System.route -> stringResource(NavigationItem.System.name)
+                                    NavigationItem.Connectivity.route -> stringResource(NavigationItem.Connectivity.name)
                                     NavigationItem.About.route -> stringResource(NavigationItem.About.name)
                                     NavigationItem.Settings.route -> stringResource(NavigationItem.Settings.name)
                                     else -> "Home"
@@ -811,140 +798,138 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
 }
 
 @Composable
-fun BluetoothStatusScreen(onClick: () -> Unit) {
-    val localContext = LocalContext.current
-
-    // Check for Bluetooth connect permission on API 31+ (Android 12+)
-    var hasBluetoothPermission by remember {
+fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
+    val context = LocalContext.current
+    val resources = LocalResources.current
+    var refreshKey by remember { mutableIntStateOf(0) }
+    var showWarningPopup by remember { mutableStateOf(false) }
+    val hasBluetoothPermission by remember(refreshKey)  {
         mutableStateOf(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 ContextCompat.checkSelfPermission(
-                    localContext,
+                    context,
                     Manifest.permission.BLUETOOTH_CONNECT
                 ) == PackageManager.PERMISSION_GRANTED
             else true
         )
     }
-
-    // Create a launcher for the permission request.
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        hasBluetoothPermission = isGranted
-    }
-
-    // If the permission is not granted, show a prompt and a button to request it.
-    if (!hasBluetoothPermission) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "Bluetooth connect permission is required to display Bluetooth status.",
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    permissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
-                }
-            }) {
-                Text(text = "Grant Permission")
-            }
+        if (isGranted) {
+            Toast.makeText(context, resources.getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
         }
-        return
+        else {
+            showWarningPopup = !showWarningPopup
+        }
     }
-
-    // Define Compose state variables for Bluetooth enablement and profile connection states.
-    var isBluetoothEnabled by remember { mutableStateOf(false) }
-    var headsetConnectionState by remember { mutableIntStateOf(BluetoothProfile.STATE_DISCONNECTED) }
-    var a2dpConnectionState by remember { mutableIntStateOf(BluetoothProfile.STATE_DISCONNECTED) }
-
-    // Obtain the default Bluetooth adapter.
-    val bluetoothManager = localContext.getSystemService(BluetoothManager::class.java)
-    val bluetoothAdapter = bluetoothManager?.adapter
-    // State variable to hold the list of connected Bluetooth devices.
-    var connectedDevices by remember { mutableStateOf<List<BluetoothDevice>>(emptyList()) }
-    // Initialize the state using the adapter's current information.
+    val stateInfoList by remember(refreshKey) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getStateData() else emptyList()) }
+    val deviceInfoList by remember(refreshKey) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getDeviceData() else emptyList()) }
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        data = Uri.fromParts("package", context.packageName, null)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    AnimatedVisibility(visible = showWarningPopup,
+        enter = fadeIn(
+            animationSpec = tween(220, delayMillis = 100)
+        ) + scaleIn(
+            initialScale = 0.92f,
+            animationSpec = tween(220, delayMillis = 100)
+        ),
+        exit = fadeOut(animationSpec = tween(100))
+    ) {
+        ConfirmActionPopup(
+            content = {},
+            mainText = stringResource(id = R.string.permission_denied),
+            subText = stringResource(id = R.string.permission_denied_details),
+            confirmText = stringResource(id = R.string.settings),
+            cancelText = stringResource(id = R.string.cancel),
+            onDismiss = {
+                showWarningPopup = !showWarningPopup
+            },
+            onClick = {
+                showWarningPopup = !showWarningPopup
+                context.startActivity(intent)
+            }
+        )
+    }
     LaunchedEffect(Unit) {
-        isBluetoothEnabled = bluetoothAdapter?.isEnabled == true
-        headsetConnectionState = bluetoothAdapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
-            ?: BluetoothProfile.STATE_DISCONNECTED
-        a2dpConnectionState = bluetoothAdapter?.getProfileConnectionState(BluetoothProfile.A2DP)
-            ?: BluetoothProfile.STATE_DISCONNECTED
-        val headsetDevices =
-            bluetoothManager?.getConnectedDevices(BluetoothProfile.HEADSET) ?: emptyList()
-        val a2dpDevices =
-            bluetoothManager?.getConnectedDevices(BluetoothProfile.A2DP) ?: emptyList()
-        // Combine the lists and remove duplicate devices (using device address as the unique key).
-        connectedDevices = (headsetDevices + a2dpDevices).distinctBy { it.address }
+        while (true){
+            delay(1000L)
+            refreshKey++
+        }
     }
-
-    // Register a BroadcastReceiver to listen for Bluetooth state changes.
-    DisposableEffect(Unit) {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                intent?.let {
-                    when (it.action) {
-                        BluetoothAdapter.ACTION_STATE_CHANGED -> {
-                            val state = it.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
-                            isBluetoothEnabled = (state == BluetoothAdapter.STATE_ON)
-                        }
-                        BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED -> {
-                            if (ActivityCompat.checkSelfPermission(
-                                    localContext,
-                                    Manifest.permission.BLUETOOTH_CONNECT
-                                ) != PackageManager.PERMISSION_GRANTED
-                            ) {
-                                // TODO: Consider calling
-                                //    ActivityCompat#requestPermissions
-                                // here to request the missing permissions, and then overriding
-                                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                //                                          int[] grantResults)
-                                // to handle the case where the user grants the permission. See the documentation
-                                // for ActivityCompat#requestPermissions for more details.
-                                return
-                            }
-                            headsetConnectionState = bluetoothAdapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
-                                ?: BluetoothProfile.STATE_DISCONNECTED
-                            a2dpConnectionState = bluetoothAdapter?.getProfileConnectionState(BluetoothProfile.A2DP)
-                                ?: BluetoothProfile.STATE_DISCONNECTED
-                        }
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(320.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || hasBluetoothPermission) {
+            item {
+                Column {
+                    HeaderLine(tittle = stringResource(R.string.bluetooth))
+                    stateInfoList.forEach {
+                        IndividualLine(tittle = stringResource(it.name),
+                            info = it.value.toString() + it.extra,
+                            canLongPress = longPressCopy,
+                            copyTitle = copyTitle,
+                            isLast = stateInfoList.last() == it,
+                            topStart = if (stateInfoList.first() == it) 20.dp else 5.dp,
+                            topEnd = if (stateInfoList.first() == it) 20.dp else 5.dp,
+                            bottomStart = if (stateInfoList.last() == it) 20.dp else 5.dp,
+                            bottomEnd = if (stateInfoList.last() == it) 20.dp else 5.dp
+                        )
                     }
                 }
             }
         }
-        val filter = IntentFilter().apply {
-            addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
-            addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)
+        else {
+            item {
+                Column {
+                    HeaderLine(tittle = stringResource(R.string.bluetooth))
+                    IndividualLine(
+                        tittle = stringResource(R.string.status),
+                        info = stringResource(R.string.require_permission),
+                        onClick = {
+                            permissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
+                        },
+                        canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
+                        topStart = 20.dp,
+                        topEnd = 20.dp,
+                        bottomStart = 20.dp,
+                        bottomEnd = 20.dp,
+                        isLast = true
+                    )
+                }
+            }
         }
-        ContextCompat.registerReceiver(
-            localContext,
-            receiver,
-            filter,
-            ContextCompat.RECEIVER_NOT_EXPORTED
-        )
-        onDispose {
-            localContext.unregisterReceiver(receiver)
-        }
-    }
-    BackHandler {
-        onClick()
-    }
-    // Build the UI to display Bluetooth status.
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(400.dp),
-        modifier = Modifier.fillMaxSize()
-
-    ) {
-        header { HeaderLine(tittle = "Status") }
-        item { IndividualLine(tittle = "Bluetooth Enabled", info = if (isBluetoothEnabled) "Yes" else "No")}
-        item { IndividualLine(tittle = "Headset Connection", info = connectionStateToString(headsetConnectionState))}
-        item { IndividualLine(tittle = "A2DP Connection", info = connectionStateToString(a2dpConnectionState))}
-        header { HeaderLine(tittle = "Connected Devices") }
-        items(connectedDevices) { device ->
-            IndividualLine(tittle = device.name, info = device.address)
+        item {
+            Column {
+                deviceInfoList.forEachIndexed { index, device ->
+                    HeaderLine(tittle = buildString {
+                        append(stringResource(R.string.connected_devices))
+                        append(" #${index + 1}")
+                    })
+                    device.forEach {
+                        IndividualLine(
+                            tittle = stringResource(it.name),
+                            info = it.value.toString() + it.extra,
+                            canLongPress = longPressCopy,
+                            copyTitle = copyTitle,
+                            isLast = device.last() == it,
+                            topStart = if (device.first() == it) 20.dp else 5.dp,
+                            topEnd = if (device.first() == it) 20.dp else 5.dp,
+                            bottomStart = if (device.last() == it) 20.dp else 5.dp,
+                            bottomEnd = if (device.last() == it) 20.dp else 5.dp
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -1035,7 +1020,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
         NavigationItem.Storage,
         NavigationItem.Network,
         NavigationItem.Camera,
-        //NavigationItem.Connectivity
+        NavigationItem.Connectivity
     )
     AnimatedContent(targetState = useNewDashboard,
         transitionSpec = {
@@ -1089,6 +1074,11 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
                 item {
                     NetworkDashboard(
                         onClick = { navController.navigate(NavigationItem.Network.route) })
+                }
+                item {
+                    BluetoothDashboard {
+                        navController.navigate(NavigationItem.Connectivity.route)
+                    }
                 }
             }
         }
@@ -1406,8 +1396,6 @@ fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
 fun IndividualLine(
     tittle: String,
     info: String,
-    info2: String = "",
-    info3: String = "",
     onClick: () -> Unit = { },
     canLongPress: Boolean = true,
     copyTitle: Boolean = true,
@@ -1419,6 +1407,8 @@ fun IndividualLine(
 ){
     val context = LocalContext.current
     val resource = LocalResources.current
+    val isNotExpandable = info.length < 120
+    var expanded by rememberSaveable { mutableStateOf(isNotExpandable) }
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -1436,7 +1426,7 @@ fun IndividualLine(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -1445,7 +1435,12 @@ fun IndividualLine(
                     )
                 )
                 .combinedClickable(
-                    onClick = onClick,
+                    onClick = {
+                        if (isNotExpandable)
+                            onClick()
+                        else
+                            expanded = !expanded
+                    },
                     onLongClick = {
                         if (canLongPress) {
                             if (copyTitle) {
@@ -1475,13 +1470,26 @@ fun IndividualLine(
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 5.dp)
             )
-            if (info.isNotEmpty())
-                Text(text = info, fontSize = 15.sp, modifier = Modifier.padding(vertical = 5.dp))
-            if (info2.isNotEmpty())
-                Text(text = info2, fontSize = 15.sp, modifier = Modifier.padding(vertical = 5.dp))
-            if (info3.isNotEmpty())
-                Text(text = info3, fontSize = 15.sp, modifier = Modifier.padding(vertical = 5.dp))
-
+            AnimatedContent (targetState = expanded,
+               transitionSpec = {
+                   expandVertically(expandFrom = Alignment.Top) + fadeIn() togetherWith shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
+               }
+                ) {
+                if (it) {
+                    Text(
+                        text = info,
+                        fontSize = 15.sp,
+                        modifier = Modifier.padding(vertical = 5.dp)
+                    )
+                }
+                else {
+                    Text(
+                        text = info.take(60) + "...",
+                        fontSize = 15.sp,
+                        modifier = Modifier.padding(vertical = 5.dp)
+                    )
+                }
+            }
         }
         if (!isLast) {
             HorizontalDivider(
@@ -2425,9 +2433,11 @@ fun MainNavigation(
                 uriPattern = "si://info/connectivity"
             }
         )) {
-            BluetoothStatusScreen {
-                navController.returnToHome()
-            }
+            ConnectivityScreen (
+                paddingValues = paddingValues,
+                longPressCopy = longPressCopy,
+                copyTitle = copyTitle
+            )
         }
     }
 }

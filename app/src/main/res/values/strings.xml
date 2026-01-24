@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">System Info</string>
     <string name="app_ver" translatable="false">x.x.x</string>
+    <string name="bluetooth" translatable="false">Bluetooth</string>
+    <string name="uuid" translatable="false">UUID</string>
     <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="privacy_text">Read our policy</string>
     <string name="terms_text">Read our terms</string>
@@ -243,4 +245,24 @@
     <string name="vi">Vietnamese</string>
     <string name="system_default">System default</string>
     <string name="OK">OK</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="headset_connection">Headset Connection</string>
+    <string name="d2dp_connection">A2DP Connection</string>
+    <string name="le_audio_connection">LE Audio Connection</string>
+    <string name="name">Name</string>
+    <string name="address">Address</string>
+    <string name="classic">BR/EDR (Classic)</string>
+    <string name="le">Low Energy (BLE)</string>
+    <string name="dual">Dual (Classic + LE)</string>
+    <string name="connected_devices">Connected devices</string>
+    <string name="miscellaneous">Miscellaneous</string>
+    <string name="major_device_class">Class</string>
+    <string name="computer">Computer</string>
+    <string name="phone">Phone</string>
+    <string name="audio_video">Audio/Video</string>
+    <string name="peripheral">Peripheral</string>
+    <string name="imaging">Imaging</string>
+    <string name="wearable">Wearable</string>
+    <string name="toy">Toy</string>
 </resources>

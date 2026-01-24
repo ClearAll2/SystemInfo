@@ -243,4 +243,24 @@
     <string name="vi">Вьетнамский</string>
     <string name="system_default">По умолчанию системы</string>
     <string name="OK">OK</string>
+    <string name="connected">Подключено</string>
+    <string name="disconnected">Отключено</string>
+    <string name="headset_connection">Подключение гарнитуры</string>
+    <string name="d2dp_connection">Подключение A2DP</string>
+    <string name="le_audio_connection">Подключение LE Audio</string>
+    <string name="name">Имя</string>
+    <string name="address">Адрес</string>
+    <string name="classic">BR/EDR (Классический)</string>
+    <string name="le">Low Energy (BLE)</string>
+    <string name="dual">Двойной (Классический + LE)</string>
+    <string name="connected_devices">Подключенные устройства</string>
+    <string name="miscellaneous">Разное</string>
+    <string name="major_device_class">Класс</string>
+    <string name="computer">Компьютер</string>
+    <string name="phone">Телефон</string>
+    <string name="audio_video">Аудио/Видео</string>
+    <string name="peripheral">Периферия</string>
+    <string name="imaging">Изображение</string>
+    <string name="wearable">Носимое</string>
+    <string name="toy">Игрушка</string>
 </resources>

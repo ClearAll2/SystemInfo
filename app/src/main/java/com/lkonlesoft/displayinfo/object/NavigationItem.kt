@@ -15,6 +15,6 @@ sealed class NavigationItem (@param:StringRes val name: Int, val route: String, 
     data object Network: NavigationItem(name = R.string.network, route = "network", R.drawable.outline_network_cell_24)
     data object SOC: NavigationItem(name = R.string.soc, route = "soc", R.drawable.outline_developer_board_24)
     data object Camera: NavigationItem(name = R.string.camera, route = "camera", R.drawable.outline_camera_24)
-    data object Connectivity: NavigationItem(name = R.string.connectivity, route = "connectivity", R.drawable.outline_network_cell_24)
+    data object Connectivity: NavigationItem(name = R.string.connectivity, route = "connectivity", R.drawable.outline_bluetooth_24)
     data object Settings: NavigationItem(name = R.string.settings, route = "settings", R.drawable.outline_settings_24)
 }

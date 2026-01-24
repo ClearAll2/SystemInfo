@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.utils.BluetoothUtils
 import com.lkonlesoft.displayinfo.utils.NetworkUtils
 import kotlinx.coroutines.delay
 
@@ -45,6 +46,35 @@ fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(title = stringResource(R.string.network), icon = R.drawable.outline_network_cell_24)
+            Spacer(modifier = Modifier.height(12.dp))
+            infoList.forEach {
+                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra)
+            }
+        }
+    }
+}
+
+@Composable
+fun BluetoothDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
+    val context = LocalContext.current
+    var refreshKey by remember { mutableIntStateOf(0) }
+    val infoList by remember(refreshKey) { mutableStateOf(BluetoothUtils(context).getStateData()) }
+    // Auto-refresh every 5 seconds
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(intervalMillis)
+            refreshKey++ // Triggers recomposition
+        }
+    }
+    OutlinedCard(
+        modifier = Modifier
+            .padding(10.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .fillMaxWidth()
+            .clickable { onClick() }
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            HeaderForDashboard(title = stringResource(R.string.connectivity), icon = R.drawable.outline_bluetooth_24)
             Spacer(modifier = Modifier.height(12.dp))
             infoList.forEach {
                 GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra)

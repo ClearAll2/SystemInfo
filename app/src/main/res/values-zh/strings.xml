@@ -243,4 +243,24 @@
     <string name="vi">越南语</string>
     <string name="system_default">系统默认</string>
     <string name="OK">确定</string>
+    <string name="connected">已连接</string>
+    <string name="disconnected">已断开</string>
+    <string name="headset_connection">耳机连接</string>
+    <string name="d2dp_connection">A2DP连接</string>
+    <string name="le_audio_connection">LE Audio连接</string>
+    <string name="name">名称</string>
+    <string name="address">地址</string>
+    <string name="classic">BR/EDR (经典)</string>
+    <string name="le">低功耗 (BLE)</string>
+    <string name="dual">双模 (经典 + LE)</string>
+    <string name="connected_devices">已连接设备</string>
+    <string name="miscellaneous">其他</string>
+    <string name="major_device_class">类别</string>
+    <string name="computer">计算机</string>
+    <string name="phone">电话</string>
+    <string name="audio_video">音频/视频</string>
+    <string name="peripheral">外设</string>
+    <string name="imaging">成像</string>
+    <string name="wearable">可穿戴</string>
+    <string name="toy">玩具</string>
 </resources>

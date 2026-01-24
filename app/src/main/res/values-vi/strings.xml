@@ -243,4 +243,24 @@
     <string name="vi">Tiếng Việt</string>
     <string name="system_default">Mặc định hệ thống</string>
     <string name="OK">OK</string>
+    <string name="connected">Đã kết nối</string>
+    <string name="disconnected">Đã ngắt kết nối</string>
+    <string name="headset_connection">Kết nối tai nghe</string>
+    <string name="d2dp_connection">Kết nối A2DP</string>
+    <string name="le_audio_connection">Kết nối LE Audio</string>
+    <string name="name">Tên</string>
+    <string name="address">Địa chỉ</string>
+    <string name="classic">BR/EDR (Cổ điển)</string>
+    <string name="le">Năng lượng thấp (BLE)</string>
+    <string name="dual">Kép (Cổ điển + LE)</string>
+    <string name="connected_devices">Thiết bị đã kết nối</string>
+    <string name="miscellaneous">Khác</string>
+    <string name="major_device_class">Lớp</string>
+    <string name="computer">Máy tính</string>
+    <string name="phone">Điện thoại</string>
+    <string name="audio_video">Âm thanh/Video</string>
+    <string name="peripheral">Thiết bị ngoại vi</string>
+    <string name="imaging">Hình ảnh</string>
+    <string name="wearable">Thiết bị đeo</string>
+    <string name="toy">Đồ chơi</string>
 </resources>

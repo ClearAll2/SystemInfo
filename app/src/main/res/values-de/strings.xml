@@ -244,4 +244,24 @@
     <string name="vi">Vietnamesisch</string>
     <string name="system_default">Systemstandard</string>
     <string name="OK">OK</string>
+    <string name="connected">Verbunden</string>
+    <string name="disconnected">Getrennt</string>
+    <string name="headset_connection">Headset-Verbindung</string>
+    <string name="d2dp_connection">A2DP-Verbindung</string>
+    <string name="le_audio_connection">LE Audio-Verbindung</string>
+    <string name="name">Name</string>
+    <string name="address">Adresse</string>
+    <string name="classic">BR/EDR (Classic)</string>
+    <string name="le">Low Energy (BLE)</string>
+    <string name="dual">Dual (Classic + LE)</string>
+    <string name="connected_devices">Verbundene Geräte</string>
+    <string name="miscellaneous">Sonstiges</string>
+    <string name="major_device_class">Klasse</string>
+    <string name="computer">Computer</string>
+    <string name="phone">Telefon</string>
+    <string name="audio_video">Audio/Video</string>
+    <string name="peripheral">Peripheriegerät</string>
+    <string name="imaging">Bildverarbeitung</string>
+    <string name="wearable">Tragbares Gerät</string>
+    <string name="toy">Spielzeug</string>
 </resources>

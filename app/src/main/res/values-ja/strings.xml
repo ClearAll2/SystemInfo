@@ -243,4 +243,24 @@
     <string name="vi">ベトナム語</string>
     <string name="system_default">システムデフォルト</string>
     <string name="OK">OK</string>
+    <string name="connected">接続済み</string>
+    <string name="disconnected">未接続</string>
+    <string name="headset_connection">ヘッドセット接続</string>
+    <string name="d2dp_connection">A2DP接続</string>
+    <string name="le_audio_connection">LE Audio接続</string>
+    <string name="name">名前</string>
+    <string name="address">アドレス</string>
+    <string name="classic">BR/EDR (クラシック)</string>
+    <string name="le">Low Energy (BLE)</string>
+    <string name="dual">デュアル (クラシック + LE)</string>
+    <string name="connected_devices">接続デバイス</string>
+    <string name="miscellaneous">その他</string>
+    <string name="major_device_class">クラス</string>
+    <string name="computer">コンピューター</string>
+    <string name="phone">電話</string>
+    <string name="audio_video">オーディオ/ビデオ</string>
+    <string name="peripheral">周辺機器</string>
+    <string name="imaging">イメージング</string>
+    <string name="wearable">ウェアラブル</string>
+    <string name="toy">おもちゃ</string>
 </resources>

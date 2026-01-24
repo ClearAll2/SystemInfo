@@ -243,4 +243,24 @@
     <string name="vi">Vietnamita</string>
     <string name="system_default">Predefinito di sistema</string>
     <string name="OK">OK</string>
+    <string name="connected">Connesso</string>
+    <string name="disconnected">Disconnesso</string>
+    <string name="headset_connection">Connessione cuffie</string>
+    <string name="d2dp_connection">Connessione A2DP</string>
+    <string name="le_audio_connection">Connessione LE Audio</string>
+    <string name="name">Nome</string>
+    <string name="address">Indirizzo</string>
+    <string name="classic">BR/EDR (Classico)</string>
+    <string name="le">Low Energy (BLE)</string>
+    <string name="dual">Duale (Classico + LE)</string>
+    <string name="connected_devices">Dispositivi connessi</string>
+    <string name="miscellaneous">Varie</string>
+    <string name="major_device_class">Classe</string>
+    <string name="computer">Computer</string>
+    <string name="phone">Telefono</string>
+    <string name="audio_video">Audio/Video</string>
+    <string name="peripheral">Periferica</string>
+    <string name="imaging">Imaging</string>
+    <string name="wearable">Indossabile</string>
+    <string name="toy">Giocattolo</string>
 </resources>

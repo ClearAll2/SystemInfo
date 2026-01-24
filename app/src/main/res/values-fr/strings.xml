@@ -243,4 +243,24 @@
     <string name="vi">Vietnamien</string>
     <string name="system_default">Par défaut du système</string>
     <string name="OK">OK</string>
+    <string name="connected">Connecté</string>
+    <string name="disconnected">Déconnecté</string>
+    <string name="headset_connection">Connexion casque</string>
+    <string name="d2dp_connection">Connexion A2DP</string>
+    <string name="le_audio_connection">Connexion LE Audio</string>
+    <string name="name">Nom</string>
+    <string name="address">Adresse</string>
+    <string name="classic">BR/EDR (Classique)</string>
+    <string name="le">Low Energy (BLE)</string>
+    <string name="dual">Double (Classique + LE)</string>
+    <string name="connected_devices">Appareils connectés</string>
+    <string name="miscellaneous">Divers</string>
+    <string name="major_device_class">Classe</string>
+    <string name="computer">Ordinateur</string>
+    <string name="phone">Téléphone</string>
+    <string name="audio_video">Audio/Vidéo</string>
+    <string name="peripheral">Périphérique</string>
+    <string name="imaging">Imagerie</string>
+    <string name="wearable">Appareil portable</string>
+    <string name="toy">Jouet</string>
 </resources>

@@ -243,4 +243,24 @@
     <string name="vi">Vietnamees</string>
     <string name="system_default">Systeemstandaard</string>
     <string name="OK">OK</string>
+    <string name="connected">Verbonden</string>
+    <string name="disconnected">Verbinding verbroken</string>
+    <string name="headset_connection">Headset-verbinding</string>
+    <string name="d2dp_connection">A2DP-verbinding</string>
+    <string name="le_audio_connection">LE Audio-verbinding</string>
+    <string name="name">Naam</string>
+    <string name="address">Adres</string>
+    <string name="classic">BR/EDR (Classic)</string>
+    <string name="le">Low Energy (BLE)</string>
+    <string name="dual">Dual (Classic + LE)</string>
+    <string name="connected_devices">Verbonden apparaten</string>
+    <string name="miscellaneous">Diversen</string>
+    <string name="major_device_class">Klasse</string>
+    <string name="computer">Computer</string>
+    <string name="phone">Telefoon</string>
+    <string name="audio_video">Audio/Video</string>
+    <string name="peripheral">Randapparaat</string>
+    <string name="imaging">Beeldvorming</string>
+    <string name="wearable">Draagbaar</string>
+    <string name="toy">Speelgoed</string>
 </resources>
