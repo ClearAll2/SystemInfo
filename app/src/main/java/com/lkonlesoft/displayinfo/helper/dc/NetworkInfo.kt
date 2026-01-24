@@ -1,4 +1,4 @@
-package com.lkonlesoft.displayinfo.helper
+package com.lkonlesoft.displayinfo.helper.dc
 
 data class NetworkInfo (
     var ip: String = "N/A",

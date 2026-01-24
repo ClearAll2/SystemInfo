@@ -3,7 +3,7 @@ package com.lkonlesoft.displayinfo.utils
 import android.content.Context
 import android.os.Build
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.getKernelVersion
 import java.util.Locale
 

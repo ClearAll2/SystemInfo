@@ -7,7 +7,7 @@ import android.os.SystemClock
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat

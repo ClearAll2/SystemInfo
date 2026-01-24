@@ -4,7 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import java.io.File
 import java.io.RandomAccessFile
 

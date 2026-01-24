@@ -6,7 +6,7 @@ import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 
 class BatteryUtils (private val context: Context) {
 

@@ -14,9 +14,9 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
-import com.lkonlesoft.displayinfo.helper.NetworkInfo
-import com.lkonlesoft.displayinfo.helper.SimInfo
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
+import com.lkonlesoft.displayinfo.helper.dc.NetworkInfo
+import com.lkonlesoft.displayinfo.helper.dc.SimInfo
 
 class NetworkUtils(private val context: Context) {
 

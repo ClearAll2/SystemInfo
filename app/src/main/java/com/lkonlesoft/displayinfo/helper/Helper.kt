@@ -1,6 +1,5 @@
 package com.lkonlesoft.displayinfo.helper
 
-import android.bluetooth.BluetoothProfile
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -29,30 +28,6 @@ fun getKernelVersion(): String? {
     }
     catch (ex: Exception) {
         "ERROR: " + ex.message
-    }
-}
-
-fun connectionStateToString(state: Int): String = when (state) {
-    BluetoothProfile.STATE_CONNECTED -> "Connected"
-    BluetoothProfile.STATE_CONNECTING -> "Connecting"
-    BluetoothProfile.STATE_DISCONNECTED -> "Disconnected"
-    BluetoothProfile.STATE_DISCONNECTING -> "Disconnecting"
-    else -> "Unknown"
-}
-
-fun getStatusColor(value: String): Color {
-    return when (value.lowercase()) {
-        "good", "full", "charging" -> Color(0xFF4CAF50)
-        "dead", "overheat", "failure" -> Color(0xFFF44336)
-        else -> Color(0xFFFF9800)
-    }
-}
-
-fun getTemperatureColor(temp: Float): Color {
-    return when {
-        temp < 35f -> Color(0xFF4CAF50)
-        temp in 35f..42f -> Color(0xFFFFC107)
-        else -> Color(0xFFF44336)
     }
 }
 

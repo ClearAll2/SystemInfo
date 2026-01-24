@@ -1,4 +1,4 @@
-package com.lkonlesoft.displayinfo.helper
+package com.lkonlesoft.displayinfo.helper.dc
 
 data class SimInfo (
     val slot: Int,

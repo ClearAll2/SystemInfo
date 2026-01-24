@@ -12,7 +12,7 @@ import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.window.layout.WindowMetricsCalculator
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID

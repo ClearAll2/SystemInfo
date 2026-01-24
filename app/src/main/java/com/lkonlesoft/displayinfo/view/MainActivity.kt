@@ -143,8 +143,8 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.copyTextToClipboard
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.hasPermission
 import com.lkonlesoft.displayinfo.`object`.AboutItem
 import com.lkonlesoft.displayinfo.`object`.AppTheme

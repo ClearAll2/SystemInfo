@@ -9,8 +9,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.BluetoothInfo
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
+import com.lkonlesoft.displayinfo.helper.dc.BluetoothInfo
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 
 class BluetoothUtils(private val context: Context) {
     private val bluetoothManager by lazy {

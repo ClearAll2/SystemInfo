@@ -5,8 +5,8 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Build
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.CameraInfo
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
+import com.lkonlesoft.displayinfo.helper.dc.CameraInfo
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 
 class CameraUtils (private val context: Context) {
     private val cameraManager by lazy {

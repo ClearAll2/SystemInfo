@@ -6,7 +6,7 @@ import android.content.Context.ACTIVITY_SERVICE
 import android.os.Environment
 import android.os.StatFs
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import java.io.File
 
 class StorageUtils (private val context: Context) {
