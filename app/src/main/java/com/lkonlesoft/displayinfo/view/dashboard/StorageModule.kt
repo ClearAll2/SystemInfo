@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.StorageUtils
 import kotlinx.coroutines.delay
 
@@ -29,7 +28,7 @@ import kotlinx.coroutines.delay
 fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val ramInfoList by remember (refreshKey) { mutableStateOf<List<DeviceInfo>>(StorageUtils(context).getRAMInfo()) }
+    val ramInfoList by remember (refreshKey) { mutableStateOf(StorageUtils(context).getRAMInfo()) }
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -61,7 +60,7 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
 fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val internalStorageStats = remember(refreshKey) { StorageUtils(context).getInternalStorageInfo() }
+    val internalStorageStats by remember(refreshKey) { mutableStateOf(StorageUtils(context).getInternalStorageInfo()) }
     // Auto-refresh every 60 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -83,7 +82,7 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
             GeneralProgressBar((internalStorageStats[2].value as Number).toLong(), (internalStorageStats[3].value as Number).toLong(), 1)
             Spacer(modifier = Modifier.height(12.dp))
             internalStorageStats.forEach {
-                GeneralStatRow(stringResource(it.name), if (it.type == 0) it.extra.toString() else it.value.toString() + it.extra)
+                GeneralStatRow(stringResource(it.name), if (it.type == 0) it.extra else it.value.toString() + it.extra)
             }
         }
     }

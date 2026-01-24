@@ -18,19 +18,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.DisplayUtils
 import kotlinx.coroutines.delay
 
 @Composable
 fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
     val context = LocalContext.current
-    val resources = context.resources
+    val resources = LocalResources.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(DisplayUtils(context, resources).getDashboardData()) }
+    val infoList by remember(refreshKey) { mutableStateOf(DisplayUtils(context, resources).getDashboardData()) }
     LaunchedEffect(Unit) {
         while (true) {
             delay(intervalMillis)
@@ -50,7 +50,7 @@ fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
             Spacer(modifier = Modifier.height(12.dp))
 
             infoList.forEach {
-                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra.toString())
+                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra)
             }
         }
     }

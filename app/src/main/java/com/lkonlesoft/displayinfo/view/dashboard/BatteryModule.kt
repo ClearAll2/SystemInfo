@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.getBatteryLevelColor
 import com.lkonlesoft.displayinfo.helper.getMemoryLevelColor
 import com.lkonlesoft.displayinfo.utils.BatteryUtils
@@ -47,7 +46,7 @@ import kotlinx.coroutines.delay
 fun BatteryDashboard(intervalMillis: Long = 2000L,onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(BatteryUtils(context).getDashboardData()) }
+    val infoList by remember(refreshKey) { mutableStateOf(BatteryUtils(context).getDashboardData()) }
     LaunchedEffect(Unit) {
         while (true) {
             delay(intervalMillis)
@@ -65,7 +64,7 @@ fun BatteryDashboard(intervalMillis: Long = 2000L,onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(title = stringResource(R.string.battery), icon = R.drawable.outline_battery_4_bar_24)
             Spacer(modifier = Modifier.height(12.dp))
-            GeneralProgressBar((infoList[0].value as Number).toLong(), 100L)
+            GeneralProgressBar((infoList.first().value as Number).toLong(), 100L)
             Spacer(modifier = Modifier.height(12.dp))
             infoList.forEach {
                 GeneralStatRow(stringResource(it.name),

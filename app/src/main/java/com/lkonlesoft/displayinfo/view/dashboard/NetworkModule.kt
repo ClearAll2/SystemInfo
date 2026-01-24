@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.NetworkUtils
 import kotlinx.coroutines.delay
 
@@ -29,7 +28,7 @@ import kotlinx.coroutines.delay
 fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList by remember(refreshKey) { mutableStateOf<List<DeviceInfo>>(NetworkUtils(context).getDashboardData()) }
+    val infoList by remember(refreshKey) { mutableStateOf(NetworkUtils(context).getDashboardData()) }
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -48,7 +47,7 @@ fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
             HeaderForDashboard(title = stringResource(R.string.network), icon = R.drawable.outline_network_cell_24)
             Spacer(modifier = Modifier.height(12.dp))
             infoList.forEach {
-                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra.toString())
+                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra)
             }
         }
     }

@@ -21,7 +21,7 @@ import com.lkonlesoft.displayinfo.helper.SimInfo
 class NetworkUtils(private val context: Context) {
 
     fun getDetailsInfo(): List<DeviceInfo>{
-        val netInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getNetInfo() else null
+        val netInfo = getNetInfo()
         return listOf(
             DeviceInfo(R.string.interfaces, netInfo?.interfaces ?: context.getString(R.string.n_a)),
             DeviceInfo(R.string.ip_address, netInfo?.ip ?: context.getString(R.string.n_a)),
@@ -35,7 +35,7 @@ class NetworkUtils(private val context: Context) {
     }
 
     fun getDashboardData(): List<DeviceInfo>{
-        val netInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) getNetInfo() else null
+        val netInfo = getNetInfo()
         return listOf(
             DeviceInfo(R.string.interfaces, netInfo?.interfaces ?: context.getString(R.string.n_a)),
             DeviceInfo(R.string.ip_address, netInfo?.ip ?: context.getString(R.string.n_a)),
@@ -46,8 +46,7 @@ class NetworkUtils(private val context: Context) {
 
 
     fun getSimInfo(): List<List<DeviceInfo>> {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             val simInfoList = getDualSimInfo()
             if (simInfoList.isNotEmpty()) {
                 return simInfoList.map  { simInfo ->

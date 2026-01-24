@@ -125,15 +125,6 @@ class SystemUtils(private val context: Context) {
             .sorted()
     }
 
-    fun getSelinuxStatus(): String {
-        return try {
-            val process = Runtime.getRuntime().exec("getenforce")
-            process.inputStream.bufferedReader().readLine()
-        } catch (e: Exception) {
-            "Error: ${e.message}"
-        }
-    }
-
     fun isUsbDebuggingEnabled(): Boolean {
         return Settings.Global.getInt(
             context.contentResolver,

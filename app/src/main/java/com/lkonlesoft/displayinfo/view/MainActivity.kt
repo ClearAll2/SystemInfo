@@ -451,8 +451,7 @@ fun ScaffoldContext(settings: SettingsViewModel){
 @Composable
 fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
-    val deviceInfoList by remember { mutableStateOf(
-        SystemUtils(context).getDeviceData()) }
+    val deviceInfoList by remember { mutableStateOf(SystemUtils(context).getDeviceData()) }
     var rootInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
     var extraInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
     LaunchedEffect(Unit) {
@@ -973,7 +972,7 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
     ) {
         item {
             Column {
-                GeneralProgressBar((infoList[0].value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)
+                GeneralProgressBar((infoList.first().value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)
                 infoList.forEach {
                     IndividualLine(tittle = stringResource(it.name),
                         info = it.value.toString() + it.extra,
@@ -1213,12 +1212,12 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
 fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val internalStorageStats = remember(refreshKey) { StorageUtils(context).getInternalStorageInfo() }
-    val externalStorageStats = remember(refreshKey) { StorageUtils(context).getExternalStorageInfo() }
+    val internalStorageStats by remember(refreshKey) { mutableStateOf(StorageUtils(context).getInternalStorageInfo()) }
+    val externalStorageStats by remember(refreshKey) { mutableStateOf(StorageUtils(context).getExternalStorageInfo()) }
     // Auto-refresh every 10 seconds
     LaunchedEffect(Unit) {
         while (true) {
-            delay(10000L)
+            delay(30000L)
             refreshKey++ // Triggers recomposition
         }
     }
@@ -1297,7 +1296,7 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
 fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues, showNotice: Boolean) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val glEs by remember(refreshKey) { mutableStateOf(SocUtils(context).getGlEsVersion()) }
+    val glEs by remember { mutableStateOf(SocUtils(context).getGlEsVersion()) }
     val cpuInfoList by remember { mutableStateOf(SocUtils(context).getCPUInfo()) }
     val cpuUsageInfo by remember(refreshKey) { mutableStateOf(SocUtils(context).getCPUUsage()) }
     LaunchedEffect(Unit) {

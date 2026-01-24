@@ -33,7 +33,7 @@ fun AndroidDashboard(onClick: () -> Unit) {
             HeaderForDashboard(title = stringResource(R.string.android), icon = R.drawable.outline_android_24)
             Spacer(modifier = Modifier.height(8.dp))
             listInfo.forEach {
-                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra.toString())
+                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra)
             }
         }
     }

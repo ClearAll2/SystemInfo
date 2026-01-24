@@ -18,14 +18,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.SystemUtils
 
 @Composable
 fun SystemDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
-    val infoList by remember { mutableStateOf<List<DeviceInfo>>(
-        SystemUtils(context).getDashboardData()) }
+    val infoList by remember { mutableStateOf(SystemUtils(context).getDashboardData()) }
     OutlinedCard(
         modifier = Modifier
             .padding(10.dp)
