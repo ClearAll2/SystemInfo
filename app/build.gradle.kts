@@ -1,9 +1,11 @@
+import java.time.LocalDate
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 41
+val buildCode = 42
 val buildName = "3.6"
 val appId = "com.lkonlesoft.displayinfo"
 
@@ -18,6 +20,7 @@ android {
         versionCode = buildCode
         versionName = buildName
         resValue("string", "app_ver", "$buildName ($buildCode)")
+        resValue("string", "copy_right", "© ${LocalDate.now().year} LKONLE")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true

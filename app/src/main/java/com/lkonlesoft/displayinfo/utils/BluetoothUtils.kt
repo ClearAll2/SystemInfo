@@ -72,7 +72,7 @@ class BluetoothUtils(private val context: Context) {
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun getStateData(): List<DeviceInfo> {
         return listOf(
-            DeviceInfo(R.string.status, if (isEnabled()) context.getString(R.string.enabled) else context.getString(R.string.disabled)),
+            DeviceInfo(R.string.bluetooth, if (isEnabled()) context.getString(R.string.enabled) else context.getString(R.string.disabled)),
             DeviceInfo(R.string.headset_connection, getHeadsetConnectionState()),
             DeviceInfo(R.string.d2dp_connection, getD2dpConnectionState()),
             DeviceInfo(R.string.le_audio_connection, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) getLEAudioConnectionState()

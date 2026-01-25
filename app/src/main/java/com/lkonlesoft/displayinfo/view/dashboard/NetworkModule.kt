@@ -1,5 +1,8 @@
 package com.lkonlesoft.displayinfo.view.dashboard
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.BluetoothUtils
 import com.lkonlesoft.displayinfo.utils.NetworkUtils
@@ -58,7 +62,21 @@ fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
 fun BluetoothDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList by remember(refreshKey) { mutableStateOf(BluetoothUtils(context).getStateData()) }
+    val hasBluetoothPermission by remember(refreshKey)  {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ) == PackageManager.PERMISSION_GRANTED
+            else true
+        )
+    }
+    val infoList by remember(refreshKey) {
+        mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getStateData()
+            else emptyList()
+        )
+    }
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -76,8 +94,19 @@ fun BluetoothDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(title = stringResource(R.string.connectivity), icon = R.drawable.outline_bluetooth_24)
             Spacer(modifier = Modifier.height(12.dp))
-            infoList.forEach {
-                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra)
+            if (hasBluetoothPermission) {
+                infoList.forEach {
+                    GeneralStatRow(
+                        label = stringResource(it.name),
+                        value = it.value.toString() + it.extra
+                    )
+                }
+            }
+            else {
+                GeneralStatRow(
+                    label = stringResource(R.string.bluetooth),
+                    value = stringResource(R.string.require_permission)
+                )
             }
         }
     }

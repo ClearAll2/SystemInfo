@@ -616,7 +616,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     }
     LaunchedEffect(Unit) {
         while (true){
-            delay(4000L)
+            delay(5000L)
             refreshKey++
         }
     }
@@ -802,6 +802,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
     val context = LocalContext.current
     val resources = LocalResources.current
     var refreshKey by remember { mutableIntStateOf(0) }
+    var refreshKey2 by remember { mutableIntStateOf(0) }
     var showWarningPopup by remember { mutableStateOf(false) }
     val hasBluetoothPermission by remember(refreshKey)  {
         mutableStateOf(
@@ -824,7 +825,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
         }
     }
     val stateInfoList by remember(refreshKey) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getStateData() else emptyList()) }
-    val deviceInfoList by remember(refreshKey) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getDeviceData() else emptyList()) }
+    val deviceInfoList by remember(refreshKey2) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getDeviceData() else emptyList()) }
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
         data = Uri.fromParts("package", context.packageName, null)
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -857,6 +858,8 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
         while (true){
             delay(1000L)
             refreshKey++
+            if (refreshKey % 10 == 0) //load device data every 10 seconds
+                refreshKey2++
         }
     }
     LazyVerticalStaggeredGrid(
@@ -871,7 +874,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || hasBluetoothPermission) {
             item {
                 Column {
-                    HeaderLine(tittle = stringResource(R.string.bluetooth))
+                    HeaderLine(tittle = stringResource(R.string.status))
                     stateInfoList.forEach {
                         IndividualLine(tittle = stringResource(it.name),
                             info = it.value.toString() + it.extra,
@@ -890,9 +893,9 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
         else {
             item {
                 Column {
-                    HeaderLine(tittle = stringResource(R.string.bluetooth))
+                    HeaderLine(tittle = stringResource(R.string.status))
                     IndividualLine(
-                        tittle = stringResource(R.string.status),
+                        tittle = stringResource(R.string.bluetooth),
                         info = stringResource(R.string.require_permission),
                         onClick = {
                             permissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
@@ -1211,8 +1214,6 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
             refreshKey++ // Triggers recomposition
         }
     }
-
-
     LazyVerticalGrid(
         columns = GridCells.Adaptive(320.dp),
         modifier = Modifier
