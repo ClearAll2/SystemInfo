@@ -126,6 +126,8 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
     ) { isGranted ->
         if (isGranted) {
             Toast.makeText(context, resources.getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
+            refreshKey++
+            refreshKey2++
         }
         else {
             showWarningPopup = !showWarningPopup

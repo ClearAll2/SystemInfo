@@ -95,6 +95,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
         hasPermission = isGranted
         if (isGranted){
             Toast.makeText(context, resource.getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
+            refreshKey++
         }
         else{
             Toast.makeText(context, resource.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
