@@ -262,4 +262,6 @@
     <string name="imaging">이미징</string>
     <string name="wearable">웨어러블</string>
     <string name="toy">장난감</string>
+    <string name="apps">앱</string>
+    <string name="version">버전</string>
 </resources>

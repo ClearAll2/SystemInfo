@@ -262,4 +262,6 @@
     <string name="imaging">成像</string>
     <string name="wearable">可穿戴</string>
     <string name="toy">玩具</string>
+    <string name="apps">应用</string>
+    <string name="version">版本</string>
 </resources>

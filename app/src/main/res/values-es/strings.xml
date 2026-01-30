@@ -262,4 +262,6 @@
     <string name="imaging">Imagen</string>
     <string name="wearable">Dispositivo wearable</string>
     <string name="toy">Juguete</string>
+    <string name="apps">Aplicaciones</string>
+    <string name="version">versión</string>
 </resources>

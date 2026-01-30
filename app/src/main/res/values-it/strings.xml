@@ -262,4 +262,6 @@
     <string name="imaging">Imaging</string>
     <string name="wearable">Indossabile</string>
     <string name="toy">Giocattolo</string>
+    <string name="apps">App</string>
+    <string name="version">versione</string>
 </resources>

@@ -262,4 +262,6 @@
     <string name="imaging">Изображение</string>
     <string name="wearable">Носимое</string>
     <string name="toy">Игрушка</string>
+    <string name="apps">Приложения</string>
+    <string name="version">версия</string>
 </resources>

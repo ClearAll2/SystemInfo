@@ -263,4 +263,6 @@
     <string name="imaging">Bildverarbeitung</string>
     <string name="wearable">Tragbares Gerät</string>
     <string name="toy">Spielzeug</string>
+    <string name="apps">Apps</string>
+    <string name="version">Version</string>
 </resources>

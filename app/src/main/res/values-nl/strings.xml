@@ -262,4 +262,6 @@
     <string name="imaging">Beeldvorming</string>
     <string name="wearable">Draagbaar</string>
     <string name="toy">Speelgoed</string>
+    <string name="apps">Apps</string>
+    <string name="version">versie</string>
 </resources>

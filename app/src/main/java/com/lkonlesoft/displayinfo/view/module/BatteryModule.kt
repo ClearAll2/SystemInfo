@@ -1,16 +1,25 @@
-package com.lkonlesoft.displayinfo.view.dashboard
+package com.lkonlesoft.displayinfo.view.module
 
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +49,9 @@ import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.getBatteryLevelColor
 import com.lkonlesoft.displayinfo.helper.getMemoryLevelColor
 import com.lkonlesoft.displayinfo.utils.BatteryUtils
+import com.lkonlesoft.displayinfo.view.GeneralWarning
+import com.lkonlesoft.displayinfo.view.IndividualLine
+import com.lkonlesoft.displayinfo.widget.BatReceiver
 import kotlinx.coroutines.delay
 
 @Composable
@@ -111,4 +123,73 @@ fun GeneralProgressBar(level: Long, total: Long, type: Int = 0, height: Dp = 10.
             .clip(MaterialTheme.shapes.small),
         color = if (type == 0) getBatteryLevelColor(level) else getMemoryLevelColor(((level.toDouble() / total.toDouble()) * 100).toLong())
     )
+}
+
+@Composable
+fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
+    val context = LocalContext.current
+    var refreshKey by remember { mutableIntStateOf(0) }
+    val infoList by remember(refreshKey) { mutableStateOf(BatteryUtils(context).getAllData()) }
+    LaunchedEffect(Unit) {
+        while (true){
+            delay(1000L)
+            refreshKey++
+        }
+    }
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(320.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .consumeWindowInsets(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentPadding = paddingValues,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        item {
+            Column {
+                GeneralProgressBar((infoList.first().value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)
+                infoList.forEach {
+                    IndividualLine(tittle = stringResource(it.name),
+                        info = it.value.toString() + it.extra,
+                        canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
+                        isLast = infoList.last() == it,
+                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
+                    )
+                }
+            }
+        }
+        item {
+            GeneralWarning(
+                title = R.string.cycle_count,
+                text = R.string.battery_notice_2,
+                icon = R.drawable.outline_info_24,
+                extra = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        val appWidgetManager = AppWidgetManager.getInstance(context)
+                        val widgetProvider = ComponentName(context, BatReceiver::class.java)
+                        Button(
+                            modifier = Modifier.padding(bottom = 10.dp),
+                            onClick = {
+                                appWidgetManager.requestPinAppWidget(widgetProvider, null, null)
+                            }
+                        ) {
+                            Text(stringResource(R.string.add_battery_widget))
+                        }
+                    }
+                }
+            )
+        }
+        if (showNotice){
+            item {
+                GeneralWarning(
+                    title = R.string.battery_notice_title,
+                    text = R.string.battery_notice
+                )
+            }
+        }
+    }
 }

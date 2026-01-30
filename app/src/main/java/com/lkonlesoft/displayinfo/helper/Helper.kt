@@ -4,9 +4,13 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -58,6 +62,19 @@ fun Context.copyTextToClipboard(text: String) {
     val clipboard = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val clip = ClipData.newPlainText("Cp", text)
     clipboard.setPrimaryClip(clip)
+}
+
+// Helper to convert Drawable to Bitmap for Compose
+// https://github.com/mohsenoid/CertHunter
+fun drawableToBitmap(drawable: Drawable): Bitmap {
+    if (drawable is android.graphics.drawable.BitmapDrawable) {
+        return drawable.bitmap
+    }
+    val bitmap = createBitmap(drawable.intrinsicWidth.coerceAtLeast(1), drawable.intrinsicHeight.coerceAtLeast(1))
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+    return bitmap
 }
 
 

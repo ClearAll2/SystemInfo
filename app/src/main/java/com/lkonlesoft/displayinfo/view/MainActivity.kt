@@ -1,17 +1,11 @@
 package com.lkonlesoft.displayinfo.view
 
-import android.Manifest
 import android.app.Application
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,6 +29,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -54,11 +49,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridItemScope
@@ -67,13 +60,11 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -95,7 +86,6 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -105,6 +95,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -118,7 +109,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.ContextCompat
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -144,33 +134,31 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.copyTextToClipboard
-import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
-import com.lkonlesoft.displayinfo.helper.hasPermission
 import com.lkonlesoft.displayinfo.`object`.AboutItem
 import com.lkonlesoft.displayinfo.`object`.AppTheme
 import com.lkonlesoft.displayinfo.`object`.NavigationItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
-import com.lkonlesoft.displayinfo.utils.AndroidUtils
-import com.lkonlesoft.displayinfo.utils.BatteryUtils
-import com.lkonlesoft.displayinfo.utils.BluetoothUtils
-import com.lkonlesoft.displayinfo.utils.CameraUtils
-import com.lkonlesoft.displayinfo.utils.DisplayUtils
-import com.lkonlesoft.displayinfo.utils.NetworkUtils
-import com.lkonlesoft.displayinfo.utils.SocUtils
-import com.lkonlesoft.displayinfo.utils.StorageUtils
-import com.lkonlesoft.displayinfo.utils.SystemUtils
-import com.lkonlesoft.displayinfo.view.dashboard.AndroidDashboard
-import com.lkonlesoft.displayinfo.view.dashboard.BatteryDashboard
-import com.lkonlesoft.displayinfo.view.dashboard.BluetoothDashboard
-import com.lkonlesoft.displayinfo.view.dashboard.DisplayDashboard
-import com.lkonlesoft.displayinfo.view.dashboard.GeneralProgressBar
-import com.lkonlesoft.displayinfo.view.dashboard.MemoryDashBoard
-import com.lkonlesoft.displayinfo.view.dashboard.NetworkDashboard
-import com.lkonlesoft.displayinfo.view.dashboard.SoCDashBoard
-import com.lkonlesoft.displayinfo.view.dashboard.StorageDashboard
-import com.lkonlesoft.displayinfo.view.dashboard.SystemDashboard
+import com.lkonlesoft.displayinfo.view.module.AndroidDashboard
+import com.lkonlesoft.displayinfo.view.module.AndroidScreen
+import com.lkonlesoft.displayinfo.view.module.AppsScreen
+import com.lkonlesoft.displayinfo.view.module.BatteryDashboard
+import com.lkonlesoft.displayinfo.view.module.BatteryScreen
+import com.lkonlesoft.displayinfo.view.module.BluetoothDashboard
+import com.lkonlesoft.displayinfo.view.module.CameraInfoScreen
+import com.lkonlesoft.displayinfo.view.module.ConnectivityScreen
+import com.lkonlesoft.displayinfo.view.module.DisplayDashboard
+import com.lkonlesoft.displayinfo.view.module.DisplayScreen
+import com.lkonlesoft.displayinfo.view.module.HardwareScreen
+import com.lkonlesoft.displayinfo.view.module.MemoryDashBoard
+import com.lkonlesoft.displayinfo.view.module.MemoryScreen
+import com.lkonlesoft.displayinfo.view.module.NetworkDashboard
+import com.lkonlesoft.displayinfo.view.module.NetworkScreen
+import com.lkonlesoft.displayinfo.view.module.SoCDashBoard
+import com.lkonlesoft.displayinfo.view.module.StorageDashboard
+import com.lkonlesoft.displayinfo.view.module.StorageScreen
+import com.lkonlesoft.displayinfo.view.module.SystemDashboard
+import com.lkonlesoft.displayinfo.view.module.SystemScreen
 import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
-import com.lkonlesoft.displayinfo.widget.BatReceiver
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -301,6 +289,22 @@ fun ScaffoldContext(settings: SettingsViewModel){
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val routes = listOf(
+        NavigationItem.Home,
+        NavigationItem.SOC,
+        NavigationItem.Battery,
+        NavigationItem.Memory,
+        NavigationItem.Display,
+        NavigationItem.Storage,
+        NavigationItem.Android,
+        NavigationItem.Network,
+        NavigationItem.System,
+        NavigationItem.Connectivity,
+        NavigationItem.About,
+        NavigationItem.Camera,
+        NavigationItem.Settings,
+        NavigationItem.Apps
+    )
     ScreenInfoTheme (
         darkTheme = when(appColor) {
             0 -> isSystemInDarkTheme()
@@ -324,20 +328,7 @@ fun ScaffoldContext(settings: SettingsViewModel){
                         ),
                         title = {
                             Text(
-                                text = when(currentRoute){
-                                    NavigationItem.SOC.route -> stringResource(NavigationItem.SOC.name)
-                                    NavigationItem.Battery.route -> stringResource(NavigationItem.Battery.name)
-                                    NavigationItem.Memory.route -> stringResource(NavigationItem.Memory.name)
-                                    NavigationItem.Display.route -> stringResource(NavigationItem.Display.name)
-                                    NavigationItem.Storage.route -> stringResource(NavigationItem.Storage.name)
-                                    NavigationItem.Android.route -> stringResource(NavigationItem.Android.name)
-                                    NavigationItem.Network.route -> stringResource(NavigationItem.Network.name)
-                                    NavigationItem.System.route -> stringResource(NavigationItem.System.name)
-                                    NavigationItem.Connectivity.route -> stringResource(NavigationItem.Connectivity.name)
-                                    NavigationItem.About.route -> stringResource(NavigationItem.About.name)
-                                    NavigationItem.Settings.route -> stringResource(NavigationItem.Settings.name)
-                                    else -> "Home"
-                                },
+                                text = stringResource(routes.find { it.route == currentRoute }?.name ?: R.string.home),
                                 fontWeight = FontWeight.Medium,
                                 modifier = Modifier
                                     .padding(horizontal = 10.dp)
@@ -435,579 +426,6 @@ fun ScaffoldContext(settings: SettingsViewModel){
     }
 }
 
-@Composable
-fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
-    val context = LocalContext.current
-    val deviceInfoList by remember { mutableStateOf(SystemUtils(context).getDeviceData()) }
-    var rootInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
-    var extraInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
-    LaunchedEffect(Unit) {
-        rootInfoList = SystemUtils(context).getRootData()
-        extraInfoList = SystemUtils(context).getExtraData()
-    }
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(320.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.device))
-                deviceInfoList.forEach {
-                    IndividualLine(
-                        tittle = stringResource(it.name),
-                        info = it.value.toString(),
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = deviceInfoList.last() == it,
-                        topStart = if (deviceInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (deviceInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (deviceInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (deviceInfoList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.root_status))
-                rootInfoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
-                        info = it.value.toString(),
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = rootInfoList.last() == it,
-                        topStart = if (rootInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (rootInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (rootInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (rootInfoList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.extra))
-                extraInfoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
-                        info = it.value.toString(),
-                        canLongPress = longPressCopy,
-                        isLast = extraInfoList.last() == it,
-                        topStart = if (extraInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (extraInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (extraInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (extraInfoList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
-    val context = LocalContext.current
-    val androidInfoList = AndroidUtils(context).getAndroidInfo()
-    val extraInfoList = AndroidUtils(context).getExtraInfo()
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(320.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.general))
-                androidInfoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
-                        info = it.value.toString(),
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = androidInfoList.last() == it,
-                        topStart = if (androidInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (androidInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (androidInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (androidInfoList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.other))
-                extraInfoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
-                        info = it.value.toString(),
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = extraInfoList.last() == it,
-                        topStart = if (extraInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (extraInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (extraInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (extraInfoList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
-    val context = LocalContext.current
-    val resource = LocalResources.current
-    var refreshKey by remember { mutableIntStateOf(0) }
-    var showWarningPopup by remember { mutableStateOf(false) }
-    var hasPermission by remember(refreshKey) { mutableStateOf(context.hasPermission(Manifest.permission.READ_PHONE_STATE)) }
-    val networkType by remember(refreshKey) {
-        mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils(context).getNetwork() else NetworkUtils(context).getNetworkOldApi())
-    }
-    val infoList by remember(refreshKey) { mutableStateOf(NetworkUtils(context).getDetailsInfo()) }
-    val simInfoList by remember(refreshKey) { mutableStateOf(NetworkUtils(context).getSimInfo()) }
-    val startForPermissionResult = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()) {isGranted ->
-        hasPermission = isGranted
-        if (isGranted){
-            Toast.makeText(context, resource.getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
-        }
-        else{
-            Toast.makeText(context, resource.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
-            showWarningPopup = !showWarningPopup
-        }
-    }
-    val startSettingForResult = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        hasPermission = context.hasPermission(Manifest.permission.READ_PHONE_STATE)
-    }
-    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-        data = Uri.fromParts("package", context.packageName, null)
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
-    AnimatedVisibility(visible = showWarningPopup,
-        enter = fadeIn(
-            animationSpec = tween(220, delayMillis = 100)
-        ) + scaleIn(
-            initialScale = 0.92f,
-            animationSpec = tween(220, delayMillis = 100)
-        ),
-        exit = fadeOut(animationSpec = tween(100))
-    ) {
-        ConfirmActionPopup(
-            content = {},
-            mainText = stringResource(id = R.string.permission_denied),
-            subText = stringResource(id = R.string.permission_denied_details),
-            confirmText = stringResource(id = R.string.settings),
-            cancelText = stringResource(id = R.string.cancel),
-            onDismiss = {
-                showWarningPopup = !showWarningPopup
-            },
-            onClick = {
-                showWarningPopup = !showWarningPopup
-                startSettingForResult.launch(intent)
-            }
-        )
-    }
-    LaunchedEffect(Unit) {
-        while (true){
-            delay(5000L)
-            refreshKey++
-        }
-    }
-
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(320.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        item {
-            Column {
-                Spacer(modifier = Modifier.padding(vertical = 10.dp))
-                IndividualLine(tittle = stringResource(R.string.network_type), info = networkType,
-                    onClick = {
-                        startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
-                    },
-                    canLongPress = longPressCopy,
-                    copyTitle = copyTitle,
-                    topStart = 20.dp,
-                    topEnd = 20.dp,
-                    bottomStart = 20.dp,
-                    bottomEnd = 20.dp,
-                    isLast = true
-                )
-            }
-        }
-        if (simInfoList.isNotEmpty() && hasPermission) {
-            itemsIndexed(simInfoList) { index, simInfo ->
-                Column {
-                    HeaderLine(tittle = "SIM #${index+1}")
-                    simInfo.forEach {
-                        IndividualLine(
-                            tittle = stringResource(it.name),
-                            info = it.value.toString(),
-                            canLongPress = longPressCopy,
-                            copyTitle = copyTitle,
-                            isLast = simInfo.last() == it,
-                            topStart = if (simInfo.first() == it) 20.dp else 5.dp,
-                            topEnd = if (simInfo.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (simInfo.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (simInfo.last() == it) 20.dp else 5.dp
-                        )
-                    }
-                }
-            }
-        }
-        else{
-            item {
-                Column {
-                    HeaderLine(tittle = stringResource(R.string.sim_info))
-                    IndividualLine(tittle = stringResource(R.string.sim_info), info = stringResource(R.string.require_permission),
-                        onClick = {
-                            startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
-                        },
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        topStart = 20.dp,
-                        topEnd = 20.dp,
-                        bottomStart = 20.dp,
-                        bottomEnd = 20.dp,
-                        isLast = true
-                    )
-                }
-            }
-        }
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.details))
-                infoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
-                        info = it.value.toString(),
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = infoList.last() == it,
-                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
-    val context = LocalContext.current
-    val resources = LocalResources.current
-    var refreshKey by remember { mutableIntStateOf(0) }
-    var widevineInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
-    var clearKeyInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
-    var infoList by remember(refreshKey) { mutableStateOf(DisplayUtils(context, resources).getAllData()) }
-    LaunchedEffect(Unit) {
-        widevineInfo = DisplayUtils(context, resources).getWidevineInfo()
-        clearKeyInfo = DisplayUtils(context, resources).getClearKeyInfo()
-        while (true){
-            delay(1000L)
-            refreshKey++
-        }
-    }
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(320.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.display))
-                infoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
-                        info = it.value.toString() + it.extra,
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = infoList.last() == it,
-                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.widevine))
-                val widevineList = widevineInfo.toList()
-                widevineList.forEach {
-                    IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() },
-                        info = it.second,
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = widevineList.last() == it,
-                        topStart = if (widevineList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (widevineList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (widevineList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (widevineList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.clearkey))
-                val clearKeyList = clearKeyInfo.toList()
-                clearKeyList.forEach {
-                    IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() },
-                        info = it.second,
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = clearKeyList.last() == it,
-                        topStart = if (clearKeyList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (clearKeyList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (clearKeyList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (clearKeyList.last() == it) 20.dp else 5.dp
-                    )
-                }
-
-            }
-        }
-        if (showNotice){
-            item {
-                GeneralWarning(
-                    title = R.string.drm_notice_title,
-                    text = R.string.drm_notice,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
-    val context = LocalContext.current
-    val resources = LocalResources.current
-    var refreshKey by remember { mutableIntStateOf(0) }
-    var refreshKey2 by remember { mutableIntStateOf(0) }
-    var showWarningPopup by remember { mutableStateOf(false) }
-    val hasBluetoothPermission by remember(refreshKey)  {
-        mutableStateOf(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) == PackageManager.PERMISSION_GRANTED
-            else true
-        )
-    }
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            Toast.makeText(context, resources.getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
-        }
-        else {
-            showWarningPopup = !showWarningPopup
-        }
-    }
-    val stateInfoList by remember(refreshKey) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getStateData() else emptyList()) }
-    val deviceInfoList by remember(refreshKey2) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getDeviceData() else emptyList()) }
-    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-        data = Uri.fromParts("package", context.packageName, null)
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
-    AnimatedVisibility(visible = showWarningPopup,
-        enter = fadeIn(
-            animationSpec = tween(220, delayMillis = 100)
-        ) + scaleIn(
-            initialScale = 0.92f,
-            animationSpec = tween(220, delayMillis = 100)
-        ),
-        exit = fadeOut(animationSpec = tween(100))
-    ) {
-        ConfirmActionPopup(
-            content = {},
-            mainText = stringResource(id = R.string.permission_denied),
-            subText = stringResource(id = R.string.permission_denied_details),
-            confirmText = stringResource(id = R.string.settings),
-            cancelText = stringResource(id = R.string.cancel),
-            onDismiss = {
-                showWarningPopup = !showWarningPopup
-            },
-            onClick = {
-                showWarningPopup = !showWarningPopup
-                context.startActivity(intent)
-            }
-        )
-    }
-    LaunchedEffect(Unit) {
-        while (true){
-            delay(1000L)
-            refreshKey++
-            if (refreshKey % 10 == 0) //load device data every 10 seconds
-                refreshKey2++
-        }
-    }
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(320.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || hasBluetoothPermission) {
-            item {
-                Column {
-                    HeaderLine(tittle = stringResource(R.string.status))
-                    stateInfoList.forEach {
-                        IndividualLine(tittle = stringResource(it.name),
-                            info = it.value.toString() + it.extra,
-                            canLongPress = longPressCopy,
-                            copyTitle = copyTitle,
-                            isLast = stateInfoList.last() == it,
-                            topStart = if (stateInfoList.first() == it) 20.dp else 5.dp,
-                            topEnd = if (stateInfoList.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (stateInfoList.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (stateInfoList.last() == it) 20.dp else 5.dp
-                        )
-                    }
-                }
-            }
-        }
-        else {
-            item {
-                Column {
-                    HeaderLine(tittle = stringResource(R.string.status))
-                    IndividualLine(
-                        tittle = stringResource(R.string.bluetooth),
-                        info = stringResource(R.string.require_permission),
-                        onClick = {
-                            permissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
-                        },
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        topStart = 20.dp,
-                        topEnd = 20.dp,
-                        bottomStart = 20.dp,
-                        bottomEnd = 20.dp,
-                        isLast = true
-                    )
-                }
-            }
-        }
-        item {
-            Column {
-                deviceInfoList.forEachIndexed { index, device ->
-                    HeaderLine(tittle = buildString {
-                        append(stringResource(R.string.connected_devices))
-                        append(" #${index + 1}")
-                    })
-                    device.forEach {
-                        IndividualLine(
-                            tittle = stringResource(it.name),
-                            info = it.value.toString() + it.extra,
-                            canLongPress = longPressCopy,
-                            copyTitle = copyTitle,
-                            isLast = device.last() == it,
-                            topStart = if (device.first() == it) 20.dp else 5.dp,
-                            topEnd = if (device.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (device.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (device.last() == it) 20.dp else 5.dp
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
-    val context = LocalContext.current
-    var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList by remember(refreshKey) { mutableStateOf(BatteryUtils(context).getAllData()) }
-    LaunchedEffect(Unit) {
-        while (true){
-            delay(1000L)
-            refreshKey++
-        }
-    }
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(320.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        item {
-            Column {
-                GeneralProgressBar((infoList.first().value as Number).toLong(), 100L, 1, height = 30.dp, verticalPadding = 15.dp)
-                infoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
-                        info = it.value.toString() + it.extra,
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = infoList.last() == it,
-                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-        item {
-            GeneralWarning(
-                title = R.string.cycle_count,
-                text = R.string.battery_notice_2,
-                icon = R.drawable.outline_info_24,
-                extra = {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                        val appWidgetManager = AppWidgetManager.getInstance(context)
-                        val widgetProvider = ComponentName(context, BatReceiver::class.java)
-                        Button(
-                            modifier = Modifier.padding(bottom = 10.dp),
-                            onClick = {
-                                appWidgetManager.requestPinAppWidget(widgetProvider, null, null)
-                            }
-                        ) {
-                            Text(stringResource(R.string.add_battery_widget))
-                        }
-                    }
-                }
-            )
-        }
-        if (showNotice){
-            item {
-                GeneralWarning(
-                    title = R.string.battery_notice_title,
-                    text = R.string.battery_notice
-                )
-            }
-        }
-    }
-}
-
-
 @OptIn(FlowPreview::class)
 @Composable
 fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, currentRoute: String?, paddingValues: PaddingValues) {
@@ -1023,7 +441,8 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
         NavigationItem.Storage,
         NavigationItem.Network,
         NavigationItem.Camera,
-        NavigationItem.Connectivity
+        NavigationItem.Connectivity,
+        NavigationItem.Apps
     )
     AnimatedContent(targetState = useNewDashboard,
         transitionSpec = {
@@ -1111,261 +530,6 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
 }
 
 @Composable
-fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean) {
-    val context = LocalContext.current
-    var cameraInfoList by remember { mutableStateOf<List<List<DeviceInfo>>>(emptyList()) }
-    LaunchedEffect(Unit) {
-       cameraInfoList = CameraUtils(context).getAllData()
-    }
-
-    // Display the list of camera details.
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(320.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        itemsIndexed(cameraInfoList) { index, cameraItemList ->
-            Column {
-                HeaderLine(tittle = "#${index+1}")
-                cameraItemList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
-                        info = it.value.toString() + it.extra,
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = cameraItemList.last() == it,
-                        topStart = if (cameraItemList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (cameraItemList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (cameraItemList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (cameraItemList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-        if (showNotice) {
-            staggeredHeader {
-                GeneralWarning(
-                    title = R.string.camera_notice_title,
-                    text = R.string.camera_notice
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
-    val context = LocalContext.current
-    var refreshKey by remember { mutableIntStateOf(0) }
-    val ramInfo by remember(refreshKey) { mutableStateOf(StorageUtils(context).getRAMInfo()) }
-    // Auto-refresh every 2 seconds
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(2000L)
-            refreshKey++ // Triggers recomposition
-        }
-    }
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-        modifier = Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-
-        header {GeneralProgressBar((ramInfo[2].value as Number).toLong(), (ramInfo[3].value as Number).toLong(), 1,
-            height = 30.dp,
-            verticalPadding = 15.dp)}
-        item {
-            Column {
-                ramInfo.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
-                        info = it.value.toString() + it.extra,
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = ramInfo.last() == it,
-                        topStart = if (ramInfo.first() == it) 20.dp else 5.dp,
-                        topEnd = if (ramInfo.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (ramInfo.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (ramInfo.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
-    val context = LocalContext.current
-    var refreshKey by remember { mutableIntStateOf(0) }
-    val internalStorageStats by remember(refreshKey) { mutableStateOf(StorageUtils(context).getInternalStorageInfo()) }
-    val externalStorageStats by remember(refreshKey) { mutableStateOf(StorageUtils(context).getExternalStorageInfo()) }
-    // Auto-refresh every 10 seconds
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(30000L)
-            refreshKey++ // Triggers recomposition
-        }
-    }
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(320.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-
-    ) {
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.internal_storage))
-                GeneralProgressBar((internalStorageStats[2].value as Number).toLong(), (internalStorageStats[3].value as Number).toLong(), 1,
-                height = 30.dp, verticalPadding = 5.dp)
-                Spacer(modifier = Modifier.padding(10.dp))
-                internalStorageStats.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
-                        info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = internalStorageStats.last() == it,
-                        topStart = if (internalStorageStats.first() == it) 20.dp else 5.dp,
-                        topEnd = if (internalStorageStats.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (internalStorageStats.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (internalStorageStats.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-        if (externalStorageStats.isNotEmpty()) {
-            item {
-                Column {
-                    HeaderLine(tittle = stringResource(R.string.external_storage))
-                    GeneralProgressBar(
-                        (externalStorageStats[2].value as Number).toLong(),
-                        (externalStorageStats[3].value as Number).toLong(),
-                        1,
-                        height = 30.dp,
-                        verticalPadding = 5.dp
-                    )
-                    Spacer(modifier = Modifier.padding(10.dp))
-                    externalStorageStats.forEach {
-                        IndividualLine(
-                            tittle = stringResource(it.name),
-                            info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
-                            canLongPress = longPressCopy,
-                            copyTitle = copyTitle,
-                            isLast = externalStorageStats.last() == it,
-                            topStart = if (externalStorageStats.first() == it) 20.dp else 5.dp,
-                            topEnd = if (externalStorageStats.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (externalStorageStats.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (externalStorageStats.last() == it) 20.dp else 5.dp
-                        )
-                    }
-                }
-            }
-        }
-        if (showNotice){
-            item {
-                GeneralWarning(
-                    title = R.string.storage_notice_title,
-                    text = R.string.storage_notice
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues, showNotice: Boolean) {
-    val context = LocalContext.current
-    var refreshKey by remember { mutableIntStateOf(0) }
-    val glEs by remember { mutableStateOf(SocUtils(context).getGlEsVersion()) }
-    val cpuInfoList by remember { mutableStateOf(SocUtils(context).getCPUInfo()) }
-    val cpuUsageInfo by remember(refreshKey) { mutableStateOf(SocUtils(context).getCPUUsage()) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(1000L) // Update every 1 second
-            refreshKey++
-        }
-    }
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(320.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.cpu_info))
-                cpuInfoList.forEach {
-                    IndividualLine(tittle = if (it.type == 1) stringResource(it.name, it.value) else stringResource(it.name),
-                        info = if (it.type == 1) it.extra else it.value.toString(),
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = cpuInfoList.last() == it,
-                        topStart = if (cpuInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (cpuInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (cpuInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (cpuInfoList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.cpu_usage))
-                cpuUsageInfo.forEach {
-                    IndividualLine(tittle = stringResource(it.name, it.value),
-                        info = it.extra,
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = cpuUsageInfo.last() == it,
-                        topStart = if (cpuUsageInfo.first() == it) 20.dp else 5.dp,
-                        topEnd = if (cpuUsageInfo.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (cpuUsageInfo.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (cpuUsageInfo.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.gpu_info))
-                IndividualLine(tittle = stringResource(R.string.gles_version),
-                    info = glEs,
-                    canLongPress = longPressCopy,
-                    copyTitle = copyTitle,
-                    isLast = true,
-                    topStart = 20.dp,
-                    topEnd = 20.dp,
-                    bottomStart = 20.dp,
-                    bottomEnd = 20.dp
-                )
-            }
-        }
-        if (showNotice) {
-            staggeredHeader {
-                GeneralWarning(
-                    title = R.string.soc_notice_title,
-                    text = R.string.soc_notice
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
     OutlinedCard (
         modifier = Modifier
@@ -1397,6 +561,7 @@ fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
 fun IndividualLine(
     tittle: String,
     info: String,
+    icon: Bitmap? = null,
     onClick: () -> Unit = { },
     canLongPress: Boolean = true,
     copyTitle: Boolean = true,
@@ -1415,7 +580,7 @@ fun IndividualLine(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
     ) {
-        Column(
+        Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(
@@ -1462,33 +627,41 @@ fun IndividualLine(
                         }
                     },
                 )
-                .padding(horizontal = 20.dp, vertical = 10.dp),
-            horizontalAlignment = Alignment.Start,
+                .padding(horizontal = 20.dp, vertical = 10.dp)
         ) {
-            Text(
-                text = tittle.split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } },
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(vertical = 5.dp)
-            )
-            AnimatedContent (targetState = expanded,
-               transitionSpec = {
-                   expandVertically(expandFrom = Alignment.Top) + fadeIn() togetherWith shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
-               }
+            if (icon != null) {
+                Image(
+                    bitmap = icon.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier.size(64.dp).padding(end = 20.dp)
+                )
+            }
+            Column {
+                Text(
+                    text = tittle.split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } },
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(vertical = 5.dp)
+                )
+                AnimatedContent (targetState = expanded,
+                    transitionSpec = {
+                        expandVertically(expandFrom = Alignment.Top) + fadeIn() togetherWith shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
+                    }
                 ) {
-                if (it) {
-                    Text(
-                        text = info,
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(vertical = 5.dp)
-                    )
-                }
-                else {
-                    Text(
-                        text = info.take(60) + "...",
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(vertical = 5.dp)
-                    )
+                    if (it) {
+                        Text(
+                            text = info,
+                            fontSize = 15.sp,
+                            modifier = Modifier.padding(vertical = 5.dp)
+                        )
+                    }
+                    else {
+                        Text(
+                            text = info.take(60) + "...",
+                            fontSize = 15.sp,
+                            modifier = Modifier.padding(vertical = 5.dp)
+                        )
+                    }
                 }
             }
         }
@@ -2439,6 +1612,13 @@ fun MainNavigation(
                 longPressCopy = longPressCopy,
                 copyTitle = copyTitle
             )
+        }
+        composable(route = NavigationItem.Apps.route, deepLinks = listOf(
+            navDeepLink {
+                uriPattern = "si://info/apps"
+            }
+        )) {
+            AppsScreen(paddingValues = paddingValues, longPressCopy = longPressCopy, copyTitle = copyTitle)
         }
     }
 }

@@ -262,4 +262,6 @@
     <string name="imaging">イメージング</string>
     <string name="wearable">ウェアラブル</string>
     <string name="toy">おもちゃ</string>
+    <string name="apps">アプリ</string>
+    <string name="version">バージョン</string>
 </resources>
