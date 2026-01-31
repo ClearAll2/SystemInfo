@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.compose.ui.graphics.Color
@@ -64,17 +65,16 @@ fun Context.copyTextToClipboard(text: String) {
     clipboard.setPrimaryClip(clip)
 }
 
-// Helper to convert Drawable to Bitmap for Compose
-// https://github.com/mohsenoid/CertHunter
-fun drawableToBitmap(drawable: Drawable): Bitmap {
-    if (drawable is android.graphics.drawable.BitmapDrawable) {
-        return drawable.bitmap
+fun Drawable.toBitmap(): Bitmap {
+    return if (this is BitmapDrawable && this.bitmap != null) {
+        this.bitmap
+    } else {
+        val bitmap = createBitmap(intrinsicWidth.coerceAtLeast(1), intrinsicHeight.coerceAtLeast(1))
+        val canvas = Canvas(bitmap)
+        setBounds(0, 0, canvas.width, canvas.height)
+        draw(canvas)
+        bitmap
     }
-    val bitmap = createBitmap(drawable.intrinsicWidth.coerceAtLeast(1), drawable.intrinsicHeight.coerceAtLeast(1))
-    val canvas = Canvas(bitmap)
-    drawable.setBounds(0, 0, canvas.width, canvas.height)
-    drawable.draw(canvas)
-    return bitmap
 }
 
 

@@ -264,4 +264,5 @@
     <string name="toy">おもちゃ</string>
     <string name="apps">アプリ</string>
     <string name="version">バージョン</string>
+    <string name="find_app">アプリ内で検索…</string>
 </resources>

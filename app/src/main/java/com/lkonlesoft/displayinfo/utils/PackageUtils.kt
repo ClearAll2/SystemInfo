@@ -3,7 +3,6 @@ package com.lkonlesoft.displayinfo.utils
 import android.content.Context
 import android.content.pm.PackageManager
 import com.lkonlesoft.displayinfo.helper.dc.AppInfo
-import com.lkonlesoft.displayinfo.helper.drawableToBitmap
 
 class PackageUtils(private val context: Context) {
     private val pm by lazy {
@@ -19,7 +18,7 @@ class PackageUtils(private val context: Context) {
             AppInfo(
                 name = it.applicationInfo?.loadLabel(pm).toString(),
                 packageName = it.packageName,
-                icon = drawableToBitmap(it.applicationInfo?.loadIcon(pm)!!),
+                icon = it.applicationInfo?.loadIcon(pm),
                 versionName = it.versionName
             )
         }

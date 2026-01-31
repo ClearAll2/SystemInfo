@@ -2,7 +2,7 @@ package com.lkonlesoft.displayinfo.view
 
 import android.app.Application
 import android.content.Intent
-import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -96,6 +96,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -134,6 +135,7 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.copyTextToClipboard
+import com.lkonlesoft.displayinfo.helper.toBitmap
 import com.lkonlesoft.displayinfo.`object`.AboutItem
 import com.lkonlesoft.displayinfo.`object`.AppTheme
 import com.lkonlesoft.displayinfo.`object`.NavigationItem
@@ -561,7 +563,7 @@ fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
 fun IndividualLine(
     tittle: String,
     info: String,
-    icon: Bitmap? = null,
+    icon: Drawable? = null,
     onClick: () -> Unit = { },
     canLongPress: Boolean = true,
     copyTitle: Boolean = true,
@@ -569,12 +571,15 @@ fun IndividualLine(
     topEnd: Dp = 5.dp,
     bottomStart: Dp = 5.dp,
     bottomEnd: Dp = 5.dp,
-    isLast: Boolean = false
+    isLast: Boolean = false,
+    dividerColor: Color = MaterialTheme.colorScheme.background,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
 ){
     val context = LocalContext.current
     val resource = LocalResources.current
     val isNotExpandable = info.length < 120
     var expanded by rememberSaveable { mutableStateOf(isNotExpandable) }
+    val pm = context.packageManager
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -592,7 +597,7 @@ fun IndividualLine(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    color = backgroundColor,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -631,14 +636,16 @@ fun IndividualLine(
         ) {
             if (icon != null) {
                 Image(
-                    bitmap = icon.asImageBitmap(),
+                    painter = BitmapPainter(icon.toBitmap().asImageBitmap()),
                     contentDescription = null,
                     modifier = Modifier.size(64.dp).padding(end = 20.dp)
                 )
             }
             Column {
                 Text(
-                    text = tittle.split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } },
+                    text = if (icon == null) tittle.split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
+                        else tittle
+                    ,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(vertical = 5.dp)
@@ -668,7 +675,7 @@ fun IndividualLine(
         if (!isLast) {
             HorizontalDivider(
                 thickness = 2.dp,
-                color = MaterialTheme.colorScheme.background
+                color = dividerColor
             )
         }
     }

@@ -264,4 +264,5 @@
     <string name="toy">玩具</string>
     <string name="apps">应用</string>
     <string name="version">版本</string>
+    <string name="find_app">在应用中搜索…</string>
 </resources>

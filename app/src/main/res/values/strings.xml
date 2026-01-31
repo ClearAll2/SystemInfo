@@ -268,4 +268,5 @@
     <string name="toy">Toy</string>
     <string name="apps">Apps</string>
     <string name="version">version</string>
+    <string name="find_app">Search in apps…</string>
 </resources>

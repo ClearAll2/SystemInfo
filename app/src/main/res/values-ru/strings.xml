@@ -264,4 +264,5 @@
     <string name="toy">Игрушка</string>
     <string name="apps">Приложения</string>
     <string name="version">версия</string>
+    <string name="find_app">Поиск в приложениях…</string>
 </resources>
