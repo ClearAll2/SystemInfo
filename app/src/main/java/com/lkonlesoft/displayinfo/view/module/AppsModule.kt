@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -72,7 +74,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
     AnimatedContent (targetState = isLoading,
         transitionSpec = { fadeIn() togetherWith fadeOut() }) {
         if (it) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surfaceContainer), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
                     strokeWidth = 10.dp,
                     modifier = Modifier.size(100.dp)
@@ -80,12 +82,18 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
             }
         }
         else {
-            Column(modifier = Modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding())) {
+            Column(modifier = Modifier.fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                .padding(top = paddingValues.calculateTopPadding())) {
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { newVal ->
                         searchQuery = newVal
                     },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.background,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 10.dp),
@@ -110,9 +118,10 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                     shape = RoundedCornerShape(25.dp)
                 )
                 LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Adaptive(320.dp),
+                    columns = StaggeredGridCells.Fixed(1),
                     modifier = Modifier
                         .fillMaxSize()
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer)
                         .consumeWindowInsets(paddingValues)
                         .padding(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
@@ -131,7 +140,10 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,
                             isLast = filteredApps.last() == app,
-                            backgroundColor = MaterialTheme.colorScheme.background,
+                            topStart = if (filteredApps.first() == app) 20.dp else 5.dp,
+                            topEnd = if (filteredApps.first() == app) 20.dp else 5.dp,
+                            bottomStart = if (filteredApps.last() == app) 20.dp else 5.dp,
+                            bottomEnd = if (filteredApps.last() == app) 20.dp else 5.dp,
                             onClick = {
                                 context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                                     data = Uri.fromParts("package", app.packageName, null)

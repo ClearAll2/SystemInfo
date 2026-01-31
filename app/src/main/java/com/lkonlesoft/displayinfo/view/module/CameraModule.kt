@@ -1,5 +1,6 @@
 package com.lkonlesoft.displayinfo.view.module
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +42,7 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyT
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),
         contentPadding = paddingValues,

@@ -1,5 +1,6 @@
 package com.lkonlesoft.displayinfo.view.module
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,6 +73,7 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),
         contentPadding = paddingValues,

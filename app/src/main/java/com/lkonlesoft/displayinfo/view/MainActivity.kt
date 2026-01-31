@@ -65,6 +65,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -72,6 +73,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -318,15 +320,15 @@ fun ScaffoldContext(settings: SettingsViewModel){
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background)
+            color = MaterialTheme.colorScheme.surfaceContainer)
         {
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
                     LargeTopAppBar(
                         colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                            scrolledContainerColor = MaterialTheme.colorScheme.background
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
                         ),
                         title = {
                             Text(
@@ -354,7 +356,7 @@ fun ScaffoldContext(settings: SettingsViewModel){
                                         modifier = Modifier
                                             .padding(start = 20.dp)
                                             .background(
-                                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
                                                 shape = CircleShape
                                             ),
                                         onClick = { navController.navigateUp() }
@@ -464,6 +466,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
                 contentPadding = paddingValues,
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.surfaceContainer)
                     .padding(horizontal = 7.5.dp)
                     .consumeWindowInsets(paddingValues)
             ) {
@@ -513,6 +516,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
                 contentPadding = paddingValues,
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.surfaceContainer)
                     .padding(horizontal = 7.5.dp)
                     .consumeWindowInsets(paddingValues)
             ) {
@@ -572,14 +576,13 @@ fun IndividualLine(
     bottomStart: Dp = 5.dp,
     bottomEnd: Dp = 5.dp,
     isLast: Boolean = false,
-    dividerColor: Color = MaterialTheme.colorScheme.background,
-    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
+    dividerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
+    backgroundColor: Color = MaterialTheme.colorScheme.background
 ){
     val context = LocalContext.current
     val resource = LocalResources.current
     val isNotExpandable = info.length < 120
     var expanded by rememberSaveable { mutableStateOf(isNotExpandable) }
-    val pm = context.packageManager
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -736,6 +739,7 @@ fun AboutScreen(paddingValues: PaddingValues) {
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),
         contentPadding = paddingValues,
@@ -837,11 +841,12 @@ fun LanguageSelectionPopup(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 5.dp)
+                        .padding(bottom = 10.dp)
                 ) {
-                    TextButton(onClick = onDismiss, modifier = Modifier.padding(5.dp)) {
+                    OutlinedButton(onClick = onDismiss, modifier = Modifier.padding(5.dp)) {
                         Text(text = stringResource(id = R.string.cancel), modifier = Modifier.padding(5.dp))
                     }
-                    TextButton(
+                    Button(
                         onClick = {
                             onClick(selectLang)
                             onDismiss()
@@ -917,6 +922,7 @@ fun SettingsScreen(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),
         contentPadding = paddingValues,
@@ -1063,7 +1069,7 @@ fun AboutMenuItem(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    color = MaterialTheme.colorScheme.background,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -1090,7 +1096,7 @@ fun AboutMenuItem(
         if (!isLast) {
             HorizontalDivider(
                 thickness = 2.dp,
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.surfaceContainer
             )
         }
     }
@@ -1198,7 +1204,7 @@ fun CommonSwitchOption(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    color = MaterialTheme.colorScheme.background,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -1261,7 +1267,7 @@ fun CommonSwitchOption(
         if (!isLast) {
             HorizontalDivider(
                 thickness = 2.dp,
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.surfaceContainer
             )
         }
     }
@@ -1299,7 +1305,7 @@ fun ThemeSelector(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    color = MaterialTheme.colorScheme.background,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -1342,7 +1348,7 @@ fun ThemeSelector(
         if (!isLast) {
             HorizontalDivider(
                 thickness = 2.dp,
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.surfaceContainer
             )
         }
     }
