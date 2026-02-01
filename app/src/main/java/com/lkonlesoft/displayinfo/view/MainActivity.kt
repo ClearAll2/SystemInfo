@@ -65,6 +65,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -72,6 +73,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -579,7 +581,6 @@ fun IndividualLine(
     val resource = LocalResources.current
     val isNotExpandable = info.length < 120
     var expanded by rememberSaveable { mutableStateOf(isNotExpandable) }
-    val pm = context.packageManager
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -837,11 +838,14 @@ fun LanguageSelectionPopup(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 5.dp)
+                        .padding(bottom = 10.dp)
                 ) {
-                    TextButton(onClick = onDismiss, modifier = Modifier.padding(5.dp)) {
+                    OutlinedButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.padding(5.dp)) {
                         Text(text = stringResource(id = R.string.cancel), modifier = Modifier.padding(5.dp))
                     }
-                    TextButton(
+                    Button(
                         onClick = {
                             onClick(selectLang)
                             onDismiss()

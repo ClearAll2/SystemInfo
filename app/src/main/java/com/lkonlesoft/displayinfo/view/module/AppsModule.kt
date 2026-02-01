@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -110,7 +109,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                     shape = RoundedCornerShape(25.dp)
                 )
                 LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Adaptive(320.dp),
+                    columns = StaggeredGridCells.Fixed(1),
                     modifier = Modifier
                         .fillMaxSize()
                         .consumeWindowInsets(paddingValues)
@@ -131,7 +130,10 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,
                             isLast = filteredApps.last() == app,
-                            backgroundColor = MaterialTheme.colorScheme.background,
+                            topStart = if (filteredApps.first() == app) 20.dp else 5.dp,
+                            topEnd = if (filteredApps.first() == app) 20.dp else 5.dp,
+                            bottomStart = if (filteredApps.last() == app) 20.dp else 5.dp,
+                            bottomEnd = if (filteredApps.last() == app) 20.dp else 5.dp,
                             onClick = {
                                 context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                                     data = Uri.fromParts("package", app.packageName, null)
