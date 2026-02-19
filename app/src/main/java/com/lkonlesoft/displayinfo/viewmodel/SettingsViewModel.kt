@@ -1,6 +1,5 @@
 package com.lkonlesoft.displayinfo.viewmodel
 
-import android.content.Context
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,10 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class SettingsViewModel(context: Context) : ViewModel() {
-
-    // Get singleton instance of SettingsManager
-    private val settingsManager = SettingsManager.getInstance(context)
+class SettingsViewModel(private val settingsManager: SettingsManager) : ViewModel() {
 
     private val _useNewDashboard = MutableStateFlow(true)
     val useNewDashboard = _useNewDashboard.asStateFlow()
@@ -51,8 +47,10 @@ class SettingsViewModel(context: Context) : ViewModel() {
     }
 
     fun setCopyTitle(copyTitle: Boolean) {
-        settingsManager.saveSettingLogic("copyTitle", copyTitle)
-        _copyTitle.value = copyTitle
+        viewModelScope.launch (Dispatchers.IO) {
+            settingsManager.saveSettingLogic("copyTitle", copyTitle)
+            _copyTitle.value = copyTitle
+        }
     }
 
     fun getCopyTitle(): Boolean {
@@ -60,8 +58,10 @@ class SettingsViewModel(context: Context) : ViewModel() {
     }
 
     fun setUseNewDashboard(useNewDashboard: Boolean) {
-        settingsManager.saveSettingLogic("useNewDashboard", useNewDashboard)
-        _useNewDashboard.value = useNewDashboard
+        viewModelScope.launch (Dispatchers.IO) {
+            settingsManager.saveSettingLogic("useNewDashboard", useNewDashboard)
+            _useNewDashboard.value = useNewDashboard
+        }
     }
 
     fun getUseNewDashboard(): Boolean {
@@ -69,8 +69,10 @@ class SettingsViewModel(context: Context) : ViewModel() {
     }
 
     fun setAppColor(color: Int) {
-        settingsManager.saveSettingsInt("appColor", color)
-        _appColor.value = color
+        viewModelScope.launch (Dispatchers.IO) {
+            settingsManager.saveSettingsInt("appColor", color)
+            _appColor.value = color
+        }
     }
 
     fun getAppColor(): Int {
@@ -78,8 +80,10 @@ class SettingsViewModel(context: Context) : ViewModel() {
     }
 
     fun setUseDynamicColors(useDynamicColors: Boolean) {
-        settingsManager.saveSettingLogic("useDynamicColors", useDynamicColors)
-        _useDynamicColors.value = useDynamicColors
+        viewModelScope.launch (Dispatchers.IO) {
+            settingsManager.saveSettingLogic("useDynamicColors", useDynamicColors)
+            _useDynamicColors.value = useDynamicColors
+        }
     }
 
     fun getUseDynamicColors(): Boolean {
@@ -87,8 +91,10 @@ class SettingsViewModel(context: Context) : ViewModel() {
     }
 
     fun setLongPressCopy(longPressCopy: Boolean) {
-        settingsManager.saveSettingLogic("longPressCopy", longPressCopy)
-        _longPressCopy.value = longPressCopy
+        viewModelScope.launch (Dispatchers.IO) {
+            settingsManager.saveSettingLogic("longPressCopy", longPressCopy)
+            _longPressCopy.value = longPressCopy
+        }
     }
 
     fun getLongPressCopy(): Boolean {
@@ -96,8 +102,10 @@ class SettingsViewModel(context: Context) : ViewModel() {
     }
 
     fun setShowNotice(showNotice: Boolean) {
-        settingsManager.saveSettingLogic("showNotice", showNotice)
-        _showNotice.value = showNotice
+        viewModelScope.launch (Dispatchers.IO) {
+            settingsManager.saveSettingLogic("showNotice", showNotice)
+            _showNotice.value = showNotice
+        }
     }
 
     fun getShowNotice(): Boolean {

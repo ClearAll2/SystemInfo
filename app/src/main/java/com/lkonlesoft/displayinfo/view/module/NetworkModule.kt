@@ -190,7 +190,8 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
             item {
                 Column {
                     HeaderLine(tittle = stringResource(R.string.sim_info))
-                    IndividualLine(tittle = stringResource(R.string.sim_info), info = stringResource(R.string.require_permission),
+                    IndividualLine(tittle = stringResource(R.string.sim_info), info = if (!hasPermission) stringResource(R.string.require_permission)
+                    else stringResource(R.string.n_a),
                         onClick = {
                             startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
                         },

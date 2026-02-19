@@ -1,6 +1,5 @@
 package com.lkonlesoft.displayinfo.view
 
-import android.app.Application
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -9,7 +8,6 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedContent
@@ -118,8 +116,6 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -166,6 +162,7 @@ import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MainActivity : AppCompatActivity() {
@@ -205,9 +202,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val settings: SettingsViewModel by viewModels{
-        SettingsModelFactory(application)
-    }
+    private val settings: SettingsViewModel by viewModel()
 
     override fun onResume() {
         super.onResume()
@@ -276,12 +271,6 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class SettingsModelFactory(private val application: Application) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return modelClass.cast(SettingsViewModel(application))!!
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldContext(settings: SettingsViewModel){
@@ -293,22 +282,24 @@ fun ScaffoldContext(settings: SettingsViewModel){
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val routes = listOf(
-        NavigationItem.Home,
-        NavigationItem.SOC,
-        NavigationItem.Battery,
-        NavigationItem.Memory,
-        NavigationItem.Display,
-        NavigationItem.Storage,
-        NavigationItem.Android,
-        NavigationItem.Network,
-        NavigationItem.System,
-        NavigationItem.Connectivity,
-        NavigationItem.About,
-        NavigationItem.Camera,
-        NavigationItem.Settings,
-        NavigationItem.Apps
-    )
+    val routes = remember {
+        listOf(
+            NavigationItem.Home,
+            NavigationItem.SOC,
+            NavigationItem.Battery,
+            NavigationItem.Memory,
+            NavigationItem.Display,
+            NavigationItem.Storage,
+            NavigationItem.Android,
+            NavigationItem.Network,
+            NavigationItem.System,
+            NavigationItem.Connectivity,
+            NavigationItem.About,
+            NavigationItem.Camera,
+            NavigationItem.Settings,
+            NavigationItem.Apps
+        )
+    }
     ScreenInfoTheme (
         darkTheme = when(appColor) {
             0 -> isSystemInDarkTheme()
@@ -435,19 +426,21 @@ fun ScaffoldContext(settings: SettingsViewModel){
 fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, currentRoute: String?, paddingValues: PaddingValues) {
     val width = LocalWindowInfo.current.containerDpSize.width
     val state = rememberLazyStaggeredGridState()
-    val listScreen = listOf(
-        NavigationItem.System,
-        NavigationItem.Android,
-        NavigationItem.SOC,
-        NavigationItem.Display,
-        NavigationItem.Battery,
-        NavigationItem.Memory,
-        NavigationItem.Storage,
-        NavigationItem.Network,
-        NavigationItem.Camera,
-        NavigationItem.Connectivity,
-        NavigationItem.Apps
-    )
+    val listScreen = remember {
+        listOf(
+            NavigationItem.System,
+            NavigationItem.Android,
+            NavigationItem.SOC,
+            NavigationItem.Display,
+            NavigationItem.Battery,
+            NavigationItem.Memory,
+            NavigationItem.Storage,
+            NavigationItem.Network,
+            NavigationItem.Camera,
+            NavigationItem.Connectivity,
+            NavigationItem.Apps
+        )
+    }
     AnimatedContent(targetState = useNewDashboard,
         transitionSpec = {
             if (targetState && !initialState) {
@@ -522,9 +515,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
                     val isSelected = currentRoute == item.route
                     BigTitle(title = stringResource(item.name), icon = item.icon) {
                         if (!isSelected) {
-                            navController.navigate(item.route) {
-                                launchSingleTop = true
-                            }
+                            navController.navigate(item.route)
                         }
                     }
                 }
@@ -722,17 +713,21 @@ fun HeaderLine(tittle: String, horizontalPadding: Dp = 10.dp, verticalPadding: D
 @Composable
 fun AboutScreen(paddingValues: PaddingValues) {
     val uriHandler = LocalUriHandler.current
-    val appInfoItems = listOf(
-        AboutItem.AppVer,
-        AboutItem.Rate,
-        AboutItem.More,
-        AboutItem.Contact,
+    val appInfoItems = remember {
+        listOf (
+            AboutItem.AppVer,
+            AboutItem.Rate,
+            AboutItem.More,
+            AboutItem.Contact,
 
         )
-    val legalInfoItems = listOf(
-        AboutItem.Privacy,
-        AboutItem.Terms
-    )
+    }
+    val legalInfoItems = remember {
+        listOf(
+            AboutItem.Privacy,
+            AboutItem.Terms
+        )
+    }
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
@@ -747,7 +742,7 @@ fun AboutScreen(paddingValues: PaddingValues) {
                 HeaderLine(tittle = stringResource(R.string.app_info))
                 appInfoItems.forEach { item ->
                     val url = stringResource(id = item.url)
-                    AboutMenuItem(tittle = stringResource(id = item.title),
+                    AboutMenuItem(title = stringResource(id = item.title),
                         text = stringResource(id = item.text),
                         onItemClick = {
                             uriHandler.openUri(url)
@@ -766,7 +761,7 @@ fun AboutScreen(paddingValues: PaddingValues) {
                 HeaderLine(tittle = stringResource(R.string.legal_info))
                 legalInfoItems.forEach { item ->
                     val url = stringResource(id = item.url)
-                    AboutMenuItem(tittle = stringResource(id = item.title),
+                    AboutMenuItem(title = stringResource(id = item.title),
                         text = stringResource(id = item.text),
                         onItemClick = {
                             uriHandler.openUri(url)
@@ -787,24 +782,11 @@ fun AboutScreen(paddingValues: PaddingValues) {
 fun LanguageSelectionPopup(
     modifier: Modifier,
     currentLang: String,
+    localeOptions: Map<String, Int>,
     onClick: (String) -> Unit,
-    onDismiss: () -> Unit) {
+    onDismiss: () -> Unit
+) {
     val height = LocalWindowInfo.current.containerDpSize.height
-    val localeOptions = mapOf(
-        "default" to R.string.system_default,
-        "vi" to R.string.vi,
-        "ru" to R.string.ru,
-        "zh" to R.string.zh,
-        "ja" to R.string.ja,
-        "ko" to R.string.ko,
-        "en" to R.string.en,
-        "fr" to R.string.fr,
-        "nl" to R.string.nl,
-        "de" to R.string.de,
-        "it" to R.string.it,
-        "pt" to R.string.pt,
-        "es" to R.string.es
-    )
     var selectLang by remember { mutableStateOf(currentLang) }
     val firstIndex = localeOptions.entries.toList().indexOfFirst { it.key == currentLang } -1
     val state = rememberLazyListState(initialFirstVisibleItemIndex = if (firstIndex >= 0) firstIndex else 0)
@@ -825,7 +807,11 @@ fun LanguageSelectionPopup(
                     .height(height.times(0.4f))){
                     items(localeOptions.entries.toList()) { item ->
                         PopupSelectionLine(
-                            name = stringResource(item.value),
+                            name = buildString {
+                                append(stringResource(item.value))
+                                append("\n")
+                                append("(${item.key})")
+                            },
                             onSelected = selectLang == item.key,
                             onItemClick = {
                                 selectLang = item.key
@@ -873,21 +859,23 @@ fun SettingsScreen(
 ) {
     var showLangDialog by remember { mutableStateOf(false) }
     var currentLang by remember { mutableStateOf("")}
-    val localeOptions = mapOf(
-        "default" to R.string.system_default,
-        "vi" to R.string.vi,
-        "ru" to R.string.ru,
-        "zh" to R.string.zh,
-        "ja" to R.string.ja,
-        "ko" to R.string.ko,
-        "en" to R.string.en,
-        "fr" to R.string.fr,
-        "nl" to R.string.nl,
-        "de" to R.string.de,
-        "it" to R.string.it,
-        "pt" to R.string.pt,
-        "es" to R.string.es
-    )
+    val localeOptions = remember {
+        mapOf(
+            "default" to R.string.system_default,
+            "vi" to R.string.vi,
+            "ru" to R.string.ru,
+            "zh" to R.string.zh,
+            "ja" to R.string.ja,
+            "ko" to R.string.ko,
+            "en" to R.string.en,
+            "fr" to R.string.fr,
+            "nl" to R.string.nl,
+            "de" to R.string.de,
+            "it" to R.string.it,
+            "pt" to R.string.pt,
+            "es" to R.string.es
+        )
+    }
     LaunchedEffect(Unit) {
         currentLang = getCurrentLanguage()
     }
@@ -902,6 +890,7 @@ fun SettingsScreen(
     ) {
         LanguageSelectionPopup(
             modifier = Modifier.fillMaxWidth(),
+            localeOptions = localeOptions,
             currentLang = currentLang,
             onDismiss = {
                 showLangDialog = !showLangDialog
@@ -929,9 +918,9 @@ fun SettingsScreen(
         item {
             Column {
                 HeaderLine(tittle = stringResource(R.string.language))
-                AboutMenuItem(tittle = stringResource(R.string.language),
-                    text = stringResource(localeOptions.entries.firstOrNull { it.key == currentLang }?.value
-                        ?: R.string.system_default),
+                AboutMenuItem(title = stringResource(localeOptions.entries.firstOrNull { it.key == currentLang }?.value
+                    ?: R.string.system_default),
+                    text = currentLang,
                     onItemClick = {
                         showLangDialog = !showLangDialog
                     },
@@ -1030,7 +1019,7 @@ fun SettingsScreen(
         item {
             Column {
                 HeaderLine(tittle = stringResource(R.string.about))
-                AboutMenuItem(tittle = stringResource(R.string.app_info),
+                AboutMenuItem(title = stringResource(R.string.app_info),
                     text = stringResource(id = R.string.app_ver),
                     onItemClick = onAboutClick,
                     isLast = true,
@@ -1046,7 +1035,7 @@ fun SettingsScreen(
 
 @Composable
 fun AboutMenuItem(
-    tittle: String,
+    title: String,
     text: String,
     topStart: Dp = 5.dp,
     topEnd: Dp = 5.dp,
@@ -1083,7 +1072,7 @@ fun AboutMenuItem(
             horizontalAlignment = Alignment.Start,
         ) {
             Text(
-                text = tittle.split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } },
+                text = title.split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } },
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 5.dp)
@@ -1282,13 +1271,16 @@ fun ThemeSelector(
     paddingValues: Dp = 20.dp,
     isLast: Boolean = false
 ) {
-    val themeOptions = mutableListOf(
-        AppTheme.System,
-        AppTheme.Light,
-        AppTheme.Dark
-    )
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
-        themeOptions.remove(AppTheme.System)
+    val themeOptions = remember {
+        mutableListOf(
+            AppTheme.System,
+            AppTheme.Light,
+            AppTheme.Dark
+        ).apply {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
+                remove(AppTheme.System)
+            }
+        }
     }
     Column {
         Column(
