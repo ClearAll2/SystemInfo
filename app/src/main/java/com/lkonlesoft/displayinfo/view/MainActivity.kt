@@ -93,6 +93,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -300,6 +301,10 @@ fun ScaffoldContext(settings: SettingsViewModel){
             NavigationItem.Apps
         )
     }
+    val rotateSettingGear by animateFloatAsState(
+        targetValue = if (currentRoute == NavigationItem.Home.route) 0f else 360f,
+        animationSpec = tween(250)
+    )
     ScreenInfoTheme (
         darkTheme = when(appColor) {
             0 -> isSystemInDarkTheme()
@@ -371,6 +376,7 @@ fun ScaffoldContext(settings: SettingsViewModel){
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     IconButton(
+                                        modifier = Modifier.rotate(rotateSettingGear),
                                         onClick = {
                                             settings.setUseNewDashboard(!useNewDashboard)
                                         }) {
@@ -391,7 +397,7 @@ fun ScaffoldContext(settings: SettingsViewModel){
                                         }
                                     }
                                     IconButton(
-                                        modifier = Modifier.padding(end = 5.dp),
+                                        modifier = Modifier.padding(end = 5.dp).rotate(rotateSettingGear),
                                         onClick = {
                                             navController.navigate(NavigationItem.Settings.route)
                                         }) {

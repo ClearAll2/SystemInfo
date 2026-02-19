@@ -64,7 +64,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
     var isLoading by remember { mutableStateOf(true) }
     var allApps by remember { mutableStateOf(emptyList<AppInfo>()) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
-    var selectType by remember { mutableIntStateOf(-1) }
+    var selectType by rememberSaveable { mutableIntStateOf(-1) }
     val filteredApps by remember {
         derivedStateOf {
             val appsByType = if (selectType != -1) allApps.filter { it.type == selectType } else allApps
@@ -138,8 +138,8 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                         modifier = Modifier
                             .fillMaxSize()
                             .consumeWindowInsets(paddingValues)
-                            .padding(horizontal = 20.dp)
-                            .padding(bottom = paddingValues.calculateBottomPadding()),
+                            .padding(horizontal = 20.dp),
+                        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()), //fix edge to edge
                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         items(filteredApps) { app ->
@@ -147,7 +147,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                                 tittle = app.name,
                                 info = buildString {
                                     append(app.packageName)
-                                    append("\n")
+                                    append("\n\n")
                                     append(stringResource(R.string.version))
                                     append(" ")
                                     append(app.versionName)
