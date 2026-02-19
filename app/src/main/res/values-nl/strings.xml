@@ -265,4 +265,7 @@
     <string name="apps">Apps</string>
     <string name="version">versie</string>
     <string name="find_app">Zoeken in apps…</string>
+    <string name="user">Gebruiker</string>
+    <string name="all">Alle</string>
+    <string name="no_apps_found">Geen apps gevonden</string>
 </resources>

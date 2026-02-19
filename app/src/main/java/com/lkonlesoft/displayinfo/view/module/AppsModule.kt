@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -29,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -40,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.AppInfo
 import com.lkonlesoft.displayinfo.utils.PackageUtils
@@ -50,15 +54,25 @@ import kotlinx.coroutines.withContext
 @Composable
 fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
+    val appTypes = remember {
+        mapOf(
+            -1 to R.string.all,
+            0 to R.string.system,
+            1 to R.string.user
+        )
+    }
     var isLoading by remember { mutableStateOf(true) }
     var allApps by remember { mutableStateOf(emptyList<AppInfo>()) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
+    var selectType by remember { mutableIntStateOf(-1) }
     val filteredApps by remember {
         derivedStateOf {
+            val appsByType = if (selectType != -1) allApps.filter { it.type == selectType } else allApps
+
             if (searchQuery.isEmpty()) {
-                allApps
+                appsByType
             } else {
-                allApps.filter { it.name.contains(searchQuery, ignoreCase = true) || it.packageName.contains(searchQuery, ignoreCase = true) }
+                appsByType.filter { it.name.contains(searchQuery, ignoreCase = true) || it.packageName.contains(searchQuery, ignoreCase = true) }
             }
         }
     }
@@ -108,38 +122,56 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                     },
                     shape = RoundedCornerShape(25.dp)
                 )
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Fixed(1),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .consumeWindowInsets(paddingValues)
-                        .padding(horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    items(filteredApps) { app ->
-                        IndividualLine(
-                            tittle = app.name,
-                            info = buildString {
-                                append(app.packageName)
-                                append("\n")
-                                append(stringResource(R.string.version))
-                                append(" ")
-                                append(app.versionName)
-                            },
-                            icon = app.icon,
-                            canLongPress = longPressCopy,
-                            copyTitle = copyTitle,
-                            isLast = filteredApps.last() == app,
-                            topStart = if (filteredApps.first() == app) 20.dp else 5.dp,
-                            topEnd = if (filteredApps.first() == app) 20.dp else 5.dp,
-                            bottomStart = if (filteredApps.last() == app) 20.dp else 5.dp,
-                            bottomEnd = if (filteredApps.last() == app) 20.dp else 5.dp,
-                            onClick = {
-                                context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                    data = Uri.fromParts("package", app.packageName, null)
-                                })
-                            }
+                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                    appTypes.entries.forEach { type ->
+                        FilterChip(
+                            selected = selectType == type.key,
+                            onClick = { selectType = type.key },
+                            label = { Text(text = stringResource(type.value)) }
                         )
+                    }
+                }
+                if (filteredApps.isNotEmpty()) {
+                    LazyVerticalStaggeredGrid(
+                        columns = StaggeredGridCells.Fixed(1),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .consumeWindowInsets(paddingValues)
+                            .padding(horizontal = 20.dp)
+                            .padding(bottom = paddingValues.calculateBottomPadding()),
+                        horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        items(filteredApps) { app ->
+                            IndividualLine(
+                                tittle = app.name,
+                                info = buildString {
+                                    append(app.packageName)
+                                    append("\n")
+                                    append(stringResource(R.string.version))
+                                    append(" ")
+                                    append(app.versionName)
+                                },
+                                icon = app.icon,
+                                canLongPress = longPressCopy,
+                                copyTitle = copyTitle,
+                                isLast = filteredApps.last() == app,
+                                topStart = if (filteredApps.first() == app) 20.dp else 5.dp,
+                                topEnd = if (filteredApps.first() == app) 20.dp else 5.dp,
+                                bottomStart = if (filteredApps.last() == app) 20.dp else 5.dp,
+                                bottomEnd = if (filteredApps.last() == app) 20.dp else 5.dp,
+                                onClick = {
+                                    context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                        data = Uri.fromParts("package", app.packageName, null)
+                                    })
+                                }
+                            )
+                        }
+                    }
+                }
+                else {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(text = stringResource(R.string.no_apps_found), fontSize = 18.sp)
                     }
                 }
             }

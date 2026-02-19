@@ -269,4 +269,7 @@
     <string name="apps">Apps</string>
     <string name="version">version</string>
     <string name="find_app">Search in apps…</string>
+    <string name="user">User</string>
+    <string name="all">All</string>
+    <string name="no_apps_found">No apps found</string>
 </resources>

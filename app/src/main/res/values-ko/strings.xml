@@ -265,4 +265,7 @@
     <string name="apps">앱</string>
     <string name="version">버전</string>
     <string name="find_app">앱에서 검색…</string>
+    <string name="user">사용자</string>
+    <string name="all">모두</string>
+    <string name="no_apps_found">앱을 찾을 수 없습니다</string>
 </resources>

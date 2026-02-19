@@ -265,4 +265,7 @@
     <string name="apps">Приложения</string>
     <string name="version">версия</string>
     <string name="find_app">Поиск в приложениях…</string>
+    <string name="user">Пользователь</string>
+    <string name="all">Все</string>
+    <string name="no_apps_found">Приложения не найдены</string>
 </resources>

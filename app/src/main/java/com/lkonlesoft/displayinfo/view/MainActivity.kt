@@ -570,7 +570,7 @@ fun IndividualLine(
 ){
     val context = LocalContext.current
     val resource = LocalResources.current
-    val isNotExpandable = info.length < 120
+    val isNotExpandable by remember { mutableStateOf(info.length < 120) }
     var expanded by rememberSaveable { mutableStateOf(isNotExpandable) }
     Column(
         modifier = Modifier

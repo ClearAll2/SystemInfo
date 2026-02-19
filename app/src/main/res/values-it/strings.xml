@@ -265,4 +265,7 @@
     <string name="apps">App</string>
     <string name="version">versione</string>
     <string name="find_app">Cerca nelle app…</string>
+    <string name="user">Utente</string>
+    <string name="all">Tutti</string>
+    <string name="no_apps_found">Nessuna app trovata</string>
 </resources>
