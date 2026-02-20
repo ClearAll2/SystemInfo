@@ -17,13 +17,13 @@ Show various system information of device:
 ## Screenshots
 Simple and adaptive UI.
 <p>
-  <img src="screenshots/261.png" alt="sp1"  height="350px"/>
-  <img src="screenshots/262.png" alt="sp1"  height="350px"/>
-  <img src="screenshots/263.png" alt="sp1"  height="350px"/>
-  <img src="screenshots/263.png" alt="sp1"  height="350px"/>
-  <img src="screenshots/265.png" alt="sp1"  height="350px"/>
-  <img src="screenshots/266.png" alt="sp1"  height="350px"/>
-  <img src="screenshots/267.png" alt="sp1"  height="350px"/>	
+  <img src="screenshots/261.png" alt="sp1"  height="360px"/>
+  <img src="screenshots/262.png" alt="sp1"  height="360px"/>
+  <img src="screenshots/263.png" alt="sp1"  height="360px"/>
+  <img src="screenshots/264.png" alt="sp1"  height="360px"/>
+  <img src="screenshots/265.png" alt="sp1"  height="360px"/>
+  <img src="screenshots/266.png" alt="sp1"  height="360px"/>
+  <img src="screenshots/267.png" alt="sp1"  height="360px"/>	
 </p>
 
 ## License
