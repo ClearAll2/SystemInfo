@@ -268,4 +268,5 @@
     <string name="user">사용자</string>
     <string name="all">모두</string>
     <string name="no_apps_found">앱을 찾을 수 없습니다</string>
+    <string name="appearance">모양</string>
 </resources>

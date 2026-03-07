@@ -45,6 +45,8 @@ import androidx.core.content.ContextCompat
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.BluetoothUtils
 import com.lkonlesoft.displayinfo.view.ConfirmActionPopup
+import com.lkonlesoft.displayinfo.view.GeneralStatRow
+import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import kotlinx.coroutines.delay
@@ -84,7 +86,10 @@ fun BluetoothDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
             .clickable { onClick() }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            HeaderForDashboard(title = stringResource(R.string.connectivity), icon = R.drawable.outline_bluetooth_24)
+            HeaderForDashboard(
+                title = stringResource(R.string.connectivity),
+                icon = R.drawable.outline_bluetooth_24
+            )
             Spacer(modifier = Modifier.height(12.dp))
             if (hasBluetoothPermission) {
                 infoList.forEach {
@@ -185,7 +190,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
                 Column {
                     HeaderLine(tittle = stringResource(R.string.status))
                     stateInfoList.forEach {
-                        IndividualLine(tittle = stringResource(it.name),
+                        IndividualLine(title = stringResource(it.name),
                             info = it.value.toString() + it.extra,
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,
@@ -204,7 +209,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
                 Column {
                     HeaderLine(tittle = stringResource(R.string.status))
                     IndividualLine(
-                        tittle = stringResource(R.string.bluetooth),
+                        title = stringResource(R.string.bluetooth),
                         info = stringResource(R.string.require_permission),
                         onClick = {
                             permissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
@@ -229,7 +234,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
                     })
                     device.forEach {
                         IndividualLine(
-                            tittle = stringResource(it.name),
+                            title = stringResource(it.name),
                             info = it.value.toString() + it.extra,
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,

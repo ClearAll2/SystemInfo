@@ -28,7 +28,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.StorageUtils
+import com.lkonlesoft.displayinfo.view.GeneralProgressBar
+import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.GeneralWarning
+import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.header
@@ -55,9 +58,16 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
             .clickable { onClick() }
     ) {
         Column(Modifier.padding(16.dp)) {
-            HeaderForDashboard(title = stringResource(R.string.memory), icon = R.drawable.outline_memory_24)
+            HeaderForDashboard(
+                title = stringResource(R.string.memory),
+                icon = R.drawable.outline_memory_24
+            )
             Spacer(Modifier.height(12.dp))
-            GeneralProgressBar((ramInfoList[2].value as Number).toLong(), (ramInfoList[3].value as Number).toLong(), 1)
+            GeneralProgressBar(
+                (ramInfoList[2].value as Number).toLong(),
+                (ramInfoList[3].value as Number).toLong(),
+                1
+            )
             Spacer(modifier = Modifier.height(12.dp))
             ramInfoList.forEach {
                 GeneralStatRow(stringResource(it.name), it.value.toString() + it.extra)
@@ -87,12 +97,22 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
             .clickable { onClick() }
     ) {
         Column(Modifier.padding(16.dp)) {
-            HeaderForDashboard(title = stringResource(R.string.storage), icon = R.drawable.outline_storage_24)
+            HeaderForDashboard(
+                title = stringResource(R.string.storage),
+                icon = R.drawable.outline_storage_24
+            )
             Spacer(Modifier.height(12.dp))
-            GeneralProgressBar((internalStorageStats[2].value as Number).toLong(), (internalStorageStats[3].value as Number).toLong(), 1)
+            GeneralProgressBar(
+                (internalStorageStats[2].value as Number).toLong(),
+                (internalStorageStats[3].value as Number).toLong(),
+                1
+            )
             Spacer(modifier = Modifier.height(12.dp))
             internalStorageStats.forEach {
-                GeneralStatRow(stringResource(it.name), if (it.type == 0) it.extra else it.value.toString() + it.extra)
+                GeneralStatRow(
+                    stringResource(it.name),
+                    if (it.type == 0) it.extra else it.value.toString() + it.extra
+                )
             }
         }
     }
@@ -121,13 +141,17 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
-        header {GeneralProgressBar((ramInfo[2].value as Number).toLong(), (ramInfo[3].value as Number).toLong(), 1,
-            height = 30.dp,
-            verticalPadding = 15.dp)}
+        header {
+            GeneralProgressBar(
+                (ramInfo[2].value as Number).toLong(), (ramInfo[3].value as Number).toLong(), 1,
+                height = 30.dp,
+                verticalPadding = 15.dp
+            )
+        }
         item {
             Column {
                 ramInfo.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
+                    IndividualLine(title = stringResource(it.name),
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
@@ -169,11 +193,16 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
         item {
             Column {
                 HeaderLine(tittle = stringResource(R.string.internal_storage))
-                GeneralProgressBar((internalStorageStats[2].value as Number).toLong(), (internalStorageStats[3].value as Number).toLong(), 1,
-                    height = 30.dp, verticalPadding = 5.dp)
+                GeneralProgressBar(
+                    (internalStorageStats[2].value as Number).toLong(),
+                    (internalStorageStats[3].value as Number).toLong(),
+                    1,
+                    height = 30.dp,
+                    verticalPadding = 5.dp
+                )
                 Spacer(modifier = Modifier.padding(10.dp))
                 internalStorageStats.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
+                    IndividualLine(title = stringResource(it.name),
                         info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
@@ -200,7 +229,7 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                     Spacer(modifier = Modifier.padding(10.dp))
                     externalStorageStats.forEach {
                         IndividualLine(
-                            tittle = stringResource(it.name),
+                            title = stringResource(it.name),
                             info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,

@@ -49,7 +49,7 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyT
             Column {
                 HeaderLine(tittle = "#${index+1}")
                 cameraItemList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
+                    IndividualLine(title = stringResource(it.name),
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,

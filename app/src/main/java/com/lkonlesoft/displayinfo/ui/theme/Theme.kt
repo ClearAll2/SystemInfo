@@ -38,6 +38,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun ScreenInfoTheme(
+    typographyType: Int,
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -69,7 +70,7 @@ fun ScreenInfoTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = if (typographyType == 0) customTypography else defaultTypography,
         content = content
     )
 }

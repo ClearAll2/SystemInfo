@@ -26,7 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.SocUtils
+import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.GeneralWarning
+import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.staggeredHeader
@@ -54,7 +56,10 @@ fun SoCDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
             .clickable { onClick() }
     ) {
         Column(Modifier.padding(16.dp)) {
-            HeaderForDashboard(title = stringResource(R.string.cpu_usage), icon = R.drawable.outline_developer_board_24)
+            HeaderForDashboard(
+                title = stringResource(R.string.cpu_usage),
+                icon = R.drawable.outline_developer_board_24
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
             cpuUsageInfo.forEach {
@@ -90,7 +95,7 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
             Column {
                 HeaderLine(tittle = stringResource(R.string.cpu_info))
                 cpuInfoList.forEach {
-                    IndividualLine(tittle = if (it.type == 1) stringResource(it.name, it.value) else stringResource(it.name),
+                    IndividualLine(title = if (it.type == 1) stringResource(it.name, it.value) else stringResource(it.name),
                         info = if (it.type == 1) it.extra else it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
@@ -107,7 +112,7 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
             Column {
                 HeaderLine(tittle = stringResource(R.string.cpu_usage))
                 cpuUsageInfo.forEach {
-                    IndividualLine(tittle = stringResource(it.name, it.value),
+                    IndividualLine(title = stringResource(it.name, it.value),
                         info = it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
@@ -123,7 +128,7 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
         item {
             Column {
                 HeaderLine(tittle = stringResource(R.string.gpu_info))
-                IndividualLine(tittle = stringResource(R.string.gles_version),
+                IndividualLine(title = stringResource(R.string.gles_version),
                     info = glEs,
                     canLongPress = longPressCopy,
                     copyTitle = copyTitle,

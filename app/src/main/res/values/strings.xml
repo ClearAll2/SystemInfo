@@ -4,6 +4,8 @@
     <string name="bluetooth" translatable="false">Bluetooth</string>
     <string name="uuid" translatable="false">UUID</string>
     <string name="home" translatable="false">Home</string>
+    <string name="font" translatable="false">Font</string>
+    <string name="gg_sf_font" translatable="false">Google Sans Flex</string>
     <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="privacy_text">Read our policy</string>
     <string name="terms_text">Read our terms</string>
@@ -272,4 +274,5 @@
     <string name="user">User</string>
     <string name="all">All</string>
     <string name="no_apps_found">No apps found</string>
+    <string name="appearance">Appearance</string>
 </resources>

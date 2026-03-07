@@ -45,6 +45,8 @@ import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.hasPermission
 import com.lkonlesoft.displayinfo.utils.NetworkUtils
 import com.lkonlesoft.displayinfo.view.ConfirmActionPopup
+import com.lkonlesoft.displayinfo.view.GeneralStatRow
+import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import kotlinx.coroutines.delay
@@ -69,10 +71,16 @@ fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
             .clickable { onClick() }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            HeaderForDashboard(title = stringResource(R.string.network), icon = R.drawable.outline_network_cell_24)
+            HeaderForDashboard(
+                title = stringResource(R.string.network),
+                icon = R.drawable.outline_network_cell_24
+            )
             Spacer(modifier = Modifier.height(12.dp))
             infoList.forEach {
-                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra)
+                GeneralStatRow(
+                    label = stringResource(it.name),
+                    value = it.value.toString() + it.extra
+                )
             }
         }
     }
@@ -152,7 +160,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
         item {
             Column {
                 Spacer(modifier = Modifier.padding(vertical = 10.dp))
-                IndividualLine(tittle = stringResource(R.string.network_type), info = networkType,
+                IndividualLine(title = stringResource(R.string.network_type), info = networkType,
                     onClick = {
                         startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
                     },
@@ -172,7 +180,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                     HeaderLine(tittle = "SIM #${index+1}")
                     simInfo.forEach {
                         IndividualLine(
-                            tittle = stringResource(it.name),
+                            title = stringResource(it.name),
                             info = it.value.toString(),
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,
@@ -190,7 +198,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
             item {
                 Column {
                     HeaderLine(tittle = stringResource(R.string.sim_info))
-                    IndividualLine(tittle = stringResource(R.string.sim_info), info = if (!hasPermission) stringResource(R.string.require_permission)
+                    IndividualLine(title = stringResource(R.string.sim_info), info = if (!hasPermission) stringResource(R.string.require_permission)
                     else stringResource(R.string.n_a),
                         onClick = {
                             startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
@@ -210,7 +218,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
             Column {
                 HeaderLine(tittle = stringResource(R.string.details))
                 infoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
+                    IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,

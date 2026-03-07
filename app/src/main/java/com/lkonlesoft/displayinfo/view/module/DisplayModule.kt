@@ -29,7 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.DisplayUtils
+import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.GeneralWarning
+import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import kotlinx.coroutines.Dispatchers
@@ -57,11 +59,17 @@ fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
             .clickable { onClick() }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            HeaderForDashboard(title = stringResource(R.string.display), icon = R.drawable.outline_smartphone_24)
+            HeaderForDashboard(
+                title = stringResource(R.string.display),
+                icon = R.drawable.outline_smartphone_24
+            )
             Spacer(modifier = Modifier.height(12.dp))
 
             infoList.forEach {
-                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra)
+                GeneralStatRow(
+                    label = stringResource(it.name),
+                    value = it.value.toString() + it.extra
+                )
             }
         }
     }
@@ -98,7 +106,7 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
             Column {
                 HeaderLine(tittle = stringResource(R.string.display))
                 infoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
+                    IndividualLine(title = stringResource(it.name),
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
@@ -116,7 +124,7 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                 HeaderLine(tittle = stringResource(R.string.widevine))
                 val widevineList = widevineInfo.toList()
                 widevineList.forEach {
-                    IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() },
+                    IndividualLine(title = it.first.replaceFirstChar { c -> c.uppercase() },
                         info = it.second,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
@@ -134,7 +142,7 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                 HeaderLine(tittle = stringResource(R.string.clearkey))
                 val clearKeyList = clearKeyInfo.toList()
                 clearKeyList.forEach {
-                    IndividualLine(tittle = it.first.replaceFirstChar { c -> c.uppercase() },
+                    IndividualLine(title = it.first.replaceFirstChar { c -> c.uppercase() },
                         info = it.second,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,

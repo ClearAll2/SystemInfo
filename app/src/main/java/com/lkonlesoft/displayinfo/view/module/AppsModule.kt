@@ -144,7 +144,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                     ) {
                         items(filteredApps) { app ->
                             IndividualLine(
-                                tittle = app.name,
+                                title = app.name,
                                 info = buildString {
                                     append(app.packageName)
                                     append("\n\n")

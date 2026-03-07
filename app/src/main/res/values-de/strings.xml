@@ -269,4 +269,5 @@
     <string name="user">Benutzer</string>
     <string name="all">Alle</string>
     <string name="no_apps_found">Keine Apps gefunden</string>
+    <string name="appearance">Erscheinungsbild</string>
 </resources>

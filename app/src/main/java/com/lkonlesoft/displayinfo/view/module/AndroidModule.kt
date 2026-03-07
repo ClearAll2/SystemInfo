@@ -22,6 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.AndroidUtils
+import com.lkonlesoft.displayinfo.view.GeneralStatRow
+import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 
@@ -38,10 +40,16 @@ fun AndroidDashboard(onClick: () -> Unit) {
             .clickable { onClick() },
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            HeaderForDashboard(title = stringResource(R.string.android), icon = R.drawable.outline_android_24)
+            HeaderForDashboard(
+                title = stringResource(R.string.android),
+                icon = R.drawable.outline_android_24
+            )
             Spacer(modifier = Modifier.height(8.dp))
             listInfo.forEach {
-                GeneralStatRow(label = stringResource(it.name), value = it.value.toString() + it.extra)
+                GeneralStatRow(
+                    label = stringResource(it.name),
+                    value = it.value.toString() + it.extra
+                )
             }
         }
     }
@@ -65,7 +73,7 @@ fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
             Column {
                 HeaderLine(tittle = stringResource(R.string.general))
                 androidInfoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
+                    IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
@@ -82,7 +90,7 @@ fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
             Column {
                 HeaderLine(tittle = stringResource(R.string.other))
                 extraInfoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
+                    IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,

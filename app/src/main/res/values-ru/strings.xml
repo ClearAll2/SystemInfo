@@ -268,4 +268,5 @@
     <string name="user">Пользователь</string>
     <string name="all">Все</string>
     <string name="no_apps_found">Приложения не найдены</string>
+    <string name="appearance">Внешний вид</string>
 </resources>

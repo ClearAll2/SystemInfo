@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.SystemUtils
+import com.lkonlesoft.displayinfo.view.GeneralStatRow
+import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +47,10 @@ fun SystemDashboard(onClick: () -> Unit) {
             .clickable { onClick() }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            HeaderForDashboard(title = stringResource(R.string.system), icon = R.drawable.outline_settings_24)
+            HeaderForDashboard(
+                title = stringResource(R.string.system),
+                icon = R.drawable.outline_settings_24
+            )
             Spacer(modifier = Modifier.height(12.dp))
 
             infoList.forEach {
@@ -81,7 +86,7 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
                 HeaderLine(tittle = stringResource(R.string.device))
                 deviceInfoList.forEach {
                     IndividualLine(
-                        tittle = stringResource(it.name),
+                        title = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
@@ -98,7 +103,7 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
             Column {
                 HeaderLine(tittle = stringResource(R.string.root_status))
                 rootInfoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
+                    IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
@@ -115,7 +120,7 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
             Column {
                 HeaderLine(tittle = stringResource(R.string.extra))
                 extraInfoList.forEach {
-                    IndividualLine(tittle = stringResource(it.name),
+                    IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         isLast = extraInfoList.last() == it,
