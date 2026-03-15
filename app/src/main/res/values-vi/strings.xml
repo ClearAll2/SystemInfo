@@ -269,4 +269,8 @@
     <string name="all">Tất cả</string>
     <string name="no_apps_found">Không tìm thấy ứng dụng nào</string>
     <string name="appearance">Giao diện</string>
+    <string name="font">Phông chữ</string>
+    <string name="face_authentication">Xác thực khuôn mặt</string>
+    <string name="fingerprint_authentication">Xác thực vân tay</string>
+    <string name="file_based_encryption">Mã hóa dựa trên tệp</string>
 </resources>

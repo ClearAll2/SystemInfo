@@ -269,4 +269,8 @@
     <string name="all">Alle</string>
     <string name="no_apps_found">Geen apps gevonden</string>
     <string name="appearance">Uiterlijk</string>
+    <string name="font">Lettertype</string>
+    <string name="face_authentication">Gezichtsherkenning</string>
+    <string name="fingerprint_authentication">Vingerafdrukverificatie</string>
+    <string name="file_based_encryption">Bestandsgebaseerde versleuteling</string>
 </resources>

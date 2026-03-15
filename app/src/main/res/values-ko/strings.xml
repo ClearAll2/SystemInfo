@@ -269,4 +269,8 @@
     <string name="all">모두</string>
     <string name="no_apps_found">앱을 찾을 수 없습니다</string>
     <string name="appearance">모양</string>
+    <string name="font">글꼴</string>
+    <string name="face_authentication">얼굴 인증</string>
+    <string name="fingerprint_authentication">지문 인증</string>
+    <string name="file_based_encryption">파일 기반 암호화</string>
 </resources>

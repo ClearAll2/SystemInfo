@@ -269,4 +269,8 @@
     <string name="all">全部</string>
     <string name="no_apps_found">未找到应用</string>
     <string name="appearance">外观</string>
+    <string name="font">字体</string>
+    <string name="face_authentication">面部认证</string>
+    <string name="fingerprint_authentication">指纹认证</string>
+    <string name="file_based_encryption">基于文件的加密</string>
 </resources>

@@ -162,7 +162,8 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                 Spacer(modifier = Modifier.padding(vertical = 10.dp))
                 IndividualLine(title = stringResource(R.string.network_type), info = networkType,
                     onClick = {
-                        startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
+                        if (!hasPermission)
+                            startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
                     },
                     canLongPress = longPressCopy,
                     copyTitle = copyTitle,

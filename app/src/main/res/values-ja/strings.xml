@@ -269,4 +269,8 @@
     <string name="all">すべて</string>
     <string name="no_apps_found">アプリが見つかりませんでした</string>
     <string name="appearance">外観</string>
+    <string name="font">フォント</string>
+    <string name="face_authentication">顔認証</string>
+    <string name="fingerprint_authentication">指紋認証</string>
+    <string name="file_based_encryption">ファイルベースの暗号化</string>
 </resources>

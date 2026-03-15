@@ -270,4 +270,8 @@
     <string name="all">Alle</string>
     <string name="no_apps_found">Keine Apps gefunden</string>
     <string name="appearance">Erscheinungsbild</string>
+    <string name="font">Schriftart</string>
+    <string name="face_authentication">Gesichtserkennung</string>
+    <string name="fingerprint_authentication">Fingerabdruckerkennung</string>
+    <string name="file_based_encryption">Dateibasierte Verschlüsselung</string>
 </resources>

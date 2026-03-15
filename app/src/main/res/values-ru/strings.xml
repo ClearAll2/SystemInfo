@@ -269,4 +269,8 @@
     <string name="all">Все</string>
     <string name="no_apps_found">Приложения не найдены</string>
     <string name="appearance">Внешний вид</string>
+    <string name="font">Шрифт</string>
+    <string name="face_authentication">Аутентификация по лицу</string>
+    <string name="fingerprint_authentication">Аутентификация по отпечатку пальца</string>
+    <string name="file_based_encryption">Шифрование на уровне файлов</string>
 </resources>

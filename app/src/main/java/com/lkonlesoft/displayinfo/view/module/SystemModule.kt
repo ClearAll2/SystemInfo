@@ -64,8 +64,10 @@ fun SystemDashboard(onClick: () -> Unit) {
 fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val deviceInfoList by remember { mutableStateOf(SystemUtils(context).getDeviceData()) }
+    val deviceFeaturesList by remember { mutableStateOf(SystemUtils(context).getDeviceFeatures()) }
     var rootInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
     var extraInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
+
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             rootInfoList = SystemUtils(context).getRootData()
@@ -83,7 +85,7 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
     ) {
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.device))
+                HeaderLine(tittle = stringResource(R.string.general))
                 deviceInfoList.forEach {
                     IndividualLine(
                         title = stringResource(it.name),
@@ -112,6 +114,22 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
                         topEnd = if (rootInfoList.first() == it) 20.dp else 5.dp,
                         bottomStart = if (rootInfoList.last() == it) 20.dp else 5.dp,
                         bottomEnd = if (rootInfoList.last() == it) 20.dp else 5.dp
+                    )
+                }
+            }
+        }
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.device_features))
+                deviceFeaturesList.forEach {
+                    IndividualLine(title = stringResource(it.name),
+                        info = it.value.toString(),
+                        canLongPress = longPressCopy,
+                        isLast = deviceFeaturesList.last() == it,
+                        topStart = if (deviceFeaturesList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (deviceFeaturesList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (deviceFeaturesList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (deviceFeaturesList.last() == it) 20.dp else 5.dp
                     )
                 }
             }

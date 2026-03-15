@@ -269,4 +269,8 @@
     <string name="all">Tudo</string>
     <string name="no_apps_found">Nenhum aplicativo encontrado</string>
     <string name="appearance">Aparência</string>
+    <string name="font">Fonte</string>
+    <string name="face_authentication">Autenticação facial</string>
+    <string name="fingerprint_authentication">Autenticação por impressão digital</string>
+    <string name="file_based_encryption">Criptografia baseada em arquivos</string>
 </resources>

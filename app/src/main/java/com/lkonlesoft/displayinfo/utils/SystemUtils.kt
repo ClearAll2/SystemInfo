@@ -16,6 +16,10 @@ import java.util.Locale
 
 class SystemUtils(private val context: Context) {
 
+    private val pm by lazy {
+        context.packageManager
+    }
+
     fun getDeviceData(): List<DeviceInfo>{
         return listOf(
             DeviceInfo(R.string.model, getModel()),
@@ -48,7 +52,7 @@ class SystemUtils(private val context: Context) {
             DeviceInfo(R.string.treble, if (isTrebleSupported()) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
             DeviceInfo(R.string.seamless_update, if (isSeamlessUpdateSupported()) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
             DeviceInfo(R.string.active_slot, if (isSeamlessUpdateSupported() && getActiveSlot() != context.getString(R.string.unknown)) getActiveSlot() else context.getString(R.string.n_a)),
-            DeviceInfo(R.string.device_features, getAllSystemFeatures().joinToString("\n")),
+
         )
     }
 
@@ -59,6 +63,18 @@ class SystemUtils(private val context: Context) {
             DeviceInfo(R.string.device, getDevice()),
             DeviceInfo(R.string.manufacturer, getManufacturer()),
             DeviceInfo(R.string.up_time, getUptime()),
+        )
+    }
+
+    fun getDeviceFeatures(): List<DeviceInfo> {
+        return listOf(
+            DeviceInfo(R.string.face_authentication,
+                if (hasFaceAuthentication()) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.fingerprint_authentication,
+                if (hasFingerprintAuthentication()) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.file_based_encryption,
+                if (hasFileBasedEncryption()) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.details, getAllSystemFeatures().joinToString("\n")),
         )
     }
 
@@ -119,7 +135,6 @@ class SystemUtils(private val context: Context) {
     }
 
     fun getAllSystemFeatures(): List<String> {
-        val pm = context.packageManager
         return pm.systemAvailableFeatures
             .mapNotNull { it?.name }  // filter out nulls (some features don't have a name)
             .sorted()
@@ -259,4 +274,15 @@ class SystemUtils(private val context: Context) {
         return System.getProperty("java.vm.version") ?: context.getString(R.string.unknown)
     }
 
+    fun hasFaceAuthentication(): Boolean {
+        return pm.hasSystemFeature("android.hardware.biometrics.face")
+    }
+
+    fun hasFingerprintAuthentication(): Boolean {
+        return pm.hasSystemFeature("android.hardware.fingerprint")
+    }
+
+    fun hasFileBasedEncryption(): Boolean {
+        return pm.hasSystemFeature("android.software.file_based_encryption")
+    }
 }
