@@ -82,9 +82,13 @@ class BluetoothUtils(private val context: Context) {
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun getDeviceData(): List<List<DeviceInfo>> {
+        if (bluetoothAdapter == null || !isEnabled())
+            return emptyList()
         val devices = bluetoothAdapter?.bondedDevices ?: emptySet()
+        if (devices.isEmpty())
+            return emptyList()
         val deviceList = mutableListOf<BluetoothInfo>()
-        devices.forEach { device ->
+        devices.filterNotNull().forEach { device ->
             deviceList.add(
                 BluetoothInfo(
                     uuid = device.uuids.joinToString("\n"),

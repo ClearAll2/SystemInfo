@@ -171,14 +171,14 @@ class NetworkUtils(private val context: Context) {
             // Fallback for older APIs: assume at least 1 slot, check active subscriptions
             maxOf(1, activeSims?.size ?: 0)
         }
-        activeSims?.forEach { info ->
+        activeSims?.filterNotNull()?.forEach { info ->
             simInfoList.add(
                 SimInfo(
                     slot = info.simSlotIndex,
-                    carrierName = info.carrierName.toString(),
-                    displayName = info.displayName.toString(),
-                    countryIso = info.countryIso,
-                    iccId = if (info.iccId != "") info.iccId else context.getString(R.string.unknown),
+                    carrierName = info.carrierName?.toString() ?: context.getString(R.string.unknown),
+                    displayName = info.displayName?.toString() ?: context.getString(R.string.unknown),
+                    countryIso = info.countryIso ?: context.getString(R.string.unknown),
+                    iccId = if (!info.iccId.isNullOrEmpty()) info.iccId else context.getString(R.string.unknown),
                     subscriptionId = info.subscriptionId,
                     isActive = true
                 )
