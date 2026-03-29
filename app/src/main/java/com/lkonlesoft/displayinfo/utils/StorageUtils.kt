@@ -33,8 +33,9 @@ class StorageUtils (private val context: Context) {
     }
 
     fun getInternalStorageInfo(): List<DeviceInfo>{
-        val internalTotal = getInternalStorageStats().first
-        val internalFree = getInternalStorageStats().second
+        val internalStorage = getInternalStorageStats()
+        val internalTotal = internalStorage.first
+        val internalFree = internalStorage.second
         val usedInternal = internalTotal - internalFree
         val percentageUsed = (usedInternal.toDouble() / internalTotal.toDouble() * 100).toInt()
         return listOf(
@@ -46,10 +47,11 @@ class StorageUtils (private val context: Context) {
     }
 
     fun getExternalStorageInfo(): List<DeviceInfo>{
-        val externalTotal = getExternalStorageStats().first
+        val externalStorage = getExternalStorageStats()
+        val externalTotal = externalStorage.first
         if (externalTotal == -1L)
             return emptyList()
-        val externalFree = getExternalStorageStats().second
+        val externalFree = externalStorage.second
         val usedExternal = externalTotal - externalFree
         val percentageUsed = (usedExternal.toDouble() / externalTotal.toDouble() * 100).toInt()
         return listOf(

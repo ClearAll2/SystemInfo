@@ -91,9 +91,9 @@ class BluetoothUtils(private val context: Context) {
         devices.filterNotNull().forEach { device ->
             deviceList.add(
                 BluetoothInfo(
-                    uuid = device.uuids.joinToString("\n"),
-                    name = device.name ?: context.getString(R.string.n_a),
-                    address = device.address,
+                    uuid = device.uuids?.joinToString("\n") ?: context.getString(R.string.unknown),
+                    name = device.name ?: context.getString(R.string.unknown),
+                    address = device.address ?: context.getString(R.string.unknown),
                     type = deviceType[device.type] ?: context.getString(R.string.unknown),
                     bluetoothClass = getMajorDeviceClassName(device.bluetoothClass.majorDeviceClass),
                 )

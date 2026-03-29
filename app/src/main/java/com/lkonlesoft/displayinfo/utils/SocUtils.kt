@@ -10,10 +10,14 @@ import java.io.RandomAccessFile
 
 class SocUtils(private val context: Context) {
 
-    private val CPU_INFO_DIR = "/sys/devices/system/cpu/"
+    private val path = "/sys/devices/system/cpu/"
+
+    private val activityManager by lazy {
+        context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+    }
 
     fun getCpuGovernor(core: Int = 0): String {
-        val path = "/sys/devices/system/cpu/cpu$core/cpufreq/scaling_governor"
+        val path = "${path}cpu$core/cpufreq/scaling_governor"
         return try {
             File(path).readText().trim()
         } catch (_: Exception) {
@@ -27,7 +31,7 @@ class SocUtils(private val context: Context) {
     }
 
     fun getCpuClockSpeed(core: Int): Int {
-        val path = "/sys/devices/system/cpu/cpu$core/cpufreq/scaling_cur_freq"
+        val path = "${path}cpu$core/cpufreq/scaling_cur_freq"
         return try {
             val file = File(path)
             if (file.exists()) {
@@ -45,7 +49,6 @@ class SocUtils(private val context: Context) {
     }
 
     fun getGlEsVersion(): String{
-        val activityManager: ActivityManager = context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
         return activityManager.deviceConfigurationInfo.glEsVersion
     }
 
@@ -54,8 +57,8 @@ class SocUtils(private val context: Context) {
     }
 
     fun getMinMaxFreq(coreNumber: Int): Pair<Long, Long> {
-        val minPath = "${CPU_INFO_DIR}cpu$coreNumber/cpufreq/cpuinfo_min_freq"
-        val maxPath = "${CPU_INFO_DIR}cpu$coreNumber/cpufreq/cpuinfo_max_freq"
+        val minPath = "${path}cpu$coreNumber/cpufreq/cpuinfo_min_freq"
+        val maxPath = "${path}cpu$coreNumber/cpufreq/cpuinfo_max_freq"
         return try {
             val minMhz = RandomAccessFile(minPath, "r").use { it.readLine().toLong() / 1000 }
             val maxMhz = RandomAccessFile(maxPath, "r").use { it.readLine().toLong() / 1000 }

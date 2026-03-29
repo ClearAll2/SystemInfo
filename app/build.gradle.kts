@@ -5,8 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 48
-val buildName = "3.10"
+val buildCode = 49
+val buildName = "3.11"
 val appId = "com.lkonlesoft.displayinfo"
 
 android {
@@ -52,8 +52,8 @@ android {
 }
 
 dependencies {
-    implementation("io.insert-koin:koin-android:4.1.1")
-    implementation("io.insert-koin:koin-androidx-compose:4.1.1")
+    implementation("io.insert-koin:koin-android:4.2.0")
+    implementation("io.insert-koin:koin-androidx-compose:4.2.0")
     implementation("androidx.window:window:1.5.1")
     implementation("androidx.glance:glance-appwidget:1.1.1")
     implementation("androidx.glance:glance-material3:1.1.1")
@@ -62,21 +62,21 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
     implementation("androidx.activity:activity-compose:1.13.0")
-    implementation(platform("androidx.compose:compose-bom:2026.03.00"))
+    implementation(platform("androidx.compose:compose-bom:2026.03.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.activity:activity-ktx:1.13.0")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.navigation:navigation-compose:2.9.7")
-    implementation("androidx.work:work-runtime-ktx:2.11.1")
-    implementation("androidx.compose.ui:ui-text:1.10.5")
-    implementation("androidx.compose.animation:animation-core:1.10.5")
-    implementation("androidx.compose.ui:ui-graphics:1.10.5")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
+    implementation("androidx.compose.ui:ui-text:1.10.6")
+    implementation("androidx.compose.animation:animation-core:1.10.6")
+    implementation("androidx.compose.ui:ui-graphics:1.10.6")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2026.03.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2026.03.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
