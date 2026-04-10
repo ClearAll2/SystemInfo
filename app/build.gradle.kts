@@ -5,8 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 49
-val buildName = "3.11"
+val buildCode = 50
+val buildName = "3.12"
 val appId = "com.lkonlesoft.displayinfo"
 
 android {
@@ -27,6 +27,11 @@ android {
         }
         @Suppress("UnstableApiUsage")
         androidResources.localeFilters += listOf("en", "vi", "nl", "fr", "de", "it", "pt", "es", "ru", "ja", "ko", "zh")
+    }
+
+    configurations.all {
+        exclude(group = "com.google.android.gms", module = "play-services-basement")
+        exclude(group = "com.google.android.gms", module = "play-services-tasks")
     }
 
     buildTypes {
