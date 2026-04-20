@@ -57,8 +57,8 @@ android {
 }
 
 dependencies {
-    implementation("io.insert-koin:koin-android:4.2.0")
-    implementation("io.insert-koin:koin-androidx-compose:4.2.0")
+    implementation("io.insert-koin:koin-android:4.2.1")
+    implementation("io.insert-koin:koin-androidx-compose:4.2.1")
     implementation("androidx.window:window:1.5.1")
     implementation("androidx.glance:glance-appwidget:1.1.1")
     implementation("androidx.glance:glance-material3:1.1.1")
