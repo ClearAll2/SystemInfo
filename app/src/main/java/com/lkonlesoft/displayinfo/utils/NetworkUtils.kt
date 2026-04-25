@@ -70,8 +70,8 @@ class NetworkUtils(private val context: Context) {
     fun getNetwork(): String {
         val connectivityManager =
             context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val nw = connectivityManager.activeNetwork ?: return "-"
-        val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return "-"
+        val nw = connectivityManager.activeNetwork ?: return context.getString(R.string.unknown)
+        val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return context.getString(R.string.unknown)
         when {
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return context.getString(R.string.wifi)
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return context.getString(R.string.ethernet)
