@@ -39,6 +39,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -50,7 +51,6 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -84,6 +84,7 @@ import com.lkonlesoft.displayinfo.helper.toBitmap
 @Composable
 fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
     OutlinedCard(
+        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
         modifier = Modifier
             .padding(horizontal = 7.5.dp, vertical = 7.5.dp)
             .clip(RoundedCornerShape(10.dp))
@@ -129,8 +130,8 @@ fun IndividualLine(
     bottomStart: Dp = 5.dp,
     bottomEnd: Dp = 5.dp,
     isLast: Boolean = false,
-    dividerColor: Color = MaterialTheme.colorScheme.background,
-    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
+    dividerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceBright
 ){
     val context = LocalContext.current
     val resource = LocalResources.current
@@ -366,7 +367,7 @@ fun CommonSwitchOption(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    color = MaterialTheme.colorScheme.surfaceBright,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -430,7 +431,7 @@ fun CommonSwitchOption(
         if (!isLast) {
             HorizontalDivider(
                 thickness = 2.dp,
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.surfaceContainer
             )
         }
     }
@@ -451,7 +452,7 @@ fun GeneralWarning(
             .fillMaxWidth()
             .clip(shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp))
             .background(
-                color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp).copy(.5f),
+                color = MaterialTheme.colorScheme.surfaceDim,
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
             )
             .clickable(canClick) { onClick() }

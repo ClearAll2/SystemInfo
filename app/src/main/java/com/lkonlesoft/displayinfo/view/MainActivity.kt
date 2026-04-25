@@ -173,15 +173,15 @@ fun MainContext(settings: SettingsViewModel){
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background)
+            color = MaterialTheme.colorScheme.surfaceContainer)
         {
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
                     LargeTopAppBar(
                         colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                            scrolledContainerColor = MaterialTheme.colorScheme.background
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
                         ),
                         title = {
                             Text(
@@ -209,7 +209,7 @@ fun MainContext(settings: SettingsViewModel){
                                         modifier = Modifier
                                             .padding(start = 20.dp)
                                             .background(
-                                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
                                                 shape = CircleShape
                                             ),
                                         onClick = { navController.navigateUp() }
@@ -322,6 +322,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
                 columns = if (width < 600.dp) StaggeredGridCells.Fixed(1) else StaggeredGridCells.Adaptive(400.dp),
                 contentPadding = paddingValues,
                 modifier = Modifier
+                    .background(color = MaterialTheme.colorScheme.surfaceContainer)
                     .fillMaxSize()
                     .padding(horizontal = 7.5.dp)
                     .consumeWindowInsets(paddingValues)
@@ -371,6 +372,7 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
                 columns = if (width < 600.dp) StaggeredGridCells.Fixed(2) else StaggeredGridCells.Adaptive(240.dp),
                 contentPadding = paddingValues,
                 modifier = Modifier
+                    .background(color = MaterialTheme.colorScheme.surfaceContainer)
                     .fillMaxSize()
                     .padding(horizontal = 7.5.dp)
                     .consumeWindowInsets(paddingValues)

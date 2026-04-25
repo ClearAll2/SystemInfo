@@ -149,6 +149,7 @@ fun SettingsScreen(
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),
@@ -194,25 +195,25 @@ fun SettingsScreen(
                         showFontDialog = !showFontDialog
                     }
                 )
-                CommonSwitchOption(
-                    text = R.string.material_you,
-                    subText = R.string.material_you_details,
-                    extra = "",
-                    checked = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) isDynamicColors else false,
-                    onClick = {
-                        settings.setUseDynamicColors(!isDynamicColors)
-                    },
-                    onSwitch = {
-                        settings.setUseDynamicColors(it)
-                    },
-                    topStart = 5.dp,
-                    topEnd = 5.dp,
-                    bottomStart = 5.dp,
-                    bottomEnd = 5.dp,
-                    isLast = false,
-                    enabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
-                    clickable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    CommonSwitchOption(
+                        text = R.string.material_you,
+                        subText = R.string.material_you_details,
+                        extra = "",
+                        checked = isDynamicColors,
+                        onClick = {
+                            settings.setUseDynamicColors(!isDynamicColors)
+                        },
+                        onSwitch = {
+                            settings.setUseDynamicColors(it)
+                        },
+                        topStart = 5.dp,
+                        topEnd = 5.dp,
+                        bottomStart = 5.dp,
+                        bottomEnd = 5.dp,
+                        isLast = false
+                    )
+                }
                 CommonSwitchOption(
                     text = R.string.show_warning_notice,
                     subText = R.string.show_warning_notice_details,
@@ -293,8 +294,7 @@ fun ThemeSelector(
     topEnd: Dp = 20.dp,
     bottomStart: Dp = 20.dp,
     bottomEnd: Dp = 20.dp,
-    paddingValues: Dp = 20.dp,
-    isLast: Boolean = false
+    paddingValues: Dp = 20.dp
 ) {
     val themeOptions = remember {
         mutableListOf(
@@ -320,7 +320,7 @@ fun ThemeSelector(
                     )
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    color = MaterialTheme.colorScheme.surfaceBright,
                     shape = RoundedCornerShape(
                         topStart = topStart,
                         topEnd = topEnd,
@@ -360,12 +360,10 @@ fun ThemeSelector(
             }
             Spacer(modifier = Modifier.padding(5.dp))
         }
-        if (!isLast) {
-            HorizontalDivider(
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.background
-            )
-        }
+        HorizontalDivider(
+            thickness = 2.dp,
+            color = MaterialTheme.colorScheme.surfaceContainer
+        )
     }
 }
 

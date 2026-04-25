@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,8 +26,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -85,7 +88,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
     AnimatedContent (targetState = isLoading,
         transitionSpec = { fadeIn() togetherWith fadeOut() }) {
         if (it) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainer).fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
                     strokeWidth = 10.dp,
                     modifier = Modifier.size(100.dp)
@@ -93,7 +96,11 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
             }
         }
         else {
-            Column(modifier = Modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding())) {
+            Column(modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
+            ) {
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { newVal ->
@@ -120,7 +127,11 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                             }
                         }
                     },
-                    shape = RoundedCornerShape(25.dp)
+                    shape = RoundedCornerShape(28.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.background,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.background
+                    )
                 )
                 Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -136,6 +147,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                     LazyVerticalStaggeredGrid(
                         columns = StaggeredGridCells.Fixed(1),
                         modifier = Modifier
+                            .background(color = MaterialTheme.colorScheme.surfaceContainer)
                             .fillMaxSize()
                             .consumeWindowInsets(paddingValues)
                             .padding(horizontal = 20.dp),

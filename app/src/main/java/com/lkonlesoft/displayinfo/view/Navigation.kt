@@ -4,9 +4,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -41,7 +44,9 @@ fun MainNavigation(
     val copyTitle by settings.copyTitle.collectAsStateWithLifecycle()
     val showNotice by settings.showNotice.collectAsStateWithLifecycle()
     NavHost(
-        navController, startDestination = NavigationItem.Home.route,
+        modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainer),
+        navController = navController,
+        startDestination = NavigationItem.Home.route,
         enterTransition = {
             fadeIn(
                 animationSpec = tween(220, delayMillis = 100)
