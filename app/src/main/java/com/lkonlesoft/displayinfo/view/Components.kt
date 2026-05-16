@@ -2,6 +2,7 @@ package com.lkonlesoft.displayinfo.view
 
 import android.graphics.drawable.Drawable
 import android.widget.Toast
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -639,5 +640,87 @@ fun NewThemePickerItem(
             fontSize = 14.sp,
             fontWeight = if (checked) FontWeight.Medium else FontWeight.Normal
         )
+    }
+}
+
+@Composable
+fun MainSettingItem(
+    modifier: Modifier = Modifier,
+    @DrawableRes iconId: Int,
+    mainText: String,
+    subText: String,
+    isLast: Boolean = false,
+    tintColor: Color = MaterialTheme.colorScheme.onSurface.copy(.8f),
+    iconBackgroundColor: Color,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceBright,
+    topStart: Dp = 4.dp,
+    topEnd: Dp = 4.dp,
+    bottomStart: Dp = 4.dp,
+    bottomEnd: Dp = 4.dp,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(
+                    shape = RoundedCornerShape(
+                        topStart = topStart,
+                        topEnd = topEnd,
+                        bottomStart = bottomStart,
+                        bottomEnd = bottomEnd
+                    )
+                )
+                .background(
+                    color = backgroundColor,
+                    shape = RoundedCornerShape(
+                        topStart = topStart,
+                        topEnd = topEnd,
+                        bottomStart = bottomStart,
+                        bottomEnd = bottomEnd
+                    )
+                )
+                .clickable {
+                    onClick()
+                }
+                .padding(horizontal = 15.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            //Spacer(modifier = Modifier.width(30.dp))
+            Icon(
+                imageVector = ImageVector.vectorResource(id = iconId),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(vertical = 10.dp)
+                    .background(color = iconBackgroundColor, shape = RoundedCornerShape(12.dp))
+                    .padding(10.dp)
+                    .size(28.dp),
+                tint = tintColor
+            )
+            Column(
+                modifier = Modifier.padding(
+                    horizontal = 15.dp,
+                    vertical = 10.dp
+                )
+            ) {
+                Text(
+                    text = mainText,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(vertical = 5.dp),
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = subText,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(.8f),
+                    fontSize = 14.sp
+                )
+            }
+        }
+        if (!isLast)
+            Spacer(modifier = Modifier.height(2.dp))
     }
 }

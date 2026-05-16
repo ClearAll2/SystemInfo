@@ -14,8 +14,8 @@ class SettingsViewModel(private val settingsManager: SettingsManager) : ViewMode
     private val _typographyType = MutableStateFlow(0)
     val typographyType = _typographyType.asStateFlow()
 
-    private val _useNewDashboard = MutableStateFlow(true)
-    val useNewDashboard = _useNewDashboard.asStateFlow()
+    private val _currentView = MutableStateFlow(0)
+    val currentView = _currentView.asStateFlow()
 
     private val _appColor = MutableStateFlow(0)
     val appColor = _appColor.asStateFlow()
@@ -35,7 +35,7 @@ class SettingsViewModel(private val settingsManager: SettingsManager) : ViewMode
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _typographyType.emit(settingsManager.getSettingsInt("typographyType"))
-            _useNewDashboard.emit(settingsManager.getSettingLogic("useNewDashboard"))
+            _currentView.emit(settingsManager.getSettingsInt("currentView"))
             _useDynamicColors.emit(settingsManager.getSettingLogic("useDynamicColors"))
             val appColor = settingsManager.getSettingsInt("appColor")
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && appColor == 0){
@@ -50,6 +50,13 @@ class SettingsViewModel(private val settingsManager: SettingsManager) : ViewMode
         }
     }
 
+    fun setCurrentView(currentView: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsManager.saveSettingsInt("currentView", currentView)
+            _currentView.value = currentView
+        }
+    }
+
     fun setTypographyType(typographyType: Int) {
         viewModelScope.launch (Dispatchers.IO) {
             settingsManager.saveSettingsInt("typographyType", typographyType)
@@ -61,13 +68,6 @@ class SettingsViewModel(private val settingsManager: SettingsManager) : ViewMode
         viewModelScope.launch (Dispatchers.IO) {
             settingsManager.saveSettingLogic("copyTitle", copyTitle)
             _copyTitle.value = copyTitle
-        }
-    }
-
-    fun setUseNewDashboard(useNewDashboard: Boolean) {
-        viewModelScope.launch (Dispatchers.IO) {
-            settingsManager.saveSettingLogic("useNewDashboard", useNewDashboard)
-            _useNewDashboard.value = useNewDashboard
         }
     }
 

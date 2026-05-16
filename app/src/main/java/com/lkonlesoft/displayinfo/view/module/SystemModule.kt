@@ -52,7 +52,7 @@ fun SystemDashboard(onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(
                 title = stringResource(R.string.system),
-                icon = R.drawable.stacks_24px
+                icon = R.drawable.manufacturing_24px
             )
             Spacer(modifier = Modifier.height(12.dp))
 

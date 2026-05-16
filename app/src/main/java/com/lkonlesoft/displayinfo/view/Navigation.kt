@@ -36,7 +36,7 @@ fun MainNavigation(
     currentRoute: String?,
     appColor: Int,
     typographyType: Int,
-    useNewDashboard: Boolean,
+    currentView: Int,
     isDynamicColors: Boolean,
     paddingValues: PaddingValues
 ) {
@@ -111,7 +111,7 @@ fun MainNavigation(
             HomeScreen(
                 navController = navController,
                 currentRoute = currentRoute,
-                useNewDashboard = useNewDashboard,
+                currentView = currentView,
                 paddingValues = paddingValues
             )
         }

@@ -1,6 +1,7 @@
 package com.lkonlesoft.displayinfo.view
 
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,10 +16,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,8 +49,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -102,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         val shortcutBattery = ShortcutInfoCompat.Builder(this, "battery")
             .setShortLabel(getString(R.string.battery))
             .setLongLabel(getString(R.string.battery))
-            .setIcon(IconCompat.createWithResource(this, R.drawable.outline_battery_4_bar_24))
+            .setIcon(IconCompat.createWithResource(this, R.drawable.battery_android_4_24px))
             .setIntent(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -113,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         val shortcutMemory = ShortcutInfoCompat.Builder(this, "memory")
             .setShortLabel(getString(R.string.memory))
             .setLongLabel(getString(R.string.memory))
-            .setIcon(IconCompat.createWithResource(this, R.drawable.outline_memory_24))
+            .setIcon(IconCompat.createWithResource(this, R.drawable.memory_24px))
             .setIntent(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -131,7 +137,7 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun MainContext(settings: SettingsViewModel){
     val typographyType by settings.typographyType.collectAsStateWithLifecycle()
-    val useNewDashboard by settings.useNewDashboard.collectAsStateWithLifecycle()
+    val currentView by settings.currentView.collectAsStateWithLifecycle()
     val appColor by settings.appColor.collectAsStateWithLifecycle()
     val useDynamicColors by settings.useDynamicColors.collectAsStateWithLifecycle()
     val state = rememberTopAppBarState()
@@ -233,21 +239,16 @@ fun MainContext(settings: SettingsViewModel){
                                         shapes = IconButtonDefaults.shapes(),
                                         modifier = Modifier.rotate(rotateSettingGear),
                                         onClick = {
-                                            settings.setUseNewDashboard(!useNewDashboard)
+                                            settings.setCurrentView(if (currentView == 2) 0 else currentView + 1)
                                         }) {
                                         Crossfade(
-                                            targetState = useNewDashboard,
+                                            targetState = currentView,
                                             label = "TitleAnimation"
-                                        ) { new ->
-                                            if (new) {
-                                                Icon(
-                                                    imageVector = ImageVector.vectorResource(R.drawable.dashboard_2_24px), contentDescription = "OldView"
-                                                )
-                                            }
-                                            else {
-                                                Icon(
-                                                    imageVector = ImageVector.vectorResource(R.drawable.dashboard_24px), contentDescription = "NewView"
-                                                )
+                                        ) { view ->
+                                            when(view){
+                                                0 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_24px), contentDescription = "newDashboard")
+                                                1 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.view_list_24px), contentDescription = "listDashboard")
+                                                else -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_2_24px), contentDescription = "oldDashboard")
                                             }
                                         }
                                     }
@@ -275,7 +276,7 @@ fun MainContext(settings: SettingsViewModel){
                     navController = navController,
                     currentRoute = currentRoute,
                     typographyType = typographyType,
-                    useNewDashboard = useNewDashboard,
+                    currentView = currentView,
                     appColor = appColor,
                     isDynamicColors = useDynamicColors,
                     paddingValues = paddingValues)
@@ -286,105 +287,194 @@ fun MainContext(settings: SettingsViewModel){
 
 @OptIn(FlowPreview::class)
 @Composable
-fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, currentRoute: String?, paddingValues: PaddingValues) {
+fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute: String?, paddingValues: PaddingValues) {
     val width = LocalWindowInfo.current.containerDpSize.width
     val state = rememberLazyStaggeredGridState()
+    val resources = LocalResources.current
     val listScreen = remember {
         listOf(
-            NavigationItem.System,
-            NavigationItem.Android,
-            NavigationItem.SOC,
-            NavigationItem.Display,
-            NavigationItem.Battery,
-            NavigationItem.Memory,
-            NavigationItem.Storage,
-            NavigationItem.Network,
-            NavigationItem.Camera,
-            NavigationItem.Connectivity,
-            NavigationItem.Apps
+            Pair(
+                NavigationItem.System,
+                buildDetailsSubTextSetting(resources, R.string.model, R.string.device_features, R.string.root_status)
+            ),
+            Pair(
+                NavigationItem.Android,
+                buildDetailsSubTextSetting(resources, R.string.android_version, R.string.fingerprint, R.string.kernel)
+            ),
+            Pair(
+                NavigationItem.SOC,
+                buildDetailsSubTextSetting(resources, R.string.cpu_info, R.string.cpu_usage)
+            ),
+            Pair(
+                NavigationItem.Display,
+                buildDetailsSubTextSetting(resources, R.string.size, R.string.refresh_rate, R.string.widevine)
+            ),
+            Pair(
+                NavigationItem.Battery,
+                buildDetailsSubTextSetting(resources, R.string.health, R.string.cycle_count, R.string.temperature)
+            ),
+            Pair(
+                NavigationItem.Memory,
+                buildDetailsSubTextSetting(resources, R.string.available_ram, R.string.total_ram)
+            ),
+            Pair(
+                NavigationItem.Storage,
+                buildDetailsSubTextSetting(resources, R.string.internal_storage, R.string.external_storage)
+            ),
+            Pair(
+                NavigationItem.Network,
+                buildDetailsSubTextSetting(resources, R.string.network_type, R.string.sim_info)
+            ),
+            Pair(
+                NavigationItem.Camera,
+                buildDetailsSubTextSetting(resources, R.string.hardware_level, R.string.resolution)
+            ),
+            Pair(
+                NavigationItem.Connectivity,
+                buildDetailsSubTextSetting(resources, R.string.bluetooth, R.string.connected_devices)
+            ),
+            Pair(
+                NavigationItem.Apps,
+                buildDetailsSubTextSetting(resources, R.string.all, R.string.system, R.string.user)
+            )
         )
     }
-    AnimatedContent(targetState = useNewDashboard,
+    AnimatedContent(targetState = currentView,
         transitionSpec = {
-            if (targetState && !initialState) {
+            if (targetState > initialState) {
                 slideInHorizontally(initialOffsetX = { -it }) + fadeIn() togetherWith
                         slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
             } else {
-                slideInHorizontally(initialOffsetX = { it }) + fadeIn() togetherWith
-                        slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+                slideInHorizontally(initialOffsetX = { -it }) + fadeIn() togetherWith
+                        slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
             }
         }
-    ) {
-        if (it){
-            LazyVerticalStaggeredGrid (
-                state = state,
-                columns = if (width < 600.dp) StaggeredGridCells.Fixed(1) else StaggeredGridCells.Adaptive(400.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 7.5.dp)
-                    .padding(top = paddingValues.calculateTopPadding())
-                    .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
-                contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
-            ) {
-                item {
-                    SystemDashboard(
-                        onClick = { navController.navigate(NavigationItem.System.route) })
-                }
-                item {
-                    AndroidDashboard(
-                        onClick = { navController.navigate(NavigationItem.Android.route) })
-                }
-                item {
-                    SoCDashBoard(
-                        onClick = { navController.navigate(NavigationItem.SOC.route) })
-                }
-                item {
-                    BatteryDashboard(
-                        onClick = { navController.navigate(NavigationItem.Battery.route) })
-                }
-                item {
-                    DisplayDashboard(
-                        onClick = { navController.navigate(NavigationItem.Display.route) })
-                }
-                item {
-                    MemoryDashBoard(
-                        onClick = { navController.navigate(NavigationItem.Memory.route) })
-                }
-                item {
-                    StorageDashboard(
-                        onClick = { navController.navigate(NavigationItem.Storage.route) })
-                }
-                item {
-                    NetworkDashboard(
-                        onClick = { navController.navigate(NavigationItem.Network.route) })
-                }
-                item {
-                    BluetoothDashboard {
-                        navController.navigate(NavigationItem.Connectivity.route)
-                    }
-                }
-            }
-        }
-        else {
-            LazyVerticalStaggeredGrid (
-                state = state,
-                columns = if (width < 600.dp) StaggeredGridCells.Fixed(2) else StaggeredGridCells.Adaptive(240.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 7.5.dp)
-                    .padding(top = paddingValues.calculateTopPadding())
-                    .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
-                contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
-            ) {
-                items(listScreen) { item ->
-                    val isSelected = currentRoute == item.route
-                    BigTitle(title = stringResource(item.name), icon = item.icon) {
-                        if (!isSelected) {
-                            navController.navigate(item.route)
+    ) { view ->
+        when(view){
+            0 -> {
+                LazyVerticalStaggeredGrid (
+                    state = state,
+                    columns = if (width < 600.dp) StaggeredGridCells.Fixed(2) else StaggeredGridCells.Adaptive(240.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 7.5.dp)
+                        .padding(top = paddingValues.calculateTopPadding())
+                        .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                    contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                ) {
+                    items(listScreen) { item ->
+                        val isSelected = currentRoute == item.first.route
+                        BigTitle(title = stringResource(item.first.name), icon = item.first.icon) {
+                            if (!isSelected) {
+                                navController.navigate(item.first.route)
+                            }
                         }
                     }
                 }
             }
+            1 -> {
+                LazyVerticalStaggeredGrid (
+                    state = state,
+                    columns = if (width < 600.dp) StaggeredGridCells.Fixed(1) else StaggeredGridCells.Adaptive(400.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 7.5.dp)
+                        .padding(top = paddingValues.calculateTopPadding())
+                        .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                    contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                ) {
+                    item {
+                        SystemDashboard(
+                            onClick = { navController.navigate(NavigationItem.System.route) })
+                    }
+                    item {
+                        AndroidDashboard(
+                            onClick = { navController.navigate(NavigationItem.Android.route) })
+                    }
+                    item {
+                        SoCDashBoard(
+                            onClick = { navController.navigate(NavigationItem.SOC.route) })
+                    }
+                    item {
+                        BatteryDashboard(
+                            onClick = { navController.navigate(NavigationItem.Battery.route) })
+                    }
+                    item {
+                        DisplayDashboard(
+                            onClick = { navController.navigate(NavigationItem.Display.route) })
+                    }
+                    item {
+                        MemoryDashBoard(
+                            onClick = { navController.navigate(NavigationItem.Memory.route) })
+                    }
+                    item {
+                        StorageDashboard(
+                            onClick = { navController.navigate(NavigationItem.Storage.route) })
+                    }
+                    item {
+                        NetworkDashboard(
+                            onClick = { navController.navigate(NavigationItem.Network.route) })
+                    }
+                    item {
+                        BluetoothDashboard {
+                            navController.navigate(NavigationItem.Connectivity.route)
+                        }
+                    }
+                }
+            }
+            else -> {
+                Column(modifier = Modifier.fillMaxSize()
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    LazyVerticalStaggeredGrid(
+                        state = state,
+                        columns = StaggeredGridCells.Fixed(1),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(if (width < 840.dp) 1f else .7f)
+                            .padding(horizontal = 20.dp)
+                            .padding(top = paddingValues.calculateTopPadding())
+                            .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                    ) {
+                        items(listScreen) { item ->
+                            val isSelected = currentRoute == item.first.route
+                            MainSettingItem(
+                                modifier = Modifier,
+                                iconId = item.first.icon,
+                                mainText = stringResource(item.first.name),
+                                subText = item.second,
+                                isLast = item == listScreen.last(),
+                                tintColor = Color.DarkGray,
+                                iconBackgroundColor = item.first.color,
+                                topStart = if (item == listScreen.first()) 20.dp else 5.dp,
+                                topEnd = if (item == listScreen.first()) 20.dp else 5.dp,
+                                bottomStart = if (item == listScreen.last()) 20.dp else 5.dp,
+                                bottomEnd = if (item == listScreen.last()) 20.dp else 5.dp,
+                            ) {
+                                if (!isSelected) {
+                                    navController.navigate(item.first.route)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun buildDetailsSubTextSetting(resources: Resources, vararg resIds: Int): String {
+    return when (resIds.size) {
+        0 -> ""
+        1 -> resources.getString(resIds[0])
+        2 -> "${resources.getString(resIds[0])} & ${resources.getString(resIds[1])}"
+        else -> {
+            val lastString = resources.getString(resIds.last())
+            // Drop the last element to join the rest with commas
+            val remainingStrings = resIds.dropLast(1).joinToString(", ") { resources.getString(it) }
+            "$remainingStrings & $lastString" // Added the Oxford comma for grammatical correctness
         }
     }
 }
