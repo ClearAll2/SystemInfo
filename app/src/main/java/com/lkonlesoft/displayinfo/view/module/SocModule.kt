@@ -5,13 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -52,9 +53,11 @@ fun SoCDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
     }
 
     OutlinedCard(
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
         modifier = Modifier
             .padding(10.dp)
+            .clip(RoundedCornerShape(16.dp))
             .fillMaxWidth()
             .clickable { onClick() }
     ) {
@@ -89,9 +92,10 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
+            .padding(horizontal = 20.dp)
+            .padding(top = paddingValues.calculateTopPadding())
+            .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {

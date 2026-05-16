@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -41,6 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -149,8 +149,8 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                         modifier = Modifier
                             .background(color = MaterialTheme.colorScheme.surfaceContainer)
                             .fillMaxSize()
-                            .consumeWindowInsets(paddingValues)
-                            .padding(horizontal = 20.dp),
+                            .padding(horizontal = 20.dp)
+                            .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
                         contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()), //fix edge to edge
                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {

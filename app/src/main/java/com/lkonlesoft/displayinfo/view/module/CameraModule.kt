@@ -3,12 +3,12 @@ package com.lkonlesoft.displayinfo.view.module
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -40,9 +41,10 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyT
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
+            .padding(horizontal = 20.dp)
+            .padding(top = paddingValues.calculateTopPadding())
+            .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         itemsIndexed(cameraInfoList) { index, cameraItemList ->

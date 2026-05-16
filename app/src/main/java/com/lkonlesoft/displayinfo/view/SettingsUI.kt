@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -150,9 +149,10 @@ fun SettingsScreen(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
+            .padding(horizontal = 20.dp)
+            .padding(top = paddingValues.calculateTopPadding())
+            .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {

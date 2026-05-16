@@ -90,9 +90,10 @@ import com.lkonlesoft.displayinfo.helper.toBitmap
 fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
     OutlinedCard(
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
+        shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .padding(horizontal = 7.5.dp, vertical = 7.5.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(16.dp))
             .clickable {
                 onClick()
             }
@@ -634,6 +635,9 @@ fun NewThemePickerItem(
             }
 
         }
-        Text(text = text, fontSize = 14.sp)
+        Text(text = text,
+            fontSize = 14.sp,
+            fontWeight = if (checked) FontWeight.Medium else FontWeight.Normal
+        )
     }
 }

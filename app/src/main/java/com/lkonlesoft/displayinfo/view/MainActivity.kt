@@ -19,7 +19,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,6 +26,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -318,11 +319,12 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
             LazyVerticalStaggeredGrid (
                 state = state,
                 columns = if (width < 600.dp) StaggeredGridCells.Fixed(1) else StaggeredGridCells.Adaptive(400.dp),
-                contentPadding = paddingValues,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 7.5.dp)
-                    .consumeWindowInsets(paddingValues)
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
             ) {
                 item {
                     SystemDashboard(
@@ -367,11 +369,12 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
             LazyVerticalStaggeredGrid (
                 state = state,
                 columns = if (width < 600.dp) StaggeredGridCells.Fixed(2) else StaggeredGridCells.Adaptive(240.dp),
-                contentPadding = paddingValues,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 7.5.dp)
-                    .consumeWindowInsets(paddingValues)
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
             ) {
                 items(listScreen) { item ->
                     val isSelected = currentRoute == item.route

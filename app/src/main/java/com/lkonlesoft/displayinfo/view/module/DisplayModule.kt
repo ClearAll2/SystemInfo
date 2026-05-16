@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -54,10 +53,11 @@ fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
     }
 
     OutlinedCard(
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
         modifier = Modifier
             .padding(10.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(16.dp))
             .fillMaxWidth()
             .clickable { onClick() }
     ) {
@@ -100,9 +100,10 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
-            .consumeWindowInsets(paddingValues)
-            .padding(horizontal = 20.dp),
-        contentPadding = paddingValues,
+            .padding(horizontal = 20.dp)
+            .padding(top = paddingValues.calculateTopPadding())
+            .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {
