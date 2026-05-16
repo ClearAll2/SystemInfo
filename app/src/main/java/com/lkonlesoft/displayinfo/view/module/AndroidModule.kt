@@ -1,6 +1,5 @@
 package com.lkonlesoft.displayinfo.view.module
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -67,7 +66,6 @@ fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),

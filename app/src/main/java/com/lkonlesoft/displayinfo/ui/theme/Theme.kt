@@ -3,7 +3,8 @@ package com.lkonlesoft.displayinfo.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -57,7 +58,6 @@ fun ScreenInfoTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 window.isNavigationBarContrastEnforced = false
             }
@@ -68,7 +68,8 @@ fun ScreenInfoTheme(
         }
     }
 
-    MaterialTheme(
+    MaterialExpressiveTheme (
+        motionScheme = MotionScheme.expressive(),
         colorScheme = colorScheme,
         typography = if (typographyType == 0) customTypography else defaultTypography,
         content = content

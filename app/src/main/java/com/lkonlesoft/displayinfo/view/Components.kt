@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
@@ -39,17 +40,21 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconToggleButtonShapes
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -130,7 +135,6 @@ fun IndividualLine(
     bottomStart: Dp = 5.dp,
     bottomEnd: Dp = 5.dp,
     isLast: Boolean = false,
-    dividerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceBright
 ){
     val context = LocalContext.current
@@ -195,7 +199,9 @@ fun IndividualLine(
                 Image(
                     painter = BitmapPainter(icon.toBitmap().asImageBitmap()),
                     contentDescription = null,
-                    modifier = Modifier.size(64.dp).padding(end = 20.dp)
+                    modifier = Modifier
+                        .size(64.dp)
+                        .padding(end = 20.dp)
                 )
             }
             Column {
@@ -232,31 +238,28 @@ fun IndividualLine(
             }
         }
         if (!isLast) {
-            HorizontalDivider(
-                thickness = 2.dp,
-                color = dividerColor
-            )
+            Spacer(modifier = Modifier.height(2.dp))
         }
     }
 }
 
 @Composable
-fun HeaderLine(tittle: String, horizontalPadding: Dp = 10.dp, verticalPadding: Dp = 10.dp) {
+fun HeaderLine(tittle: String, horizontalPadding: Dp = 10.dp, verticalPadding: Dp = 8.dp) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
                 horizontal = horizontalPadding,
                 vertical = verticalPadding
-            ),
+            )
+            .padding(top = 12.dp),
         horizontalAlignment = Alignment.Start,
     ) {
         Text(
             text = tittle,
-            fontSize = 15.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(vertical = 10.dp)
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
@@ -429,10 +432,7 @@ fun CommonSwitchOption(
             )
         }
         if (!isLast) {
-            HorizontalDivider(
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.surfaceContainer
-            )
+            Spacer(modifier = Modifier.height(2.dp))
         }
     }
 }
@@ -516,11 +516,19 @@ fun ConfirmActionPopup(
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 5.dp)
                 ) {
-                    TextButton(onClick = onDismiss, modifier = Modifier.padding(5.dp)) {
+                    TextButton(
+                        shapes = ButtonDefaults.shapes(),
+                        onClick = onDismiss,
+                        modifier = Modifier.padding(5.dp)
+                    ) {
                         Text(text = cancelText, modifier = Modifier.padding(5.dp))
                     }
                     Spacer(modifier = Modifier.padding(5.dp))
-                    TextButton(onClick = onClick, modifier = Modifier.padding(5.dp)) {
+                    TextButton(
+                        shapes = ButtonDefaults.shapes(),
+                        onClick = onClick,
+                        modifier = Modifier.padding(5.dp)
+                    ) {
                         Text(text = confirmText, modifier = Modifier.padding(5.dp))
                     }
                 }
@@ -550,7 +558,9 @@ fun HeaderForDashboard(title: String, icon: Int) {
         verticalAlignment = Alignment.CenterVertically) {
         Icon(imageVector = ImageVector.vectorResource(icon),
             contentDescription = title,
-            modifier = Modifier.size(48.dp).padding(end = 10.dp),
+            modifier = Modifier
+                .size(48.dp)
+                .padding(end = 10.dp),
             tint = MaterialTheme.colorScheme.primary)
         Text(text = title, fontSize = 20.sp, fontWeight = FontWeight.Medium)
     }
@@ -580,4 +590,50 @@ fun GeneralProgressBar(level: Long, total: Long, type: Int = 0, height: Dp = 10.
             .clip(MaterialTheme.shapes.small),
         color = if (type == 0) getBatteryLevelColor(level) else getMemoryLevelColor(((level.toDouble() / total.toDouble()) * 100).toLong())
     )
+}
+
+@Composable
+fun NewThemePickerItem(
+    modifier: Modifier = Modifier,
+    onSwitch: (Boolean) -> Unit,
+    checked: Boolean,
+    icon: ImageVector,
+    checkedIcon: ImageVector,
+    text: String
+) {
+    Column(modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedIconToggleButton(
+            shapes = IconToggleButtonShapes(
+                checkedShape = ToggleButtonDefaults.checkedShape,
+                shape = ToggleButtonDefaults.shape,
+                pressedShape = ToggleButtonDefaults.pressedShape
+            ),
+            colors = IconButtonDefaults.outlinedIconToggleButtonVibrantColors(
+                checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ),
+            modifier = Modifier.size(64.dp),
+            checked = checked,
+            onCheckedChange = onSwitch,
+        ) {
+            Crossfade(
+                targetState = checked
+            ) {
+                if (it)
+                    Icon(
+                        imageVector = checkedIcon,
+                        contentDescription = "null",
+                    )
+                else
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = "null",
+                    )
+            }
+
+        }
+        Text(text = text, fontSize = 14.sp)
+    }
 }

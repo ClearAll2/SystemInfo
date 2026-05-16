@@ -15,7 +15,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -28,10 +27,10 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -206,12 +205,9 @@ fun MainContext(settings: SettingsViewModel){
                                     Spacer(modifier = Modifier.padding(start = 20.dp))
                                 } else {
                                     IconButton(
-                                        modifier = Modifier
-                                            .padding(start = 20.dp)
-                                            .background(
-                                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                                shape = CircleShape
-                                            ),
+                                        shapes = IconButtonDefaults.shapes(),
+                                        colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
+                                        modifier = Modifier.padding(start = 20.dp),
                                         onClick = { navController.navigateUp() }
                                     ) {
                                         Icon(
@@ -233,6 +229,7 @@ fun MainContext(settings: SettingsViewModel){
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     IconButton(
+                                        shapes = IconButtonDefaults.shapes(),
                                         modifier = Modifier.rotate(rotateSettingGear),
                                         onClick = {
                                             settings.setUseNewDashboard(!useNewDashboard)
@@ -243,24 +240,25 @@ fun MainContext(settings: SettingsViewModel){
                                         ) { new ->
                                             if (new) {
                                                 Icon(
-                                                    imageVector = ImageVector.vectorResource(R.drawable.outline_tile_small_24), contentDescription = "OldView"
+                                                    imageVector = ImageVector.vectorResource(R.drawable.dashboard_2_24px), contentDescription = "OldView"
                                                 )
                                             }
                                             else {
                                                 Icon(
-                                                    imageVector = ImageVector.vectorResource(R.drawable.outline_dashboard_24), contentDescription = "NewView"
+                                                    imageVector = ImageVector.vectorResource(R.drawable.dashboard_24px), contentDescription = "NewView"
                                                 )
                                             }
                                         }
                                     }
                                     IconButton(
+                                        shapes = IconButtonDefaults.shapes(),
                                         modifier = Modifier.padding(end = 5.dp).rotate(rotateSettingGear),
                                         onClick = {
                                             navController.navigate(NavigationItem.Settings.route)
                                         }) {
                                         Icon(
                                             imageVector = ImageVector.vectorResource(
-                                                R.drawable.rounded_settings_24
+                                                R.drawable.settings_24px
                                             ), contentDescription = "Settings"
                                         )
                                     }
@@ -322,7 +320,6 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
                 columns = if (width < 600.dp) StaggeredGridCells.Fixed(1) else StaggeredGridCells.Adaptive(400.dp),
                 contentPadding = paddingValues,
                 modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.surfaceContainer)
                     .fillMaxSize()
                     .padding(horizontal = 7.5.dp)
                     .consumeWindowInsets(paddingValues)
@@ -372,7 +369,6 @@ fun HomeScreen(useNewDashboard: Boolean, navController: NavHostController, curre
                 columns = if (width < 600.dp) StaggeredGridCells.Fixed(2) else StaggeredGridCells.Adaptive(240.dp),
                 contentPadding = paddingValues,
                 modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.surfaceContainer)
                     .fillMaxSize()
                     .padding(horizontal = 7.5.dp)
                     .consumeWindowInsets(paddingValues)

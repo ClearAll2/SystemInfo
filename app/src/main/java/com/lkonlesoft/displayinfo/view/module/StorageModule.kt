@@ -64,7 +64,7 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
         Column(Modifier.padding(16.dp)) {
             HeaderForDashboard(
                 title = stringResource(R.string.memory),
-                icon = R.drawable.outline_memory_24
+                icon = R.drawable.memory_24px
             )
             Spacer(Modifier.height(12.dp))
             GeneralProgressBar(
@@ -189,7 +189,6 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
     LazyVerticalGrid(
         columns = GridCells.Adaptive(320.dp),
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),

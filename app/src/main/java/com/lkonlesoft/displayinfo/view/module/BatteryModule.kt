@@ -4,7 +4,6 @@ package com.lkonlesoft.displayinfo.view.module
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.os.Build
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +18,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -68,7 +68,7 @@ fun BatteryDashboard(intervalMillis: Long = 2000L,onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(
                 title = stringResource(R.string.battery),
-                icon = R.drawable.outline_battery_4_bar_24
+                icon = R.drawable.battery_android_4_24px
             )
             Spacer(modifier = Modifier.height(12.dp))
             GeneralProgressBar((infoList.first().value as Number).toLong(), 100L)
@@ -97,7 +97,6 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),
@@ -137,6 +136,7 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                         val appWidgetManager = AppWidgetManager.getInstance(context)
                         val widgetProvider = ComponentName(context, BatReceiver::class.java)
                         Button(
+                            shapes = ButtonDefaults.shapes(),
                             modifier = Modifier.padding(bottom = 10.dp),
                             onClick = {
                                 appWidgetManager.requestPinAppWidget(widgetProvider, null, null)

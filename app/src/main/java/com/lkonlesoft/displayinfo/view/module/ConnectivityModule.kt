@@ -14,7 +14,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -92,7 +91,7 @@ fun BluetoothDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(
                 title = stringResource(R.string.connectivity),
-                icon = R.drawable.outline_bluetooth_24
+                icon = R.drawable.bluetooth_connected_24px
             )
             Spacer(modifier = Modifier.height(12.dp))
             if (hasBluetoothPermission) {
@@ -183,7 +182,6 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),

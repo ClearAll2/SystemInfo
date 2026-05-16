@@ -13,7 +13,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -77,7 +76,7 @@ fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(
                 title = stringResource(R.string.network),
-                icon = R.drawable.outline_network_cell_24
+                icon = R.drawable.android_cell_4_bar_24px
             )
             Spacer(modifier = Modifier.height(12.dp))
             infoList.forEach {
@@ -155,7 +154,6 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),

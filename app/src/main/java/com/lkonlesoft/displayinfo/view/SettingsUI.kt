@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -28,9 +28,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -45,6 +43,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -149,7 +149,6 @@ fun SettingsScreen(
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),
@@ -164,7 +163,7 @@ fun SettingsScreen(
                         localeOptions.entries.firstOrNull { it.key == currentLang }?.value
                             ?: R.string.system_default
                     ),
-                    info = currentLang,
+                    info = "($currentLang)",
                     onClick = {
                         showLangDialog = !showLangDialog
                     },
@@ -283,6 +282,9 @@ fun SettingsScreen(
                 )
             }
         }
+        staggeredHeader {
+            Spacer(modifier = Modifier.padding(20.dp))
+        }
     }
 }
 
@@ -296,6 +298,7 @@ fun ThemeSelector(
     bottomEnd: Dp = 20.dp,
     paddingValues: Dp = 20.dp
 ) {
+    val haptics = LocalHapticFeedback.current
     val themeOptions = remember {
         mutableListOf(
             AppTheme.System,
@@ -339,31 +342,26 @@ fun ThemeSelector(
                     .padding(vertical = 5.dp)
             )
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
             ) {
                 themeOptions.forEach { theme ->
-                    FilterChip(
-                        leadingIcon = {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(theme.icon),
-                                contentDescription = null
-                            )
+                    NewThemePickerItem(
+                        modifier = Modifier.wrapContentSize().padding(vertical = 8.dp),
+                        checked = selectedTheme == theme.value,
+                        onSwitch = {
+                            onThemeSelected(theme.value)
+                            haptics.performHapticFeedback(HapticFeedbackType.ToggleOn)
                         },
-                        selected = selectedTheme == theme.value,
-                        onClick = { onThemeSelected(theme.value) },
-                        label = { Text(stringResource(theme.title), fontSize = 14.sp) }
+                        icon = ImageVector.vectorResource(theme.icon),
+                        checkedIcon = ImageVector.vectorResource(theme.checkedIcon),
+                        text = stringResource(theme.title)
                     )
                 }
             }
             Spacer(modifier = Modifier.padding(5.dp))
         }
-        HorizontalDivider(
-            thickness = 2.dp,
-            color = MaterialTheme.colorScheme.surfaceContainer
-        )
+        Spacer(modifier = Modifier.height(2.dp))
     }
 }
 
@@ -423,6 +421,7 @@ fun LanguageSelectionPopup(
                         .padding(bottom = 10.dp)
                 ) {
                     OutlinedButton(
+                        shapes = ButtonDefaults.shapes(),
                         onClick = onDismiss,
                         modifier = Modifier.padding(5.dp)
                     ) {
@@ -432,6 +431,7 @@ fun LanguageSelectionPopup(
                         )
                     }
                     Button(
+                        shapes = ButtonDefaults.shapes(),
                         onClick = {
                             onClick(selectLang)
                             onDismiss()
@@ -496,6 +496,7 @@ fun FontSelectionPopup(
                         .padding(bottom = 10.dp)
                 ) {
                     OutlinedButton(
+                        shapes = ButtonDefaults.shapes(),
                         onClick = onDismiss,
                         modifier = Modifier.padding(5.dp)
                     ) {
@@ -505,6 +506,7 @@ fun FontSelectionPopup(
                         )
                     }
                     Button(
+                        shapes = ButtonDefaults.shapes(),
                         onClick = {
                             onClick(selectFont)
                             onDismiss()

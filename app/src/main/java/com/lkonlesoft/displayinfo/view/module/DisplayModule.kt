@@ -1,6 +1,5 @@
 package com.lkonlesoft.displayinfo.view.module
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -65,7 +64,7 @@ fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(
                 title = stringResource(R.string.display),
-                icon = R.drawable.outline_smartphone_24
+                icon = R.drawable.mobile_text_24px
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -100,7 +99,6 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),

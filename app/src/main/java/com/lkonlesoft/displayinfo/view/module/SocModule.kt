@@ -1,6 +1,5 @@
 package com.lkonlesoft.displayinfo.view.module
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -62,7 +61,7 @@ fun SoCDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
         Column(Modifier.padding(16.dp)) {
             HeaderForDashboard(
                 title = stringResource(R.string.cpu_usage),
-                icon = R.drawable.outline_developer_board_24
+                icon = R.drawable.developer_board_24px
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -89,7 +88,6 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .fillMaxSize()
             .consumeWindowInsets(paddingValues)
             .padding(horizontal = 20.dp),
