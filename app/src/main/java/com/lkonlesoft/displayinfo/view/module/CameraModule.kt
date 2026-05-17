@@ -1,15 +1,21 @@
 package com.lkonlesoft.displayinfo.view.module
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,10 +30,40 @@ import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.CameraUtils
+import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.GeneralWarning
+import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.staggeredHeader
+
+
+@Composable
+fun CameraDashboard(onClick: () -> Unit) {
+    val context = LocalContext.current
+    val cameraCount = CameraUtils(context).getCameraCount()
+    OutlinedCard(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
+        modifier = Modifier
+            .padding(10.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .fillMaxWidth()
+            .clickable { onClick() },
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            HeaderForDashboard(
+                title = stringResource(R.string.camera),
+                icon = R.drawable.camera_24px
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            GeneralStatRow(
+                label = stringResource(cameraCount.name),
+                value = cameraCount.value.toString()
+            )
+        }
+    }
+}
 
 @Composable
 fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean) {

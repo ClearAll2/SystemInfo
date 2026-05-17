@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -23,12 +25,14 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -57,11 +61,44 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.AppInfo
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.PackageUtils
+import com.lkonlesoft.displayinfo.view.GeneralStatRow
+import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.staggeredHeader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+
+
+@Composable
+fun AppDashboard(onClick: () -> Unit) {
+    val context = LocalContext.current
+    val listInfo = PackageUtils(context).getAppCountDetails()
+    OutlinedCard(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
+        modifier = Modifier
+            .padding(10.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .fillMaxWidth()
+            .clickable { onClick() },
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            HeaderForDashboard(
+                title = stringResource(R.string.apps),
+                icon = R.drawable.outline_apps_24
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            listInfo.forEach {
+                GeneralStatRow(
+                    label = stringResource(it.name),
+                    value = it.value.toString()
+                )
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -79,6 +116,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
     }
     var isLoading by remember { mutableStateOf(true) }
     var allApps by remember { mutableStateOf(emptyList<AppInfo>()) }
+    var appCountInfo by remember { mutableStateOf(emptyList<DeviceInfo>()) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var selectType by rememberSaveable { mutableIntStateOf(-1) }
     val filteredApps by remember {
@@ -95,6 +133,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             allApps = PackageUtils(context).getAllPackages().sortedBy { it.name.lowercase() }
+            appCountInfo = PackageUtils(context).getAppCountDetails()
             isLoading = false
         }
     }
@@ -156,7 +195,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                                 selectType = type.key
                                 haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
                             },
-                            label = resource.getString(type.value)
+                            label = "${resource.getString(type.value)} (${appCountInfo[type.key+1].value})"
                         )
                     }
                 }

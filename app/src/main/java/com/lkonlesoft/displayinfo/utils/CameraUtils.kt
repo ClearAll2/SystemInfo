@@ -13,6 +13,10 @@ class CameraUtils (private val context: Context) {
         context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     }
 
+    fun getCameraCount(): DeviceInfo {
+        return DeviceInfo(R.string.camera, cameraManager.cameraIdList.size)
+    }
+
     fun getAllData(): List<List<DeviceInfo>> {
         val cameraInfo = getCameraInfo()
         return cameraInfo.map { camera ->

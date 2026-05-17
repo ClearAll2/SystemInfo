@@ -79,8 +79,10 @@ import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.`object`.NavigationItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
 import com.lkonlesoft.displayinfo.view.module.AndroidDashboard
+import com.lkonlesoft.displayinfo.view.module.AppDashboard
 import com.lkonlesoft.displayinfo.view.module.BatteryDashboard
 import com.lkonlesoft.displayinfo.view.module.BluetoothDashboard
+import com.lkonlesoft.displayinfo.view.module.CameraDashboard
 import com.lkonlesoft.displayinfo.view.module.DisplayDashboard
 import com.lkonlesoft.displayinfo.view.module.MemoryDashBoard
 import com.lkonlesoft.displayinfo.view.module.NetworkDashboard
@@ -429,6 +431,16 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                     item {
                         BluetoothDashboard {
                             navController.navigate(NavigationItem.Connectivity.route)
+                        }
+                    }
+                    item {
+                        AppDashboard {
+                            navController.navigate(NavigationItem.Apps.route)
+                        }
+                    }
+                    item {
+                        CameraDashboard {
+                            navController.navigate(NavigationItem.Camera.route)
                         }
                     }
                 }

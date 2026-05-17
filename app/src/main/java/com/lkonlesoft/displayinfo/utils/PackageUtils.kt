@@ -3,7 +3,9 @@ package com.lkonlesoft.displayinfo.utils
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.AppInfo
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 
 class PackageUtils(private val context: Context) {
     private val pm by lazy {
@@ -12,6 +14,17 @@ class PackageUtils(private val context: Context) {
 
     private val packages by lazy {
         pm.getInstalledPackages(PackageManager.GET_META_DATA)
+    }
+
+    fun getAppCountDetails(): List<DeviceInfo> {
+        val appCount = packages.size
+        val systemAppCount = packages.count { (it.applicationInfo?.flags ?: 0) and ApplicationInfo.FLAG_SYSTEM != 0 }
+        val userAppCount = appCount - systemAppCount
+        return listOf(
+            DeviceInfo(R.string.all, appCount),
+            DeviceInfo(R.string.system, systemAppCount),
+            DeviceInfo(R.string.user, userAppCount)
+        )
     }
 
     fun getAllPackages(): List<AppInfo> {
