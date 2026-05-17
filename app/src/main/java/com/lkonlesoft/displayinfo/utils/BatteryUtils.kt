@@ -130,7 +130,7 @@ class BatteryUtils (private val context: Context) {
             DeviceInfo(R.string.battery_level, getBatteryPercentage(), "%"),
             DeviceInfo(R.string.status, getBatteryStatus()),
             DeviceInfo(R.string.health, getBatteryHealth()),
-            DeviceInfo(R.string.cycle_count, if (cycleCount >= 0) cycleCount else context.getString(R.string.unknown)),
+            DeviceInfo(R.string.cycle_count, if (cycleCount >= 0) cycleCount else context.getString(R.string.n_a)),
             DeviceInfo(R.string.capacity, if (capacity > 0) capacity else context.getString(R.string.unknown), if (capacity > 0) " mAh" else ""),
             DeviceInfo(R.string.temperature, getBatteryTemperature(), " °C"),
             DeviceInfo(R.string.current, getDischargeCurrent(), " mA"),

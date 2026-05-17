@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +25,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -34,8 +35,10 @@ import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedToggleButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -185,7 +188,32 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                         unfocusedContainerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                ButtonGroup(overflowIndicator = {},
+                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+                ) {
+                    appTypes.entries.forEach { type ->
+                        OutlinedToggleButton (
+                            checked = selectType == type.key,
+                            onCheckedChange = {
+                                selectType = type.key
+                                haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                            },
+                            shapes = when(type.key) {
+                                -1 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                appTypes.keys.last() -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                            },
+                            colors = ToggleButtonDefaults.toggleButtonColors(
+                                disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+                            )
+                        ) {
+                            Text(text = "${resource.getString(type.value)} (${appCountInfo[type.key+1].value})")
+                        }
+                    }
+                }
+                /*ButtonGroup(overflowIndicator = {},
                     modifier = Modifier.fillMaxWidth(if (width < 840.dp) 1f else .7f).padding(horizontal = 20.dp).padding(bottom = 8.dp)) {
                     appTypes.entries.forEach { type ->
                         toggleableItem(
@@ -195,10 +223,14 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                                 selectType = type.key
                                 haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
                             },
-                            label = "${resource.getString(type.value)} (${appCountInfo[type.key+1].value})"
+                            label = buildString {
+                                append(resource.getString(type.value))
+                                append("\n")
+                                append("(${appCountInfo[type.key + 1].value})")
+                            }
                         )
                     }
-                }
+                }*/
                 AnimatedContent(
                     targetState = filteredApps.isNotEmpty(),
                     transitionSpec = {
