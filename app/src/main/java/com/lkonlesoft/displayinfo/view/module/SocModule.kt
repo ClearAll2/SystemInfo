@@ -155,5 +155,8 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
                 )
             }
         }
+        staggeredHeader {
+            Spacer(modifier = Modifier.padding(20.dp))
+        }
     }
 }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
-import com.lkonlesoft.displayinfo.helper.getKernelVersion
 import java.util.Locale
 
 class AndroidUtils (private val context: Context) {
@@ -90,34 +89,13 @@ class AndroidUtils (private val context: Context) {
         return Build.TAGS ?: context.getString(R.string.unknown)
     }
 
-    fun getFingerprint(): String {
-        return Build.FINGERPRINT ?: context.getString(R.string.unknown)
-    }
-
     fun getHost(): String {
         return Build.HOST ?: context.getString(R.string.unknown)
     }
 
-    fun getKernel(): String {
-        return getKernelVersion() ?: context.getString(R.string.unknown)
-    }
-
-    fun getHardware(): String {
-        return Build.HARDWARE ?: context.getString(R.string.unknown)
-    }
-
-    fun getBoard(): String {
-        return Build.BOARD ?: context.getString(R.string.unknown)
-    }
-
-    fun getBootloader(): String {
-        return Build.BOOTLOADER ?: context.getString(R.string.unknown)
-    }
 
     fun getExtraInfo(): List<DeviceInfo> {
         return listOf(
-            DeviceInfo(R.string.hardware, getHardware()),
-            DeviceInfo(R.string.board, getBoard()),
             DeviceInfo(R.string.performance_class, if (getPerformanceClass() > 0) getPerformanceClass().toString() else context.getString(R.string.n_a)),
             DeviceInfo(R.string.google_play_service, getGmsVersion()),
             DeviceInfo(R.string.google_play_store, getPlayStoreVersion()),
@@ -138,10 +116,7 @@ class AndroidUtils (private val context: Context) {
             DeviceInfo(R.string.codename, getCodename()),
             DeviceInfo(R.string.type, getType()),
             DeviceInfo(R.string.tags, getTags()),
-            DeviceInfo(R.string.fingerprint, getFingerprint()),
             DeviceInfo(R.string.host, getHost()),
-            DeviceInfo(R.string.bootloader, getBootloader()),
-            DeviceInfo(R.string.kernel, getKernel()),
         )
     }
 

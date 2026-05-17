@@ -8,6 +8,7 @@ import android.provider.Settings
 import androidx.annotation.RequiresApi
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
+import com.lkonlesoft.displayinfo.helper.getKernelVersion
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -25,14 +26,16 @@ class SystemUtils(private val context: Context) {
             DeviceInfo(R.string.model, getModel()),
             DeviceInfo(R.string.product, getProduct()),
             DeviceInfo(R.string.device, getDevice()),
+            DeviceInfo(R.string.hardware, getHardware()),
             DeviceInfo(R.string.board, getBoard()),
             DeviceInfo(R.string.manufacturer, getManufacturer()),
             DeviceInfo(R.string.brand, getBrand()),
             DeviceInfo(R.string.sku, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) getSku() else context.getString(R.string.unknown)),
             DeviceInfo(R.string.radio, getRadio()),
             DeviceInfo(R.string.instruction_sets, getInstructions()),
-            DeviceInfo(R.string.up_time, getUptime()),
-            DeviceInfo(R.string.boot_time, getBootTime()),
+            DeviceInfo(R.string.bootloader, getBootloader()),
+            DeviceInfo(R.string.fingerprint, getFingerprint()),
+            DeviceInfo(R.string.kernel, getKernel())
         )
     }
 
@@ -46,6 +49,8 @@ class SystemUtils(private val context: Context) {
 
     fun getExtraData(): List<DeviceInfo>{
         return listOf(
+            DeviceInfo(R.string.up_time, getUptime()),
+            DeviceInfo(R.string.boot_time, getBootTime()),
             DeviceInfo(R.string.java_runtime_version, getJavaRuntimeVersion()),
             DeviceInfo(R.string.jvm_version, getJvmVersion()),
             DeviceInfo(R.string.usb_debug, if (isUsbDebuggingEnabled()) context.getString(R.string.enabled) else context.getString(R.string.disabled)),
@@ -264,6 +269,23 @@ class SystemUtils(private val context: Context) {
         } catch (_: IOException) {
             false
         }
+    }
+
+    fun getHardware(): String {
+        return Build.HARDWARE ?: context.getString(R.string.unknown)
+    }
+
+
+    fun getKernel(): String {
+        return getKernelVersion() ?: context.getString(R.string.unknown)
+    }
+
+    fun getFingerprint(): String {
+        return Build.FINGERPRINT ?: context.getString(R.string.unknown)
+    }
+
+    fun getBootloader(): String {
+        return Build.BOOTLOADER ?: context.getString(R.string.unknown)
     }
 
     fun getJavaRuntimeVersion(): String {

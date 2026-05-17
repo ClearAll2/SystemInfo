@@ -35,6 +35,7 @@ import com.lkonlesoft.displayinfo.view.GeneralWarning
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
+import com.lkonlesoft.displayinfo.view.staggeredHeader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -167,6 +168,9 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                     text = R.string.drm_notice,
                 )
             }
+        }
+        staggeredHeader {
+            Spacer(modifier = Modifier.padding(20.dp))
         }
     }
 }

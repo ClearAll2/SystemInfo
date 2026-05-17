@@ -1,10 +1,16 @@
 package com.lkonlesoft.displayinfo.view
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.Canvas
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -58,8 +64,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
+import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -97,7 +105,8 @@ class MainActivity : AppCompatActivity() {
         val shortcutAndroid = ShortcutInfoCompat.Builder(this, "android")
             .setShortLabel(getString(R.string.android))
             .setLongLabel(getString(R.string.android))
-            .setIcon(IconCompat.createWithResource(this, R.drawable.outline_android_24))
+            .setIcon(createTintedIconCompat(context = this, resId = R.drawable.outline_android_24,
+                ContextCompat.getColor(this, R.color.teal_700)))
             .setIntent(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -108,7 +117,8 @@ class MainActivity : AppCompatActivity() {
         val shortcutBattery = ShortcutInfoCompat.Builder(this, "battery")
             .setShortLabel(getString(R.string.battery))
             .setLongLabel(getString(R.string.battery))
-            .setIcon(IconCompat.createWithResource(this, R.drawable.battery_android_4_24px))
+            .setIcon(createTintedIconCompat(context = this, resId = R.drawable.battery_android_4_24px,
+                ContextCompat.getColor(this, R.color.teal_700)))
             .setIntent(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -119,7 +129,8 @@ class MainActivity : AppCompatActivity() {
         val shortcutMemory = ShortcutInfoCompat.Builder(this, "memory")
             .setShortLabel(getString(R.string.memory))
             .setLongLabel(getString(R.string.memory))
-            .setIcon(IconCompat.createWithResource(this, R.drawable.memory_24px))
+            .setIcon(createTintedIconCompat(context = this, resId = R.drawable.memory_24px,
+                ContextCompat.getColor(this, R.color.teal_700)))
             .setIntent(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -295,11 +306,11 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
         listOf(
             Pair(
                 NavigationItem.System,
-                buildDetailsSubTextSetting(resources, R.string.model, R.string.device_features, R.string.root_status)
+                buildDetailsSubTextSetting(resources, R.string.model, R.string.kernel, R.string.root_status)
             ),
             Pair(
                 NavigationItem.Android,
-                buildDetailsSubTextSetting(resources, R.string.android_version, R.string.fingerprint, R.string.kernel)
+                buildDetailsSubTextSetting(resources, R.string.android_version, R.string.security_patch)
             ),
             Pair(
                 NavigationItem.SOC,
@@ -335,7 +346,7 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             ),
             Pair(
                 NavigationItem.Apps,
-                buildDetailsSubTextSetting(resources, R.string.all, R.string.system, R.string.user)
+                buildDetailsSubTextSetting(resources,  R.string.system, R.string.user)
             )
         )
     }
@@ -458,6 +469,9 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                                 }
                             }
                         }
+                        staggeredHeader {
+                            Spacer(modifier = Modifier.padding(20.dp))
+                        }
                     }
                 }
             }
@@ -477,4 +491,29 @@ private fun buildDetailsSubTextSetting(resources: Resources, vararg resIds: Int)
             "$remainingStrings & $lastString" // Added the Oxford comma for grammatical correctness
         }
     }
+}
+
+private fun createTintedIconCompat(
+    context: Context,
+    @DrawableRes resId: Int,
+    @ColorInt tintColor: Int
+): IconCompat {
+
+    val drawable = ContextCompat.getDrawable(context, resId)?.mutate()
+        ?: return IconCompat.createWithResource(context, resId) // fallback
+
+    // Force tint with SRC_IN (most reliable across versions)
+    drawable.colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
+
+    // Create bitmap with explicit config for better compatibility
+    val width = drawable.intrinsicWidth.coerceAtLeast(1)
+    val height = drawable.intrinsicHeight.coerceAtLeast(1)
+
+    val bitmap = createBitmap(width, height)
+
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, width, height)
+    drawable.draw(canvas)
+
+    return IconCompat.createWithBitmap(bitmap)
 }

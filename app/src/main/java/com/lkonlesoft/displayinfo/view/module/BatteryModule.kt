@@ -41,6 +41,7 @@ import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.GeneralWarning
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.IndividualLine
+import com.lkonlesoft.displayinfo.view.staggeredHeader
 import com.lkonlesoft.displayinfo.widget.BatReceiver
 import kotlinx.coroutines.delay
 
@@ -156,6 +157,9 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                     text = R.string.battery_notice
                 )
             }
+        }
+        staggeredHeader {
+            Spacer(modifier = Modifier.padding(20.dp))
         }
     }
 }

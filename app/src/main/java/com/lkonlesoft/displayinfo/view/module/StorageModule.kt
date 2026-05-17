@@ -170,6 +170,9 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
                 }
             }
         }
+        header {
+            Spacer(modifier = Modifier.padding(20.dp))
+        }
     }
 }
 
@@ -257,6 +260,9 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                     text = R.string.storage_notice
                 )
             }
+        }
+        header {
+            Spacer(modifier = Modifier.padding(20.dp))
         }
     }
 }

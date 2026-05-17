@@ -33,6 +33,7 @@ import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
+import com.lkonlesoft.displayinfo.view.staggeredHeader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -89,7 +90,7 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
     ) {
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.general))
+                HeaderLine(tittle = stringResource(R.string.device))
                 deviceInfoList.forEach {
                     IndividualLine(
                         title = stringResource(it.name),
@@ -153,6 +154,9 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
                     )
                 }
             }
+        }
+        staggeredHeader {
+            Spacer(modifier = Modifier.padding(20.dp))
         }
     }
 }

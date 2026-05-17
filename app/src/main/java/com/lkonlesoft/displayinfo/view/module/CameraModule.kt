@@ -3,6 +3,7 @@ package com.lkonlesoft.displayinfo.view.module
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -71,6 +72,9 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyT
                     text = R.string.camera_notice
                 )
             }
+        }
+        staggeredHeader {
+            Spacer(modifier = Modifier.padding(20.dp))
         }
     }
 }

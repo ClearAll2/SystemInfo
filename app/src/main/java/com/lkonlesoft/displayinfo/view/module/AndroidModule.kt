@@ -27,6 +27,7 @@ import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
+import com.lkonlesoft.displayinfo.view.staggeredHeader
 
 @Composable
 fun AndroidDashboard(onClick: () -> Unit) {
@@ -106,6 +107,9 @@ fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                     )
                 }
             }
+        }
+        staggeredHeader {
+            Spacer(modifier = Modifier.padding(20.dp))
         }
     }
 }
