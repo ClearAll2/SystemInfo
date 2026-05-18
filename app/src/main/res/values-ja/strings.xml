@@ -99,8 +99,6 @@
     <string name="cpu_info">CPU情報</string>
     <string name="cores">コア</string>
     <string name="core">コア %s</string>
-    <string name="min_freq">最小周波数: %s</string>
-    <string name="max_freq">最大周波数: %s</string>
     <string name="governor">ガバナー</string>
     <string name="cpu_usage">CPU使用率</string>
     <string name="gpu_info">GPU情報</string>
@@ -273,4 +271,16 @@
     <string name="face_authentication">顔認証</string>
     <string name="fingerprint_authentication">指紋認証</string>
     <string name="file_based_encryption">ファイルベースの暗号化</string>
+    <string name="cluster">クラスタ</string>
+    <string name="min_freq">最小周波数</string>
+    <string name="max_freq">最大周波数</string>
+    <string name="supported_abi">対応ABI</string>
+    <string name="extensions">拡張機能</string>
+    <string name="vendor">ベンダー</string>
+    <string name="security_level">セキュリティレベル</string>
+    <string name="algorithms">アルゴリズム</string>
+    <string name="maxNumberOfSessions">最大セッション数</string>
+    <string name="numberOfOpenSessions">オープンセッション数</string>
+    <string name="systemId">システムID</string>
+    <string name="device_uid">デバイス固有ID</string>
 </resources>

@@ -99,8 +99,6 @@
     <string name="cpu_info">CPU信息</string>
     <string name="cores">核心</string>
     <string name="core">核心 %s</string>
-    <string name="min_freq">最小频率: %s</string>
-    <string name="max_freq">最大频率: %s</string>
     <string name="governor">调节器</string>
     <string name="cpu_usage">CPU使用率</string>
     <string name="gpu_info">GPU信息</string>
@@ -273,4 +271,16 @@
     <string name="face_authentication">面部认证</string>
     <string name="fingerprint_authentication">指纹认证</string>
     <string name="file_based_encryption">基于文件的加密</string>
+    <string name="cluster">集群</string>
+    <string name="min_freq">最低频率</string>
+    <string name="max_freq">最高频率</string>
+    <string name="supported_abi">支持的 ABI</string>
+    <string name="extensions">扩展</string>
+    <string name="vendor">供应商</string>
+    <string name="security_level">安全级别</string>
+    <string name="algorithms">算法</string>
+    <string name="maxNumberOfSessions">最大会话数</string>
+    <string name="numberOfOpenSessions">打开的会话数</string>
+    <string name="systemId">系统 ID</string>
+    <string name="device_uid">设备唯一 ID</string>
 </resources>

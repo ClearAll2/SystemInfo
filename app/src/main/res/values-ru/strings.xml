@@ -99,8 +99,6 @@
     <string name="cpu_info">Инфо CPU</string>
     <string name="cores">Ядра</string>
     <string name="core">Ядро %s</string>
-    <string name="min_freq">Мин. частота: %s</string>
-    <string name="max_freq">Макс. частота: %s</string>
     <string name="governor">Губернатор</string>
     <string name="cpu_usage">Загрузка CPU</string>
     <string name="gpu_info">Инфо GPU</string>
@@ -273,4 +271,16 @@
     <string name="face_authentication">Аутентификация по лицу</string>
     <string name="fingerprint_authentication">Аутентификация по отпечатку пальца</string>
     <string name="file_based_encryption">Шифрование на уровне файлов</string>
+    <string name="cluster">Кластер</string>
+    <string name="min_freq">Минимальная частота</string>
+    <string name="max_freq">Максимальная частота</string>
+    <string name="supported_abi">Поддерживаемые ABI</string>
+    <string name="extensions">Расширения</string>
+    <string name="vendor">Производитель</string>
+    <string name="security_level">Уровень безопасности</string>
+    <string name="algorithms">Алгоритмы</string>
+    <string name="maxNumberOfSessions">Максимальное количество сессий</string>
+    <string name="numberOfOpenSessions">Количество открытых сессий</string>
+    <string name="systemId">ID системы</string>
+    <string name="device_uid">Уникальный ID устройства</string>
 </resources>

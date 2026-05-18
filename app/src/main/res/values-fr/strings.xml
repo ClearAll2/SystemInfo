@@ -99,8 +99,6 @@
     <string name="cpu_info">Info CPU</string>
     <string name="cores">Cœurs</string>
     <string name="core">Cœur %s</string>
-    <string name="min_freq">Fréquence min : %s</string>
-    <string name="max_freq">Fréquence max : %s</string>
     <string name="governor">Governor</string>
     <string name="cpu_usage">Utilisation CPU</string>
     <string name="gpu_info">Info GPU</string>
@@ -273,4 +271,16 @@
     <string name="face_authentication">Authentification faciale</string>
     <string name="fingerprint_authentication">Authentification par empreinte digitale</string>
     <string name="file_based_encryption">Chiffrement basé sur les fichiers</string>
+    <string name="cluster">Cluster</string>
+    <string name="min_freq">Fréquence minimale</string>
+    <string name="max_freq">Fréquence maximale</string>
+    <string name="supported_abi">ABIs supportés</string>
+    <string name="extensions">Extensions</string>
+    <string name="vendor">Fabricant</string>
+    <string name="security_level">Niveau de sécurité</string>
+    <string name="algorithms">Algorithmes</string>
+    <string name="maxNumberOfSessions">Nombre maximum de sessions</string>
+    <string name="numberOfOpenSessions">Nombre de sessions ouvertes</string>
+    <string name="systemId">ID système</string>
+    <string name="device_uid">ID unique de l\'appareil</string>
 </resources>

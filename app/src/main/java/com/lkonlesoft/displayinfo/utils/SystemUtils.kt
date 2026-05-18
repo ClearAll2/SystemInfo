@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.getKernelVersion
+import com.lkonlesoft.displayinfo.helper.getSystemProperty
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -32,7 +33,6 @@ class SystemUtils(private val context: Context) {
             DeviceInfo(R.string.brand, getBrand()),
             DeviceInfo(R.string.sku, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) getSku() else context.getString(R.string.unknown)),
             DeviceInfo(R.string.radio, getRadio()),
-            DeviceInfo(R.string.instruction_sets, getInstructions()),
             DeviceInfo(R.string.bootloader, getBootloader()),
             DeviceInfo(R.string.fingerprint, getFingerprint()),
             DeviceInfo(R.string.kernel, getKernel())
@@ -117,11 +117,6 @@ class SystemUtils(private val context: Context) {
         return Build.getRadioVersion() ?: context.getString(R.string.unknown)
     }
 
-    fun getInstructions(): String {
-        val supportedABIS = Build.SUPPORTED_ABIS
-        return supportedABIS?.joinToString(", ") ?: context.getString(R.string.unknown)
-    }
-
     fun getUptime(): String {
         val uptimeMillis = SystemClock.elapsedRealtime()
         val seconds = uptimeMillis / 1000
@@ -150,19 +145,6 @@ class SystemUtils(private val context: Context) {
             context.contentResolver,
             Settings.Global.ADB_ENABLED, 0
         ) == 1
-    }
-
-    fun getSystemProperty(key: String): String? {
-        return try {
-            Runtime.getRuntime()
-                .exec("getprop $key")
-                .inputStream
-                .bufferedReader()
-                .use { it.readLine() }
-                ?.trim()
-        } catch (_: Exception) {
-            null
-        }
     }
 
 

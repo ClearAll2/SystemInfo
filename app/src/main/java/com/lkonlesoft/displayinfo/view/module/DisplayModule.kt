@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.DisplayUtils
 import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.GeneralWarning
@@ -84,8 +85,8 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
     val context = LocalContext.current
     val resources = LocalResources.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    var widevineInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
-    var clearKeyInfo by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    var widevineInfo by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
+    var clearKeyInfo by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     var infoList by remember(refreshKey) { mutableStateOf(DisplayUtils(context, resources).getAllData()) }
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -129,8 +130,8 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                 HeaderLine(tittle = stringResource(R.string.widevine))
                 val widevineList = widevineInfo.toList()
                 widevineList.forEach {
-                    IndividualLine(title = it.first.replaceFirstChar { c -> c.uppercase() },
-                        info = it.second,
+                    IndividualLine(title = stringResource(it.name),
+                        info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
                         isLast = widevineList.last() == it,
@@ -147,8 +148,8 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                 HeaderLine(tittle = stringResource(R.string.clearkey))
                 val clearKeyList = clearKeyInfo.toList()
                 clearKeyList.forEach {
-                    IndividualLine(title = it.first.replaceFirstChar { c -> c.uppercase() },
-                        info = it.second,
+                    IndividualLine(title = stringResource(it.name),
+                        info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
                         isLast = clearKeyList.last() == it,

@@ -99,8 +99,6 @@
     <string name="cpu_info">CPU-info</string>
     <string name="cores">Kernen</string>
     <string name="core">Kern %s</string>
-    <string name="min_freq">Minimale freq.: %s</string>
-    <string name="max_freq">Maximale freq.: %s</string>
     <string name="governor">Governor</string>
     <string name="cpu_usage">CPU-gebruik</string>
     <string name="gpu_info">GPU-info</string>
@@ -273,4 +271,16 @@
     <string name="face_authentication">Gezichtsherkenning</string>
     <string name="fingerprint_authentication">Vingerafdrukverificatie</string>
     <string name="file_based_encryption">Bestandsgebaseerde versleuteling</string>
+    <string name="cluster">Cluster</string>
+    <string name="min_freq">Minimale frequentie</string>
+    <string name="max_freq">Maximale frequentie</string>
+    <string name="supported_abi">Ondersteunde ABIs</string>
+    <string name="extensions">Extensies</string>
+    <string name="vendor">Fabrikant</string>
+    <string name="security_level">Beveiligingsniveau</string>
+    <string name="algorithms">Algoritmen</string>
+    <string name="maxNumberOfSessions">Maximaal aantal sessies</string>
+    <string name="numberOfOpenSessions">Aantal open sessies</string>
+    <string name="systemId">Systeem-ID</string>
+    <string name="device_uid">Uniek apparaat-ID</string>
 </resources>

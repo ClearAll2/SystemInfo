@@ -104,33 +104,30 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
     }
 
 
-    suspend fun getWidevineInfo(): Map<String, String> = withContext(Dispatchers.IO) {
-        val widevineUUID = UUID.fromString("edef8ba9-79d6-4ace-a3c8-27dcd51d21ed")
+    suspend fun getWidevineInfo(): List<DeviceInfo> = withContext(Dispatchers.IO) {
+        val widevineUUID = UUID.fromString(context.getString(R.string.widevineUUID))
         val info = mutableMapOf<String, String>()
-
+        val widevineInfo = mutableListOf<DeviceInfo>()
+        val customProps = mapOf(
+            "vendor" to R.string.vendor,
+            "version" to R.string.version,
+            "securityLevel" to R.string.security_level,
+            "algorithms" to R.string.algorithms,
+            "maxNumberOfSessions" to R.string.maxNumberOfSessions,
+            "numberOfOpenSessions" to R.string.numberOfOpenSessions,
+            "systemId" to R.string.systemId,
+            "deviceUniqueId" to R.string.device_uid
+        )
         try {
             val mediaDrm = MediaDrm(widevineUUID)
 
-            val customProps = listOf(
-                "vendor",
-                "version",
-                "securityLevel",
-                "algorithms",
-                "hdcpLevel",
-                "maxHdcpLevel",
-                "usageReportingSupport",
-                "maxNumberOfSessions",
-                "numberOfOpenSessions",
-                "systemId"
-            )
-
             for (prop in customProps) {
                 val value = try {
-                    mediaDrm.getPropertyString(prop)
+                    mediaDrm.getPropertyString(prop.key)
                 } catch (_: Exception) {
                     "Unavailable"
                 }
-                info[prop] = value
+                info[prop.key] = value
             }
 
             val uniqueId = try {
@@ -153,28 +150,35 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
             info["error"] = e.message ?: "Error accessing MediaDrm"
         }
 
-        info
+        info.entries.forEach {
+            widevineInfo.add(
+                DeviceInfo(
+                    name = customProps.getValue(it.key),
+                    it.value
+                )
+            )
+        }
+        widevineInfo
     }
 
-    suspend fun getClearKeyInfo(): Map<String, String> = withContext(Dispatchers.IO) {
-        val clearKeyUUID = UUID.fromString("e2719d58-a985-b3c9-781a-b030af78d30e")
+    suspend fun getClearKeyInfo(): List<DeviceInfo> = withContext(Dispatchers.IO) {
+        val clearKeyUUID = UUID.fromString(context.getString(R.string.clearKeyUUID))
         val info = mutableMapOf<String, String>()
-
+        val clearKeyInfo = mutableListOf<DeviceInfo>()
+        val customProps = mapOf(
+            "vendor" to R.string.vendor,
+            "version" to R.string.version
+        )
         try {
             val mediaDrm = MediaDrm(clearKeyUUID)
 
-            val customProps = listOf(
-                "vendor",
-                "version"
-            )
-
             for (prop in customProps) {
                 val value = try {
-                    mediaDrm.getPropertyString(prop)
+                    mediaDrm.getPropertyString(prop.key)
                 } catch (_: Exception) {
                     "Unavailable"
                 }
-                info[prop] = value
+                info[prop.key] = value
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -188,7 +192,15 @@ class DisplayUtils (private val context: Context, private val resources: Resourc
             info["error"] = e.message ?: "Error accessing MediaDrm"
         }
 
-        info
+        info.entries.forEach {
+            clearKeyInfo.add(
+                DeviceInfo(
+                    name = customProps.getValue(it.key),
+                    it.value
+                )
+            )
+        }
+        clearKeyInfo
     }
 
     fun calculateScreenSizeInInches(): Double {

@@ -99,8 +99,6 @@
     <string name="cpu_info">Thông tin CPU</string>
     <string name="cores">Lõi</string>
     <string name="core">Lõi %s</string>
-    <string name="min_freq">Tần số tối thiểu: %s</string>
-    <string name="max_freq">Tần số tối đa: %s</string>
     <string name="governor">Governor</string>
     <string name="cpu_usage">Sử dụng CPU</string>
     <string name="gpu_info">Thông tin GPU</string>
@@ -273,4 +271,16 @@
     <string name="face_authentication">Xác thực khuôn mặt</string>
     <string name="fingerprint_authentication">Xác thực vân tay</string>
     <string name="file_based_encryption">Mã hóa dựa trên tệp</string>
+    <string name="cluster">Cluster</string>
+    <string name="min_freq">Tần số tối thiểu</string>
+    <string name="max_freq">Tần số tối đa</string>
+    <string name="supported_abi">ABI được hỗ trợ</string>
+    <string name="extensions">Tiện ích mở rộng</string>
+    <string name="vendor">Nhà cung cấp</string>
+    <string name="security_level">Mức độ bảo mật</string>
+    <string name="algorithms">Thuật toán</string>
+    <string name="maxNumberOfSessions">Số phiên tối đa</string>
+    <string name="numberOfOpenSessions">Số phiên đang mở</string>
+    <string name="systemId">ID hệ thống</string>
+    <string name="device_uid">ID thiết bị duy nhất</string>
 </resources>

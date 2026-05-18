@@ -103,8 +103,6 @@
     <string name="cpu_info">CPU info</string>
     <string name="cores">Cores</string>
     <string name="core">Core %s</string>
-    <string name="min_freq">Minimum Freq: %s</string>
-    <string name="max_freq">Maximum Freq: %s</string>
     <string name="governor">Governor</string>
     <string name="cpu_usage">CPU usage</string>
     <string name="gpu_info">GPU info</string>
@@ -278,4 +276,16 @@
     <string name="face_authentication">Face authentication</string>
     <string name="fingerprint_authentication">Fingerprint authentication</string>
     <string name="file_based_encryption">File-based encryption</string>
+    <string name="cluster">Cluster</string>
+    <string name="min_freq">Minimum frequency</string>
+    <string name="max_freq">Maximum frequency</string>
+    <string name="supported_abi">Supported ABIs</string>
+    <string name="extensions">Extensions</string>
+    <string name="vendor">Vendor</string>
+    <string name="security_level">Security level</string>
+    <string name="algorithms">Algorithms</string>
+    <string name="maxNumberOfSessions">Max number of sessions</string>
+    <string name="numberOfOpenSessions">Number of open sessions</string>
+    <string name="systemId">System Id</string>
+    <string name="device_uid">Device unique id</string>
 </resources>

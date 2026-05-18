@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widevineUUID" translatable="false">edef8ba9-79d6-4ace-a3c8-27dcd51d21ed</string>
+    <string name="clearKeyUUID" translatable="false">e2719d58-a985-b3c9-781a-b030af78d30e</string>
+</resources>

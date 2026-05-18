@@ -78,4 +78,15 @@ fun Drawable.toBitmap(): Bitmap {
 }
 
 
-
+fun getSystemProperty(key: String): String? {
+    return try {
+        Runtime.getRuntime()
+            .exec("getprop $key")
+            .inputStream
+            .bufferedReader()
+            .use { it.readLine() }
+            ?.trim()
+    } catch (_: Exception) {
+        null
+    }
+}
