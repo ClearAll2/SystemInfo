@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -94,6 +97,7 @@ fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
 fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val resource = LocalResources.current
+    val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
     var showWarningPopup by remember { mutableStateOf(false) }
     var hasPermission by remember(refreshKey) { mutableStateOf(context.hasPermission(Manifest.permission.READ_PHONE_STATE)) }
@@ -159,7 +163,11 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
             .padding(horizontal = 20.dp)
             .padding(top = paddingValues.calculateTopPadding())
             .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+        contentPadding = PaddingValues(
+            start = paddingValues.calculateStartPadding(layoutDirection),
+            end = paddingValues.calculateEndPadding(layoutDirection),
+            bottom = paddingValues.calculateBottomPadding()
+        ),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {

@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
@@ -126,6 +129,7 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
 @Composable
 fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
+    val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val ramInfo by remember(refreshKey) { mutableStateOf(StorageUtils(context).getRAMInfo()) }
     // Auto-refresh every 2 seconds
@@ -137,25 +141,26 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
     }
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
+        columns = GridCells.Adaptive(320.dp),
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp)
             .padding(top = paddingValues.calculateTopPadding())
             .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+        contentPadding = PaddingValues(
+            start = paddingValues.calculateStartPadding(layoutDirection),
+            end = paddingValues.calculateEndPadding(layoutDirection),
+            bottom = paddingValues.calculateBottomPadding()
+        ),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-
-        header {
-            GeneralProgressBar(
-                (ramInfo[2].value as Number).toLong(), (ramInfo[3].value as Number).toLong(), 1,
-                height = 30.dp,
-                verticalPadding = 15.dp
-            )
-        }
         item {
             Column {
+                GeneralProgressBar(
+                    (ramInfo[2].value as Number).toLong(), (ramInfo[3].value as Number).toLong(), 1,
+                    height = 30.dp,
+                    verticalPadding = 15.dp
+                )
                 ramInfo.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString() + it.extra,
@@ -179,6 +184,7 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
 @Composable
 fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
+    val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val internalStorageStats by remember(refreshKey) { mutableStateOf(StorageUtils(context).getInternalStorageInfo()) }
     val externalStorageStats by remember(refreshKey) { mutableStateOf(StorageUtils(context).getExternalStorageInfo()) }
@@ -196,9 +202,12 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
             .padding(horizontal = 20.dp)
             .padding(top = paddingValues.calculateTopPadding())
             .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+        contentPadding = PaddingValues(
+            start = paddingValues.calculateStartPadding(layoutDirection),
+            end = paddingValues.calculateEndPadding(layoutDirection),
+            bottom = paddingValues.calculateBottomPadding()
+        ),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
-
     ) {
         item {
             Column {

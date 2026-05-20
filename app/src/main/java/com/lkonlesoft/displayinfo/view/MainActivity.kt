@@ -28,6 +28,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,6 +61,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
@@ -304,6 +307,7 @@ fun MainContext(settings: SettingsViewModel){
 @OptIn(FlowPreview::class)
 @Composable
 fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute: String?, paddingValues: PaddingValues) {
+    val layoutDirection = LocalLayoutDirection.current
     val width = LocalWindowInfo.current.containerDpSize.width
     val state = rememberLazyStaggeredGridState()
     val resources = LocalResources.current
@@ -380,7 +384,11 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                         .padding(horizontal = 7.5.dp)
                         .padding(top = paddingValues.calculateTopPadding())
                         .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
-                    contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                    contentPadding = PaddingValues(
+                        start = paddingValues.calculateStartPadding(layoutDirection),
+                        end = paddingValues.calculateEndPadding(layoutDirection),
+                        bottom = paddingValues.calculateBottomPadding()
+                    ),
                 ) {
                     items(listScreen) { item ->
                         val isSelected = currentRoute == item.first.route
@@ -401,7 +409,11 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                         .padding(horizontal = 7.5.dp)
                         .padding(top = paddingValues.calculateTopPadding())
                         .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
-                    contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                    contentPadding = PaddingValues(
+                        start = paddingValues.calculateStartPadding(layoutDirection),
+                        end = paddingValues.calculateEndPadding(layoutDirection),
+                        bottom = paddingValues.calculateBottomPadding()
+                    ),
                 ) {
                     item {
                         SystemDashboard(
@@ -471,7 +483,11 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                             .padding(horizontal = 20.dp)
                             .padding(top = paddingValues.calculateTopPadding())
                             .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
-                        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                        contentPadding = PaddingValues(
+                            start = paddingValues.calculateStartPadding(layoutDirection),
+                            end = paddingValues.calculateEndPadding(layoutDirection),
+                            bottom = paddingValues.calculateBottomPadding()
+                        ),
                     ) {
                         items(listScreen) { item ->
                             val isSelected = currentRoute == item.first.route

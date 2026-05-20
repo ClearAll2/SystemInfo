@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -69,6 +72,7 @@ fun SettingsScreen(
     onAboutClick: () -> Unit,
     paddingValues: PaddingValues
 ) {
+    val layoutDirection = LocalLayoutDirection.current
     var showLangDialog by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
     var currentLang by remember { mutableStateOf("") }
@@ -152,7 +156,11 @@ fun SettingsScreen(
             .padding(horizontal = 20.dp)
             .padding(top = paddingValues.calculateTopPadding())
             .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+        contentPadding = PaddingValues(
+            start = paddingValues.calculateStartPadding(layoutDirection),
+            end = paddingValues.calculateEndPadding(layoutDirection),
+            bottom = paddingValues.calculateBottomPadding()
+        ),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {

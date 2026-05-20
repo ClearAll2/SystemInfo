@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
@@ -87,6 +90,7 @@ fun BatteryDashboard(intervalMillis: Long = 2000L,onClick: () -> Unit) {
 @Composable
 fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
+    val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val infoList by remember(refreshKey) { mutableStateOf(BatteryUtils(context).getAllData()) }
     LaunchedEffect(Unit) {
@@ -102,7 +106,11 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
             .padding(horizontal = 20.dp)
             .padding(top = paddingValues.calculateTopPadding())
             .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+        contentPadding = PaddingValues(
+            start = paddingValues.calculateStartPadding(layoutDirection),
+            end = paddingValues.calculateEndPadding(layoutDirection),
+            bottom = paddingValues.calculateBottomPadding()
+        ),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {

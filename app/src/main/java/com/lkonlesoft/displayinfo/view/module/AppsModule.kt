@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,6 +58,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
@@ -110,6 +113,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
     val resource = LocalResources.current
     val haptic = LocalHapticFeedback.current
     val width = LocalWindowInfo.current.containerDpSize.width
+    val layoutDirection = LocalLayoutDirection.current
     val appTypes = remember {
         mapOf(
             -1 to R.string.all,
@@ -143,7 +147,9 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
     AnimatedContent (targetState = isLoading,
         transitionSpec = { fadeIn() togetherWith fadeOut() }) {
         if (it) {
-            Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainer).fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                .fillMaxSize(), contentAlignment = Alignment.Center) {
                 ContainedLoadingIndicator(
                     modifier = Modifier.size(100.dp)
                 )
@@ -153,7 +159,10 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
             Column(modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
                 .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding()),
+                .padding(top = paddingValues.calculateTopPadding(),
+                    start = paddingValues.calculateStartPadding(layoutDirection),
+                    end = paddingValues.calculateEndPadding(layoutDirection)
+                ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 OutlinedTextField(
@@ -188,7 +197,10 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                         unfocusedContainerColor = MaterialTheme.colorScheme.background
                     )
                 )
-                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 8.dp),
+                Row(modifier = Modifier
+                    .fillMaxWidth(if (width < 840.dp) 1f else .7f)
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
                 ) {
@@ -213,24 +225,6 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                         }
                     }
                 }
-                /*ButtonGroup(overflowIndicator = {},
-                    modifier = Modifier.fillMaxWidth(if (width < 840.dp) 1f else .7f).padding(horizontal = 20.dp).padding(bottom = 8.dp)) {
-                    appTypes.entries.forEach { type ->
-                        toggleableItem(
-                            weight = 1f,
-                            checked = selectType == type.key,
-                            onCheckedChange = {
-                                selectType = type.key
-                                haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                            },
-                            label = buildString {
-                                append(resource.getString(type.value))
-                                append("\n")
-                                append("(${appCountInfo[type.key + 1].value})")
-                            }
-                        )
-                    }
-                }*/
                 AnimatedContent(
                     targetState = filteredApps.isNotEmpty(),
                     transitionSpec = {
@@ -282,8 +276,13 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                     else {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Box(contentAlignment = Alignment.Center,
-                                modifier = Modifier.size(240.dp).clip(MaterialShapes.Cookie12Sided.toShape())
-                                    .background(color = MaterialTheme.colorScheme.surfaceBright, shape = MaterialShapes.Cookie12Sided.toShape())
+                                modifier = Modifier
+                                    .size(240.dp)
+                                    .clip(MaterialShapes.Cookie12Sided.toShape())
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surfaceBright,
+                                        shape = MaterialShapes.Cookie12Sided.toShape()
+                                    )
                             ) {
                                 Text(text = stringResource(R.string.no_apps_found), fontSize = 18.sp)
                             }
