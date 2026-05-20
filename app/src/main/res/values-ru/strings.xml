@@ -283,4 +283,21 @@
     <string name="numberOfOpenSessions">Количество открытых сессий</string>
     <string name="systemId">ID системы</string>
     <string name="device_uid">Уникальный ID устройства</string>
+    <string name="bl_multiple_advertise">Множественная реклама</string>
+    <string name="bl_offloaded_filtering">Выгруженная фильтрация</string>
+    <string name="bl_offloaded_scan_batching">Выгруженное пакетное сканирование</string>
+    <string name="bl_le_periodic_advertise">LE Periodic Advertising</string>
+    <string name="bl_le_extended_advertise">LE Extended Advertising</string>
+    <string name="bl_le_2m_phy">LE 2M PHY (Высокая скорость)</string>
+    <string name="bl_le_coded_phy">LE Coded PHY (Дальний радиус)</string>
+    <string name="le_audio">Поддержка LE Audio</string>
+    <string name="low_latency_audio">Аудио с низкой задержкой</string>
+    <string name="pro_audio_support">Поддержка Pro Audio</string>
+    <string name="midi_support">Поддержка MIDI</string>
+    <string name="unprocessed_audio_source">Необработанный источник аудио</string>
+    <string name="video_codecs">Видеокодеки</string>
+    <string name="media">Медиа</string>
+    <string name="audio_codecs">Аудиокодеки</string>
+    <string name="codecs">Кодеки</string>
+    <string name="features">Функции</string>
 </resources>

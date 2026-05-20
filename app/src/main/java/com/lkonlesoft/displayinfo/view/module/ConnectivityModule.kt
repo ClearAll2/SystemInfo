@@ -143,6 +143,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
         }
     }
     val stateInfoList by remember(refreshKey) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getStateData() else emptyList()) }
+    val featuresList by remember(refreshKey2) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getFeatures() else emptyList()) }
     val deviceInfoList by remember(refreshKey2) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getDeviceData() else emptyList()) }
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
         data = Uri.fromParts("package", context.packageName, null)
@@ -204,6 +205,23 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
                             topEnd = if (stateInfoList.first() == it) 20.dp else 5.dp,
                             bottomStart = if (stateInfoList.last() == it) 20.dp else 5.dp,
                             bottomEnd = if (stateInfoList.last() == it) 20.dp else 5.dp
+                        )
+                    }
+                }
+            }
+            item {
+                Column {
+                    HeaderLine(tittle = stringResource(R.string.features))
+                    featuresList.forEach {
+                        IndividualLine(title = stringResource(it.name),
+                            info = it.value.toString(),
+                            canLongPress = longPressCopy,
+                            copyTitle = copyTitle,
+                            isLast = featuresList.last() == it,
+                            topStart = if (featuresList.first() == it) 20.dp else 5.dp,
+                            topEnd = if (featuresList.first() == it) 20.dp else 5.dp,
+                            bottomStart = if (featuresList.last() == it) 20.dp else 5.dp,
+                            bottomEnd = if (featuresList.last() == it) 20.dp else 5.dp
                         )
                     }
                 }

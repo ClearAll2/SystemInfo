@@ -23,6 +23,7 @@ import com.lkonlesoft.displayinfo.view.module.CameraInfoScreen
 import com.lkonlesoft.displayinfo.view.module.ConnectivityScreen
 import com.lkonlesoft.displayinfo.view.module.DisplayScreen
 import com.lkonlesoft.displayinfo.view.module.HardwareScreen
+import com.lkonlesoft.displayinfo.view.module.MediaScreen
 import com.lkonlesoft.displayinfo.view.module.MemoryScreen
 import com.lkonlesoft.displayinfo.view.module.NetworkScreen
 import com.lkonlesoft.displayinfo.view.module.StorageScreen
@@ -165,8 +166,7 @@ fun MainNavigation(
             DisplayScreen(
                 paddingValues = paddingValues,
                 longPressCopy = longPressCopy,
-                copyTitle = copyTitle,
-                showNotice = showNotice
+                copyTitle = copyTitle
             )
         }
         composable(
@@ -246,6 +246,19 @@ fun MainNavigation(
                 paddingValues = paddingValues,
                 longPressCopy = longPressCopy,
                 copyTitle = copyTitle
+            )
+        }
+        composable(
+            route = NavigationItem.Media.route, deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "si://info/media"
+                }
+            )) {
+            MediaScreen(
+                paddingValues = paddingValues,
+                longPressCopy = longPressCopy,
+                copyTitle = copyTitle,
+                showNotice = showNotice
             )
         }
         composable(

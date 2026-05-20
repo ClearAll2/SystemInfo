@@ -283,4 +283,21 @@
     <string name="numberOfOpenSessions">打开的会话数</string>
     <string name="systemId">系统 ID</string>
     <string name="device_uid">设备唯一 ID</string>
+    <string name="bl_multiple_advertise">多重广播</string>
+    <string name="bl_offloaded_filtering">卸载过滤</string>
+    <string name="bl_offloaded_scan_batching">卸载扫描批处理</string>
+    <string name="bl_le_periodic_advertise">LE Periodic Advertising</string>
+    <string name="bl_le_extended_advertise">LE Extended Advertising</string>
+    <string name="bl_le_2m_phy">LE 2M PHY (高速)</string>
+    <string name="bl_le_coded_phy">LE Coded PHY (远距离)</string>
+    <string name="le_audio">LE Audio 支持</string>
+    <string name="low_latency_audio">低延迟音频</string>
+    <string name="pro_audio_support">专业音频支持</string>
+    <string name="midi_support">MIDI 支持</string>
+    <string name="unprocessed_audio_source">未处理音频源</string>
+    <string name="video_codecs">视频编解码器</string>
+    <string name="media">媒体</string>
+    <string name="audio_codecs">音频编解码器</string>
+    <string name="codecs">编解码器</string>
+    <string name="features">功能</string>
 </resources>

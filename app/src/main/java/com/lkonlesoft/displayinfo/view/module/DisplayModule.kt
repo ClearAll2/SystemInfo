@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -29,17 +30,13 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.DisplayUtils
 import com.lkonlesoft.displayinfo.view.GeneralStatRow
-import com.lkonlesoft.displayinfo.view.GeneralWarning
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.staggeredHeader
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 
 @Composable
 fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
@@ -81,18 +78,12 @@ fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
 }
 
 @Composable
-fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
+fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val resources = LocalResources.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    var widevineInfo by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
-    var clearKeyInfo by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
-    var infoList by remember(refreshKey) { mutableStateOf(DisplayUtils(context, resources).getAllData()) }
+    var infoList by remember(refreshKey) { mutableStateOf(DisplayUtils(context, resources).getAllDisplayDetails()) }
     LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            widevineInfo = DisplayUtils(context, resources).getWidevineInfo()
-            clearKeyInfo = DisplayUtils(context, resources).getClearKeyInfo()
-        }
         while (true){
             delay(1000L)
             refreshKey++
@@ -108,68 +99,24 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
         contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        item {
+        itemsIndexed(infoList) { index, display ->
             Column {
-                HeaderLine(tittle = stringResource(R.string.display))
-                infoList.forEach {
+                HeaderLine(tittle = stringResource(R.string.display) + " #${index+1}")
+                display.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = infoList.last() == it,
-                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
+                        isLast = display.last() == it,
+                        topStart = if (display.first() == it) 20.dp else 5.dp,
+                        topEnd = if (display.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (display.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (display.last() == it) 20.dp else 5.dp
                     )
                 }
             }
         }
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.widevine))
-                val widevineList = widevineInfo.toList()
-                widevineList.forEach {
-                    IndividualLine(title = stringResource(it.name),
-                        info = it.value.toString(),
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = widevineList.last() == it,
-                        topStart = if (widevineList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (widevineList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (widevineList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (widevineList.last() == it) 20.dp else 5.dp
-                    )
-                }
-            }
-        }
-        item {
-            Column {
-                HeaderLine(tittle = stringResource(R.string.clearkey))
-                val clearKeyList = clearKeyInfo.toList()
-                clearKeyList.forEach {
-                    IndividualLine(title = stringResource(it.name),
-                        info = it.value.toString(),
-                        canLongPress = longPressCopy,
-                        copyTitle = copyTitle,
-                        isLast = clearKeyList.last() == it,
-                        topStart = if (clearKeyList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (clearKeyList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (clearKeyList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (clearKeyList.last() == it) 20.dp else 5.dp
-                    )
-                }
 
-            }
-        }
-        if (showNotice){
-            item {
-                GeneralWarning(
-                    title = R.string.drm_notice_title,
-                    text = R.string.drm_notice,
-                )
-            }
-        }
         staggeredHeader {
             Spacer(modifier = Modifier.padding(20.dp))
         }

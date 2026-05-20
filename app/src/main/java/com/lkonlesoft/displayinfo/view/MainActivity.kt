@@ -43,10 +43,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -85,6 +85,7 @@ import com.lkonlesoft.displayinfo.view.module.BatteryDashboard
 import com.lkonlesoft.displayinfo.view.module.BluetoothDashboard
 import com.lkonlesoft.displayinfo.view.module.CameraDashboard
 import com.lkonlesoft.displayinfo.view.module.DisplayDashboard
+import com.lkonlesoft.displayinfo.view.module.MediaDashboard
 import com.lkonlesoft.displayinfo.view.module.MemoryDashBoard
 import com.lkonlesoft.displayinfo.view.module.NetworkDashboard
 import com.lkonlesoft.displayinfo.view.module.SoCDashBoard
@@ -155,7 +156,7 @@ fun MainContext(settings: SettingsViewModel){
     val appColor by settings.appColor.collectAsStateWithLifecycle()
     val useDynamicColors by settings.useDynamicColors.collectAsStateWithLifecycle()
     val state = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state)
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(state)
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -174,6 +175,7 @@ fun MainContext(settings: SettingsViewModel){
             NavigationItem.About,
             NavigationItem.Camera,
             NavigationItem.Settings,
+            NavigationItem.Media,
             NavigationItem.Apps
         )
     }
@@ -198,7 +200,7 @@ fun MainContext(settings: SettingsViewModel){
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
-                    MediumFlexibleTopAppBar(
+                    TopAppBar(
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainer,
                             scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -321,7 +323,7 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             ),
             Pair(
                 NavigationItem.Display,
-                buildDetailsSubTextSetting(resources, R.string.size, R.string.refresh_rate, R.string.widevine)
+                buildDetailsSubTextSetting(resources, R.string.size, R.string.refresh_rate, R.string.capacity)
             ),
             Pair(
                 NavigationItem.Battery,
@@ -346,6 +348,10 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             Pair(
                 NavigationItem.Connectivity,
                 buildDetailsSubTextSetting(resources, R.string.bluetooth, R.string.connected_devices)
+            ),
+            Pair(
+                NavigationItem.Media,
+                buildDetailsSubTextSetting(resources, R.string.widevine, R.string.security_level)
             ),
             Pair(
                 NavigationItem.Apps,
@@ -430,18 +436,23 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                             onClick = { navController.navigate(NavigationItem.Network.route) })
                     }
                     item {
+                        CameraDashboard {
+                            navController.navigate(NavigationItem.Camera.route)
+                        }
+                    }
+                    item {
                         BluetoothDashboard {
                             navController.navigate(NavigationItem.Connectivity.route)
                         }
                     }
                     item {
-                        AppDashboard {
-                            navController.navigate(NavigationItem.Apps.route)
+                        MediaDashboard {
+                            navController.navigate(NavigationItem.Media.route)
                         }
                     }
                     item {
-                        CameraDashboard {
-                            navController.navigate(NavigationItem.Camera.route)
+                        AppDashboard {
+                            navController.navigate(NavigationItem.Apps.route)
                         }
                     }
                 }

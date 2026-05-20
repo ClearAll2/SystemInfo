@@ -283,4 +283,21 @@
     <string name="numberOfOpenSessions">Numero di sessioni aperte</string>
     <string name="systemId">ID di sistema</string>
     <string name="device_uid">ID univoco del dispositivo</string>
+    <string name="bl_multiple_advertise">Annuncio multiplo</string>
+    <string name="bl_offloaded_filtering">Filtraggio offload</string>
+    <string name="bl_offloaded_scan_batching">Batching scansione offload</string>
+    <string name="bl_le_periodic_advertise">LE Periodic Advertising</string>
+    <string name="bl_le_extended_advertise">LE Extended Advertising</string>
+    <string name="bl_le_2m_phy">LE 2M PHY (Alta velocità)</string>
+    <string name="bl_le_coded_phy">LE Coded PHY (Lungo raggio)</string>
+    <string name="le_audio">Supporto LE Audio</string>
+    <string name="low_latency_audio">Audio a bassa latenza</string>
+    <string name="pro_audio_support">Supporto audio professionale</string>
+    <string name="midi_support">Supporto MIDI</string>
+    <string name="unprocessed_audio_source">Sorgente audio non processata</string>
+    <string name="video_codecs">Codec video</string>
+    <string name="media">Media</string>
+    <string name="audio_codecs">Codec audio</string>
+    <string name="codecs">Codec</string>
+    <string name="features">Funzionalità</string>
 </resources>

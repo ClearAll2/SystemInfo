@@ -138,8 +138,8 @@ class SocUtils(private val context: Context) {
 
             result.add(
                 ClusterInfo(
-                    minFreq = if (min != -1L) "$min MHz" else context.getString(R.string.unknown),
-                    maxFreq = if (max != -1L) "$max MHz" else context.getString(R.string.unknown),
+                    minFreq = if (min > 0) "$min MHz" else context.getString(R.string.unknown),
+                    maxFreq = if (max > 0) "$max MHz" else context.getString(R.string.unknown),
                     cores = coresRange
                 )
             )

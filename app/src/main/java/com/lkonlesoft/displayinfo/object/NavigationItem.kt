@@ -12,6 +12,7 @@ import com.lkonlesoft.displayinfo.ui.theme.ConnectivityColor
 import com.lkonlesoft.displayinfo.ui.theme.DisplayColor
 import com.lkonlesoft.displayinfo.ui.theme.MemoryColor
 import com.lkonlesoft.displayinfo.ui.theme.NetworkColor
+import com.lkonlesoft.displayinfo.ui.theme.Pink80
 import com.lkonlesoft.displayinfo.ui.theme.SoCColor
 import com.lkonlesoft.displayinfo.ui.theme.StorageColor
 import com.lkonlesoft.displayinfo.ui.theme.SystemColor
@@ -52,5 +53,8 @@ sealed class NavigationItem (@param:StringRes val name: Int, val route: String, 
     data object Settings: NavigationItem(name = R.string.settings, route = "settings", R.drawable.rounded_settings_24)
     data object Apps: NavigationItem(name = R.string.apps, route = "apps", R.drawable.outline_apps_24,
         AppsColor
+    )
+    data object Media: NavigationItem(name = R.string.media, route = "media", R.drawable.slideshow_24px,
+        Pink80
     )
 }

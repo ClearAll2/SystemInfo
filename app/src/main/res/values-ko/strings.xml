@@ -283,4 +283,21 @@
     <string name="numberOfOpenSessions">열린 세션 수</string>
     <string name="systemId">시스템 ID</string>
     <string name="device_uid">기기 고유 ID</string>
+    <string name="bl_multiple_advertise">다중 광고</string>
+    <string name="bl_offloaded_filtering">오프로드 필터링</string>
+    <string name="bl_offloaded_scan_batching">오프로드 스캔 배칭</string>
+    <string name="bl_le_periodic_advertise">LE Periodic Advertising</string>
+    <string name="bl_le_extended_advertise">LE Extended Advertising</string>
+    <string name="bl_le_2m_phy">LE 2M PHY (고속)</string>
+    <string name="bl_le_coded_phy">LE Coded PHY (장거리)</string>
+    <string name="le_audio">LE Audio 지원</string>
+    <string name="low_latency_audio">저지연 오디오</string>
+    <string name="pro_audio_support">Pro 오디오 지원</string>
+    <string name="midi_support">MIDI 지원</string>
+    <string name="unprocessed_audio_source">비처리 오디오 소스</string>
+    <string name="video_codecs">비디오 코덱</string>
+    <string name="media">미디어</string>
+    <string name="audio_codecs">오디오 코덱</string>
+    <string name="codecs">코덱</string>
+    <string name="features">기능</string>
 </resources>

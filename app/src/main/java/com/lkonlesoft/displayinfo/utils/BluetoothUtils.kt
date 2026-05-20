@@ -4,12 +4,13 @@ import android.Manifest
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
+import android.bluetooth.BluetoothStatusCodes
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.helper.dc.BluetoothInfo
+import com.lkonlesoft.displayinfo.helper.dc.BondedDeviceInfo
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 
 class BluetoothUtils(private val context: Context) {
@@ -51,6 +52,12 @@ class BluetoothUtils(private val context: Context) {
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun getName(): String {
+        return bluetoothAdapter?.name ?: context.getString(R.string.unknown)
+    }
+
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun getHeadsetConnectionState(): String {
         val state = bluetoothAdapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
         return connectionState[state] ?: context.getString(R.string.unknown)
@@ -73,6 +80,7 @@ class BluetoothUtils(private val context: Context) {
     fun getStateData(): List<DeviceInfo> {
         return listOf(
             DeviceInfo(R.string.bluetooth, if (isEnabled()) context.getString(R.string.enabled) else context.getString(R.string.disabled)),
+            DeviceInfo(R.string.name, getName()),
             DeviceInfo(R.string.headset_connection, getHeadsetConnectionState()),
             DeviceInfo(R.string.d2dp_connection, getD2dpConnectionState()),
             DeviceInfo(R.string.le_audio_connection, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) getLEAudioConnectionState()
@@ -81,16 +89,59 @@ class BluetoothUtils(private val context: Context) {
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun getFeatures(): List<DeviceInfo> {
+        val multiAdvertise = bluetoothAdapter?.isMultipleAdvertisementSupported ?: false
+        val offloadFiltering = bluetoothAdapter?.isOffloadedFilteringSupported ?: false
+        val offloadScanning = bluetoothAdapter?.isOffloadedScanBatchingSupported ?: false
+        val lePeriodicAdvertise = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bluetoothAdapter?.isLePeriodicAdvertisingSupported ?: false
+        } else {
+            false
+        }
+        val leExtendedAdvertise = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bluetoothAdapter?.isLeExtendedAdvertisingSupported ?: false
+        } else {
+            false
+        }
+        val le2MPhy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bluetoothAdapter?.isLe2MPhySupported ?: false
+        } else {
+            false
+        }
+        val leCodedPhy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bluetoothAdapter?.isLeCodedPhySupported ?: false
+        } else {
+            false
+        }
+        val leAudio = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            bluetoothAdapter?.isLeAudioSupported == BluetoothStatusCodes.FEATURE_SUPPORTED
+        } else {
+            false
+        }
+        return listOf(
+            DeviceInfo(R.string.bl_multiple_advertise, if (multiAdvertise) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.bl_offloaded_filtering, if (offloadFiltering) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.bl_offloaded_scan_batching, if (offloadScanning) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.bl_le_periodic_advertise, if (lePeriodicAdvertise) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.bl_le_extended_advertise, if (leExtendedAdvertise) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.bl_le_2m_phy, if (le2MPhy) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.bl_le_coded_phy, if (leCodedPhy) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+            DeviceInfo(R.string.le_audio, if (leAudio) context.getString(R.string.supported) else context.getString(R.string.not_supported)),
+        )
+    }
+
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun getDeviceData(): List<List<DeviceInfo>> {
         if (bluetoothAdapter == null || !isEnabled())
             return emptyList()
         val devices = bluetoothAdapter?.bondedDevices ?: emptySet()
         if (devices.isEmpty())
             return emptyList()
-        val deviceList = mutableListOf<BluetoothInfo>()
+        val deviceList = mutableListOf<BondedDeviceInfo>()
         devices.filterNotNull().forEach { device ->
             deviceList.add(
-                BluetoothInfo(
+                BondedDeviceInfo(
                     uuid = device.uuids?.joinToString("\n") ?: context.getString(R.string.unknown),
                     name = device.name ?: context.getString(R.string.unknown),
                     address = device.address ?: context.getString(R.string.unknown),

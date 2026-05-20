@@ -1,6 +1,6 @@
 package com.lkonlesoft.displayinfo.helper.dc
 
-data class BluetoothInfo(
+data class BondedDeviceInfo(
     val uuid: String,
     val name: String,
     val address: String,

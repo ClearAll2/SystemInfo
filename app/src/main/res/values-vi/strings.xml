@@ -283,4 +283,21 @@
     <string name="numberOfOpenSessions">Số phiên đang mở</string>
     <string name="systemId">ID hệ thống</string>
     <string name="device_uid">ID thiết bị duy nhất</string>
+    <string name="bl_multiple_advertise">Quảng cáo nhiều</string>
+    <string name="bl_offloaded_filtering">Lọc offload</string>
+    <string name="bl_offloaded_scan_batching">Batching quét offload</string>
+    <string name="bl_le_periodic_advertise">LE Periodic Advertising</string>
+    <string name="bl_le_extended_advertise">LE Extended Advertising</string>
+    <string name="bl_le_2m_phy">LE 2M PHY (Tốc độ cao)</string>
+    <string name="bl_le_coded_phy">LE Coded PHY (Phạm vi xa)</string>
+    <string name="le_audio">Hỗ trợ LE Audio</string>
+    <string name="low_latency_audio">Âm thanh độ trễ thấp</string>
+    <string name="pro_audio_support">Hỗ trợ Pro Audio</string>
+    <string name="midi_support">Hỗ trợ MIDI</string>
+    <string name="unprocessed_audio_source">Nguồn âm thanh chưa xử lý</string>
+    <string name="video_codecs">Codec video</string>
+    <string name="media">Phương tiện</string>
+    <string name="audio_codecs">Codec âm thanh</string>
+    <string name="codecs">Codec</string>
+    <string name="features">Tính năng</string>
 </resources>

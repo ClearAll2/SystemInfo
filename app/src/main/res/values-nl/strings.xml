@@ -283,4 +283,21 @@
     <string name="numberOfOpenSessions">Aantal open sessies</string>
     <string name="systemId">Systeem-ID</string>
     <string name="device_uid">Uniek apparaat-ID</string>
+    <string name="bl_multiple_advertise">Meerdere advertenties</string>
+    <string name="bl_offloaded_filtering">Offload filtering</string>
+    <string name="bl_offloaded_scan_batching">Offload scan batching</string>
+    <string name="bl_le_periodic_advertise">LE Periodic Advertising</string>
+    <string name="bl_le_extended_advertise">LE Extended Advertising</string>
+    <string name="bl_le_2m_phy">LE 2M PHY (Hoge snelheid)</string>
+    <string name="bl_le_coded_phy">LE Coded PHY (Lange afstand)</string>
+    <string name="le_audio">LE Audio ondersteuning</string>
+    <string name="low_latency_audio">Lage latentie audio</string>
+    <string name="pro_audio_support">Pro audio ondersteuning</string>
+    <string name="midi_support">MIDI ondersteuning</string>
+    <string name="unprocessed_audio_source">Onbewerkte audio bron</string>
+    <string name="video_codecs">Video-codecs</string>
+    <string name="media">Media</string>
+    <string name="audio_codecs">Audio-codecs</string>
+    <string name="codecs">Codecs</string>
+    <string name="features">Functies</string>
 </resources>

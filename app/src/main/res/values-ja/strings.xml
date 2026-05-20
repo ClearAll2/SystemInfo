@@ -283,4 +283,21 @@
     <string name="numberOfOpenSessions">オープンセッション数</string>
     <string name="systemId">システムID</string>
     <string name="device_uid">デバイス固有ID</string>
+    <string name="bl_multiple_advertise">複数広告</string>
+    <string name="bl_offloaded_filtering">オフロードフィルタリング</string>
+    <string name="bl_offloaded_scan_batching">オフロードスキャンバッチング</string>
+    <string name="bl_le_periodic_advertise">LE Periodic Advertising</string>
+    <string name="bl_le_extended_advertise">LE Extended Advertising</string>
+    <string name="bl_le_2m_phy">LE 2M PHY (高速)</string>
+    <string name="bl_le_coded_phy">LE Coded PHY (長距離)</string>
+    <string name="le_audio">LE Audio サポート</string>
+    <string name="low_latency_audio">低遅延オーディオ</string>
+    <string name="pro_audio_support">Pro Audio サポート</string>
+    <string name="midi_support">MIDI サポート</string>
+    <string name="unprocessed_audio_source">未処理オーディオソース</string>
+    <string name="video_codecs">ビデオコーデック</string>
+    <string name="media">メディア</string>
+    <string name="audio_codecs">オーディオコーデック</string>
+    <string name="codecs">コーデック</string>
+    <string name="features">機能</string>
 </resources>
