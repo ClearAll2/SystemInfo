@@ -1,8 +1,11 @@
-# System Info
-Repository of System Info app
+A simple and modern app to get device info.
 
-## App Info
-System Info is a simple Android app built with [Jetpack Compose UI toolkit](https://developer.android.com/jetpack/compose).
+System Info is a project that I'm doing with passion and in my free time.
+It's entirely free, open-source and contains no ads.
+
+Screenshots made by Hotpot.ai
+
+If you like System Info, please leave a review. It helps a lot 😊
 
 <p>
  <a href='https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height="80px"/></a>
@@ -34,6 +37,9 @@ Simple and adaptive UI.
   <img src="screenshots/266.png" alt="sp1"  height="360px"/>
   <img src="screenshots/267.png" alt="sp1"  height="360px"/>	
 </p>
+
+## Minimum supported Android version
+Android 6 (Marshmallow)
 
 ## Changelog
 Read app [changelog](changelog.md)
