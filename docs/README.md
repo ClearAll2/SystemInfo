@@ -1,9 +1,4 @@
-A simple and modern app to get device info.
-
-System Info is a project that I'm doing with passion and in my free time.
-It's entirely free, open-source and contains no ads.
-
-Screenshots made by Hotpot.ai
+System Info is a project that I'm doing with passion and in my free time – a simple and modern app to get device info.
 
 If you like System Info, please leave a review. It helps a lot 😊
 
@@ -30,13 +25,14 @@ Show various system information of device:
 Simple and adaptive UI.
 <p>
   <img src="screenshots/261.png" alt="sp1"  height="360px"/>
-  <img src="screenshots/262.png" alt="sp1"  height="360px"/>
-  <img src="screenshots/263.png" alt="sp1"  height="360px"/>
-  <img src="screenshots/264.png" alt="sp1"  height="360px"/>
-  <img src="screenshots/265.png" alt="sp1"  height="360px"/>
-  <img src="screenshots/266.png" alt="sp1"  height="360px"/>
-  <img src="screenshots/267.png" alt="sp1"  height="360px"/>	
+  <img src="screenshots/262.png" alt="sp2"  height="360px"/>
+  <img src="screenshots/263.png" alt="sp3"  height="360px"/>
+  <img src="screenshots/264.png" alt="sp4"  height="360px"/>
+  <img src="screenshots/265.png" alt="sp5"  height="360px"/>
+  <img src="screenshots/266.png" alt="sp6"  height="360px"/>
+  <img src="screenshots/267.png" alt="sp7"  height="360px"/>	
 </p>
+Screenshots made by Hotpot.ai
 
 ## Minimum supported Android version
 Android 6 (Marshmallow)
