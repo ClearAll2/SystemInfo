@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">시스템 정보</string>
-    <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="privacy_text">정책 읽기</string>
     <string name="terms_text">약관 읽기</string>
-    <string name="privacy_link">https://clearall2.github.io/SmartSleepApp/privacy.html#display-info-app</string>
-    <string name="term_link">https://clearall2.github.io/SmartSleepApp/terms.html#display-info-app</string>
-    <string name="more_app_link">https://play.google.com/store/apps/developer?id=LKONLE</string>
     <string name="more_app_text">더 많은 앱 받기</string>
     <string name="contact_text">문의하기</string>
-    <string name="contact_link">https://clearall2.github.io/SmartSleepApp/</string>
     <string name="title_activity_web_view">WebView</string>
     <string name="appwidget_description">배터리 사이클 수</string>
     <string name="use_details_dashboard">상세 대시보드 사용</string>
@@ -300,4 +295,8 @@
     <string name="audio_codecs">오디오 코덱</string>
     <string name="codecs">코덱</string>
     <string name="features">기능</string>
+    <string name="drm_access_error">MediaDrm 접근 오류</string>
+    <string name="max_hdcp_level">최대 HDCP 레벨</string>
+    <string name="changelog">변경 로그</string>
+    <string name="changelog_sub">새로운 기능</string>
 </resources>

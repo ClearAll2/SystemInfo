@@ -27,13 +27,14 @@ class MediaUtils(private val context: Context) {
         val widevineUUID = UUID.fromString(context.getString(R.string.widevineUUID))
         val info = mutableMapOf<String, String>()
         val widevineInfo = mutableListOf<DeviceInfo>()
-        val customProps = mapOf(
+        val customProps = mutableMapOf(
             "vendor" to R.string.vendor,
             "version" to R.string.version,
             "securityLevel" to R.string.security_level,
             "algorithms" to R.string.algorithms,
             "maxNumberOfSessions" to R.string.maxNumberOfSessions,
             "numberOfOpenSessions" to R.string.numberOfOpenSessions,
+            "maxHdcpLevel" to R.string.max_hdcp_level,
             "systemId" to R.string.systemId,
             "deviceUniqueId" to R.string.device_uid
         )
@@ -44,7 +45,7 @@ class MediaUtils(private val context: Context) {
                 val value = try {
                     mediaDrm.getPropertyString(prop.key)
                 } catch (_: Exception) {
-                    "Unavailable"
+                    context.getString(R.string.n_a)
                 }
                 info[prop.key] = value
             }
@@ -53,7 +54,7 @@ class MediaUtils(private val context: Context) {
                 val bytes = mediaDrm.getPropertyByteArray("deviceUniqueId")
                 Base64.encodeToString(bytes, Base64.NO_WRAP)
             } catch (_: Exception) {
-                "Unavailable"
+                context.getString(R.string.unknown)
             }
 
             info["deviceUniqueId"] = uniqueId
@@ -66,7 +67,9 @@ class MediaUtils(private val context: Context) {
             }
 
         } catch (e: Exception) {
-            info["error"] = e.message ?: "Error accessing MediaDrm"
+            customProps.clear()
+            customProps["error"] = R.string.failure
+            info["error"] = e.message ?: context.getString(R.string.drm_access_error)
         }
 
         info.entries.forEach {
@@ -85,7 +88,7 @@ class MediaUtils(private val context: Context) {
             val clearKeyUUID = UUID.fromString(context.getString(R.string.clearKeyUUID))
             val info = mutableMapOf<String, String>()
             val clearKeyInfo = mutableListOf<DeviceInfo>()
-            val customProps = mapOf(
+            val customProps = mutableMapOf(
                 "vendor" to R.string.vendor,
                 "version" to R.string.version
             )
@@ -96,7 +99,7 @@ class MediaUtils(private val context: Context) {
                     val value = try {
                         mediaDrm.getPropertyString(prop.key)
                     } catch (_: Exception) {
-                        "Unavailable"
+                        context.getString(R.string.n_a)
                     }
                     info[prop.key] = value
                 }
@@ -109,7 +112,9 @@ class MediaUtils(private val context: Context) {
                 }
 
             } catch (e: Exception) {
-                info["error"] = e.message ?: "Error accessing MediaDrm"
+                customProps.clear()
+                customProps["error"] = R.string.failure
+                info["error"] = e.message ?: context.getString(R.string.drm_access_error)
             }
 
             info.entries.forEach {

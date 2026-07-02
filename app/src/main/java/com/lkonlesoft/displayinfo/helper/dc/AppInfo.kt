@@ -7,5 +7,6 @@ data class AppInfo(
     val packageName: String,
     val icon: Drawable?,
     val versionName: String?,
-    val type: Int
+    val type: Int,
+    val status: Boolean
 )

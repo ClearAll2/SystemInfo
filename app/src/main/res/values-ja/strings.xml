@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">システム情報</string>
-    <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="privacy_text">プライバシーポリシーを読む</string>
     <string name="terms_text">利用規約を読む</string>
-    <string name="privacy_link">https://clearall2.github.io/SmartSleepApp/privacy.html#display-info-app</string>
-    <string name="term_link">https://clearall2.github.io/SmartSleepApp/terms.html#display-info-app</string>
-    <string name="more_app_link">https://play.google.com/store/apps/developer?id=LKONLE</string>
     <string name="more_app_text">他のアプリも入手</string>
     <string name="contact_text">お問い合わせ</string>
-    <string name="contact_link">https://clearall2.github.io/SmartSleepApp/</string>
     <string name="title_activity_web_view">WebView</string>
     <string name="appwidget_description">バッテリーサイクルカウント</string>
     <string name="use_details_dashboard">詳細ダッシュボードを使用</string>
@@ -300,4 +295,8 @@
     <string name="audio_codecs">オーディオコーデック</string>
     <string name="codecs">コーデック</string>
     <string name="features">機能</string>
+    <string name="drm_access_error">MediaDrmへのアクセスエラー</string>
+    <string name="max_hdcp_level">最大 HDCP レベル</string>
+    <string name="changelog">変更履歴</string>
+    <string name="changelog_sub">新機能</string>
 </resources>

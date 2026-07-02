@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CardDefaults
@@ -199,6 +201,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                 )
                 Row(modifier = Modifier
                     .fillMaxWidth(if (width < 840.dp) 1f else .7f)
+                    .horizontalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp)
                     .padding(bottom = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -247,12 +250,14 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                                 IndividualLine(
                                     title = app.name,
                                     info = buildString {
-                                        append(app.packageName)
-                                        append("\n\n")
+                                        append(app.packageName.take(25))
+                                        append("...\n\n")
                                         append(stringResource(R.string.version))
                                         append(" ")
                                         append(app.versionName)
                                     },
+                                    featureTagText = stringResource(R.string.disabled),
+                                    showFeatureTag = !app.status,
                                     icon = app.icon,
                                     canLongPress = longPressCopy,
                                     copyTitle = copyTitle,

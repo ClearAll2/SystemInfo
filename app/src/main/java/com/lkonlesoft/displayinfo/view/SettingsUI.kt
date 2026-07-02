@@ -47,6 +47,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -72,7 +74,9 @@ fun SettingsScreen(
     onAboutClick: () -> Unit,
     paddingValues: PaddingValues
 ) {
+    val resource = LocalResources.current
     val layoutDirection = LocalLayoutDirection.current
+    val uriHandler = LocalUriHandler.current
     var showLangDialog by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
     var currentLang by remember { mutableStateOf("") }
@@ -279,12 +283,19 @@ fun SettingsScreen(
             Column {
                 HeaderLine(tittle = stringResource(R.string.about))
                 IndividualLine(
+                    title = stringResource(R.string.changelog),
+                    info = stringResource(R.string.changelog_sub),
+                    onClick = {
+                        uriHandler.openUri(resource.getString(R.string.changelog_link))
+                    },
+                    topStart = 20.dp,
+                    topEnd = 20.dp,
+                )
+                IndividualLine(
                     title = stringResource(R.string.app_info),
                     info = stringResource(id = R.string.app_ver),
                     onClick = onAboutClick,
                     isLast = true,
-                    topStart = 20.dp,
-                    topEnd = 20.dp,
                     bottomStart = 20.dp,
                     bottomEnd = 20.dp
                 )

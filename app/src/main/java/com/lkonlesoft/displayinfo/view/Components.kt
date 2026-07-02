@@ -72,12 +72,14 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -129,6 +131,8 @@ fun IndividualLine(
     title: String,
     info: String,
     icon: Drawable? = null,
+    showFeatureTag: Boolean = false,
+    featureTagText: String = "Beta",
     onClick: () -> Unit = { },
     canLongPress: Boolean = true,
     copyTitle: Boolean = true,
@@ -207,6 +211,8 @@ fun IndividualLine(
                 )
             }
             Column {
+                if (showFeatureTag)
+                    FeatureTag(text = featureTagText, backgroundColor = Color.Red, textColor = Color.White)
                 Text(
                     text = if (icon == null) title.split(" ")
                         .joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
@@ -641,6 +647,33 @@ fun NewThemePickerItem(
             fontWeight = if (checked) FontWeight.Medium else FontWeight.Normal
         )
     }
+}
+
+val Int.nonScaledSp
+    @Composable
+    get() = (this / LocalDensity.current.fontScale).sp
+
+@Composable
+fun FeatureTag(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    text: String = "Beta",
+    fontSize: TextUnit = 12.nonScaledSp,
+    fontWeight: FontWeight = FontWeight.Medium,
+    backgroundColor: Color = MaterialTheme.colorScheme.primary,
+    textColor: Color = MaterialTheme.colorScheme.onPrimary,
+    cornerRadius: Dp = 5.dp
+) {
+    Text(
+        text = text,
+        fontSize = fontSize,
+        fontWeight = fontWeight,
+        modifier = modifier
+            .clip(shape = RoundedCornerShape(cornerRadius))
+            .background(backgroundColor)
+            .padding(horizontal = 5.dp),
+        color = if (enabled) textColor else Color.Gray
+    )
 }
 
 @Composable

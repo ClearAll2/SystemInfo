@@ -32,12 +32,14 @@ class PackageUtils(private val context: Context) {
             val isSystemApp = packageInfo.applicationInfo?.flags?.let { flags ->
                 (flags and ApplicationInfo.FLAG_SYSTEM) != 0
             } ?: false
+
             AppInfo(
                 name = packageInfo.applicationInfo?.loadLabel(pm).toString(),
                 packageName = packageInfo.packageName,
                 icon = packageInfo.applicationInfo?.loadIcon(pm),
                 versionName = packageInfo.versionName,
-                type = if (isSystemApp) 0 else 1
+                type = if (isSystemApp) 0 else 1,
+                status = packageInfo.applicationInfo?.enabled ?: false
             )
         }
     }

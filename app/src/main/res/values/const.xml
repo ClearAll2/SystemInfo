@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_ver" translatable="false">x.x.x</string>
+    <string name="bluetooth" translatable="false">Bluetooth</string>
+    <string name="uuid" translatable="false">UUID</string>
+    <string name="home" translatable="false">Home</string>
+    <string name="gg_sf_font" translatable="false">Google Sans Flex</string>
+    <string name="rate_link" translatable="false">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
+    <string name="privacy_link" translatable="false">https://clearall2.github.io/SmartSleepApp/privacy.html#display-info-app</string>
+    <string name="term_link" translatable="false">https://clearall2.github.io/SmartSleepApp/terms.html#display-info-app</string>
+    <string name="more_app_link" translatable="false">https://play.google.com/store/apps/developer?id=LKONLE</string>
+    <string name="contact_link" translatable="false">https://clearall2.github.io/SystemInfo/</string>
+    <string name="changelog_link" translatable="false">https://clearall2.github.io/SystemInfo/changelog.html</string>
     <string name="widevineUUID" translatable="false">edef8ba9-79d6-4ace-a3c8-27dcd51d21ed</string>
     <string name="clearKeyUUID" translatable="false">e2719d58-a985-b3c9-781a-b030af78d30e</string>
 </resources>

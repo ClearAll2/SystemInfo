@@ -2,15 +2,10 @@
 <!-- German (de) -->
 <resources>
     <string name="app_name">Systeminfo</string>
-    <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="privacy_text">Unsere Richtlinie lesen</string>
     <string name="terms_text">Unsere Nutzungsbedingungen lesen</string>
-    <string name="privacy_link">https://clearall2.github.io/SmartSleepApp/privacy.html#display-info-app</string>
-    <string name="term_link">https://clearall2.github.io/SmartSleepApp/terms.html#display-info-app</string>
-    <string name="more_app_link">https://play.google.com/store/apps/developer?id=LKONLE</string>
     <string name="more_app_text">Weitere Apps von uns holen</string>
     <string name="contact_text">Kontaktieren Sie uns</string>
-    <string name="contact_link">https://clearall2.github.io/SmartSleepApp/</string>
     <string name="title_activity_web_view">WebView</string>
     <string name="appwidget_description">Akkuladezyklen</string>
     <string name="use_details_dashboard">Details-Dashboard verwenden</string>
@@ -301,4 +296,8 @@
     <string name="audio_codecs">Audio-Codecs</string>
     <string name="codecs">Codecs</string>
     <string name="features">Funktionen</string>
+    <string name="drm_access_error">Fehler beim Zugriff auf MediaDrm</string>
+    <string name="max_hdcp_level">Maximale HDCP-Stufe</string>
+    <string name="changelog">Änderungsprotokoll</string>
+    <string name="changelog_sub">Was ist neu</string>
 </resources>

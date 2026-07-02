@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Thông tin hệ thống</string>
-    <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="privacy_text">Đọc chính sách của chúng tôi</string>
     <string name="terms_text">Đọc điều khoản của chúng tôi</string>
-    <string name="privacy_link">https://clearall2.github.io/SmartSleepApp/privacy.html#display-info-app</string>
-    <string name="term_link">https://clearall2.github.io/SmartSleepApp/terms.html#display-info-app</string>
-    <string name="more_app_link">https://play.google.com/store/apps/developer?id=LKONLE</string>
     <string name="more_app_text">Tải thêm ứng dụng từ chúng tôi</string>
     <string name="contact_text">Liên hệ chúng tôi</string>
-    <string name="contact_link">https://clearall2.github.io/SmartSleepApp/</string>
     <string name="title_activity_web_view">WebView</string>
     <string name="appwidget_description">Số chu kỳ pin</string>
     <string name="use_details_dashboard">Sử dụng bảng chi tiết</string>
@@ -300,4 +295,8 @@
     <string name="audio_codecs">Codec âm thanh</string>
     <string name="codecs">Codec</string>
     <string name="features">Tính năng</string>
+    <string name="drm_access_error">Lỗi truy cập MediaDrm</string>
+    <string name="max_hdcp_level">Mức HDCP tối đa</string>
+    <string name="changelog">Nhật ký thay đổi</string>
+    <string name="changelog_sub">Có gì mới</string>
 </resources>

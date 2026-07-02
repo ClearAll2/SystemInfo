@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Информация о системе</string>
-    <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="privacy_text">Прочитать нашу политику</string>
     <string name="terms_text">Прочитать наши условия</string>
-    <string name="privacy_link">https://clearall2.github.io/SmartSleepApp/privacy.html#display-info-app</string>
-    <string name="term_link">https://clearall2.github.io/SmartSleepApp/terms.html#display-info-app</string>
-    <string name="more_app_link">https://play.google.com/store/apps/developer?id=LKONLE</string>
     <string name="more_app_text">Получить больше наших приложений</string>
     <string name="contact_text">Связаться с нами</string>
-    <string name="contact_link">https://clearall2.github.io/SmartSleepApp/</string>
     <string name="title_activity_web_view">WebView</string>
     <string name="appwidget_description">Счётчик циклов батареи</string>
     <string name="use_details_dashboard">Использовать панель деталей</string>
@@ -300,4 +295,8 @@
     <string name="audio_codecs">Аудиокодеки</string>
     <string name="codecs">Кодеки</string>
     <string name="features">Функции</string>
+    <string name="drm_access_error">Ошибка доступа к MediaDrm</string>
+    <string name="max_hdcp_level">Максимальный уровень HDCP</string>
+    <string name="changelog">Журнал изменений</string>
+    <string name="changelog_sub">Что нового</string>
 </resources>

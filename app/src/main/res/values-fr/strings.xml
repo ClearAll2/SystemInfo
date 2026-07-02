@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Informations système</string>
-    <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="privacy_text">Lire notre politique</string>
     <string name="terms_text">Lire nos conditions</string>
-    <string name="privacy_link">https://clearall2.github.io/SmartSleepApp/privacy.html#display-info-app</string>
-    <string name="term_link">https://clearall2.github.io/SmartSleepApp/terms.html#display-info-app</string>
-    <string name="more_app_link">https://play.google.com/store/apps/developer?id=LKONLE</string>
     <string name="more_app_text">Obtenir plus d\'applications de notre part</string>
     <string name="contact_text">Nous contacter</string>
-    <string name="contact_link">https://clearall2.github.io/SmartSleepApp/</string>
     <string name="title_activity_web_view">WebView</string>
     <string name="appwidget_description">Nombre de cycles de batterie</string>
     <string name="use_details_dashboard">Utiliser le tableau de bord des détails</string>
@@ -300,4 +295,8 @@
     <string name="audio_codecs">Codecs audio</string>
     <string name="codecs">Codecs</string>
     <string name="features">Fonctionnalités</string>
+    <string name="drm_access_error">Erreur d\'accès à MediaDrm</string>
+    <string name="max_hdcp_level">Niveau HDCP maximum</string>
+    <string name="changelog">Journal des modifications</string>
+    <string name="changelog_sub">Quoi de neuf</string>
 </resources>

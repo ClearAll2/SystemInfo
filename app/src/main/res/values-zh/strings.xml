@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">系统信息</string>
-    <string name="rate_link">https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo</string>
     <string name="privacy_text">阅读我们的政策</string>
     <string name="terms_text">阅读我们的条款</string>
-    <string name="privacy_link">https://clearall2.github.io/SmartSleepApp/privacy.html#display-info-app</string>
-    <string name="term_link">https://clearall2.github.io/SmartSleepApp/terms.html#display-info-app</string>
-    <string name="more_app_link">https://play.google.com/store/apps/developer?id=LKONLE</string>
     <string name="more_app_text">获取我们更多应用</string>
     <string name="contact_text">联系我们</string>
-    <string name="contact_link">https://clearall2.github.io/SmartSleepApp/</string>
     <string name="title_activity_web_view">WebView</string>
     <string name="appwidget_description">电池循环计数</string>
     <string name="use_details_dashboard">使用详情仪表板</string>
@@ -300,4 +295,8 @@
     <string name="audio_codecs">音频编解码器</string>
     <string name="codecs">编解码器</string>
     <string name="features">功能</string>
+    <string name="drm_access_error">访问 MediaDrm 时出错</string>
+    <string name="max_hdcp_level">最大 HDCP 级别</string>
+    <string name="changelog">更新日志</string>
+    <string name="changelog_sub">更新内容</string>
 </resources>
