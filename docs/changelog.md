@@ -2,6 +2,11 @@
 
 Thank you for choosing System Info! We're constantly making changes and improvements to enhance your experience. To stay updated with the latest features and improvements, please keep your updates turned on.
 
+## 4.1
+
+* DRM info should now show Max HDCP level.
+* New "Disabled" tag for inactive apps.
+* New changelog and homepage sections.
 
 
 ## 4.0
