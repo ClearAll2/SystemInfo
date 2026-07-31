@@ -299,4 +299,13 @@
     <string name="max_hdcp_level">Mức HDCP tối đa</string>
     <string name="changelog">Nhật ký thay đổi</string>
     <string name="changelog_sub">Có gì mới</string>
+    <string name="link_speed">Tốc độ liên kết</string>
+    <string name="signal_strength">Cường độ tín hiệu</string>
+    <string name="frequency">Tần số</string>
+    <string name="channel">Kênh</string>
+    <string name="wifi_standard">Chuẩn Wi-Fi</string>
+    <string name="excellent">Xuất sắc</string>
+    <string name="fair">Trung bình</string>
+    <string name="weak">Yếu</string>
+    <string name="very_weak">Rất yếu</string>
 </resources>

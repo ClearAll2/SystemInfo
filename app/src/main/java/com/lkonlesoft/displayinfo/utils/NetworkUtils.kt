@@ -6,7 +6,12 @@ import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.LinkProperties
+import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.NetworkRequest
+import android.net.wifi.ScanResult
+import android.net.wifi.WifiInfo
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
@@ -17,8 +22,20 @@ import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.dc.NetworkInfo
 import com.lkonlesoft.displayinfo.helper.dc.SimInfo
+import com.lkonlesoft.displayinfo.helper.dc.WifiConnectionInfo
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.coroutines.resume
 
 class NetworkUtils(private val context: Context) {
+
+    private val connectivityManager by lazy {
+        context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+
+    private val wifiManager by lazy {
+        context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+    }
 
     fun getDetailsInfo(): List<DeviceInfo>{
         val netInfo = getNetInfo()
@@ -44,6 +61,123 @@ class NetworkUtils(private val context: Context) {
         )
     }
 
+    suspend fun getWifiDetails(): List<DeviceInfo> {
+        // Try legacy sync API first for speed
+        val legacy = getWifiInfoLegacy()
+
+        val wifiInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // On Android 12+, legacy might be redacted. Try callback if legacy is null or missing SSID.
+            if (legacy == null || legacy.ssid == "<unknown ssid>") {
+                withTimeoutOrNull(1000L) { getWifiInfo() } ?: legacy
+            } else {
+                legacy
+            }
+        } else {
+            legacy
+        }
+
+        return wifiInfo?.let { info ->
+            listOf(
+                DeviceInfo(R.string.ssid, info.ssid),
+                DeviceInfo(R.string.link_speed, info.linkSpeedMbps, " Mbps"),
+                DeviceInfo(R.string.signal_strength, "${info.signalStrengthDbm} dBm (${rssiToQuality(info.signalStrengthDbm)})"),
+                DeviceInfo(R.string.frequency, info.frequencyMhz, " MHz"),
+                DeviceInfo(R.string.channel, if (info.channel != -1 ) info.channel else context.getString(R.string.unknown)),
+                DeviceInfo(R.string.wifi_standard, info.standard)
+            )
+        } ?: emptyList()
+    }
+
+    fun rssiToQuality(rssi: Int): String = when {
+        rssi >= -50 -> context.getString(R.string.excellent)
+        rssi >= -60 -> context.getString(R.string.good)
+        rssi >= -70 -> context.getString(R.string.fair)
+        rssi >= -80 -> context.getString(R.string.weak)
+        else -> context.getString(R.string.very_weak)
+    }
+
+    fun WifiInfo.wifiStandardToString(): String {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            return context.getString(R.string.unknown)
+        }
+        return when (wifiStandard) {
+            ScanResult.WIFI_STANDARD_LEGACY -> "802.11a/b/g"
+            ScanResult.WIFI_STANDARD_11N   -> "802.11n (Wi-Fi 4)"
+            ScanResult.WIFI_STANDARD_11AC  -> "802.11ac (Wi-Fi 5)"
+            ScanResult.WIFI_STANDARD_11AX  -> "802.11ax (Wi-Fi 6/6E)"
+            ScanResult.WIFI_STANDARD_11AD  -> "802.11ad"
+            ScanResult.WIFI_STANDARD_11BE  -> "802.11be (Wi-Fi 7)"  // API 33+
+            else -> context.getString(R.string.unknown)
+        }
+    }
+
+    fun WifiInfo.toWifiConnectionInfo(): WifiConnectionInfo {
+        return WifiConnectionInfo(
+            ssid = ssid.removeSurrounding("\""),
+            linkSpeedMbps = linkSpeed,
+            signalStrengthDbm = rssi,
+            frequencyMhz = frequency,
+            channel = frequencyToChannel(frequency),
+            standard = wifiStandardToString()
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    suspend fun getWifiInfo(): WifiConnectionInfo? = suspendCancellableCoroutine { continuation ->
+        val request = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .build()
+
+        val callback = object : ConnectivityManager.NetworkCallback(FLAG_INCLUDE_LOCATION_INFO) {
+            override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
+                val wifiInfo = capabilities.transportInfo as? WifiInfo
+                if (continuation.isActive) {
+                    continuation.resume(if (wifiManager.isWifiEnabled) wifiInfo?.toWifiConnectionInfo() else null)
+                }
+                connectivityManager.unregisterNetworkCallback(this)
+            }
+
+            override fun onLost(network: Network) {
+                if (continuation.isActive) {
+                    continuation.resume(null)
+                }
+                connectivityManager.unregisterNetworkCallback(this)
+            }
+
+            override fun onUnavailable() {
+                if (continuation.isActive) {
+                    continuation.resume(null)
+                }
+                connectivityManager.unregisterNetworkCallback(this)
+            }
+        }
+        connectivityManager.registerNetworkCallback(request, callback)
+        continuation.invokeOnCancellation {
+            connectivityManager.unregisterNetworkCallback(callback)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    fun getWifiInfoLegacy(): WifiConnectionInfo? {
+        if (!wifiManager.isWifiEnabled) return null
+
+        val info = wifiManager.connectionInfo ?: return null
+        if (info.networkId == -1) return null   // not connected
+
+        return info.toWifiConnectionInfo()
+    }
+
+
+    private fun frequencyToChannel(freq: Int): Int {
+        return when (freq) {
+            2484 -> 14
+            in 2412..2472 -> ((freq - 2412) / 5) + 1
+            in 5170..5825 -> ((freq - 5170) / 5) + 34
+            in 5945..7105 -> ((freq - 5945) / 5) + 1
+            else -> -1
+        }
+    }
+
 
     fun getSimInfo(): List<List<DeviceInfo>> {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
@@ -57,8 +191,7 @@ class NetworkUtils(private val context: Context) {
                         DeviceInfo(R.string.country_iso, simInfo.countryIso),
                         //DeviceInfo(R.string.icc_id, simInfo.iccId),
                         DeviceInfo(R.string.subscription_id, simInfo.subscriptionId),
-                        DeviceInfo(R.string.enabled, if (simInfo.isActive) context.getString(R.string.yes)
-                        else context.getString(R.string.no))
+                        DeviceInfo(R.string.enabled, if (simInfo.isActive) context.getString(R.string.yes) else context.getString(R.string.no))
                     )
                 }
             }
@@ -68,8 +201,6 @@ class NetworkUtils(private val context: Context) {
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun getNetwork(): String {
-        val connectivityManager =
-            context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val nw = connectivityManager.activeNetwork ?: return context.getString(R.string.unknown)
         val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return context.getString(R.string.unknown)
         when {
@@ -112,32 +243,32 @@ class NetworkUtils(private val context: Context) {
     }
 
     fun getNetInfo(): NetworkInfo? {
+        val activeNetwork = connectivityManager.activeNetwork ?: return null
         val netInfo = NetworkInfo()
-        val connectivityManager = context.getSystemService(CONNECTIVITY_SERVICE)
-        if (connectivityManager is ConnectivityManager && connectivityManager.activeNetwork != null) {
-            val link: LinkProperties =  connectivityManager.getLinkProperties(connectivityManager.activeNetwork) as LinkProperties
-            netInfo.ip = link.linkAddresses.joinToString("\n")
-            netInfo.domain = if (link.domains != null) link.domains.toString() else context.getString(R.string.n_a)
-            netInfo.interfaces = link.interfaceName.toString()
-            netInfo.dnsServer = link.dnsServers.joinToString("\n")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                netInfo.isPrivateDNSActive = link.isPrivateDnsActive
-                netInfo.privateDNS = if (link.privateDnsServerName != null) link.privateDnsServerName.toString() else context.getString(R.string.n_a)
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                netInfo.dhcpServer = if (link.dhcpServerAddress?.hostAddress != null) link.dhcpServerAddress?.hostAddress.toString() else context.getString(R.string.n_a)
-                netInfo.wakeOnLanSupported = link.isWakeOnLanSupported
-            }
-            return netInfo
+        val link: LinkProperties =  connectivityManager.getLinkProperties(activeNetwork) ?: return null
+        
+        netInfo.ip = link.linkAddresses.joinToString("\n")
+        netInfo.domain = if (link.domains != null) link.domains.toString() else context.getString(R.string.n_a)
+        netInfo.interfaces = link.interfaceName.toString()
+        netInfo.dnsServer = link.dnsServers.joinToString("\n")
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            netInfo.isPrivateDNSActive = link.isPrivateDnsActive
+            netInfo.privateDNS = if (link.privateDnsServerName != null) link.privateDnsServerName.toString() else context.getString(R.string.n_a)
         }
-        return null
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            netInfo.dhcpServer = link.dhcpServerAddress?.hostAddress ?: context.getString(R.string.n_a)
+            netInfo.wakeOnLanSupported = link.isWakeOnLanSupported
+        }
+        
+        return netInfo
     }
 
     @Suppress("DEPRECATION")
     fun getNetworkOldApi(): String {
         // ConnectionManager instance
-        val mConnectivityManager = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val mInfo = mConnectivityManager.activeNetworkInfo
+        val mInfo = connectivityManager.activeNetworkInfo
 
         // If not connected, "-" will be displayed
         if ((mInfo == null) || !mInfo.isConnected) return "-"

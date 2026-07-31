@@ -299,4 +299,13 @@
     <string name="max_hdcp_level">최대 HDCP 레벨</string>
     <string name="changelog">변경 로그</string>
     <string name="changelog_sub">새로운 기능</string>
+    <string name="link_speed">링크 속도</string>
+    <string name="signal_strength">신호 강도</string>
+    <string name="frequency">주파수</string>
+    <string name="channel">채널</string>
+    <string name="wifi_standard">Wi-Fi 표준</string>
+    <string name="excellent">우수</string>
+    <string name="fair">보통</string>
+    <string name="weak">약함</string>
+    <string name="very_weak">매우 약함</string>
 </resources>

@@ -299,4 +299,13 @@
     <string name="max_hdcp_level">Максимальный уровень HDCP</string>
     <string name="changelog">Журнал изменений</string>
     <string name="changelog_sub">Что нового</string>
+    <string name="link_speed">Скорость соединения</string>
+    <string name="signal_strength">Сила сигнала</string>
+    <string name="frequency">Частота</string>
+    <string name="channel">Канал</string>
+    <string name="wifi_standard">Стандарт Wi-Fi</string>
+    <string name="excellent">Отличный</string>
+    <string name="fair">Средний</string>
+    <string name="weak">Слабый</string>
+    <string name="very_weak">Очень слабый</string>
 </resources>

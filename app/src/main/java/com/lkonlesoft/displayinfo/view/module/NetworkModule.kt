@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.helper.hasPermission
 import com.lkonlesoft.displayinfo.utils.NetworkUtils
 import com.lkonlesoft.displayinfo.view.ConfirmActionPopup
@@ -100,30 +101,39 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
     var showWarningPopup by remember { mutableStateOf(false) }
-    var hasPermission by remember(refreshKey) { mutableStateOf(context.hasPermission(Manifest.permission.READ_PHONE_STATE)) }
+    val hasPhonePermission by remember(refreshKey) { mutableStateOf(context.hasPermission(Manifest.permission.READ_PHONE_STATE)) }
+    val hasLocationPermission by remember(refreshKey) { mutableStateOf(context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) }
     val networkType by remember(refreshKey) {
         mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils(context).getNetwork() else NetworkUtils(context).getNetworkOldApi())
     }
     val infoList by remember(refreshKey) { mutableStateOf(NetworkUtils(context).getDetailsInfo()) }
+    var wifiInfoList by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     val simInfoList by remember(refreshKey) { mutableStateOf(NetworkUtils(context).getSimInfo()) }
-    val startForPermissionResult = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()) {isGranted ->
-        hasPermission = isGranted
-        if (isGranted){
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) {
             Toast.makeText(context, resource.getString(R.string.permission_granted), Toast.LENGTH_SHORT).show()
             refreshKey++
-        }
-        else{
+        } else {
             Toast.makeText(context, resource.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
-            showWarningPopup = !showWarningPopup
+            showWarningPopup = true
         }
     }
     val startSettingForResult = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        hasPermission = context.hasPermission(Manifest.permission.READ_PHONE_STATE)
+        refreshKey++
     }
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
         data = Uri.fromParts("package", context.packageName, null)
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    LaunchedEffect(refreshKey) {
+        wifiInfoList = NetworkUtils(context).getWifiDetails()
+    }
+    LaunchedEffect(Unit) {
+        while (true){
+            delay(3000L)
+            refreshKey++
+        }
     }
     AnimatedVisibility(visible = showWarningPopup,
         enter = fadeIn(
@@ -149,13 +159,6 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
             }
         )
     }
-    LaunchedEffect(Unit) {
-        while (true){
-            delay(5000L)
-            refreshKey++
-        }
-    }
-
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
@@ -175,8 +178,8 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                 Spacer(modifier = Modifier.padding(vertical = 10.dp))
                 IndividualLine(title = stringResource(R.string.network_type), info = networkType,
                     onClick = {
-                        if (!hasPermission)
-                            startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
+                        if (!hasPhonePermission)
+                            permissionLauncher.launch(Manifest.permission.READ_PHONE_STATE)
                     },
                     canLongPress = longPressCopy,
                     copyTitle = copyTitle,
@@ -188,7 +191,58 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                 )
             }
         }
-        if (simInfoList.isNotEmpty() && hasPermission) {
+        item {
+            Column {
+                HeaderLine(tittle = stringResource(R.string.wifi))
+                if (!hasLocationPermission){
+                    IndividualLine(
+                        title = stringResource(R.string.wifi),
+                        info = stringResource(R.string.require_permission),
+                        onClick = {
+                            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                        },
+                        canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
+                        topStart = 20.dp,
+                        topEnd = 20.dp,
+                        bottomStart = 20.dp,
+                        bottomEnd = 20.dp,
+                        isLast = true
+                    )
+                }
+                else {
+                    if (wifiInfoList.isNotEmpty()) {
+                        wifiInfoList.forEach {
+                            IndividualLine(
+                                title = stringResource(it.name),
+                                info = it.value.toString() + it.extra,
+                                canLongPress = longPressCopy,
+                                copyTitle = copyTitle,
+                                isLast = wifiInfoList.last() == it,
+                                topStart = if (wifiInfoList.first() == it) 20.dp else 5.dp,
+                                topEnd = if (wifiInfoList.first() == it) 20.dp else 5.dp,
+                                bottomStart = if (wifiInfoList.last() == it) 20.dp else 5.dp,
+                                bottomEnd = if (wifiInfoList.last() == it) 20.dp else 5.dp
+                            )
+                        }
+                    }
+                    else {
+                        IndividualLine(
+                            title = stringResource(R.string.wifi),
+                            info = stringResource(R.string.n_a),
+                            canLongPress = longPressCopy,
+                            copyTitle = copyTitle,
+                            topStart = 20.dp,
+                            topEnd = 20.dp,
+                            bottomStart = 20.dp,
+                            bottomEnd = 20.dp,
+                            isLast = true
+                        )
+                    }
+                }
+            }
+        }
+        if (simInfoList.isNotEmpty() && hasPhonePermission) {
             itemsIndexed(simInfoList) { index, simInfo ->
                 Column {
                     HeaderLine(tittle = "SIM #${index+1}")
@@ -212,10 +266,11 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
             item {
                 Column {
                     HeaderLine(tittle = stringResource(R.string.sim_info))
-                    IndividualLine(title = stringResource(R.string.sim_info), info = if (!hasPermission) stringResource(R.string.require_permission)
+                    IndividualLine(title = stringResource(R.string.sim_info), info = if (!hasPhonePermission) stringResource(R.string.require_permission)
                     else stringResource(R.string.n_a),
                         onClick = {
-                            startForPermissionResult.launch(Manifest.permission.READ_PHONE_STATE)
+                            if (!hasPhonePermission)
+                                permissionLauncher.launch(Manifest.permission.READ_PHONE_STATE)
                         },
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,

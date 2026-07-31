@@ -299,4 +299,13 @@
     <string name="max_hdcp_level">最大 HDCP 级别</string>
     <string name="changelog">更新日志</string>
     <string name="changelog_sub">更新内容</string>
+    <string name="link_speed">链路速度</string>
+    <string name="signal_strength">信号强度</string>
+    <string name="frequency">频率</string>
+    <string name="channel">信道</string>
+    <string name="wifi_standard">Wi-Fi 标准</string>
+    <string name="excellent">优秀</string>
+    <string name="fair">一般</string>
+    <string name="weak">较弱</string>
+    <string name="very_weak">非常弱</string>
 </resources>

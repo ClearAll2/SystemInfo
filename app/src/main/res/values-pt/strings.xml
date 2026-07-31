@@ -299,4 +299,13 @@
     <string name="max_hdcp_level">Nível HDCP máximo</string>
     <string name="changelog">Registro de alterações</string>
     <string name="changelog_sub">O que há de novo</string>
+    <string name="link_speed">Velocidade do link</string>
+    <string name="signal_strength">Intensidade do sinal</string>
+    <string name="frequency">Frequência</string>
+    <string name="channel">Canal</string>
+    <string name="wifi_standard">Padrão Wi-Fi</string>
+    <string name="excellent">Excelente</string>
+    <string name="fair">Regular</string>
+    <string name="weak">Fraco</string>
+    <string name="very_weak">Muito fraco</string>
 </resources>
