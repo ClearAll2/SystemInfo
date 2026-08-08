@@ -33,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -101,10 +102,20 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
     var showWarningPopup by remember { mutableStateOf(false) }
-    val hasPhonePermission by remember(refreshKey) { mutableStateOf(context.hasPermission(Manifest.permission.READ_PHONE_STATE)) }
-    val hasLocationPermission by remember(refreshKey) { mutableStateOf(context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) }
+    val hasPhonePermission by remember(refreshKey) {
+        derivedStateOf {
+            context.hasPermission(Manifest.permission.READ_PHONE_STATE)
+        }
+    }
+    val hasLocationPermission by remember(refreshKey) {
+        derivedStateOf {
+            context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
     val networkType by remember(refreshKey) {
-        mutableStateOf(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils(context).getNetwork() else NetworkUtils(context).getNetworkOldApi())
+        derivedStateOf {
+            (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils(context).getNetwork() else NetworkUtils(context).getNetworkOldApi())
+        }
     }
     val infoList by remember(refreshKey) { mutableStateOf(NetworkUtils(context).getDetailsInfo()) }
     var wifiInfoList by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
@@ -126,7 +137,8 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
         data = Uri.fromParts("package", context.packageName, null)
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
-    LaunchedEffect(refreshKey) {
+    //only reload data when network changes or has location permission, reduce location access frequency
+    LaunchedEffect(networkType, hasLocationPermission) {
         wifiInfoList = NetworkUtils(context).getWifiDetails()
     }
     LaunchedEffect(Unit) {
@@ -194,13 +206,29 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
         item {
             Column {
                 HeaderLine(tittle = stringResource(R.string.wifi))
-                if (!hasLocationPermission){
+                if (wifiInfoList.isNotEmpty()) {
+                    wifiInfoList.forEach {
+                        IndividualLine(
+                            title = stringResource(it.name),
+                            info = if (wifiInfoList.first() == it && !hasLocationPermission) stringResource(R.string.require_permission) else it.value.toString() + it.extra,
+                            onClick = {
+                                if (wifiInfoList.first() == it && !hasLocationPermission)
+                                    permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                            },
+                            canLongPress = longPressCopy,
+                            copyTitle = copyTitle,
+                            isLast = wifiInfoList.last() == it,
+                            topStart = if (wifiInfoList.first() == it) 20.dp else 5.dp,
+                            topEnd = if (wifiInfoList.first() == it) 20.dp else 5.dp,
+                            bottomStart = if (wifiInfoList.last() == it) 20.dp else 5.dp,
+                            bottomEnd = if (wifiInfoList.last() == it) 20.dp else 5.dp
+                        )
+                    }
+                }
+                else {
                     IndividualLine(
                         title = stringResource(R.string.wifi),
-                        info = stringResource(R.string.require_permission),
-                        onClick = {
-                            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                        },
+                        info = stringResource(R.string.n_a),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
                         topStart = 20.dp,
@@ -209,36 +237,6 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                         bottomEnd = 20.dp,
                         isLast = true
                     )
-                }
-                else {
-                    if (wifiInfoList.isNotEmpty()) {
-                        wifiInfoList.forEach {
-                            IndividualLine(
-                                title = stringResource(it.name),
-                                info = it.value.toString() + it.extra,
-                                canLongPress = longPressCopy,
-                                copyTitle = copyTitle,
-                                isLast = wifiInfoList.last() == it,
-                                topStart = if (wifiInfoList.first() == it) 20.dp else 5.dp,
-                                topEnd = if (wifiInfoList.first() == it) 20.dp else 5.dp,
-                                bottomStart = if (wifiInfoList.last() == it) 20.dp else 5.dp,
-                                bottomEnd = if (wifiInfoList.last() == it) 20.dp else 5.dp
-                            )
-                        }
-                    }
-                    else {
-                        IndividualLine(
-                            title = stringResource(R.string.wifi),
-                            info = stringResource(R.string.n_a),
-                            canLongPress = longPressCopy,
-                            copyTitle = copyTitle,
-                            topStart = 20.dp,
-                            topEnd = 20.dp,
-                            bottomStart = 20.dp,
-                            bottomEnd = 20.dp,
-                            isLast = true
-                        )
-                    }
                 }
             }
         }

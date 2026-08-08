@@ -33,6 +33,10 @@ class NetworkUtils(private val context: Context) {
         context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
+    private val telephonyManager by lazy {
+        context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+    }
+
     private val wifiManager by lazy {
         context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
     }
@@ -102,11 +106,11 @@ class NetworkUtils(private val context: Context) {
         }
         return when (wifiStandard) {
             ScanResult.WIFI_STANDARD_LEGACY -> "802.11a/b/g"
-            ScanResult.WIFI_STANDARD_11N   -> "802.11n (Wi-Fi 4)"
-            ScanResult.WIFI_STANDARD_11AC  -> "802.11ac (Wi-Fi 5)"
-            ScanResult.WIFI_STANDARD_11AX  -> "802.11ax (Wi-Fi 6/6E)"
+            ScanResult.WIFI_STANDARD_11N   -> "802.11n (WiFi 4)"
+            ScanResult.WIFI_STANDARD_11AC  -> "802.11ac (WiFi 5)"
+            ScanResult.WIFI_STANDARD_11AX  -> "802.11ax (WiFi 6/6E)"
             ScanResult.WIFI_STANDARD_11AD  -> "802.11ad"
-            ScanResult.WIFI_STANDARD_11BE  -> "802.11be (Wi-Fi 7)"  // API 33+
+            ScanResult.WIFI_STANDARD_11BE  -> "802.11be (WiFi 7)"  // API 33+
             else -> context.getString(R.string.unknown)
         }
     }
@@ -128,7 +132,7 @@ class NetworkUtils(private val context: Context) {
             .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
             .build()
 
-        val callback = object : ConnectivityManager.NetworkCallback(FLAG_INCLUDE_LOCATION_INFO) {
+        val callback = object : ConnectivityManager.NetworkCallback(0) {
             override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
                 val wifiInfo = capabilities.transportInfo as? WifiInfo
                 if (continuation.isActive) {
@@ -207,7 +211,6 @@ class NetworkUtils(private val context: Context) {
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return context.getString(R.string.wifi)
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return context.getString(R.string.ethernet)
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
                 if (ActivityCompat.checkSelfPermission(
                         context,
                         Manifest.permission.READ_PHONE_STATE
@@ -216,7 +219,7 @@ class NetworkUtils(private val context: Context) {
                     return context.getString(R.string.require_permission)
                 }
                 @Suppress("DEPRECATION")
-                when (tm.dataNetworkType) {
+                when (telephonyManager.dataNetworkType) {
                     TelephonyManager.NETWORK_TYPE_GPRS,
                     TelephonyManager.NETWORK_TYPE_EDGE,
                     TelephonyManager.NETWORK_TYPE_CDMA,
@@ -295,7 +298,6 @@ class NetworkUtils(private val context: Context) {
         val subscriptionManager = context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
         val activeSims = subscriptionManager.activeSubscriptionInfoList
         // Get TelephonyManager to check SIM slot count and states
-        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         val simSlotCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             telephonyManager.supportedModemCount
         } else {
