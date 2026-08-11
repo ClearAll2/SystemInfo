@@ -127,7 +127,7 @@ class BatteryUtils (private val context: Context) {
         val cycleCount = getBatteryCycleCount()
         val capacity = getBatteryCapacity().toInt()
         return listOf(
-            DeviceInfo(R.string.battery_level, getBatteryPercentage(), "%"),
+            DeviceInfo(R.string.battery_level, getBatteryPercentage(), "%", type = 1),
             DeviceInfo(R.string.status, getBatteryStatus()),
             DeviceInfo(R.string.health, getBatteryHealth()),
             DeviceInfo(R.string.cycle_count, if (cycleCount >= 0) cycleCount else context.getString(R.string.n_a)),
