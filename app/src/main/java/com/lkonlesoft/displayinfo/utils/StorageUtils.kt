@@ -22,7 +22,7 @@ class StorageUtils (private val context: Context) {
     fun getRAMInfo(): List<DeviceInfo>{
         val totalRAM = getTotalRAM()
         val availableRAM = getAvailableRAM()
-        val usedRAM = totalRAM - availableRAM
+        val usedRAM = getUsedRAM()
         val percentageUsed = (usedRAM.toDouble() / totalRAM.toDouble() * 100).toInt()
         return listOf(
             DeviceInfo(R.string.used, percentageUsed, "%", 1),
@@ -64,14 +64,18 @@ class StorageUtils (private val context: Context) {
 
 
     fun getTotalRAM(): Long {
-        val reader = File("/proc/meminfo").bufferedReader().readLine()
-        val totalKb = reader.replace(Regex("[^0-9]"), "").toLong()
-        return totalKb / 1024 // MB
+        am.getMemoryInfo(info)
+        return info.totalMem / 1024 / 1024 // MB
     }
 
     fun getAvailableRAM(): Long {
         am.getMemoryInfo(info)
         return info.availMem / 1024 / 1024 // MB
+    }
+
+    fun getUsedRAM(): Int {
+        am.getMemoryInfo(info)
+        return (info.totalMem - info.availMem).toInt() / 1024 / 1024 // MB
     }
 
     private fun getStorageStats(path: File): Pair<Long, Long> {

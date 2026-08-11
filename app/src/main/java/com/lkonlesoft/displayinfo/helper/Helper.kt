@@ -39,7 +39,7 @@ fun getKernelVersion(): String? {
 fun getBatteryLevelColor(level: Long): Color {
     return when {
         level >= 80 -> Color(0xFF4CAF50)
-        level >= 30 -> Color(0xFFFFC107)
+        level > 20 -> Color(0xFFFFC107)
         else -> Color(0xFFF44336)
     }
 }

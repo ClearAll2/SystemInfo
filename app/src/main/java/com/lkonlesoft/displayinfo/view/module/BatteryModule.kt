@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -26,6 +27,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.BatteryUtils
 import com.lkonlesoft.displayinfo.view.GeneralProgressBar
@@ -92,7 +95,11 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList by remember(refreshKey) { mutableStateOf(BatteryUtils(context).getAllData()) }
+    val infoList by remember(refreshKey) {
+        derivedStateOf {
+            BatteryUtils(context).getAllData()
+        }
+    }
     LaunchedEffect(Unit) {
         while (true){
             delay(1000L)
@@ -114,24 +121,32 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {
+            val filteredInfoList = infoList.filter { it.type != 1 }
             Column {
+                Row (modifier = Modifier.padding(top = 20.dp)) {
+                    Text(text = infoList.first().value.toString(),
+                        fontSize = 64.sp,
+                        modifier = Modifier.alignByBaseline()
+                    )
+                    Text(text = infoList.first().extra, modifier = Modifier.alignByBaseline())
+                }
                 GeneralProgressBar(
                     (infoList.first().value as Number).toLong(),
                     100L,
-                    1,
+                    0,
                     height = 30.dp,
                     verticalPadding = 15.dp
                 )
-                infoList.forEach {
+                filteredInfoList.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = infoList.last() == it,
-                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
+                        isLast = filteredInfoList.last() == it,
+                        topStart = if (filteredInfoList.first() == it) 20.dp else 5.dp,
+                        topEnd = if (filteredInfoList.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (filteredInfoList.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (filteredInfoList.last() == it) 20.dp else 5.dp
                     )
                 }
             }
