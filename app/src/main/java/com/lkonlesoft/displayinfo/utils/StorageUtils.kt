@@ -73,9 +73,9 @@ class StorageUtils (private val context: Context) {
         return info.availMem / 1024 / 1024 // MB
     }
 
-    fun getUsedRAM(): Int {
+    fun getUsedRAM(): Long {
         am.getMemoryInfo(info)
-        return (info.totalMem - info.availMem).toInt() / 1024 / 1024 // MB
+        return (info.totalMem - info.availMem) / 1024 / 1024 // MB
     }
 
     private fun getStorageStats(path: File): Pair<Long, Long> {
