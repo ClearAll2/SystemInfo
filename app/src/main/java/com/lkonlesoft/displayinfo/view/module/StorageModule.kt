@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -18,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -36,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.StorageUtils
+import com.lkonlesoft.displayinfo.view.BigPercentageValue
 import com.lkonlesoft.displayinfo.view.GeneralProgressBar
 import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.GeneralWarning
@@ -72,6 +71,7 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
                 title = stringResource(R.string.memory),
                 icon = R.drawable.memory_24px
             )
+            BigPercentageValue(value = ramInfoList.first().value.toString(), fontSize = 36.sp)
             Spacer(Modifier.height(12.dp))
             GeneralProgressBar(
                 (ramInfoList[2].value as Number).toLong(),
@@ -79,7 +79,7 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
                 1
             )
             Spacer(modifier = Modifier.height(12.dp))
-            ramInfoList.forEach {
+            ramInfoList.filter { it != ramInfoList.first() }.forEach {
                 GeneralStatRow(stringResource(it.name), it.value.toString() + it.extra)
             }
         }
@@ -113,6 +113,7 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
                 title = stringResource(R.string.storage),
                 icon = R.drawable.outline_storage_24
             )
+            BigPercentageValue(value = internalStorageStats.first().value.toString(), fontSize = 36.sp)
             Spacer(Modifier.height(12.dp))
             GeneralProgressBar(
                 (internalStorageStats[2].value as Number).toLong(),
@@ -120,7 +121,7 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
                 1
             )
             Spacer(modifier = Modifier.height(12.dp))
-            internalStorageStats.forEach {
+            internalStorageStats.filter { it != internalStorageStats.first() }.forEach {
                 GeneralStatRow(
                     stringResource(it.name),
                     if (it.type == 0) it.extra else it.value.toString() + it.extra
@@ -165,16 +166,10 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
         item {
             val filteredRamInfo = ramInfo.filter { it.type != 1 }
             Column {
-                Row (modifier = Modifier.padding(top = 20.dp)) {
-                    Text(text = ramInfo.first().value.toString(),
-                        fontSize = 64.sp,
-                        modifier = Modifier.alignByBaseline()
-                    )
-                    Text(text = ramInfo.first().extra, modifier = Modifier.alignByBaseline())
-                }
+                BigPercentageValue(value = ramInfo.first().value.toString())
                 GeneralProgressBar(
                     (ramInfo[2].value as Number).toLong(), (ramInfo[3].value as Number).toLong(), 1,
-                    height = 30.dp,
+                    height = 32.dp,
                     verticalPadding = 15.dp
                 )
                 filteredRamInfo.forEach {
@@ -236,21 +231,13 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
         item {
             Column {
                 val filteredInternalStats = internalStorageStats.filter { it.type != 1 }
-
                 HeaderLine(tittle = stringResource(R.string.internal_storage))
-                Row(modifier = Modifier.padding(top = 20.dp)) {
-                    Text(
-                        text = internalStorageStats.first().value.toString(),
-                        fontSize = 64.sp,
-                        modifier = Modifier.alignByBaseline()
-                    )
-                    Text(text = internalStorageStats.first().extra, modifier = Modifier.alignByBaseline())
-                }
+                BigPercentageValue(value = internalStorageStats.first().value.toString())
                 GeneralProgressBar(
                     (internalStorageStats[2].value as Number).toLong(),
                     (internalStorageStats[3].value as Number).toLong(),
                     1,
-                    height = 30.dp,
+                    height = 32.dp,
                     verticalPadding = 15.dp
                 )
                 filteredInternalStats.forEach {
@@ -271,21 +258,13 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
             item {
                 Column {
                     val filteredExternalStats = externalStorageStats.filter { it.type != 1 }
-
                     HeaderLine(tittle = stringResource(R.string.external_storage))
-                    Row(modifier = Modifier.padding(top = 20.dp)) {
-                        Text(
-                            text = externalStorageStats.first().value.toString(),
-                            fontSize = 64.sp,
-                            modifier = Modifier.alignByBaseline()
-                        )
-                        Text(text = externalStorageStats.first().extra, modifier = Modifier.alignByBaseline())
-                    }
+                    BigPercentageValue(value = externalStorageStats.first().value.toString())
                     GeneralProgressBar(
                         (externalStorageStats[2].value as Number).toLong(),
                         (externalStorageStats[3].value as Number).toLong(),
                         1,
-                        height = 30.dp,
+                        height = 32.dp,
                         verticalPadding = 15.dp
                     )
                     filteredExternalStats.forEach {

@@ -588,7 +588,23 @@ fun GeneralStatRow(label: String, value: String) {
 }
 
 @Composable
-fun GeneralProgressBar(level: Long, total: Long, type: Int = 0, height: Dp = 10.dp, horizontalPadding: Dp = 0.dp, verticalPadding: Dp = 0.dp) {
+fun BigPercentageValue(
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 64.sp,
+    value: String,
+    indicator: String = "%"
+) {
+    Row (modifier = modifier.padding(top = 20.dp)) {
+        Text(text = value,
+            fontSize = fontSize,
+            modifier = Modifier.alignByBaseline()
+        )
+        Text(text = indicator, modifier = Modifier.alignByBaseline())
+    }
+}
+
+@Composable
+fun GeneralProgressBar(level: Long, total: Long, type: Int = 0, height: Dp = 16.dp, horizontalPadding: Dp = 0.dp, verticalPadding: Dp = 0.dp) {
     LinearProgressIndicator(
         progress = { level.toFloat().div(total) },
         modifier = Modifier

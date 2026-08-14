@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.BatteryUtils
+import com.lkonlesoft.displayinfo.view.BigPercentageValue
 import com.lkonlesoft.displayinfo.view.GeneralProgressBar
 import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.GeneralWarning
@@ -77,10 +77,11 @@ fun BatteryDashboard(intervalMillis: Long = 2000L,onClick: () -> Unit) {
                 title = stringResource(R.string.battery),
                 icon = R.drawable.battery_android_4_24px
             )
+            BigPercentageValue(value = infoList.first().value.toString(), fontSize = 36.sp)
             Spacer(modifier = Modifier.height(12.dp))
             GeneralProgressBar((infoList.first().value as Number).toLong(), 100L)
             Spacer(modifier = Modifier.height(12.dp))
-            infoList.forEach {
+            infoList.filter { it != infoList.first() }.forEach {
                 GeneralStatRow(
                     stringResource(it.name),
                     it.value.toString() + it.extra
@@ -123,18 +124,12 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
         item {
             val filteredInfoList = infoList.filter { it.type != 1 }
             Column {
-                Row (modifier = Modifier.padding(top = 20.dp)) {
-                    Text(text = infoList.first().value.toString(),
-                        fontSize = 64.sp,
-                        modifier = Modifier.alignByBaseline()
-                    )
-                    Text(text = infoList.first().extra, modifier = Modifier.alignByBaseline())
-                }
+                BigPercentageValue(value = infoList.first().value.toString())
                 GeneralProgressBar(
                     (infoList.first().value as Number).toLong(),
                     100L,
                     0,
-                    height = 30.dp,
+                    height = 32.dp,
                     verticalPadding = 15.dp
                 )
                 filteredInfoList.forEach {
