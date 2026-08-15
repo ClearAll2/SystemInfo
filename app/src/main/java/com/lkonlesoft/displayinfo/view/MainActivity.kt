@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -186,6 +187,10 @@ fun MainContext(settings: SettingsViewModel){
         targetValue = if (currentRoute == NavigationItem.Home.route) 0f else 360f,
         animationSpec = tween(250)
     )
+    val paddingAnimate by animateDpAsState(
+        targetValue = if (currentRoute == NavigationItem.Home.route) 0.dp else 12.dp,
+        animationSpec = tween(250)
+    )
     ScreenInfoTheme (
         typographyType = typographyType,
         darkTheme = when(appColor) {
@@ -212,9 +217,7 @@ fun MainContext(settings: SettingsViewModel){
                             Text(
                                 text = stringResource(routes.find { it.route == currentRoute }?.name ?: R.string.home),
                                 fontWeight = FontWeight.Medium,
-                                modifier = Modifier
-                                    .padding(horizontal = 10.dp)
-                                    .fillMaxWidth()
+                                modifier = Modifier.padding(paddingAnimate)
                             )
                         },
                         navigationIcon = {
@@ -319,11 +322,11 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             ),
             Pair(
                 NavigationItem.Android,
-                buildDetailsSubTextSetting(resources, R.string.android_version, R.string.security_patch)
+                buildDetailsSubTextSetting(resources, R.string.android_version, R.string.api_level, R.string.sdk)
             ),
             Pair(
                 NavigationItem.SOC,
-                buildDetailsSubTextSetting(resources, R.string.cpu_info, R.string.cpu_usage)
+                buildDetailsSubTextSetting(resources, R.string.cpu_info, R.string.cpu_usage, R.string.gpu_info)
             ),
             Pair(
                 NavigationItem.Display,
@@ -343,7 +346,7 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             ),
             Pair(
                 NavigationItem.Network,
-                buildDetailsSubTextSetting(resources, R.string.network_type, R.string.sim_info)
+                buildDetailsSubTextSetting(resources, R.string.network_type, R.string.wifi, R.string.sim_info)
             ),
             Pair(
                 NavigationItem.Camera,
@@ -355,7 +358,7 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             ),
             Pair(
                 NavigationItem.Media,
-                buildDetailsSubTextSetting(resources, R.string.widevine, R.string.security_level)
+                buildDetailsSubTextSetting(resources, R.string.features, R.string.widevine)
             ),
             Pair(
                 NavigationItem.Apps,
@@ -401,7 +404,7 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                 }
             }
             1 -> {
-                LazyVerticalStaggeredGrid (
+                LazyVerticalStaggeredGrid(
                     state = state,
                     columns = if (width < 600.dp) StaggeredGridCells.Fixed(1) else StaggeredGridCells.Adaptive(400.dp),
                     modifier = Modifier
@@ -415,56 +418,23 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                         bottom = paddingValues.calculateBottomPadding()
                     ),
                 ) {
-                    item {
-                        SystemDashboard(
-                            onClick = { navController.navigate(NavigationItem.System.route) })
-                    }
-                    item {
-                        AndroidDashboard(
-                            onClick = { navController.navigate(NavigationItem.Android.route) })
-                    }
-                    item {
-                        SoCDashBoard(
-                            onClick = { navController.navigate(NavigationItem.SOC.route) })
-                    }
-                    item {
-                        BatteryDashboard(
-                            onClick = { navController.navigate(NavigationItem.Battery.route) })
-                    }
-                    item {
-                        DisplayDashboard(
-                            onClick = { navController.navigate(NavigationItem.Display.route) })
-                    }
-                    item {
-                        MemoryDashBoard(
-                            onClick = { navController.navigate(NavigationItem.Memory.route) })
-                    }
-                    item {
-                        StorageDashboard(
-                            onClick = { navController.navigate(NavigationItem.Storage.route) })
-                    }
-                    item {
-                        NetworkDashboard(
-                            onClick = { navController.navigate(NavigationItem.Network.route) })
-                    }
-                    item {
-                        CameraDashboard {
-                            navController.navigate(NavigationItem.Camera.route)
-                        }
-                    }
-                    item {
-                        BluetoothDashboard {
-                            navController.navigate(NavigationItem.Connectivity.route)
-                        }
-                    }
-                    item {
-                        MediaDashboard {
-                            navController.navigate(NavigationItem.Media.route)
-                        }
-                    }
-                    item {
-                        AppDashboard {
-                            navController.navigate(NavigationItem.Apps.route)
+                    items(listScreen) { itemPair ->
+                        val item = itemPair.first
+                        val onClick = { navController.navigate(item.route) }
+                        when (item) {
+                            NavigationItem.System -> SystemDashboard(onClick = onClick)
+                            NavigationItem.Android -> AndroidDashboard(onClick = onClick)
+                            NavigationItem.SOC -> SoCDashBoard(onClick = onClick)
+                            NavigationItem.Display -> DisplayDashboard(onClick = onClick)
+                            NavigationItem.Battery -> BatteryDashboard(onClick = onClick)
+                            NavigationItem.Memory -> MemoryDashBoard(onClick = onClick)
+                            NavigationItem.Storage -> StorageDashboard(onClick = onClick)
+                            NavigationItem.Network -> NetworkDashboard(onClick = onClick)
+                            NavigationItem.Camera -> CameraDashboard(onClick = onClick)
+                            NavigationItem.Connectivity -> BluetoothDashboard(onClick = onClick)
+                            NavigationItem.Media -> MediaDashboard(onClick = onClick)
+                            NavigationItem.Apps -> AppDashboard(onClick = onClick)
+                            else -> {}
                         }
                     }
                 }
