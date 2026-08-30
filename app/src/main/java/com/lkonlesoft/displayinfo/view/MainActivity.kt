@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -26,6 +25,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -152,7 +153,9 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalLayoutApi::class
+)
 @Composable
 fun MainContext(settings: SettingsViewModel){
     val typographyType by settings.typographyType.collectAsStateWithLifecycle()
@@ -187,10 +190,6 @@ fun MainContext(settings: SettingsViewModel){
         targetValue = if (currentRoute == NavigationItem.Home.route) 0f else 360f,
         animationSpec = tween(250)
     )
-    val paddingAnimate by animateDpAsState(
-        targetValue = if (currentRoute == NavigationItem.Home.route) 0.dp else 12.dp,
-        animationSpec = tween(250)
-    )
     ScreenInfoTheme (
         typographyType = typographyType,
         darkTheme = when(appColor) {
@@ -206,7 +205,9 @@ fun MainContext(settings: SettingsViewModel){
             color = MaterialTheme.colorScheme.surfaceContainer)
         {
             Scaffold(
-                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                modifier = Modifier
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .imePadding(),
                 topBar = {
                     TopAppBar(
                         colors = TopAppBarDefaults.topAppBarColors(
@@ -217,7 +218,7 @@ fun MainContext(settings: SettingsViewModel){
                             Text(
                                 text = stringResource(routes.find { it.route == currentRoute }?.name ?: R.string.home),
                                 fontWeight = FontWeight.Medium,
-                                modifier = Modifier.padding(paddingAnimate)
+                                modifier = Modifier.padding(if (currentRoute == NavigationItem.Home.route) 0.dp else 12.dp)
                             )
                         },
                         navigationIcon = {

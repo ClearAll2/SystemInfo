@@ -42,6 +42,7 @@ import com.lkonlesoft.displayinfo.view.staggeredHeader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun SoCDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
@@ -52,7 +53,7 @@ fun SoCDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
         withContext(Dispatchers.IO) {
             while (true) {
                 cpuUsageInfo = SocUtils(context).getCPUUsage()
-                delay(intervalMillis)
+                delay(intervalMillis.milliseconds)
             }
         }
     }
@@ -97,7 +98,7 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
             cpuClusterInfo = SocUtils(context).getCPUClusterInfo()
             while (true) {
                 cpuUsageInfo = SocUtils(context).getCPUUsage()
-                delay(1000L) // Update every 1 second
+                delay(1000L.milliseconds) // Update every 1 second
             }
         }
     }

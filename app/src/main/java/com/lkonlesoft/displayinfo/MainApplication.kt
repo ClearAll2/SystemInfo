@@ -2,6 +2,7 @@ package com.lkonlesoft.displayinfo
 
 import android.app.Application
 import com.lkonlesoft.displayinfo.di.appModule
+import com.lkonlesoft.displayinfo.widget.WidgetUpdateWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
@@ -14,5 +15,6 @@ class MainApplication : Application() {
             androidContext(this@MainApplication)
             modules(appModule)
         }
+        WidgetUpdateWorker.enqueueWork(this@MainApplication)
     }
 }

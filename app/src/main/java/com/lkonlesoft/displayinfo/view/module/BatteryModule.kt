@@ -48,8 +48,9 @@ import com.lkonlesoft.displayinfo.view.GeneralWarning
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.staggeredHeader
-import com.lkonlesoft.displayinfo.widget.BatReceiver
+import com.lkonlesoft.displayinfo.widget.BatteryWidgetReceiver
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun BatteryDashboard(intervalMillis: Long = 2000L,onClick: () -> Unit) {
@@ -58,7 +59,7 @@ fun BatteryDashboard(intervalMillis: Long = 2000L,onClick: () -> Unit) {
     val infoList by remember(refreshKey) { mutableStateOf(BatteryUtils(context).getDashboardData()) }
     LaunchedEffect(Unit) {
         while (true) {
-            delay(intervalMillis)
+            delay(intervalMillis.milliseconds)
             refreshKey++
         }
     }
@@ -103,7 +104,7 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
     }
     LaunchedEffect(Unit) {
         while (true){
-            delay(1000L)
+            delay(1000L.milliseconds)
             refreshKey++
         }
     }
@@ -154,7 +155,7 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                 extra = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                         val appWidgetManager = AppWidgetManager.getInstance(context)
-                        val widgetProvider = ComponentName(context, BatReceiver::class.java)
+                        val widgetProvider = ComponentName(context, BatteryWidgetReceiver::class.java)
                         Button(
                             shapes = ButtonDefaults.shapes(),
                             modifier = Modifier.padding(bottom = 10.dp),

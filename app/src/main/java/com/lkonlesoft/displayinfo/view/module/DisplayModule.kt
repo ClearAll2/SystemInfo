@@ -40,6 +40,7 @@ import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.staggeredHeader
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
@@ -49,7 +50,7 @@ fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
     val infoList by remember(refreshKey) { mutableStateOf(DisplayUtils(context, resources).getDashboardData()) }
     LaunchedEffect(Unit) {
         while (true) {
-            delay(intervalMillis)
+            delay(intervalMillis.milliseconds)
             refreshKey++
         }
     }
@@ -89,7 +90,7 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     var infoList by remember(refreshKey) { mutableStateOf(DisplayUtils(context, resources).getAllDisplayDetails()) }
     LaunchedEffect(Unit) {
         while (true){
-            delay(1000L)
+            delay(1000L.milliseconds)
             refreshKey++
         }
     }

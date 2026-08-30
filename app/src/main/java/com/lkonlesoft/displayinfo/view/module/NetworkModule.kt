@@ -57,6 +57,7 @@ import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.staggeredHeader
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
@@ -66,7 +67,7 @@ fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
-            delay(intervalMillis)
+            delay(intervalMillis.milliseconds)
             refreshKey++ // Triggers recomposition
         }
     }
@@ -143,7 +144,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     }
     LaunchedEffect(Unit) {
         while (true){
-            delay(3000L)
+            delay(3000L.milliseconds)
             refreshKey++
         }
     }

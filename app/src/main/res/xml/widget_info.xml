@@ -1,10 +1,14 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="100dp"
-    android:minHeight="50dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:minWidth="110dp"
+    android:minHeight="55dp"
     android:updatePeriodMillis="0"
+    android:targetCellHeight="1"
+    android:targetCellWidth="2"
     android:description="@string/appwidget_description"
-    android:initialLayout="@layout/appwidget_preview"
+    android:initialLayout="@layout/glance_default_loading_layout"
     android:previewImage="@drawable/widget_preview"
     android:resizeMode="vertical|horizontal"
-    android:widgetCategory="home_screen">
+    android:widgetCategory="home_screen"
+    tools:ignore="UnusedAttribute">
 </appwidget-provider>

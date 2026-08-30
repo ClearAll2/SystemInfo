@@ -55,6 +55,7 @@ import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.staggeredHeader
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
@@ -79,7 +80,7 @@ fun BluetoothDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
-            delay(intervalMillis)
+            delay(intervalMillis.milliseconds)
             refreshKey++ // Triggers recomposition
         }
     }
@@ -179,7 +180,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
     }
     LaunchedEffect(Unit) {
         while (true){
-            delay(1000L)
+            delay(1000L.milliseconds)
             refreshKey++
             if (refreshKey % 10 == 0) //load device data every 10 seconds
                 refreshKey2++

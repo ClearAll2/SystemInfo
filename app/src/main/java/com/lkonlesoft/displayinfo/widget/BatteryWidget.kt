@@ -15,6 +15,7 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionStartActivity
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -50,6 +51,12 @@ class BatteryWidget : GlanceAppWidget() {
         }
     }
 
+    override suspend fun providePreview(context: Context, widgetCategory: Int) {
+        provideContent {
+            BatteryInfoContent(context)
+        }
+    }
+
     @Composable
     fun BatteryInfoContent(context: Context) {
         val size = LocalSize.current
@@ -71,6 +78,7 @@ class BatteryWidget : GlanceAppWidget() {
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
+                .cornerRadius(28.dp)
                 .padding(vertical = 10.dp, horizontal = 10.dp)
                 .background(GlanceTheme.colors.background)
                 .clickable(onClick = actionStartActivity(intent)),

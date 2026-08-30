@@ -5,8 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 59
-val buildName = "4.2"
+val buildCode = 60
+val buildName = "4.3"
 val appId = "com.lkonlesoft.displayinfo"
 
 android {
@@ -60,8 +60,8 @@ dependencies {
     implementation("io.insert-koin:koin-android:4.2.2")
     implementation("io.insert-koin:koin-androidx-compose:4.2.2")
     implementation("androidx.window:window:1.5.1")
-    implementation("androidx.glance:glance-appwidget:1.1.1")
-    implementation("androidx.glance:glance-material3:1.1.1")
+    implementation("androidx.glance:glance-appwidget:1.2.0")
+    implementation("androidx.glance:glance-material3:1.2.0")
     implementation("androidx.core:core-splashscreen:1.2.0")
     implementation("androidx.core:core-ktx:1.19.0")
     implementation("androidx.appcompat:appcompat:1.8.0")
@@ -73,8 +73,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material3:material3:1.5.0-alpha25")
-    implementation("androidx.navigation:navigation-compose:2.9.8")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha25") //alpha26+ requires minSdk=24, support until next year
+    implementation("androidx.navigation:navigation-compose:2.9.8")       //2.10+ requires minSdk=24, support until next year
     implementation("androidx.work:work-runtime-ktx:2.11.2")
     implementation("androidx.compose.ui:ui-text:1.12.0")
     implementation("androidx.compose.animation:animation-core:1.12.0")
@@ -82,8 +82,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2026.08.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.12.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

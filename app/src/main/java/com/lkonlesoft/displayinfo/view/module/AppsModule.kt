@@ -4,8 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroupDefaults
@@ -56,6 +60,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -66,7 +71,6 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.AppInfo
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
@@ -116,6 +120,10 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
     val haptic = LocalHapticFeedback.current
     val width = LocalWindowInfo.current.containerDpSize.width
     val layoutDirection = LocalLayoutDirection.current
+    val listState = rememberLazyStaggeredGridState()
+    var showSearchBar by remember { mutableStateOf(true) }
+    var previousIndex by remember { mutableIntStateOf(0) }
+    var previousScrollOffset by remember { mutableIntStateOf(0) }
     val appTypes = remember {
         mapOf(
             -1 to R.string.all,
@@ -139,6 +147,28 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
             }
         }
     }
+    val derivedShowBackButton by remember {
+        derivedStateOf {
+            val isAtTop = listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
+            if (isAtTop) {
+                true
+            } else {
+                val isScrollingUp = if (listState.firstVisibleItemIndex < previousIndex) {
+                    true
+                } else if (listState.firstVisibleItemIndex > previousIndex) {
+                    false
+                } else {
+                    listState.firstVisibleItemScrollOffset < previousScrollOffset
+                }
+                isScrollingUp
+            }
+        }
+    }
+    LaunchedEffect(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset) {
+        showSearchBar = derivedShowBackButton
+        previousIndex = listState.firstVisibleItemIndex
+        previousScrollOffset = listState.firstVisibleItemScrollOffset
+    }
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             allApps = PackageUtils(context).getAllPackages().sortedBy { it.name.lowercase() }
@@ -158,141 +188,167 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
             }
         }
         else {
-            Column(modifier = Modifier
+            Box(modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding(),
                     start = paddingValues.calculateStartPadding(layoutDirection),
                     end = paddingValues.calculateEndPadding(layoutDirection)
-                ),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { newVal ->
-                        searchQuery = newVal
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth(if (width < 840.dp) 1f else .7f)
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
-                    placeholder = { Text(stringResource(R.string.find_app)) },
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.outline_search_24),
-                            contentDescription = "search"
-                        )
-                    },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { searchQuery = "" }) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.baseline_close_24),
-                                    contentDescription = "clear"
+                )) {
+                Column(
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(if (width < 840.dp) 1f else .7f)
+                            .horizontalScroll(rememberScrollState())
+                            .padding(horizontal = 20.dp)
+                            .padding(bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+                    ) {
+                        appTypes.entries.forEach { type ->
+                            OutlinedToggleButton(
+                                checked = selectType == type.key,
+                                onCheckedChange = {
+                                    selectType = type.key
+                                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                },
+                                shapes = when (type.key) {
+                                    -1 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                    appTypes.keys.last() -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                },
+                                colors = ToggleButtonDefaults.toggleButtonColors(
+                                    disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer
                                 )
+                            ) {
+                                Text(text = "${resource.getString(type.value)} (${appCountInfo[type.key + 1].value})")
                             }
                         }
-                    },
-                    shape = RoundedCornerShape(28.dp),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.background,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.background
-                    )
-                )
-                Row(modifier = Modifier
-                    .fillMaxWidth(if (width < 840.dp) 1f else .7f)
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
-                ) {
-                    appTypes.entries.forEach { type ->
-                        OutlinedToggleButton (
-                            checked = selectType == type.key,
-                            onCheckedChange = {
-                                selectType = type.key
-                                haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                            },
-                            shapes = when(type.key) {
-                                -1 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                appTypes.keys.last() -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            },
-                            colors = ToggleButtonDefaults.toggleButtonColors(
-                                disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                                disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer
-                            )
-                        ) {
-                            Text(text = "${resource.getString(type.value)} (${appCountInfo[type.key+1].value})")
+                    }
+                    AnimatedContent(
+                        targetState = filteredApps.isNotEmpty(),
+                        transitionSpec = {
+                            fadeIn() togetherWith fadeOut()
+                        }
+                    ) { exist ->
+                        if (exist) {
+                            LazyVerticalStaggeredGrid(
+                                state = listState,
+                                columns = StaggeredGridCells.Fixed(1),
+                                modifier = Modifier
+                                    .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(if (width < 840.dp) 1f else .7f)
+                                    .padding(horizontal = 20.dp)
+                                    .clip(
+                                        shape = RoundedCornerShape(
+                                            topStart = 24.dp,
+                                            topEnd = 24.dp
+                                        )
+                                    ),
+                                contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()), //fix edge to edge
+                                horizontalArrangement = Arrangement.spacedBy(20.dp)
+                            ) {
+                                items(filteredApps) { app ->
+                                    IndividualLine(
+                                        title = app.name,
+                                        info = buildString {
+                                            append(app.packageName.take(25))
+                                            append("...\n\n")
+                                            append(stringResource(R.string.version))
+                                            append(" ")
+                                            append(app.versionName)
+                                        },
+                                        featureTagText = stringResource(R.string.disabled),
+                                        showFeatureTag = !app.status,
+                                        icon = app.icon,
+                                        canLongPress = longPressCopy,
+                                        copyTitle = copyTitle,
+                                        isLast = filteredApps.last() == app,
+                                        topStart = if (filteredApps.first() == app) 20.dp else 5.dp,
+                                        topEnd = if (filteredApps.first() == app) 20.dp else 5.dp,
+                                        bottomStart = if (filteredApps.last() == app) 20.dp else 5.dp,
+                                        bottomEnd = if (filteredApps.last() == app) 20.dp else 5.dp,
+                                        onClick = {
+                                            context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                                data =
+                                                    Uri.fromParts("package", app.packageName, null)
+                                            })
+                                        }
+                                    )
+                                }
+                                staggeredHeader {
+                                    Spacer(modifier = Modifier.padding(20.dp))
+                                }
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .size(240.dp)
+                                        .clip(MaterialShapes.Cookie12Sided.toShape())
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surfaceBright,
+                                            shape = MaterialShapes.Cookie12Sided.toShape()
+                                        )
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.no_apps_found),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-                AnimatedContent(
-                    targetState = filteredApps.isNotEmpty(),
-                    transitionSpec = {
-                        fadeIn() togetherWith fadeOut()
-                    }
-                ) { exist ->
-                    if (exist) {
-                        LazyVerticalStaggeredGrid(
-                            columns = StaggeredGridCells.Fixed(1),
-                            modifier = Modifier
-                                .background(color = MaterialTheme.colorScheme.surfaceContainer)
-                                .fillMaxHeight()
-                                .fillMaxWidth(if (width < 840.dp) 1f else .7f)
-                                .padding(horizontal = 20.dp)
-                                .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-                            contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()), //fix edge to edge
-                            horizontalArrangement = Arrangement.spacedBy(20.dp)
-                        ) {
-                            items(filteredApps) { app ->
-                                IndividualLine(
-                                    title = app.name,
-                                    info = buildString {
-                                        append(app.packageName.take(25))
-                                        append("...\n\n")
-                                        append(stringResource(R.string.version))
-                                        append(" ")
-                                        append(app.versionName)
-                                    },
-                                    featureTagText = stringResource(R.string.disabled),
-                                    showFeatureTag = !app.status,
-                                    icon = app.icon,
-                                    canLongPress = longPressCopy,
-                                    copyTitle = copyTitle,
-                                    isLast = filteredApps.last() == app,
-                                    topStart = if (filteredApps.first() == app) 20.dp else 5.dp,
-                                    topEnd = if (filteredApps.first() == app) 20.dp else 5.dp,
-                                    bottomStart = if (filteredApps.last() == app) 20.dp else 5.dp,
-                                    bottomEnd = if (filteredApps.last() == app) 20.dp else 5.dp,
-                                    onClick = {
-                                        context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                            data = Uri.fromParts("package", app.packageName, null)
-                                        })
-                                    }
-                                )
-                            }
-                            staggeredHeader {
-                                Spacer(modifier = Modifier.padding(20.dp))
-                            }
-                        }
-                    }
-                    else {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Box(contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .size(240.dp)
-                                    .clip(MaterialShapes.Cookie12Sided.toShape())
-                                    .background(
-                                        color = MaterialTheme.colorScheme.surfaceBright,
-                                        shape = MaterialShapes.Cookie12Sided.toShape()
+                AnimatedVisibility(
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    visible = showSearchBar,
+                    enter = fadeIn() + slideInVertically(initialOffsetY = { up -> up }),
+                    exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> down })
+                    ) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { newVal ->
+                            searchQuery = newVal
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(.7f)
+                            .padding(bottom = paddingValues.calculateBottomPadding())
+                            .padding(horizontal = 20.dp, vertical = 10.dp)
+                            .shadow(elevation = 4.dp, shape = RoundedCornerShape(28.dp)),
+                        placeholder = { Text(stringResource(R.string.find_app)) },
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.outline_search_24),
+                                contentDescription = "search"
+                            )
+                        },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { searchQuery = "" }) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_close_24),
+                                        contentDescription = "clear"
                                     )
-                            ) {
-                                Text(text = stringResource(R.string.no_apps_found), fontSize = 18.sp)
+                                }
                             }
-                        }
-                    }
+                        },
+                        shape = RoundedCornerShape(28.dp),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceDim
+                        )
+                    )
                 }
             }
         }

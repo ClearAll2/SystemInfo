@@ -43,6 +43,7 @@ import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.header
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
@@ -52,7 +53,7 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
-            delay(intervalMillis)
+            delay(intervalMillis.milliseconds)
             refreshKey++ // Triggers recomposition
         }
     }
@@ -94,7 +95,7 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
     // Auto-refresh every 60 seconds
     LaunchedEffect(Unit) {
         while (true) {
-            delay(intervalMillis)
+            delay(intervalMillis.milliseconds)
             refreshKey++ // Triggers recomposition
         }
     }
@@ -144,7 +145,7 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
     // Auto-refresh every 2 seconds
     LaunchedEffect(Unit) {
         while (true) {
-            delay(2000L)
+            delay(2000L.milliseconds)
             refreshKey++ // Triggers recomposition
         }
     }
@@ -210,7 +211,7 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
     // Auto-refresh every 10 seconds
     LaunchedEffect(Unit) {
         while (true) {
-            delay(30000L)
+            delay(30000L.milliseconds)
             refreshKey++ // Triggers recomposition
         }
     }
