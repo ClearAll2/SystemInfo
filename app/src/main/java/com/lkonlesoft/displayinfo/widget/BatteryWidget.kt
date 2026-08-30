@@ -20,19 +20,22 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.BatteryUtils
 
 class BatteryWidget : GlanceAppWidget() {
 
     companion object {
-        private val SMALL_SQUARE = DpSize(100.dp, 50.dp)
-        private val MEDIUM_SQUARE = DpSize(200.dp, 100.dp)
-        private val BIG_SQUARE = DpSize(300.dp, 200.dp)
+        private val SMALL_SQUARE = DpSize(110.dp, 110.dp)
+        private val MEDIUM_SQUARE = DpSize(150.dp, 150.dp)
+        private val BIG_SQUARE = DpSize(250.dp, 250.dp)
     }
 
     override val sizeMode = SizeMode.Responsive(
@@ -62,14 +65,14 @@ class BatteryWidget : GlanceAppWidget() {
         val size = LocalSize.current
         val cycleCount = BatteryUtils(context).getBatteryCycleCount()
         val titleFontSize = when {
-            size.height >= 50.dp && size.height < 100.dp -> 14.sp
-            size.height >= 100.dp && size.height < 150.dp -> 16.sp
-            else -> 18.sp
+            size.height >= 110.dp && size.height < 150.dp -> 16.sp
+            size.height >= 150.dp && size.height < 250.dp -> 18.sp
+            else -> 20.sp
         }
         val countFontSize = when {
-            size.height < 100.dp -> 16.sp
-            size.height < 150.dp -> 24.sp
-            else -> 26.sp
+            size.height >= 110.dp && size.height < 150.dp -> 40.sp
+            size.height >= 150.dp && size.height < 250.dp -> 48.sp
+            else -> 52.sp
         }
         val intent = Intent(Intent.ACTION_VIEW, "si://info/battery".toUri()).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -79,21 +82,22 @@ class BatteryWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .fillMaxSize()
                 .cornerRadius(28.dp)
-                .padding(vertical = 10.dp, horizontal = 10.dp)
-                .background(GlanceTheme.colors.background)
+                .padding(8.dp)
+                .background(GlanceTheme.colors.widgetBackground)
                 .clickable(onClick = actionStartActivity(intent)),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "🔋 Cycle Count", modifier = GlanceModifier.padding(horizontal = 5.dp).padding(top = 10.dp, bottom = 5.dp),
+            Text(text = context.getString(R.string.cycle_count),
                 style = TextStyle(
                     color = GlanceTheme.colors.onBackground,
                     fontSize = titleFontSize,
                     fontWeight = FontWeight.Medium)
             )
-            Text(text = if (cycleCount == -1) "N/A" else cycleCount.toString(),
-                modifier = GlanceModifier.padding(horizontal = 5.dp).padding(top = 10.dp, bottom = 5.dp),
+            Spacer(modifier = GlanceModifier.size(8.dp))
+            Text(text = if (cycleCount == -1) context.getString(R.string.n_a) else cycleCount.toString(),
                 style = TextStyle(
-                    color = GlanceTheme.colors.onBackground,
+                    color = GlanceTheme.colors.primary,
                     fontSize = countFontSize,
                     fontWeight = FontWeight.Bold)
                 )
