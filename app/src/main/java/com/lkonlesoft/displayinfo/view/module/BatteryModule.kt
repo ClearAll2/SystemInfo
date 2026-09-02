@@ -151,13 +151,13 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                 }
             }
         }
-        item {
-            GeneralWarning(
-                title = R.string.cycle_count,
-                text = R.string.battery_notice_2,
-                icon = R.drawable.outline_info_24,
-                extra = {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            item {
+                GeneralWarning(
+                    title = R.string.cycle_count,
+                    text = R.string.battery_notice_2,
+                    icon = R.drawable.outline_info_24,
+                    extra = {
                         val appWidgetManager = AppWidgetManager.getInstance(context)
                         val widgetProvider = ComponentName(context, BatteryWidgetReceiver::class.java)
                         Button(
@@ -170,8 +170,8 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                             Text(stringResource(R.string.add_battery_widget))
                         }
                     }
-                }
-            )
+                )
+            }
         }
         if (showNotice){
             item {
