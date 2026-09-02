@@ -216,8 +216,6 @@
     <string name="jvm_version">Versão Java VM</string>
     <string name="add_battery_widget">Adicionar widget à tela inicial</string>
     <string name="google_play_store">Google Play Store</string>
-    <string name="storage_notice_title">Nota sobre informações de armazenamento</string>
-    <string name="storage_notice">Esteja ciente de que a capacidade interna total não inclui o tamanho do OS e arquivos do sistema.</string>
     <string name="copy_title">Copiar título</string>
     <string name="copy_title_details">Copiar tanto título quanto valor</string>
     <string name="language">Idioma</string>

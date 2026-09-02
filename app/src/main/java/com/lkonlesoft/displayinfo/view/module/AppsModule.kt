@@ -5,6 +5,9 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -61,6 +64,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -70,6 +74,7 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.AppInfo
@@ -136,6 +141,16 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
     var appCountInfo by remember { mutableStateOf(emptyList<DeviceInfo>()) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var selectType by rememberSaveable { mutableIntStateOf(-1) }
+    var isFocused by remember { mutableStateOf(false) }
+    val widthFraction by animateFloatAsState(
+        targetValue = when {
+            width > 840.dp && !isFocused -> .5f
+            width > 840.dp && isFocused -> .7f
+            width < 840.dp && !isFocused ->.7f
+            else -> 1f
+        },
+        label = "SearchBarWidthAnimation"
+    )
     val filteredApps by remember {
         derivedStateOf {
             val appsByType = if (selectType != -1) allApps.filter { it.type == selectType } else allApps
@@ -321,11 +336,19 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                             searchQuery = newVal
                         },
                         modifier = Modifier
-                            .fillMaxWidth(.7f)
+                            .onFocusChanged { focus -> isFocused = focus.isFocused }
+                            .fillMaxWidth(widthFraction)
                             .padding(bottom = paddingValues.calculateBottomPadding())
                             .padding(horizontal = 20.dp, vertical = 10.dp)
-                            .shadow(elevation = 4.dp, shape = RoundedCornerShape(28.dp)),
-                        placeholder = { Text(stringResource(R.string.find_app)) },
+                            .shadow(elevation = 2.dp, shape = RoundedCornerShape(28.dp))
+                            .animateContentSize(tween(120))
+                        ,
+                        placeholder = {
+                            Text(stringResource(R.string.find_app),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                softWrap = false)
+                        },
                         singleLine = true,
                         leadingIcon = {
                             Icon(
@@ -337,7 +360,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                             if (searchQuery.isNotEmpty()) {
                                 IconButton(onClick = { searchQuery = "" }) {
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_close_24),
+                                        imageVector = ImageVector.vectorResource(R.drawable.cancel_24px),
                                         contentDescription = "clear"
                                     )
                                 }

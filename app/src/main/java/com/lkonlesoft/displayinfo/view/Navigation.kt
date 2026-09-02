@@ -206,8 +206,7 @@ fun MainNavigation(
             StorageScreen(
                 paddingValues = paddingValues,
                 longPressCopy = longPressCopy,
-                copyTitle = copyTitle,
-                showNotice = showNotice
+                copyTitle = copyTitle
             )
         }
         composable(

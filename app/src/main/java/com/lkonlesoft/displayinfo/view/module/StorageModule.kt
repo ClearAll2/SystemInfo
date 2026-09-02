@@ -19,10 +19,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -37,7 +35,6 @@ import com.lkonlesoft.displayinfo.utils.StorageUtils
 import com.lkonlesoft.displayinfo.view.BigPercentageValue
 import com.lkonlesoft.displayinfo.view.GeneralProgressBar
 import com.lkonlesoft.displayinfo.view.GeneralStatRow
-import com.lkonlesoft.displayinfo.view.GeneralWarning
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
@@ -49,7 +46,9 @@ import kotlin.time.Duration.Companion.milliseconds
 fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val ramInfoList by remember (refreshKey) { mutableStateOf(StorageUtils(context).getRAMInfo()) }
+    val ramInfoList = remember (refreshKey) { StorageUtils(context).getRAMInfo() }
+    val detailsInfo = remember(ramInfoList) { ramInfoList.filter { it.type != 1 } }
+
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -80,7 +79,7 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
                 1
             )
             Spacer(modifier = Modifier.height(12.dp))
-            ramInfoList.filter { it != ramInfoList.first() }.forEach {
+            detailsInfo.forEach {
                 GeneralStatRow(stringResource(it.name), it.value.toString() + it.extra)
             }
         }
@@ -91,7 +90,8 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
 fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val internalStorageStats by remember(refreshKey) { mutableStateOf(StorageUtils(context).getInternalStorageInfo()) }
+    val internalStorageStats = remember(refreshKey) { StorageUtils(context).getInternalStorageInfo() }
+    val detailsInfo = remember(internalStorageStats) { internalStorageStats.filter { it != internalStorageStats.first() } }
     // Auto-refresh every 60 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -122,7 +122,7 @@ fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
                 1
             )
             Spacer(modifier = Modifier.height(12.dp))
-            internalStorageStats.filter { it != internalStorageStats.first() }.forEach {
+            detailsInfo.forEach {
                 GeneralStatRow(
                     stringResource(it.name),
                     if (it.type == 0) it.extra else it.value.toString() + it.extra
@@ -137,11 +137,8 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val ramInfo by remember(refreshKey) {
-        derivedStateOf {
-            StorageUtils(context).getRAMInfo()
-        }
-    }
+    val ramInfo = remember(refreshKey) { StorageUtils(context).getRAMInfo() }
+    val filteredRamInfo = remember(ramInfo) { ramInfo.filter { it != ramInfo.first() } }
     // Auto-refresh every 2 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -165,7 +162,6 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {
-            val filteredRamInfo = ramInfo.filter { it.type != 1 }
             Column {
                 BigPercentageValue(value = ramInfo.first().value.toString())
                 GeneralProgressBar(
@@ -194,21 +190,15 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
 }
 
 @Composable
-fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean, paddingValues: PaddingValues) {
+fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val internalStorageStats by remember(refreshKey) {
-        derivedStateOf {
-            StorageUtils(context).getInternalStorageInfo()
-        }
-    }
-    val externalStorageStats by remember(refreshKey) {
-        derivedStateOf {
-            StorageUtils(context).getExternalStorageInfo()
-        }
-    }
-    // Auto-refresh every 10 seconds
+    val internalStorageStats = remember(refreshKey) { StorageUtils(context).getInternalStorageInfo() }
+    val detailsInternal = remember(internalStorageStats) { internalStorageStats.filter { it != internalStorageStats.first() } }
+    val externalStorageStats = remember(refreshKey) { StorageUtils(context).getExternalStorageInfo() }
+    val detailsExternal = remember(externalStorageStats) { externalStorageStats.filter { it != externalStorageStats.first() } }
+    // Auto-refresh every 30 seconds
     LaunchedEffect(Unit) {
         while (true) {
             delay(30000L.milliseconds)
@@ -231,7 +221,6 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
     ) {
         item {
             Column {
-                val filteredInternalStats = internalStorageStats.filter { it.type != 1 }
                 HeaderLine(tittle = stringResource(R.string.internal_storage))
                 BigPercentageValue(value = internalStorageStats.first().value.toString())
                 GeneralProgressBar(
@@ -241,16 +230,16 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                     height = 32.dp,
                     verticalPadding = 15.dp
                 )
-                filteredInternalStats.forEach {
+                detailsInternal.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = filteredInternalStats.last() == it,
-                        topStart = if (filteredInternalStats.first() == it) 20.dp else 5.dp,
-                        topEnd = if (filteredInternalStats.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (filteredInternalStats.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (filteredInternalStats.last() == it) 20.dp else 5.dp
+                        isLast = detailsInternal.last() == it,
+                        topStart = if (detailsInternal.first() == it) 20.dp else 5.dp,
+                        topEnd = if (detailsInternal.first() == it) 20.dp else 5.dp,
+                        bottomStart = if (detailsInternal.last() == it) 20.dp else 5.dp,
+                        bottomEnd = if (detailsInternal.last() == it) 20.dp else 5.dp
                     )
                 }
             }
@@ -258,7 +247,6 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
         if (externalStorageStats.isNotEmpty()) {
             item {
                 Column {
-                    val filteredExternalStats = externalStorageStats.filter { it.type != 1 }
                     HeaderLine(tittle = stringResource(R.string.external_storage))
                     BigPercentageValue(value = externalStorageStats.first().value.toString())
                     GeneralProgressBar(
@@ -268,28 +256,20 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                         height = 32.dp,
                         verticalPadding = 15.dp
                     )
-                    filteredExternalStats.forEach {
+                    detailsExternal.forEach {
                         IndividualLine(
                             title = stringResource(it.name),
                             info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,
-                            isLast = filteredExternalStats.last() == it,
-                            topStart = if (filteredExternalStats.first() == it) 20.dp else 5.dp,
-                            topEnd = if (filteredExternalStats.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (filteredExternalStats.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (filteredExternalStats.last() == it) 20.dp else 5.dp
+                            isLast = detailsExternal.last() == it,
+                            topStart = if (detailsExternal.first() == it) 20.dp else 5.dp,
+                            topEnd = if (detailsExternal.first() == it) 20.dp else 5.dp,
+                            bottomStart = if (detailsExternal.last() == it) 20.dp else 5.dp,
+                            bottomEnd = if (detailsExternal.last() == it) 20.dp else 5.dp
                         )
                     }
                 }
-            }
-        }
-        if (showNotice){
-            item {
-                GeneralWarning(
-                    title = R.string.storage_notice_title,
-                    text = R.string.storage_notice
-                )
             }
         }
         header {

@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -32,8 +31,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.DisplayUtils
+import com.lkonlesoft.displayinfo.view.BigPercentageValue
 import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
@@ -47,7 +48,9 @@ fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
     val context = LocalContext.current
     val resources = LocalResources.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList by remember(refreshKey) { mutableStateOf(DisplayUtils(context, resources).getDashboardData()) }
+    val infoList = remember(refreshKey) { DisplayUtils(context, resources).getDashboardData() }
+    val refreshRate = remember(infoList) { infoList.first() }
+    val detailsList = remember(infoList) { infoList.filter { it != infoList.first() } }
     LaunchedEffect(Unit) {
         while (true) {
             delay(intervalMillis.milliseconds)
@@ -69,9 +72,9 @@ fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
                 title = stringResource(R.string.display),
                 icon = R.drawable.mobile_text_24px
             )
+            BigPercentageValue(value = refreshRate.value.toString(), fontSize = 36.sp, indicator = refreshRate.extra)
             Spacer(modifier = Modifier.height(12.dp))
-
-            infoList.forEach {
+            detailsList.forEach {
                 GeneralStatRow(
                     label = stringResource(it.name),
                     value = it.value.toString() + it.extra
@@ -87,7 +90,7 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     val resources = LocalResources.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    var infoList by remember(refreshKey) { mutableStateOf(DisplayUtils(context, resources).getAllDisplayDetails()) }
+    val infoList = remember(refreshKey) { DisplayUtils(context, resources).getAllDisplayDetails() }
     LaunchedEffect(Unit) {
         while (true){
             delay(1000L.milliseconds)
@@ -109,18 +112,25 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         itemsIndexed(infoList) { index, display ->
+            val refreshRate = remember(display) { display.first()  }
+            val detailsList = remember(display) { display.filter { it != display.first() } }
             Column {
                 HeaderLine(tittle = stringResource(R.string.display) + " #${index+1}")
-                display.forEach {
+                BigPercentageValue(value = refreshRate.value.toString(),
+                    indicator = refreshRate.extra,
+                    modifier = Modifier.padding(bottom = 15.dp))
+                detailsList.forEachIndexed { i, it ->
+                    val isFirst = i == 0
+                    val isLast = i == detailsList.lastIndex
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = display.last() == it,
-                        topStart = if (display.first() == it) 20.dp else 5.dp,
-                        topEnd = if (display.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (display.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (display.last() == it) 20.dp else 5.dp
+                        isLast = isLast,
+                        topStart = if(isFirst) 20.dp else 5.dp,
+                        topEnd = if(isFirst) 20.dp else 5.dp,
+                        bottomStart = if(isLast) 20.dp else 5.dp,
+                        bottomEnd = if(isLast) 20.dp else 5.dp
                     )
                 }
             }

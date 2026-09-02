@@ -216,8 +216,6 @@
     <string name="jvm_version">Phiên bản Java VM</string>
     <string name="add_battery_widget">Thêm widget vào màn hình chính</string>
     <string name="google_play_store">Google Play Store</string>
-    <string name="storage_notice_title">Ghi chú thông tin lưu trữ</string>
-    <string name="storage_notice">Xin lưu ý rằng dung lượng trong tổng không bao gồm kích thước của hệ điều hành và tệp hệ thống.</string>
     <string name="copy_title">Sao chép tiêu đề</string>
     <string name="copy_title_details">Sao chép cả tiêu đề và giá trị</string>
     <string name="language">Ngôn ngữ</string>

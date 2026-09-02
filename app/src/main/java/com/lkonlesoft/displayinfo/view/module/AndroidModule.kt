@@ -18,6 +18,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -35,8 +36,7 @@ import com.lkonlesoft.displayinfo.view.staggeredHeader
 @Composable
 fun AndroidDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
-    val androidInfo = AndroidUtils(context)
-    val listInfo = androidInfo.getDashboardData()
+    val listInfo = remember { AndroidUtils(context).getDashboardData() }
     OutlinedCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
@@ -66,8 +66,12 @@ fun AndroidDashboard(onClick: () -> Unit) {
 fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
-    val androidInfoList = AndroidUtils(context).getAndroidInfo()
-    val extraInfoList = AndroidUtils(context).getExtraInfo()
+    val androidInfoList = remember {
+        AndroidUtils(context).getAndroidInfo()
+    }
+    val extraInfoList = remember {
+        AndroidUtils(context).getExtraInfo()
+    }
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier

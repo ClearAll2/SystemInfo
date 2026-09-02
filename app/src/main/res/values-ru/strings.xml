@@ -216,8 +216,6 @@
     <string name="jvm_version">Версия Java VM</string>
     <string name="add_battery_widget">Добавить виджет на главный экран</string>
     <string name="google_play_store">Google Play Маркет</string>
-    <string name="storage_notice_title">Примечание к информации о хранилище</string>
-    <string name="storage_notice">Обратите внимание, что общая внутренняя ёмкость не включает размер OS и системных файлов.</string>
     <string name="copy_title">Копировать заголовок</string>
     <string name="copy_title_details">Копировать как заголовок, так и значение</string>
     <string name="language">Язык</string>

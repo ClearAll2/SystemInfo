@@ -216,8 +216,6 @@
     <string name="jvm_version">Versión de Java VM</string>
     <string name="add_battery_widget">Añadir widget al homescreen</string>
     <string name="google_play_store">Google Play Store</string>
-    <string name="storage_notice_title">Nota sobre información de almacenamiento</string>
-    <string name="storage_notice">Ten en cuenta que la capacidad interna total no incluye el tamaño del OS y archivos del sistema.</string>
     <string name="copy_title">Copiar título</string>
     <string name="copy_title_details">Copiar tanto título como valor</string>
     <string name="language">Idioma</string>

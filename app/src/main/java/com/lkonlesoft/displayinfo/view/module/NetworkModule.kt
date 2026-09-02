@@ -33,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,7 +62,7 @@ import kotlin.time.Duration.Companion.milliseconds
 fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList by remember(refreshKey) { mutableStateOf(NetworkUtils(context).getDashboardData()) }
+    val infoList = remember(refreshKey) { NetworkUtils(context).getDashboardData() }
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -103,24 +102,14 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
     var showWarningPopup by remember { mutableStateOf(false) }
-    val hasPhonePermission by remember(refreshKey) {
-        derivedStateOf {
-            context.hasPermission(Manifest.permission.READ_PHONE_STATE)
-        }
+    val hasPhonePermission = remember(refreshKey) { context.hasPermission(Manifest.permission.READ_PHONE_STATE) }
+    val hasLocationPermission = remember(refreshKey) { context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) }
+    val networkType = remember(refreshKey) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils(context).getNetwork() else NetworkUtils(context).getNetworkOldApi()
     }
-    val hasLocationPermission by remember(refreshKey) {
-        derivedStateOf {
-            context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-    val networkType by remember(refreshKey) {
-        derivedStateOf {
-            (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils(context).getNetwork() else NetworkUtils(context).getNetworkOldApi())
-        }
-    }
-    val infoList by remember(refreshKey) { mutableStateOf(NetworkUtils(context).getDetailsInfo()) }
+    val infoList = remember(refreshKey) { NetworkUtils(context).getDetailsInfo() }
     var wifiInfoList by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
-    val simInfoList by remember(refreshKey) { mutableStateOf(NetworkUtils(context).getSimInfo()) }
+    val simInfoList = remember(refreshKey) { NetworkUtils(context).getSimInfo() }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {

@@ -216,8 +216,6 @@
     <string name="jvm_version">Java VM版本</string>
     <string name="add_battery_widget">将小部件添加到主屏幕</string>
     <string name="google_play_store">Google Play商店</string>
-    <string name="storage_notice_title">存储信息说明</string>
-    <string name="storage_notice">请注意，总内部容量不包括操作系统和系统文件的大小。</string>
     <string name="copy_title">复制标题</string>
     <string name="copy_title_details">同时复制标题和值</string>
     <string name="language">语言</string>

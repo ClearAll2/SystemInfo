@@ -54,7 +54,9 @@ import kotlinx.coroutines.withContext
 @Composable
 fun MediaDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
-    val mediaFeature = MediaUtils(context).getAudioFeatures()
+    val mediaFeature = remember {
+        MediaUtils(context).getAudioFeatures()
+    }
     OutlinedCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
@@ -86,8 +88,12 @@ fun MediaScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean,
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     var isLoading by remember { mutableStateOf(true) }
-    val mediaFeature = MediaUtils(context).getAudioFeatures()
-    val mediaCodecs = MediaUtils(context).getMediaCodecs()
+    val mediaFeature = remember {
+        MediaUtils(context).getAudioFeatures()
+    }
+    val mediaCodecs = remember {
+        MediaUtils(context).getMediaCodecs()
+    }
     var widevineInfo by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     var clearKeyInfo by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     LaunchedEffect(Unit) {

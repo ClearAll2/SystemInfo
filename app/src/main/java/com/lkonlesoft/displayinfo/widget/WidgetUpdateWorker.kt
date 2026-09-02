@@ -38,7 +38,7 @@ class WidgetUpdateWorker(context: Context, params: WorkerParameters) : Coroutine
 
     companion object{
         fun enqueueWork(context: Context){
-            val request = PeriodicWorkRequestBuilder<WidgetUpdateWorker>(360, TimeUnit.MINUTES)
+            val request = PeriodicWorkRequestBuilder<WidgetUpdateWorker>(180, TimeUnit.MINUTES)
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 10, TimeUnit.MINUTES)
                 .addTag("battery_widget")
                 .build()

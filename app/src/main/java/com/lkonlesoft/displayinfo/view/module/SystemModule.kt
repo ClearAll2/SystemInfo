@@ -43,7 +43,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun SystemDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
-    val infoList by remember { mutableStateOf(SystemUtils(context).getDashboardData()) }
+    val infoList = remember { SystemUtils(context).getDashboardData() }
     OutlinedCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
@@ -71,8 +71,8 @@ fun SystemDashboard(onClick: () -> Unit) {
 fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
-    val deviceInfoList by remember { mutableStateOf(SystemUtils(context).getDeviceData()) }
-    val deviceFeaturesList by remember { mutableStateOf(SystemUtils(context).getDeviceFeatures()) }
+    val deviceInfoList = remember { SystemUtils(context).getDeviceData()}
+    val deviceFeaturesList = remember { SystemUtils(context).getDeviceFeatures() }
     var rootInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
     var extraInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
 

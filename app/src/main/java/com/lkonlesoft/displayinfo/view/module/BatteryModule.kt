@@ -26,10 +26,8 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -56,7 +54,9 @@ import kotlin.time.Duration.Companion.milliseconds
 fun BatteryDashboard(intervalMillis: Long = 2000L,onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList by remember(refreshKey) { mutableStateOf(BatteryUtils(context).getDashboardData()) }
+    val infoList = remember(refreshKey) { BatteryUtils(context).getDashboardData() }
+    val batteryLevel = remember(infoList) { infoList.first()  }
+    val batteryDetails = remember(infoList) { infoList.filter { it != infoList.first() } }
     LaunchedEffect(Unit) {
         while (true) {
             delay(intervalMillis.milliseconds)
@@ -78,11 +78,13 @@ fun BatteryDashboard(intervalMillis: Long = 2000L,onClick: () -> Unit) {
                 title = stringResource(R.string.battery),
                 icon = R.drawable.battery_android_4_24px
             )
-            BigPercentageValue(value = infoList.first().value.toString(), fontSize = 36.sp)
+            batteryLevel.let {
+                BigPercentageValue(value = it.value.toString(), fontSize = 36.sp)
+                Spacer(modifier = Modifier.height(12.dp))
+                GeneralProgressBar((it.value as? Number)?.toLong() ?: 0L, 100L)
+            }
             Spacer(modifier = Modifier.height(12.dp))
-            GeneralProgressBar((infoList.first().value as Number).toLong(), 100L)
-            Spacer(modifier = Modifier.height(12.dp))
-            infoList.filter { it != infoList.first() }.forEach {
+            batteryDetails.forEach {
                 GeneralStatRow(
                     stringResource(it.name),
                     it.value.toString() + it.extra
@@ -97,11 +99,9 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList by remember(refreshKey) {
-        derivedStateOf {
-            BatteryUtils(context).getAllData()
-        }
-    }
+    val infoList = remember(refreshKey) { BatteryUtils(context).getAllData() }
+    val batteryLevel = remember(infoList) { infoList.first() }
+    val batteryDetails = remember(infoList) { infoList.filter { it != infoList.first() } }
     LaunchedEffect(Unit) {
         while (true){
             delay(1000L.milliseconds)
@@ -123,26 +123,30 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {
-            val filteredInfoList = infoList.filter { it.type != 1 }
             Column {
-                BigPercentageValue(value = infoList.first().value.toString())
-                GeneralProgressBar(
-                    (infoList.first().value as Number).toLong(),
-                    100L,
-                    0,
-                    height = 32.dp,
-                    verticalPadding = 15.dp
-                )
-                filteredInfoList.forEach {
-                    IndividualLine(title = stringResource(it.name),
-                        info = it.value.toString() + it.extra,
+                batteryLevel.let { level ->
+                    BigPercentageValue(value = level.value.toString())
+                    GeneralProgressBar(
+                        level = (level.value as? Number)?.toLong() ?: 0L,
+                        total = 100L,
+                        type = 0,
+                        height = 32.dp,
+                        verticalPadding = 15.dp
+                    )
+                }
+                batteryDetails.forEachIndexed { index, it ->
+                    val isFirst = index == 0
+                    val isLast = index == batteryDetails.lastIndex
+                    IndividualLine(
+                        title = stringResource(it.name),
+                        info = "${it.value}${it.extra}",
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = filteredInfoList.last() == it,
-                        topStart = if (filteredInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (filteredInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (filteredInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (filteredInfoList.last() == it) 20.dp else 5.dp
+                        isLast = isLast,
+                        topStart = if (isFirst) 20.dp else 5.dp,
+                        topEnd = if (isFirst) 20.dp else 5.dp,
+                        bottomStart = if (isLast) 20.dp else 5.dp,
+                        bottomEnd = if (isLast) 20.dp else 5.dp
                     )
                 }
             }

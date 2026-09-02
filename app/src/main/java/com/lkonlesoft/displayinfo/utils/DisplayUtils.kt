@@ -86,6 +86,7 @@ class DisplayUtils(private val context: Context, private val resources: Resource
 
     private fun mapDisplayInfoToDeviceInfoList(info: DisplayInfo): List<DeviceInfo> {
         return listOf(
+            DeviceInfo(R.string.refresh_rate, info.rr, " Hz"),
             DeviceInfo(R.string.size, info.size, " inches"),
             DeviceInfo(R.string.height_px, info.heightPx),
             DeviceInfo(R.string.width_px, info.widthPx),
@@ -107,24 +108,23 @@ class DisplayUtils(private val context: Context, private val resources: Resource
                 if (info.hasWCG) context.getString(R.string.supported) else context.getString(R.string.not_supported)
             ),
             DeviceInfo(R.string.display_type, info.type),
-            DeviceInfo(R.string.refresh_rate, info.rr, " Hz"),
             DeviceInfo(R.string.capacity, info.modes)
         )
     }
 
     fun getDashboardData(): List<DeviceInfo> = listOf(
-        DeviceInfo(R.string.display_pixels, "${getHeightPx()} x ${getWidthPx()}"),
-        DeviceInfo(R.string.size, "%.2f".format(calculateScreenSizeInInches()), "\""),
-        DeviceInfo(R.string.smallest_dp, getSmallestDp().toString()),
-        DeviceInfo(R.string.xdpi, "%.2f".format(getXDpi())),
-        DeviceInfo(R.string.ydpi, "%.2f".format(getYDpi())),
-        DeviceInfo(R.string.height_dp, getHeightDp().toString()),
-        DeviceInfo(R.string.width_dp, getWidthDp().toString()),
         DeviceInfo(
             R.string.refresh_rate,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getDisplayRefreshRate()
                 .toString() else "60",
             " Hz"
         ),
+        DeviceInfo(R.string.display_pixels, "${getHeightPx()} x ${getWidthPx()}"),
+        DeviceInfo(R.string.size, "%.2f".format(calculateScreenSizeInInches()), "\""),
+        DeviceInfo(R.string.smallest_dp, getSmallestDp().toString()),
+        DeviceInfo(R.string.xdpi, "%.2f".format(getXDpi())),
+        DeviceInfo(R.string.ydpi, "%.2f".format(getYDpi())),
+        DeviceInfo(R.string.height_dp, getHeightDp().toString()),
+        DeviceInfo(R.string.width_dp, getWidthDp().toString())
     )
 }

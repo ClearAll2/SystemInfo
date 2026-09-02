@@ -72,10 +72,8 @@ fun BluetoothDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
             else true
         )
     }
-    val infoList by remember(refreshKey) {
-        mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getStateData()
-        else emptyList()
-        )
+    val infoList = remember(refreshKey) {
+        if (hasBluetoothPermission) BluetoothUtils(context).getStateData() else emptyList()
     }
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
@@ -125,15 +123,13 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
     var refreshKey by remember { mutableIntStateOf(0) }
     var refreshKey2 by remember { mutableIntStateOf(0) }
     var showWarningPopup by remember { mutableStateOf(false) }
-    val hasBluetoothPermission by remember(refreshKey)  {
-        mutableStateOf(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) == PackageManager.PERMISSION_GRANTED
-            else true
-        )
+    val hasBluetoothPermission = remember(refreshKey)  {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) == PackageManager.PERMISSION_GRANTED
+        else true
     }
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -147,9 +143,9 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
             showWarningPopup = !showWarningPopup
         }
     }
-    val stateInfoList by remember(refreshKey) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getStateData() else emptyList()) }
-    val featuresList by remember(refreshKey2) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getFeatures() else emptyList()) }
-    val deviceInfoList by remember(refreshKey2) { mutableStateOf(if (hasBluetoothPermission) BluetoothUtils(context).getDeviceData() else emptyList()) }
+    val stateInfoList = remember(refreshKey) { if (hasBluetoothPermission) BluetoothUtils(context).getStateData() else emptyList() }
+    val featuresList = remember(refreshKey2) { if (hasBluetoothPermission) BluetoothUtils(context).getFeatures() else emptyList() }
+    val deviceInfoList = remember(refreshKey2) { if (hasBluetoothPermission) BluetoothUtils(context).getDeviceData() else emptyList() }
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
         data = Uri.fromParts("package", context.packageName, null)
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

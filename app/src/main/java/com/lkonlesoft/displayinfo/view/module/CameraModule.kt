@@ -44,7 +44,9 @@ import com.lkonlesoft.displayinfo.view.staggeredHeader
 @Composable
 fun CameraDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
-    val cameraCount = CameraUtils(context).getCameraCount()
+    val cameraCount = remember {
+        CameraUtils(context).getCameraCount()
+    }
     OutlinedCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),

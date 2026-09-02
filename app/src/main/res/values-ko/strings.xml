@@ -216,8 +216,6 @@
     <string name="jvm_version">Java VM 버전</string>
     <string name="add_battery_widget">홈 화면에 위젯 추가</string>
     <string name="google_play_store">Google Play 스토어</string>
-    <string name="storage_notice_title">저장소 정보 주의사항</string>
-    <string name="storage_notice">내부 총 용량에는 OS와 시스템 파일 크기가 포함되지 않습니다.</string>
     <string name="copy_title">제목 복사</string>
     <string name="copy_title_details">제목과 값 모두 복사</string>
     <string name="language">언어</string>
