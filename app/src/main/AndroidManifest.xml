@@ -47,6 +47,7 @@
             </intent-filter>
         </activity>
         <receiver android:name=".widget.BatteryWidgetReceiver"
+            android:label="@string/battery"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

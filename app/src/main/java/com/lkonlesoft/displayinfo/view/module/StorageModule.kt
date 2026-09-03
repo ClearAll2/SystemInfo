@@ -1,7 +1,13 @@
 package com.lkonlesoft.displayinfo.view.module
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -11,10 +17,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
@@ -24,6 +33,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -199,95 +209,109 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
+    var isLoading by remember { mutableStateOf(true) }
     var internalStorageStats by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     val detailsInternal = remember(internalStorageStats) { internalStorageStats.filter { it != internalStorageStats.first() } }
     var externalStorageStats by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     val detailsExternal = remember(externalStorageStats) { externalStorageStats.filter { it != externalStorageStats.first() } }
     LaunchedEffect(Unit) {
-        while (true) {
-            withContext(Dispatchers.IO) {
-                internalStorageStats = StorageUtils(context).getInternalStorageInfo()
-                externalStorageStats = StorageUtils(context).getExternalStorageInfo()
-            }
-            delay(30000L.milliseconds)
+        withContext(Dispatchers.IO) {
+            internalStorageStats = StorageUtils(context).getInternalStorageInfo()
+            externalStorageStats = StorageUtils(context).getExternalStorageInfo()
         }
+        isLoading = false
     }
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(320.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp)
-            .padding(top = paddingValues.calculateTopPadding())
-            .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-        contentPadding = PaddingValues(
-            start = paddingValues.calculateStartPadding(layoutDirection),
-            end = paddingValues.calculateEndPadding(layoutDirection),
-            bottom = paddingValues.calculateBottomPadding()
-        ),
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        if (detailsInternal.isNotEmpty()) {
-            item {
-                Column {
-                    HeaderLine(tittle = stringResource(R.string.internal_storage))
-                    BigPercentageValue(value = internalStorageStats.first().value.toString())
-                    GeneralProgressBar(
-                        (internalStorageStats[2].value as Number).toLong(),
-                        (internalStorageStats[3].value as Number).toLong(),
-                        1,
-                        height = 32.dp,
-                        verticalPadding = 15.dp
-                    )
-                    detailsInternal.forEach {
-                        IndividualLine(
-                            title = stringResource(it.name),
-                            info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
-                            canLongPress = longPressCopy,
-                            copyTitle = copyTitle,
-                            isLast = detailsInternal.last() == it,
-                            topStart = if (detailsInternal.first() == it) 20.dp else 5.dp,
-                            topEnd = if (detailsInternal.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (detailsInternal.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (detailsInternal.last() == it) 20.dp else 5.dp
-                        )
+    AnimatedContent (targetState = isLoading,
+        transitionSpec = { fadeIn() togetherWith fadeOut() }) { loading ->
+        if (loading) {
+            Box(
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainer).fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                ContainedLoadingIndicator(
+                    modifier = Modifier.size(100.dp)
+                )
+            }
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(320.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp)
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+                contentPadding = PaddingValues(
+                    start = paddingValues.calculateStartPadding(layoutDirection),
+                    end = paddingValues.calculateEndPadding(layoutDirection),
+                    bottom = paddingValues.calculateBottomPadding()
+                ),
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                if (detailsInternal.isNotEmpty()) {
+                    item {
+                        Column {
+                            HeaderLine(tittle = stringResource(R.string.internal_storage))
+                            BigPercentageValue(value = internalStorageStats.first().value.toString())
+                            GeneralProgressBar(
+                                (internalStorageStats[2].value as Number).toLong(),
+                                (internalStorageStats[3].value as Number).toLong(),
+                                1,
+                                height = 32.dp,
+                                verticalPadding = 15.dp
+                            )
+                            detailsInternal.forEach {
+                                IndividualLine(
+                                    title = stringResource(it.name),
+                                    info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
+                                    canLongPress = longPressCopy,
+                                    copyTitle = copyTitle,
+                                    isLast = detailsInternal.last() == it,
+                                    topStart = if (detailsInternal.first() == it) 20.dp else 5.dp,
+                                    topEnd = if (detailsInternal.first() == it) 20.dp else 5.dp,
+                                    bottomStart = if (detailsInternal.last() == it) 20.dp else 5.dp,
+                                    bottomEnd = if (detailsInternal.last() == it) 20.dp else 5.dp
+                                )
+                            }
+                        }
                     }
                 }
-            }
-        }
-        if (externalStorageStats.isNotEmpty()) {
-            item {
-                Column {
-                    HeaderLine(tittle = stringResource(R.string.external_storage))
-                    BigPercentageValue(value = externalStorageStats.first().value.toString())
-                    GeneralProgressBar(
-                        (externalStorageStats[2].value as Number).toLong(),
-                        (externalStorageStats[3].value as Number).toLong(),
-                        1,
-                        height = 32.dp,
-                        verticalPadding = 15.dp
-                    )
-                    detailsExternal.forEach {
-                        IndividualLine(
-                            title = stringResource(it.name),
-                            info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
-                            canLongPress = longPressCopy,
-                            copyTitle = copyTitle,
-                            isLast = detailsExternal.last() == it,
-                            topStart = if (detailsExternal.first() == it) 20.dp else 5.dp,
-                            topEnd = if (detailsExternal.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (detailsExternal.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (detailsExternal.last() == it) 20.dp else 5.dp
-                        )
+                if (externalStorageStats.isNotEmpty()) {
+                    item {
+                        Column {
+                            HeaderLine(tittle = stringResource(R.string.external_storage))
+                            BigPercentageValue(value = externalStorageStats.first().value.toString())
+                            GeneralProgressBar(
+                                (externalStorageStats[2].value as Number).toLong(),
+                                (externalStorageStats[3].value as Number).toLong(),
+                                1,
+                                height = 32.dp,
+                                verticalPadding = 15.dp
+                            )
+                            detailsExternal.forEach {
+                                IndividualLine(
+                                    title = stringResource(it.name),
+                                    info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
+                                    canLongPress = longPressCopy,
+                                    copyTitle = copyTitle,
+                                    isLast = detailsExternal.last() == it,
+                                    topStart = if (detailsExternal.first() == it) 20.dp else 5.dp,
+                                    topEnd = if (detailsExternal.first() == it) 20.dp else 5.dp,
+                                    bottomStart = if (detailsExternal.last() == it) 20.dp else 5.dp,
+                                    bottomEnd = if (detailsExternal.last() == it) 20.dp else 5.dp
+                                )
+                            }
+                        }
                     }
                 }
+                header {
+                    Spacer(modifier = Modifier.padding(20.dp))
+                }
             }
-        }
-        header {
-            Spacer(modifier = Modifier.padding(20.dp))
         }
     }
 }
