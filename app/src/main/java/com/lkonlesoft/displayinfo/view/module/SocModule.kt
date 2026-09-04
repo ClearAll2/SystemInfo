@@ -190,7 +190,7 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
             }
         }
         if (showNotice) {
-            staggeredHeader {
+            item {
                 GeneralWarning(
                     title = R.string.soc_notice_title,
                     text = R.string.soc_notice

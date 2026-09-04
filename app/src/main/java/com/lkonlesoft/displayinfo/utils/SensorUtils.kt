@@ -27,8 +27,8 @@ class SensorUtils(private val context: Context) {
     fun getSensorDetails(sensor: Sensor): List<DeviceInfo> {
         val unit = getSensorMeasureUnit(sensor.type)
         return buildList {
+            add(DeviceInfo(R.string.name, sensor.name))
             add(DeviceInfo(R.string.vendor, sensor.vendor))
-            add(DeviceInfo(R.string.version, sensor.version))
             add(DeviceInfo(R.string.power, sensor.power, " mA"))
             add(DeviceInfo(R.string.max_range, "%.2f".format(sensor.maximumRange), unit))
         }

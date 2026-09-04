@@ -177,7 +177,10 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyT
         
         itemsIndexed(cameraInfoList) { index, cameraItemList ->
             Column {
-                HeaderLine(title = "#${index+1}")
+                HeaderLine(title = buildString {
+                    append(stringResource(R.string.camera))
+                    append(" #${index+1}")
+                })
                 cameraItemList.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString() + it.extra,
@@ -193,7 +196,7 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyT
             }
         }
         if (showNotice) {
-            staggeredHeader {
+            item {
                 GeneralWarning(
                     title = R.string.camera_notice_title,
                     text = R.string.camera_notice

@@ -42,7 +42,6 @@ import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.SensorUtils
 import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
-import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.staggeredHeader
 
@@ -124,9 +123,8 @@ fun SensorsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 items(sensorList) { sensor ->
-                    Column(modifier = Modifier.padding(bottom = 16.dp)) {
-                        HeaderLine(title = sensor.name)
-                        val details = sensorUtils.getSensorDetails(sensor)
+                    Column(modifier = Modifier.padding(vertical = 10.dp)) {
+                        val details = remember { sensorUtils.getSensorDetails(sensor) }
                         details.forEachIndexed { index, it ->
                             val isFirst = index == 0
                             val isLast = index == details.lastIndex

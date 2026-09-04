@@ -12,6 +12,7 @@ import android.os.storage.StorageManager
 import android.text.format.Formatter
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
+import com.lkonlesoft.displayinfo.helper.getSystemProperty
 import java.io.File
 
 class StorageUtils (private val context: Context) {
@@ -37,12 +38,15 @@ class StorageUtils (private val context: Context) {
         val availableRAM = getAvailableRAM()
         val usedRAM = getUsedRAM()
         val percentageUsed = (usedRAM.toDouble() / totalRAM.toDouble() * 100).toInt()
-        return listOf(
-            DeviceInfo(R.string.used, percentageUsed, "%", 1),
-            DeviceInfo(R.string.available_ram, availableRAM, " MB"),
-            DeviceInfo(R.string.used_ram, usedRAM, " MB"),
-            DeviceInfo(R.string.total_ram, totalRAM, " MB")
-        )
+        val vendor = getRAMVendor()
+        return buildList {
+            if (!vendor.isNullOrEmpty())
+                add(DeviceInfo(R.string.vendor, vendor))
+            add(DeviceInfo(R.string.used, percentageUsed, "%", 1))
+            add(DeviceInfo(R.string.available_ram, availableRAM, " MB"))
+            add(DeviceInfo(R.string.used_ram, usedRAM, " MB"))
+            add(DeviceInfo(R.string.total_ram, totalRAM, " MB"))
+        }
     }
 
     fun getInternalStorageInfo(): List<DeviceInfo>{
@@ -89,6 +93,25 @@ class StorageUtils (private val context: Context) {
     fun getUsedRAM(): Long {
         am.getMemoryInfo(info)
         return (info.totalMem - info.availMem) / 1024 / 1024 // MB
+    }
+
+    fun getRAMVendor(): String? {
+        val properties = listOf(
+            "ro.boot.ram_vendor",
+            "ro.boot.ddr_vendor",
+            "ro.boot.ddr_manuf",
+            "ro.vendor.ram.manufacturer",
+            "ro.product.ram_vendor",
+            "ro.boot.hw.ram_vendor",
+            "ro.boot.hardware.ram_vendor"
+        )
+        for (prop in properties) {
+            val value = getSystemProperty(prop)
+            if (!value.isNullOrEmpty() && !value.equals(context.getString(R.string.unknown), ignoreCase = true)) {
+                return value
+            }
+        }
+        return null
     }
 
     private fun getStorageStats(path: File): Pair<Long, Long> {
