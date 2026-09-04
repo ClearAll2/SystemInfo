@@ -195,7 +195,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.wifi))
+                HeaderLine(title = stringResource(R.string.wifi))
                 if (wifiInfoList.isNotEmpty()) {
                     wifiInfoList.forEach {
                         IndividualLine(
@@ -233,7 +233,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
         if (simInfoList.isNotEmpty() && hasPhonePermission) {
             itemsIndexed(simInfoList) { index, simInfo ->
                 Column {
-                    HeaderLine(tittle = "SIM #${index+1}")
+                    HeaderLine(title = "SIM #${index+1}")
                     simInfo.forEach {
                         IndividualLine(
                             title = stringResource(it.name),
@@ -253,7 +253,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
         else{
             item {
                 Column {
-                    HeaderLine(tittle = stringResource(R.string.sim_info))
+                    HeaderLine(title = stringResource(R.string.sim_info))
                     IndividualLine(title = stringResource(R.string.sim_info), info = if (!hasPhonePermission) stringResource(R.string.require_permission)
                     else stringResource(R.string.n_a),
                         onClick = {
@@ -273,7 +273,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.details))
+                HeaderLine(title = stringResource(R.string.details))
                 infoList.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),

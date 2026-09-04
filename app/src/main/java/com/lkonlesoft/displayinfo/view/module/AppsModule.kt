@@ -368,7 +368,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                         },
                         shape = RoundedCornerShape(28.dp),
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceBright,
                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceDim
                         )
                     )

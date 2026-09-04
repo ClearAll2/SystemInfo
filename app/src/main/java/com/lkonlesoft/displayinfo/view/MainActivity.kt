@@ -93,6 +93,7 @@ import com.lkonlesoft.displayinfo.view.module.DisplayDashboard
 import com.lkonlesoft.displayinfo.view.module.MediaDashboard
 import com.lkonlesoft.displayinfo.view.module.MemoryDashBoard
 import com.lkonlesoft.displayinfo.view.module.NetworkDashboard
+import com.lkonlesoft.displayinfo.view.module.SensorsDashboard
 import com.lkonlesoft.displayinfo.view.module.SoCDashBoard
 import com.lkonlesoft.displayinfo.view.module.StorageDashboard
 import com.lkonlesoft.displayinfo.view.module.SystemDashboard
@@ -183,7 +184,8 @@ fun MainContext(settings: SettingsViewModel){
             NavigationItem.Camera,
             NavigationItem.Settings,
             NavigationItem.Media,
-            NavigationItem.Apps
+            NavigationItem.Apps,
+            NavigationItem.Sensors
         )
     }
     val rotateSettingGear by animateFloatAsState(
@@ -364,6 +366,10 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             Pair(
                 NavigationItem.Apps,
                 buildDetailsSubTextSetting(resources,  R.string.system, R.string.user)
+            ),
+            Pair(
+                NavigationItem.Sensors,
+                buildDetailsSubTextSetting(resources, R.string.sensor_count)
             )
         )
     }
@@ -435,6 +441,7 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                             NavigationItem.Connectivity -> BluetoothDashboard(onClick = onClick)
                             NavigationItem.Media -> MediaDashboard(onClick = onClick)
                             NavigationItem.Apps -> AppDashboard(onClick = onClick)
+                            NavigationItem.Sensors -> SensorsDashboard(onClick = onClick)
                             else -> {}
                         }
                     }

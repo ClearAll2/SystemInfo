@@ -119,7 +119,7 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
     ) {
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.cpu_info))
+                HeaderLine(title = stringResource(R.string.cpu_info))
                 cpuInfoList.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),
@@ -136,7 +136,7 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
         }
         itemsIndexed(cpuClusterInfo) { index, cluster ->
             Column {
-                HeaderLine(tittle = buildString {
+                HeaderLine(title = buildString {
                     append(stringResource(R.string.cluster))
                     append(" #${index+1}")
                 })
@@ -156,7 +156,7 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.cpu_usage))
+                HeaderLine(title = stringResource(R.string.cpu_usage))
                 cpuUsageInfo.forEach {
                     IndividualLine(title = stringResource(it.name, it.value),
                         info = it.extra,
@@ -174,7 +174,7 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
 
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.gpu_info))
+                HeaderLine(title = stringResource(R.string.gpu_info))
                 gpuInfo.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),

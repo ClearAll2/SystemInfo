@@ -115,7 +115,7 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
             val refreshRate = remember(display) { display.first()  }
             val detailsList = remember(display) { display.filter { it != display.first() } }
             Column {
-                HeaderLine(tittle = stringResource(R.string.display) + " #${index+1}")
+                HeaderLine(title = stringResource(R.string.display) + " #${index+1}")
                 BigPercentageValue(value = refreshRate.value.toString(),
                     indicator = refreshRate.extra,
                     modifier = Modifier.padding(bottom = 15.dp))

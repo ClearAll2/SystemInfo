@@ -306,4 +306,9 @@
     <string name="fair">Средний</string>
     <string name="weak">Слабый</string>
     <string name="very_weak">Очень слабый</string>
+    <string name="sensors">Датчики</string>
+    <string name="power">Мощность</string>
+    <string name="max_range">Максимальный диапазон</string>
+    <string name="sensor_count">Все датчики</string>
+    <string name="no_sensors_found">Датчики не найдены</string>
 </resources>

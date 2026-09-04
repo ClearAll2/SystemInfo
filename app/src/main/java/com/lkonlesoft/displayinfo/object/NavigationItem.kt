@@ -13,6 +13,7 @@ import com.lkonlesoft.displayinfo.ui.theme.DisplayColor
 import com.lkonlesoft.displayinfo.ui.theme.MemoryColor
 import com.lkonlesoft.displayinfo.ui.theme.NetworkColor
 import com.lkonlesoft.displayinfo.ui.theme.Pink80
+import com.lkonlesoft.displayinfo.ui.theme.SensorsColor
 import com.lkonlesoft.displayinfo.ui.theme.SoCColor
 import com.lkonlesoft.displayinfo.ui.theme.StorageColor
 import com.lkonlesoft.displayinfo.ui.theme.SystemColor
@@ -56,5 +57,8 @@ sealed class NavigationItem (@param:StringRes val name: Int, val route: String, 
     )
     data object Media: NavigationItem(name = R.string.media, route = "media", R.drawable.slideshow_24px,
         Pink80
+    )
+    data object Sensors: NavigationItem(name = R.string.sensors, route = "sensors", R.drawable.sensors_24px,
+        SensorsColor
     )
 }

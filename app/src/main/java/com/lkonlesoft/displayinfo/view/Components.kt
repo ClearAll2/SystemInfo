@@ -252,7 +252,7 @@ fun IndividualLine(
 }
 
 @Composable
-fun HeaderLine(tittle: String, horizontalPadding: Dp = 10.dp, verticalPadding: Dp = 8.dp) {
+fun HeaderLine(title: String, horizontalPadding: Dp = 10.dp, verticalPadding: Dp = 8.dp) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -264,7 +264,7 @@ fun HeaderLine(tittle: String, horizontalPadding: Dp = 10.dp, verticalPadding: D
         horizontalAlignment = Alignment.Start,
     ) {
         Text(
-            text = tittle,
+            text = title,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.primary

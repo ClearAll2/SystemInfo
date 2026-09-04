@@ -306,4 +306,9 @@
     <string name="fair">Trung bình</string>
     <string name="weak">Yếu</string>
     <string name="very_weak">Rất yếu</string>
+    <string name="sensors">Cảm biến</string>
+    <string name="power">Năng lượng</string>
+    <string name="max_range">Phạm vi tối đa</string>
+    <string name="sensor_count">Tất cả cảm biến</string>
+    <string name="no_sensors_found">Không tìm thấy cảm biến</string>
 </resources>

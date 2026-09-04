@@ -306,4 +306,9 @@
     <string name="fair">Regular</string>
     <string name="weak">Fraco</string>
     <string name="very_weak">Muito fraco</string>
+    <string name="sensors">Sensores</string>
+    <string name="power">Energia</string>
+    <string name="max_range">Alcance máximo</string>
+    <string name="sensor_count">Todos os sensores</string>
+    <string name="no_sensors_found">Nenhum sensor encontrado</string>
 </resources>

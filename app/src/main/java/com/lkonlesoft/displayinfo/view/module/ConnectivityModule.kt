@@ -199,7 +199,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || hasBluetoothPermission) {
             item {
                 Column {
-                    HeaderLine(tittle = stringResource(R.string.status))
+                    HeaderLine(title = stringResource(R.string.status))
                     stateInfoList.forEach {
                         IndividualLine(title = stringResource(it.name),
                             info = it.value.toString() + it.extra,
@@ -216,7 +216,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
             }
             item {
                 Column {
-                    HeaderLine(tittle = stringResource(R.string.features))
+                    HeaderLine(title = stringResource(R.string.features))
                     featuresList.forEach {
                         IndividualLine(title = stringResource(it.name),
                             info = it.value.toString(),
@@ -235,7 +235,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
         else {
             item {
                 Column {
-                    HeaderLine(tittle = stringResource(R.string.status))
+                    HeaderLine(title = stringResource(R.string.status))
                     IndividualLine(
                         title = stringResource(R.string.bluetooth),
                         info = stringResource(R.string.require_permission),
@@ -256,7 +256,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
         item {
             Column {
                 deviceInfoList.forEachIndexed { index, device ->
-                    HeaderLine(tittle = buildString {
+                    HeaderLine(title = buildString {
                         append(stringResource(R.string.connected_devices))
                         append(" #${index + 1}")
                     })

@@ -306,4 +306,9 @@
     <string name="fair">보통</string>
     <string name="weak">약함</string>
     <string name="very_weak">매우 약함</string>
+    <string name="sensors">센서</string>
+    <string name="power">전력</string>
+    <string name="max_range">최대 범위</string>
+    <string name="sensor_count">모든 센서</string>
+    <string name="no_sensors_found">센서를 찾을 수 없습니다</string>
 </resources>

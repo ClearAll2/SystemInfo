@@ -96,7 +96,7 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyT
     ) {
         itemsIndexed(cameraInfoList) { index, cameraItemList ->
             Column {
-                HeaderLine(tittle = "#${index+1}")
+                HeaderLine(title = "#${index+1}")
                 cameraItemList.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString() + it.extra,

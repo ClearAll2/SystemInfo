@@ -306,4 +306,9 @@
     <string name="fair">普通</string>
     <string name="weak">弱い</string>
     <string name="very_weak">非常に弱い</string>
+    <string name="sensors">センサー</string>
+    <string name="power">電力</string>
+    <string name="max_range">最大範囲</string>
+    <string name="sensor_count">すべてのセンサー</string>
+    <string name="no_sensors_found">センサーが見つかりません</string>
 </resources>

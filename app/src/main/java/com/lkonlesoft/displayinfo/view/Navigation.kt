@@ -26,6 +26,7 @@ import com.lkonlesoft.displayinfo.view.module.HardwareScreen
 import com.lkonlesoft.displayinfo.view.module.MediaScreen
 import com.lkonlesoft.displayinfo.view.module.MemoryScreen
 import com.lkonlesoft.displayinfo.view.module.NetworkScreen
+import com.lkonlesoft.displayinfo.view.module.SensorsScreen
 import com.lkonlesoft.displayinfo.view.module.StorageScreen
 import com.lkonlesoft.displayinfo.view.module.SystemScreen
 import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
@@ -267,6 +268,18 @@ fun MainNavigation(
             }
         )) {
             AppsScreen(
+                paddingValues = paddingValues,
+                longPressCopy = longPressCopy,
+                copyTitle = copyTitle
+            )
+        }
+        composable(
+            route = NavigationItem.Sensors.route, deepLinks = listOf(
+            navDeepLink {
+                uriPattern = "si://info/sensors"
+            }
+        )) {
+            SensorsScreen(
                 paddingValues = paddingValues,
                 longPressCopy = longPressCopy,
                 copyTitle = copyTitle

@@ -98,7 +98,7 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
     ) {
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.device))
+                HeaderLine(title = stringResource(R.string.device))
                 deviceInfoList.forEach {
                     IndividualLine(
                         title = stringResource(it.name),
@@ -116,7 +116,7 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.root_status))
+                HeaderLine(title = stringResource(R.string.root_status))
                 rootInfoList.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),
@@ -133,7 +133,7 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.device_features))
+                HeaderLine(title = stringResource(R.string.device_features))
                 deviceFeaturesList.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),
@@ -149,7 +149,7 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.extra))
+                HeaderLine(title = stringResource(R.string.extra))
                 extraInfoList.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),

@@ -306,4 +306,9 @@
     <string name="fair">一般</string>
     <string name="weak">较弱</string>
     <string name="very_weak">非常弱</string>
+    <string name="sensors">传感器</string>
+    <string name="power">功耗</string>
+    <string name="max_range">最大范围</string>
+    <string name="sensor_count">所有传感器</string>
+    <string name="no_sensors_found">未找到传感器</string>
 </resources>

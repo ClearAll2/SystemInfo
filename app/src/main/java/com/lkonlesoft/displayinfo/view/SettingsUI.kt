@@ -169,7 +169,7 @@ fun SettingsScreen(
     ) {
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.language))
+                HeaderLine(title = stringResource(R.string.language))
                 IndividualLine(
                     title = stringResource(
                         localeOptions.entries.firstOrNull { it.key == currentLang }?.value
@@ -189,7 +189,7 @@ fun SettingsScreen(
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.appearance))
+                HeaderLine(title = stringResource(R.string.appearance))
                 ThemeSelector(
                     selectedTheme = appColor,
                     onThemeSelected = {
@@ -244,7 +244,7 @@ fun SettingsScreen(
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.general))
+                HeaderLine(title = stringResource(R.string.general))
                 CommonSwitchOption(
                     text = R.string.long_press_to_copy,
                     subText = R.string.long_press_to_copy_details,
@@ -281,7 +281,7 @@ fun SettingsScreen(
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.about))
+                HeaderLine(title = stringResource(R.string.about))
                 IndividualLine(
                     title = stringResource(R.string.changelog),
                     info = stringResource(R.string.changelog_sub),

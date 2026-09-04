@@ -306,4 +306,9 @@
     <string name="fair">Moyen</string>
     <string name="weak">Faible</string>
     <string name="very_weak">Très faible</string>
+    <string name="sensors">Capteurs</string>
+    <string name="power">Puissance</string>
+    <string name="max_range">Plage maximale</string>
+    <string name="sensor_count">Tous les capteurs</string>
+    <string name="no_sensors_found">Aucun capteur trouvé</string>
 </resources>

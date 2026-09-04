@@ -306,4 +306,9 @@
     <string name="fair">Discreto</string>
     <string name="weak">Debole</string>
     <string name="very_weak">Molto debole</string>
+    <string name="sensors">Sensori</string>
+    <string name="power">Potenza</string>
+    <string name="max_range">Portata massima</string>
+    <string name="sensor_count">Tutti i sensori</string>
+    <string name="no_sensors_found">Nessun sensore trovato</string>
 </resources>

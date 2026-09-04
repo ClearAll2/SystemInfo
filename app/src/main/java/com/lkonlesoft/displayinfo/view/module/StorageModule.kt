@@ -255,7 +255,7 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                 if (detailsInternal.isNotEmpty()) {
                     item {
                         Column {
-                            HeaderLine(tittle = stringResource(R.string.internal_storage))
+                            HeaderLine(title = stringResource(R.string.internal_storage))
                             BigPercentageValue(value = internalStorageStats.first().value.toString())
                             GeneralProgressBar(
                                 (internalStorageStats[2].value as Number).toLong(),
@@ -283,7 +283,7 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                 if (externalStorageStats.isNotEmpty()) {
                     item {
                         Column {
-                            HeaderLine(tittle = stringResource(R.string.external_storage))
+                            HeaderLine(title = stringResource(R.string.external_storage))
                             BigPercentageValue(value = externalStorageStats.first().value.toString())
                             GeneralProgressBar(
                                 (externalStorageStats[2].value as Number).toLong(),

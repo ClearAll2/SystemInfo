@@ -130,7 +130,7 @@ fun MediaScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean,
             ) {
                 item {
                     Column {
-                        HeaderLine(tittle = stringResource(R.string.features))
+                        HeaderLine(title = stringResource(R.string.features))
                         mediaFeature.forEach {
                             IndividualLine(title = stringResource(it.name),
                                 info = it.value.toString(),
@@ -147,7 +147,7 @@ fun MediaScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean,
                 }
                 item {
                     Column {
-                        HeaderLine(tittle = stringResource(R.string.codecs))
+                        HeaderLine(title = stringResource(R.string.codecs))
                         mediaCodecs.forEach {
                             IndividualLine(title = stringResource(it.name),
                                 info = it.value.toString(),
@@ -164,7 +164,7 @@ fun MediaScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean,
                 }
                 item {
                     Column {
-                        HeaderLine(tittle = stringResource(R.string.widevine))
+                        HeaderLine(title = stringResource(R.string.widevine))
                         val widevineList = widevineInfo.toList()
                         widevineList.forEach {
                             IndividualLine(title = stringResource(it.name),
@@ -182,7 +182,7 @@ fun MediaScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean,
                 }
                 item {
                     Column {
-                        HeaderLine(tittle = stringResource(R.string.clearkey))
+                        HeaderLine(title = stringResource(R.string.clearkey))
                         val clearKeyList = clearKeyInfo.toList()
                         clearKeyList.forEach {
                             IndividualLine(title = stringResource(it.name),

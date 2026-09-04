@@ -88,7 +88,7 @@ fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     ) {
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.general))
+                HeaderLine(title = stringResource(R.string.general))
                 androidInfoList.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),
@@ -105,7 +105,7 @@ fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.extra))
+                HeaderLine(title = stringResource(R.string.extra))
                 extraInfoList.forEach {
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),

@@ -57,7 +57,7 @@ fun AboutScreen(paddingValues: PaddingValues) {
     ) {
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.app_info))
+                HeaderLine(title = stringResource(R.string.app_info))
                 appInfoItems.forEach { item ->
                     val url = stringResource(id = item.url)
                     IndividualLine(
@@ -77,7 +77,7 @@ fun AboutScreen(paddingValues: PaddingValues) {
         }
         item {
             Column {
-                HeaderLine(tittle = stringResource(R.string.legal_info))
+                HeaderLine(title = stringResource(R.string.legal_info))
                 legalInfoItems.forEach { item ->
                     val url = stringResource(id = item.url)
                     IndividualLine(

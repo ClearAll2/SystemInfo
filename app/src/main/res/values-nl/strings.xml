@@ -306,4 +306,9 @@
     <string name="fair">Redelijk</string>
     <string name="weak">Zwak</string>
     <string name="very_weak">Zeer zwak</string>
+    <string name="sensors">Sensoren</string>
+    <string name="power">Vermogen</string>
+    <string name="max_range">Maximaal bereik</string>
+    <string name="sensor_count">Alle sensoren</string>
+    <string name="no_sensors_found">Geen sensoren gevonden</string>
 </resources>
