@@ -311,4 +311,14 @@
     <string name="max_range">Phạm vi tối đa</string>
     <string name="sensor_count">Tất cả cảm biến</string>
     <string name="no_sensors_found">Không tìm thấy cảm biến</string>
+    <string name="unit_s">s</string>
+    <string name="unit_ms">ms</string>
+    <string name="preview_stabilization">Chống rung xem trước</string>
+    <string name="af_mode_off">Tắt</string>
+    <string name="af_mode_auto">Tự động</string>
+    <string name="af_mode_macro">Macro</string>
+    <string name="af_mode_continuous_video">Video liên tục</string>
+    <string name="af_mode_continuous_picture">Ảnh liên tục</string>
+    <string name="af_mode_edof">EDOF</string>
+    <string name="video_cap_4k">Hỗ trợ 4K</string>
 </resources>

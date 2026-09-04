@@ -193,6 +193,12 @@
     <string name="physical_camera_id">Physical Camera ID</string>
     <string name="max_aperture">Max aperture</string>
     <string name="focal_length">Focal Length</string>
+    <string name="focal_length_35mm" translatable="false">Focal Length (35mm eq.)</string>
+    <string name="sensor_size" translatable="false">Sensor Size</string>
+    <string name="iso_sensitivity" translatable="false">ISO Sensitivity</string>
+    <string name="exposure_time" translatable="false">Exposure Time</string>
+    <string name="af_modes" translatable="false">AF Modes</string>
+    <string name="video_capabilities" translatable="false">Video Capabilities</string>
     <string name="camera_notice_title">Camera Information Note</string>
     <string name="camera_notice">Details about the camera for this device may be missing or incorrect.\nFor accurate specifications, refer to the vendor’s official documentation.</string>
     <string name="has_flash">Flash</string>
@@ -311,4 +317,20 @@
     <string name="max_range">Maximum range</string>
     <string name="sensor_count">All sensors</string>
     <string name="no_sensors_found">No sensors found</string>
+    <string name="unit_mp" translatable="false">MP</string>
+    <string name="unit_mm" translatable="false">mm</string>
+    <string name="unit_degree" translatable="false">°</string>
+    <string name="unit_s">s</string>
+    <string name="unit_ms">ms</string>
+    <string name="preview_stabilization">Preview Stabilization</string>
+    <string name="af_mode_off">Off</string>
+    <string name="af_mode_auto">Auto</string>
+    <string name="af_mode_macro">Macro</string>
+    <string name="af_mode_continuous_video">Continuous Video</string>
+    <string name="af_mode_continuous_picture">Continuous Picture</string>
+    <string name="af_mode_edof">EDOF</string>
+    <string name="video_cap_4k">4K Support</string>
+    <string name="format_aperture" translatable="false">f/%.2f</string>
+    <string name="format_float_2" translatable="false">%.2f</string>
+    <string name="format_sensor_size" translatable="false">%.2f x %.2f</string>
 </resources>

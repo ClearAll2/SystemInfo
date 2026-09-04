@@ -311,4 +311,14 @@
     <string name="max_range">Maximaal bereik</string>
     <string name="sensor_count">Alle sensoren</string>
     <string name="no_sensors_found">Geen sensoren gevonden</string>
+    <string name="unit_s">s</string>
+    <string name="unit_ms">ms</string>
+    <string name="preview_stabilization">Voorbeeldstabilisatie</string>
+    <string name="af_mode_off">Uit</string>
+    <string name="af_mode_auto">Auto</string>
+    <string name="af_mode_macro">Macro</string>
+    <string name="af_mode_continuous_video">Continue video</string>
+    <string name="af_mode_continuous_picture">Continue foto</string>
+    <string name="af_mode_edof">EDOF</string>
+    <string name="video_cap_4k">4K-ondersteuning</string>
 </resources>

@@ -311,4 +311,14 @@
     <string name="max_range">最大范围</string>
     <string name="sensor_count">所有传感器</string>
     <string name="no_sensors_found">未找到传感器</string>
+    <string name="unit_s">秒</string>
+    <string name="unit_ms">毫秒</string>
+    <string name="preview_stabilization">预览防抖</string>
+    <string name="af_mode_off">关闭</string>
+    <string name="af_mode_auto">自动</string>
+    <string name="af_mode_macro">微距</string>
+    <string name="af_mode_continuous_video">连续视频</string>
+    <string name="af_mode_continuous_picture">连续照片</string>
+    <string name="af_mode_edof">EDOF</string>
+    <string name="video_cap_4k">4K 支持</string>
 </resources>

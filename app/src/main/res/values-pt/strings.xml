@@ -311,4 +311,14 @@
     <string name="max_range">Alcance máximo</string>
     <string name="sensor_count">Todos os sensores</string>
     <string name="no_sensors_found">Nenhum sensor encontrado</string>
+    <string name="unit_s">s</string>
+    <string name="unit_ms">ms</string>
+    <string name="preview_stabilization">Estabilização de pré-visualização</string>
+    <string name="af_mode_off">Desativado</string>
+    <string name="af_mode_auto">Automático</string>
+    <string name="af_mode_macro">Macro</string>
+    <string name="af_mode_continuous_video">Vídeo contínuo</string>
+    <string name="af_mode_continuous_picture">Foto contínua</string>
+    <string name="af_mode_edof">EDOF</string>
+    <string name="video_cap_4k">Suporte 4K</string>
 </resources>

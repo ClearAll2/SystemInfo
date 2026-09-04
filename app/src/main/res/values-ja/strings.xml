@@ -311,4 +311,14 @@
     <string name="max_range">最大範囲</string>
     <string name="sensor_count">すべてのセンサー</string>
     <string name="no_sensors_found">センサーが見つかりません</string>
+    <string name="unit_s">秒</string>
+    <string name="unit_ms">ミリ秒</string>
+    <string name="preview_stabilization">プレビューの手ぶれ補正</string>
+    <string name="af_mode_off">オフ</string>
+    <string name="af_mode_auto">オート</string>
+    <string name="af_mode_macro">マクロ</string>
+    <string name="af_mode_continuous_video">連続ビデオ</string>
+    <string name="af_mode_continuous_picture">連続写真</string>
+    <string name="af_mode_edof">EDOF</string>
+    <string name="video_cap_4k">4K対応</string>
 </resources>

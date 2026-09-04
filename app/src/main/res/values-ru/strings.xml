@@ -311,4 +311,14 @@
     <string name="max_range">Максимальный диапазон</string>
     <string name="sensor_count">Все датчики</string>
     <string name="no_sensors_found">Датчики не найдены</string>
+    <string name="unit_s">с</string>
+    <string name="unit_ms">мс</string>
+    <string name="preview_stabilization">Стабилизация предварительного просмотра</string>
+    <string name="af_mode_off">Выкл</string>
+    <string name="af_mode_auto">Авто</string>
+    <string name="af_mode_macro">Макро</string>
+    <string name="af_mode_continuous_video">Непрерывное видео</string>
+    <string name="af_mode_continuous_picture">Непрерывное фото</string>
+    <string name="af_mode_edof">EDOF</string>
+    <string name="video_cap_4k">Поддержка 4K</string>
 </resources>
