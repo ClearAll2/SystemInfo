@@ -1,6 +1,9 @@
-System Info is a project that I'm doing with passion and in my free time – a simple and modern app to get device info.
+System Info is a project that I'm doing with passion in my free time – a simple and modern app to get device info.
+
+All information is collected entirely offline, directly from the device, without relying on any internet sources.
 
 If you like System Info, please leave a review. It helps a lot 😊
+
 
 <p>
  <a href='https://play.google.com/store/apps/details?id=com.lkonlesoft.displayinfo&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height="80px"/></a>
@@ -11,14 +14,18 @@ Show various system information of device:
 - System
 - Android
 - SoC/CPU
+- GPU
 - Display
 - Battery
+- Storage
 - Memory
-- Network
+- Network/WIFI
 - Camera
 - Connectivity
 - DRM Information
 - Root status
+- All apps
+- Sensors
 - More info will be added soon...
 
 ## Screenshots
