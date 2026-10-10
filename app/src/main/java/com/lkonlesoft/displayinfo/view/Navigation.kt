@@ -1,5 +1,7 @@
 package com.lkonlesoft.displayinfo.view
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -49,6 +51,17 @@ fun MainNavigation(
         modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainer),
         navController = navController,
         startDestination = NavigationItem.Home.route,
+        predictivePopExitTransition = {
+            slideOutOfContainer(targetOffset = { -it },
+                towards = AnimatedContentTransitionScope.SlideDirection.Left) +
+                    ExitTransition.KeepUntilTransitionsFinished
+        },
+        predictivePopEnterTransition = {
+            scaleIn(
+                initialScale = 0.92f,
+                animationSpec = tween(220, delayMillis = 100)
+            ) + slideIntoContainer(initialOffset = { it }, towards = AnimatedContentTransitionScope.SlideDirection.Right)
+        },
         enterTransition = {
             fadeIn(
                 animationSpec = tween(220, delayMillis = 100)
@@ -70,8 +83,8 @@ fun MainNavigation(
         },
         popExitTransition = {
             fadeOut(animationSpec = tween(100))
-        }) {
-
+        }
+    ) {
         composable(
             route = NavigationItem.Settings.route,
             deepLinks = listOf(

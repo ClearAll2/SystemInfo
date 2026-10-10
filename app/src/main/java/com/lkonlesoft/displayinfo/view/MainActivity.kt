@@ -24,6 +24,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,6 +37,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -220,7 +222,7 @@ fun MainContext(settings: SettingsViewModel){
                             Text(
                                 text = stringResource(routes.find { it.route == currentRoute }?.name ?: R.string.home),
                                 fontWeight = FontWeight.Medium,
-                                modifier = Modifier.padding(if (currentRoute == NavigationItem.Home.route) 0.dp else 12.dp)
+                                modifier = Modifier.padding(start = 8.dp)
                             )
                         },
                         navigationIcon = {
@@ -239,7 +241,7 @@ fun MainContext(settings: SettingsViewModel){
                                     IconButton(
                                         shapes = IconButtonDefaults.shapes(),
                                         colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
-                                        modifier = Modifier.padding(start = 20.dp),
+                                        modifier = Modifier.padding(start = 20.dp).width(52.dp),
                                         onClick = { navController.navigateUp() }
                                     ) {
                                         Icon(
@@ -253,7 +255,8 @@ fun MainContext(settings: SettingsViewModel){
                         },
                         scrollBehavior = scrollBehavior,
                         actions = {
-                            AnimatedVisibility(visible = currentRoute == NavigationItem.Home.route,
+                            AnimatedVisibility(modifier = Modifier.padding(end = 8.dp),
+                                visible = currentRoute == NavigationItem.Home.route,
                                 enter = fadeIn() + slideInHorizontally(initialOffsetX = { it  }),
                                 exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it  })
                             ) {
@@ -262,6 +265,7 @@ fun MainContext(settings: SettingsViewModel){
                                 ) {
                                     IconButton(
                                         shapes = IconButtonDefaults.shapes(),
+                                        colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
                                         modifier = Modifier.rotate(rotateSettingGear),
                                         onClick = {
                                             settings.setCurrentView(if (currentView == 2) 0 else currentView + 1)
@@ -279,6 +283,7 @@ fun MainContext(settings: SettingsViewModel){
                                     }
                                     IconButton(
                                         shapes = IconButtonDefaults.shapes(),
+                                        colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
                                         modifier = Modifier.padding(end = 5.dp).rotate(rotateSettingGear),
                                         onClick = {
                                             navController.navigate(NavigationItem.Settings.route)
@@ -391,14 +396,15 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                     columns = if (width < 600.dp) StaggeredGridCells.Fixed(2) else StaggeredGridCells.Adaptive(240.dp),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 7.5.dp)
-                        .padding(top = paddingValues.calculateTopPadding())
-                        .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
-                    contentPadding = PaddingValues(
-                        start = paddingValues.calculateStartPadding(layoutDirection),
-                        end = paddingValues.calculateEndPadding(layoutDirection),
-                        bottom = paddingValues.calculateBottomPadding()
-                    ),
+                        .padding(top = paddingValues.calculateTopPadding(),
+                            start = paddingValues.calculateStartPadding(layoutDirection),
+                            end = paddingValues.calculateEndPadding(layoutDirection)
+                        )
+                        .padding(horizontal = 20.dp)
+                        .clip(shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                    contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                    verticalItemSpacing = 16.dp,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(listScreen) { item ->
                         val isSelected = currentRoute == item.first.route
@@ -416,14 +422,15 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                     columns = if (width < 600.dp) StaggeredGridCells.Fixed(1) else StaggeredGridCells.Adaptive(400.dp),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 7.5.dp)
-                        .padding(top = paddingValues.calculateTopPadding())
-                        .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
-                    contentPadding = PaddingValues(
-                        start = paddingValues.calculateStartPadding(layoutDirection),
-                        end = paddingValues.calculateEndPadding(layoutDirection),
-                        bottom = paddingValues.calculateBottomPadding()
-                    ),
+                        .padding(top = paddingValues.calculateTopPadding(),
+                            start = paddingValues.calculateStartPadding(layoutDirection),
+                            end = paddingValues.calculateEndPadding(layoutDirection)
+                        )
+                        .padding(horizontal = 20.dp)
+                        .clip(shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                    contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                    verticalItemSpacing = 16.dp,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(listScreen) { itemPair ->
                         val item = itemPair.first

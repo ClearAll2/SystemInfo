@@ -14,7 +14,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,15 +21,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.BluetoothUtils
+import com.lkonlesoft.displayinfo.view.CardDashboard
 import com.lkonlesoft.displayinfo.view.ConfirmActionPopup
 import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
@@ -82,14 +78,8 @@ fun BluetoothDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
             refreshKey++ // Triggers recomposition
         }
     }
-    OutlinedCard(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
-        modifier = Modifier
-            .padding(10.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .fillMaxWidth()
-            .clickable { onClick() }
+    CardDashboard(
+        onClick = onClick
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(

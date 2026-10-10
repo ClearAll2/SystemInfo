@@ -1,6 +1,5 @@
 package com.lkonlesoft.displayinfo.view.module
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,15 +7,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.SystemUtils
+import com.lkonlesoft.displayinfo.view.CardDashboard
 import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.HeaderLine
@@ -44,14 +40,8 @@ import kotlinx.coroutines.withContext
 fun SystemDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
     val infoList = remember { SystemUtils(context).getDashboardData() }
-    OutlinedCard(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
-        modifier = Modifier
-            .padding(10.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .fillMaxWidth()
-            .clickable { onClick() }
+    CardDashboard(
+        onClick = onClick
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(

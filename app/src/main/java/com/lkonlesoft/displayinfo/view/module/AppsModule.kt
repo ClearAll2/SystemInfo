@@ -14,7 +14,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,14 +36,12 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedToggleButton
 import androidx.compose.material3.Text
@@ -80,6 +77,7 @@ import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.AppInfo
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.PackageUtils
+import com.lkonlesoft.displayinfo.view.CardDashboard
 import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.IndividualLine
@@ -92,14 +90,8 @@ import kotlinx.coroutines.withContext
 fun AppDashboard(onClick: () -> Unit) {
     val context = LocalContext.current
     val listInfo = PackageUtils(context).getAppCountDetails()
-    OutlinedCard(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
-        modifier = Modifier
-            .padding(10.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .fillMaxWidth()
-            .clickable { onClick() },
+    CardDashboard(
+        onClick = onClick
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderForDashboard(
@@ -235,7 +227,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                                     appTypes.keys.last() -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                                     else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                                 },
-                                colors = ToggleButtonDefaults.toggleButtonColors(
+                                colors = ToggleButtonDefaults.colors(
                                     disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer,
                                     disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer
                                 )

@@ -42,13 +42,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButtonShapes
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -91,11 +91,10 @@ import com.lkonlesoft.displayinfo.helper.toBitmap
 
 @Composable
 fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
-    OutlinedCard(
+    Card(
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
-            .padding(horizontal = 7.5.dp, vertical = 7.5.dp)
             .clip(RoundedCornerShape(16.dp))
             .clickable {
                 onClick()
@@ -122,6 +121,23 @@ fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
 
         }
         Spacer(modifier = Modifier.padding(10.dp))
+    }
+}
+
+@Composable
+fun CardDashboard(
+    onClick: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .fillMaxWidth()
+            .clickable { onClick() },
+    ) {
+        content()
     }
 }
 

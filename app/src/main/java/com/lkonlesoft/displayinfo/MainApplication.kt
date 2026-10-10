@@ -15,6 +15,9 @@ class MainApplication : Application() {
             androidContext(this@MainApplication)
             modules(appModule)
         }
-        WidgetUpdateWorker.enqueueWork(this@MainApplication)
+        try {
+            WidgetUpdateWorker.enqueueWork(this@MainApplication)
+        }
+        catch (_: Exception){ }
     }
 }
