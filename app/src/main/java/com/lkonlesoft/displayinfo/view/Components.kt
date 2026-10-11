@@ -20,6 +20,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -90,37 +92,33 @@ import com.lkonlesoft.displayinfo.helper.getMemoryLevelColor
 import com.lkonlesoft.displayinfo.helper.toBitmap
 
 @Composable
-fun BigTitle(title: String, icon: Int, onClick: () -> Unit) {
+fun BigTile(
+    title: String,
+    icon: Int,
+    onClick: () -> Unit) {
     Card(
+        onClick = onClick,
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .clickable {
-                onClick()
-            }
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
+            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxSize().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
         ) {
-            Spacer(modifier = Modifier.padding(10.dp))
             Icon(
                 imageVector = ImageVector.vectorResource(icon),
                 contentDescription = title,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .size(40.dp),
+                modifier = Modifier.size(40.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
             Text(text = title,
-                fontSize = 25.sp,
-                modifier = Modifier.padding(10.dp)
+                fontSize = 20.sp,
+                softWrap = false,
+                maxLines = 1,
+                modifier = Modifier.basicMarquee()
             )
-
         }
-        Spacer(modifier = Modifier.padding(10.dp))
     }
 }
 
@@ -129,13 +127,10 @@ fun CardDashboard(
     onClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    Card(
+    Card(onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .fillMaxWidth()
-            .clickable { onClick() },
+        modifier = Modifier.fillMaxWidth()
     ) {
         content()
     }
@@ -152,10 +147,7 @@ fun IndividualLine(
     onClick: () -> Unit = { },
     canLongPress: Boolean = true,
     copyTitle: Boolean = true,
-    topStart: Dp = 5.dp,
-    topEnd: Dp = 5.dp,
-    bottomStart: Dp = 5.dp,
-    bottomEnd: Dp = 5.dp,
+    isFirst: Boolean = false,
     isLast: Boolean = false,
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceBright
 ){
@@ -174,21 +166,13 @@ fun IndividualLine(
                 .fillMaxWidth()
                 .clip(
                     shape = RoundedCornerShape(
-                        topStart = topStart,
-                        topEnd = topEnd,
-                        bottomStart = bottomStart,
-                        bottomEnd = bottomEnd
+                        topStart = if (isFirst) 20.dp else 4.dp,
+                        topEnd = if (isFirst) 20.dp else 4.dp,
+                        bottomStart = if (isLast) 20.dp else 4.dp,
+                        bottomEnd = if (isLast) 20.dp else 4.dp,
                     )
                 )
-                .background(
-                    color = backgroundColor,
-                    shape = RoundedCornerShape(
-                        topStart = topStart,
-                        topEnd = topEnd,
-                        bottomStart = bottomStart,
-                        bottomEnd = bottomEnd
-                    )
-                )
+                .background(color = backgroundColor)
                 .combinedClickable(
                     onClick = {
                         if (isNotExpandable)
@@ -373,10 +357,7 @@ fun CommonSwitchOption(
     separator: Boolean = false,
     checked: Boolean,
     horizontalPadding: Dp = 20.dp,
-    topStart: Dp = 20.dp,
-    topEnd: Dp = 20.dp,
-    bottomStart: Dp = 20.dp,
-    bottomEnd: Dp = 20.dp,
+    isFirst: Boolean = false,
     isLast: Boolean = false,
     onClick: () -> Unit,
     onSwitch: (Boolean) -> Unit
@@ -387,21 +368,13 @@ fun CommonSwitchOption(
                 .fillMaxWidth()
                 .clip(
                     shape = RoundedCornerShape(
-                        topStart = topStart,
-                        topEnd = topEnd,
-                        bottomStart = bottomStart,
-                        bottomEnd = bottomEnd
+                        topStart = if (isFirst) 20.dp else 4.dp,
+                        topEnd = if (isFirst) 20.dp else 4.dp,
+                        bottomStart = if (isLast) 20.dp else 4.dp,
+                        bottomEnd = if (isLast) 20.dp else 4.dp
                     )
                 )
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceBright,
-                    shape = RoundedCornerShape(
-                        topStart = topStart,
-                        topEnd = topEnd,
-                        bottomStart = bottomStart,
-                        bottomEnd = bottomEnd
-                    )
-                )
+                .background(color = MaterialTheme.colorScheme.surfaceBright)
                 .clickable(enabled = clickable) {
                     onClick()
                 }
@@ -709,19 +682,16 @@ fun FeatureTag(
 }
 
 @Composable
-fun MainSettingItem(
+fun ListViewItem(
     modifier: Modifier = Modifier,
     @DrawableRes iconId: Int,
     mainText: String,
     subText: String,
+    isFirst: Boolean = false,
     isLast: Boolean = false,
     tintColor: Color = MaterialTheme.colorScheme.onSurface.copy(.8f),
     iconBackgroundColor: Color,
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceBright,
-    topStart: Dp = 4.dp,
-    topEnd: Dp = 4.dp,
-    bottomStart: Dp = 4.dp,
-    bottomEnd: Dp = 4.dp,
     onClick: () -> Unit
 ) {
     Column(
@@ -732,21 +702,13 @@ fun MainSettingItem(
                 .fillMaxWidth()
                 .clip(
                     shape = RoundedCornerShape(
-                        topStart = topStart,
-                        topEnd = topEnd,
-                        bottomStart = bottomStart,
-                        bottomEnd = bottomEnd
+                        topStart = if (isFirst) 20.dp else 4.dp,
+                        topEnd = if (isFirst) 20.dp else 4.dp,
+                        bottomStart = if (isLast) 20.dp else 4.dp,
+                        bottomEnd = if (isLast) 20.dp else 4.dp
                     )
                 )
-                .background(
-                    color = backgroundColor,
-                    shape = RoundedCornerShape(
-                        topStart = topStart,
-                        topEnd = topEnd,
-                        bottomStart = bottomStart,
-                        bottomEnd = bottomEnd
-                    )
-                )
+                .background(color = backgroundColor)
                 .clickable {
                     onClick()
                 }

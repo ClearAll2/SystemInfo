@@ -179,11 +179,8 @@ fun SettingsScreen(
                     onClick = {
                         showLangDialog = !showLangDialog
                     },
-                    isLast = true,
-                    topStart = 20.dp,
-                    topEnd = 20.dp,
-                    bottomStart = 20.dp,
-                    bottomEnd = 20.dp
+                    isFirst = true,
+                    isLast = true
                 )
             }
         }
@@ -217,12 +214,7 @@ fun SettingsScreen(
                         },
                         onSwitch = {
                             settings.setUseDynamicColors(it)
-                        },
-                        topStart = 5.dp,
-                        topEnd = 5.dp,
-                        bottomStart = 5.dp,
-                        bottomEnd = 5.dp,
-                        isLast = false
+                        }
                     )
                 }
                 CommonSwitchOption(
@@ -236,8 +228,6 @@ fun SettingsScreen(
                     onSwitch = {
                         settings.setShowNotice(it)
                     },
-                    topStart = 5.dp,
-                    topEnd = 5.dp,
                     isLast = true
                 )
             }
@@ -256,9 +246,7 @@ fun SettingsScreen(
                     onSwitch = {
                         settings.setLongPressCopy(it)
                     },
-                    bottomStart = 5.dp,
-                    bottomEnd = 5.dp,
-                    isLast = false
+                    isFirst = true
                 )
                 CommonSwitchOption(
                     text = R.string.copy_title,
@@ -271,8 +259,6 @@ fun SettingsScreen(
                     onSwitch = {
                         settings.setCopyTitle(it)
                     },
-                    topStart = 5.dp,
-                    topEnd = 5.dp,
                     enabled = longPressCopy,
                     clickable = longPressCopy,
                     isLast = true
@@ -288,16 +274,13 @@ fun SettingsScreen(
                     onClick = {
                         uriHandler.openUri(resource.getString(R.string.changelog_link))
                     },
-                    topStart = 20.dp,
-                    topEnd = 20.dp,
+                    isFirst = true
                 )
                 IndividualLine(
                     title = stringResource(R.string.app_info),
                     info = stringResource(id = R.string.app_ver),
                     onClick = onAboutClick,
-                    isLast = true,
-                    bottomStart = 20.dp,
-                    bottomEnd = 20.dp
+                    isLast = true
                 )
             }
         }

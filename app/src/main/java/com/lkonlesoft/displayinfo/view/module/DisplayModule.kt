@@ -114,11 +114,8 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = isLast,
-                        topStart = if(isFirst) 20.dp else 5.dp,
-                        topEnd = if(isFirst) 20.dp else 5.dp,
-                        bottomStart = if(isLast) 20.dp else 5.dp,
-                        bottomEnd = if(isLast) 20.dp else 5.dp
+                        isFirst = isFirst,
+                        isLast = isLast
                     )
                 }
             }

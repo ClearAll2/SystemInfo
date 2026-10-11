@@ -275,11 +275,8 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                                         icon = app.icon,
                                         canLongPress = longPressCopy,
                                         copyTitle = copyTitle,
+                                        isFirst = filteredApps.first() == app,
                                         isLast = filteredApps.last() == app,
-                                        topStart = if (filteredApps.first() == app) 20.dp else 5.dp,
-                                        topEnd = if (filteredApps.first() == app) 20.dp else 5.dp,
-                                        bottomStart = if (filteredApps.last() == app) 20.dp else 5.dp,
-                                        bottomEnd = if (filteredApps.last() == app) 20.dp else 5.dp,
                                         onClick = {
                                             context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                                                 data =

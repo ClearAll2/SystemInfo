@@ -369,12 +369,12 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                 buildDetailsSubTextSetting(resources, R.string.features, R.string.widevine)
             ),
             Pair(
-                NavigationItem.Apps,
-                buildDetailsSubTextSetting(resources,  R.string.system, R.string.user)
-            ),
-            Pair(
                 NavigationItem.Sensors,
                 buildDetailsSubTextSetting(resources, R.string.sensor_count)
+            ),
+            Pair(
+                NavigationItem.Apps,
+                buildDetailsSubTextSetting(resources,  R.string.system, R.string.user)
             )
         )
     }
@@ -409,7 +409,8 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                 ) {
                     items(listScreen) { item ->
                         val isSelected = currentRoute == item.first.route
-                        BigTitle(title = stringResource(item.first.name), icon = item.first.icon) {
+                        BigTile(title = stringResource(item.first.name), icon = item.first.icon)
+                        {
                             if (!isSelected) {
                                 navController.navigate(item.first.route)
                             }
@@ -476,18 +477,15 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                     ) {
                         items(listScreen) { item ->
                             val isSelected = currentRoute == item.first.route
-                            MainSettingItem(
+                            ListViewItem(
                                 modifier = Modifier,
                                 iconId = item.first.icon,
                                 mainText = stringResource(item.first.name),
                                 subText = item.second,
+                                isFirst = item == listScreen.first(),
                                 isLast = item == listScreen.last(),
                                 tintColor = Color.DarkGray,
                                 iconBackgroundColor = item.first.color,
-                                topStart = if (item == listScreen.first()) 20.dp else 5.dp,
-                                topEnd = if (item == listScreen.first()) 20.dp else 5.dp,
-                                bottomStart = if (item == listScreen.last()) 20.dp else 5.dp,
-                                bottomEnd = if (item == listScreen.last()) 20.dp else 5.dp,
                             ) {
                                 if (!isSelected) {
                                     navController.navigate(item.first.route)

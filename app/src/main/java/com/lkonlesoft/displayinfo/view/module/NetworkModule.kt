@@ -3,7 +3,6 @@ package com.lkonlesoft.displayinfo.view.module
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -94,9 +93,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     var showWarningPopup by remember { mutableStateOf(false) }
     val hasPhonePermission = remember(refreshKey) { context.hasPermission(Manifest.permission.READ_PHONE_STATE) }
     val hasLocationPermission = remember(refreshKey) { context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) }
-    val networkType = remember(refreshKey) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) NetworkUtils(context).getNetwork() else NetworkUtils(context).getNetworkOldApi()
-    }
+    val networkType = remember(refreshKey) { NetworkUtils(context).getNetwork() }
     val infoList = remember(refreshKey) { NetworkUtils(context).getDetailsInfo() }
     var wifiInfoList by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     val simInfoList = remember(refreshKey) { NetworkUtils(context).getSimInfo() }
@@ -173,10 +170,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                     },
                     canLongPress = longPressCopy,
                     copyTitle = copyTitle,
-                    topStart = 20.dp,
-                    topEnd = 20.dp,
-                    bottomStart = 20.dp,
-                    bottomEnd = 20.dp,
+                    isFirst = true,
                     isLast = true
                 )
             }
@@ -195,11 +189,8 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                             },
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,
-                            isLast = wifiInfoList.last() == it,
-                            topStart = if (wifiInfoList.first() == it) 20.dp else 5.dp,
-                            topEnd = if (wifiInfoList.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (wifiInfoList.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (wifiInfoList.last() == it) 20.dp else 5.dp
+                            isFirst = wifiInfoList.first() == it,
+                            isLast = wifiInfoList.last() == it
                         )
                     }
                 }
@@ -209,10 +200,6 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                         info = stringResource(R.string.n_a),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        topStart = 20.dp,
-                        topEnd = 20.dp,
-                        bottomStart = 20.dp,
-                        bottomEnd = 20.dp,
                         isLast = true
                     )
                 }
@@ -228,11 +215,8 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                             info = it.value.toString(),
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,
-                            isLast = simInfo.last() == it,
-                            topStart = if (simInfo.first() == it) 20.dp else 5.dp,
-                            topEnd = if (simInfo.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (simInfo.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (simInfo.last() == it) 20.dp else 5.dp
+                            isFirst = simInfo.first() == it,
+                            isLast = simInfo.last() == it
                         )
                     }
                 }
@@ -250,10 +234,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                         },
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        topStart = 20.dp,
-                        topEnd = 20.dp,
-                        bottomStart = 20.dp,
-                        bottomEnd = 20.dp,
+                        isFirst = true,
                         isLast = true
                     )
                 }
@@ -267,11 +248,8 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = infoList.last() == it,
-                        topStart = if (infoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (infoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (infoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (infoList.last() == it) 20.dp else 5.dp
+                        isFirst = infoList.first() == it,
+                        isLast = infoList.last() == it
                     )
                 }
             }

@@ -185,11 +185,8 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = filteredRamInfo.last() == it,
-                        topStart = if (filteredRamInfo.first() == it) 20.dp else 5.dp,
-                        topEnd = if (filteredRamInfo.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (filteredRamInfo.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (filteredRamInfo.last() == it) 20.dp else 5.dp
+                        isFirst = filteredRamInfo.first() == it,
+                        isLast = filteredRamInfo.last() == it
                     )
                 }
             }
@@ -260,11 +257,8 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                                     info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
                                     canLongPress = longPressCopy,
                                     copyTitle = copyTitle,
-                                    isLast = detailsInternal.last() == it,
-                                    topStart = if (detailsInternal.first() == it) 20.dp else 5.dp,
-                                    topEnd = if (detailsInternal.first() == it) 20.dp else 5.dp,
-                                    bottomStart = if (detailsInternal.last() == it) 20.dp else 5.dp,
-                                    bottomEnd = if (detailsInternal.last() == it) 20.dp else 5.dp
+                                    isFirst = detailsInternal.first() == it,
+                                    isLast = detailsInternal.last() == it
                                 )
                             }
                         }
@@ -288,11 +282,8 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                                     info = if (it.type == 0) it.extra else it.value.toString() + it.extra,
                                     canLongPress = longPressCopy,
                                     copyTitle = copyTitle,
-                                    isLast = detailsExternal.last() == it,
-                                    topStart = if (detailsExternal.first() == it) 20.dp else 5.dp,
-                                    topEnd = if (detailsExternal.first() == it) 20.dp else 5.dp,
-                                    bottomStart = if (detailsExternal.last() == it) 20.dp else 5.dp,
-                                    bottomEnd = if (detailsExternal.last() == it) 20.dp else 5.dp
+                                    isFirst = detailsExternal.first() == it,
+                                    isLast = detailsExternal.last() == it
                                 )
                             }
                         }

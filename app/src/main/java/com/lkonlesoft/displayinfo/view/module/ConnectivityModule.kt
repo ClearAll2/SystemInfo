@@ -193,11 +193,8 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
                             info = it.value.toString() + it.extra,
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,
-                            isLast = stateInfoList.last() == it,
-                            topStart = if (stateInfoList.first() == it) 20.dp else 5.dp,
-                            topEnd = if (stateInfoList.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (stateInfoList.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (stateInfoList.last() == it) 20.dp else 5.dp
+                            isFirst = stateInfoList.first() == it,
+                            isLast = stateInfoList.last() == it
                         )
                     }
                 }
@@ -210,11 +207,8 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
                             info = it.value.toString(),
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,
-                            isLast = featuresList.last() == it,
-                            topStart = if (featuresList.first() == it) 20.dp else 5.dp,
-                            topEnd = if (featuresList.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (featuresList.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (featuresList.last() == it) 20.dp else 5.dp
+                            isFirst = featuresList.first() == it,
+                            isLast = featuresList.last() == it
                         )
                     }
                 }
@@ -232,10 +226,7 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
                         },
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        topStart = 20.dp,
-                        topEnd = 20.dp,
-                        bottomStart = 20.dp,
-                        bottomEnd = 20.dp,
+                        isFirst = true,
                         isLast = true
                     )
                 }
@@ -254,11 +245,8 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
                             info = it.value.toString() + it.extra,
                             canLongPress = longPressCopy,
                             copyTitle = copyTitle,
-                            isLast = device.last() == it,
-                            topStart = if (device.first() == it) 20.dp else 5.dp,
-                            topEnd = if (device.first() == it) 20.dp else 5.dp,
-                            bottomStart = if (device.last() == it) 20.dp else 5.dp,
-                            bottomEnd = if (device.last() == it) 20.dp else 5.dp
+                            isFirst = device.first() == it,
+                            isLast = device.last() == it
                         )
                     }
                 }

@@ -112,11 +112,8 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = cpuInfoList.last() == it,
-                        topStart = if (cpuInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (cpuInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (cpuInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (cpuInfoList.last() == it) 20.dp else 5.dp
+                        isFirst = cpuInfoList.first() == it,
+                        isLast = cpuInfoList.last() == it
                     )
                 }
             }
@@ -132,11 +129,8 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = cluster.last() == it,
-                        topStart = if (cluster.first() == it) 20.dp else 5.dp,
-                        topEnd = if (cluster.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (cluster.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (cluster.last() == it) 20.dp else 5.dp
+                        isFirst = cluster.first() == it,
+                        isLast = cluster.last() == it
                     )
                 }
             }
@@ -149,11 +143,8 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
                         info = it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = cpuUsageInfo.last() == it,
-                        topStart = if (cpuUsageInfo.first() == it) 20.dp else 5.dp,
-                        topEnd = if (cpuUsageInfo.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (cpuUsageInfo.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (cpuUsageInfo.last() == it) 20.dp else 5.dp
+                        isFirst = cpuUsageInfo.first() == it,
+                        isLast = cpuUsageInfo.last() == it
                     )
                 }
             }
@@ -167,11 +158,8 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = gpuInfo.last() == it,
-                        topStart = if (gpuInfo.first() == it) 20.dp else 5.dp,
-                        topEnd = if (gpuInfo.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (gpuInfo.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (gpuInfo.last() == it) 20.dp else 5.dp
+                        isFirst = gpuInfo.first() == it,
+                        isLast = gpuInfo.last() == it
                     )
                 }
             }

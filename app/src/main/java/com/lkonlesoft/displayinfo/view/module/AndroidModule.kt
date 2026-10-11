@@ -82,11 +82,8 @@ fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = androidInfoList.last() == it,
-                        topStart = if (androidInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (androidInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (androidInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (androidInfoList.last() == it) 20.dp else 5.dp
+                        isFirst = androidInfoList.first() == it,
+                        isLast = androidInfoList.last() == it
                     )
                 }
             }
@@ -99,11 +96,8 @@ fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = extraInfoList.last() == it,
-                        topStart = if (extraInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (extraInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (extraInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (extraInfoList.last() == it) 20.dp else 5.dp
+                        isFirst = extraInfoList.first() == it,
+                        isLast = extraInfoList.last() == it
                     )
                 }
             }

@@ -125,11 +125,8 @@ fun MediaScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean,
                                 info = it.value.toString(),
                                 canLongPress = longPressCopy,
                                 copyTitle = copyTitle,
-                                isLast = mediaFeature.last() == it,
-                                topStart = if (mediaFeature.first() == it) 20.dp else 5.dp,
-                                topEnd = if (mediaFeature.first() == it) 20.dp else 5.dp,
-                                bottomStart = if (mediaFeature.last() == it) 20.dp else 5.dp,
-                                bottomEnd = if (mediaFeature.last() == it) 20.dp else 5.dp
+                                isFirst = mediaFeature.first() == it,
+                                isLast = mediaFeature.last() == it
                             )
                         }
                     }
@@ -142,11 +139,8 @@ fun MediaScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean,
                                 info = it.value.toString(),
                                 canLongPress = longPressCopy,
                                 copyTitle = copyTitle,
-                                isLast = mediaCodecs.last() == it,
-                                topStart = if (mediaCodecs.first() == it) 20.dp else 5.dp,
-                                topEnd = if (mediaCodecs.first() == it) 20.dp else 5.dp,
-                                bottomStart = if (mediaCodecs.last() == it) 20.dp else 5.dp,
-                                bottomEnd = if (mediaCodecs.last() == it) 20.dp else 5.dp
+                                isFirst = mediaCodecs.first() == it,
+                                isLast = mediaCodecs.last() == it
                             )
                         }
                     }
@@ -160,11 +154,8 @@ fun MediaScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean,
                                 info = it.value.toString(),
                                 canLongPress = longPressCopy,
                                 copyTitle = copyTitle,
-                                isLast = widevineList.last() == it,
-                                topStart = if (widevineList.first() == it) 20.dp else 5.dp,
-                                topEnd = if (widevineList.first() == it) 20.dp else 5.dp,
-                                bottomStart = if (widevineList.last() == it) 20.dp else 5.dp,
-                                bottomEnd = if (widevineList.last() == it) 20.dp else 5.dp
+                                isFirst = widevineList.first() == it,
+                                isLast = widevineList.last() == it
                             )
                         }
                     }
@@ -178,11 +169,8 @@ fun MediaScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean,
                                 info = it.value.toString(),
                                 canLongPress = longPressCopy,
                                 copyTitle = copyTitle,
-                                isLast = clearKeyList.last() == it,
-                                topStart = if (clearKeyList.first() == it) 20.dp else 5.dp,
-                                topEnd = if (clearKeyList.first() == it) 20.dp else 5.dp,
-                                bottomStart = if (clearKeyList.last() == it) 20.dp else 5.dp,
-                                bottomEnd = if (clearKeyList.last() == it) 20.dp else 5.dp
+                                isFirst = clearKeyList.first() == it,
+                                isLast = clearKeyList.last() == it
                             )
                         }
 

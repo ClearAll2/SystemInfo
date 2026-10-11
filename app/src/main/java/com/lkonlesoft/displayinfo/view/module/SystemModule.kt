@@ -93,11 +93,8 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = deviceInfoList.last() == it,
-                        topStart = if (deviceInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (deviceInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (deviceInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (deviceInfoList.last() == it) 20.dp else 5.dp
+                        isFirst = deviceInfoList.first() == it,
+                        isLast = deviceInfoList.last() == it
                     )
                 }
             }
@@ -110,11 +107,8 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = rootInfoList.last() == it,
-                        topStart = if (rootInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (rootInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (rootInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (rootInfoList.last() == it) 20.dp else 5.dp
+                        isFirst = rootInfoList.first() == it,
+                        isLast = rootInfoList.last() == it
                     )
                 }
             }
@@ -126,11 +120,9 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
-                        isLast = deviceFeaturesList.last() == it,
-                        topStart = if (deviceFeaturesList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (deviceFeaturesList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (deviceFeaturesList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (deviceFeaturesList.last() == it) 20.dp else 5.dp
+                        copyTitle = copyTitle,
+                        isFirst = deviceFeaturesList.first() == it,
+                        isLast = deviceFeaturesList.last() == it
                     )
                 }
             }
@@ -142,11 +134,9 @@ fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
                     IndividualLine(title = stringResource(it.name),
                         info = it.value.toString(),
                         canLongPress = longPressCopy,
-                        isLast = extraInfoList.last() == it,
-                        topStart = if (extraInfoList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (extraInfoList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (extraInfoList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (extraInfoList.last() == it) 20.dp else 5.dp
+                        copyTitle = copyTitle,
+                        isFirst = extraInfoList.first() == it,
+                        isLast = extraInfoList.last() == it
                     )
                 }
             }

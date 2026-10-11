@@ -151,10 +151,7 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyT
                         },
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        topStart = 20.dp,
-                        topEnd = 20.dp,
-                        bottomStart = 20.dp,
-                        bottomEnd = 20.dp,
+                        isFirst = true,
                         isLast = true
                     )
                 }
@@ -172,11 +169,8 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyT
                         info = it.value.toString() + it.extra,
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
-                        isLast = cameraItemList.last() == it,
-                        topStart = if (cameraItemList.first() == it) 20.dp else 5.dp,
-                        topEnd = if (cameraItemList.first() == it) 20.dp else 5.dp,
-                        bottomStart = if (cameraItemList.last() == it) 20.dp else 5.dp,
-                        bottomEnd = if (cameraItemList.last() == it) 20.dp else 5.dp
+                        isFirst = cameraItemList.first() == it,
+                        isLast = cameraItemList.last() == it
                     )
                 }
             }

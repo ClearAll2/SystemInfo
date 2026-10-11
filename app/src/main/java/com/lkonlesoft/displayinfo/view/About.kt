@@ -66,11 +66,8 @@ fun AboutScreen(paddingValues: PaddingValues) {
                         onClick = {
                             uriHandler.openUri(url)
                         },
-                        isLast = appInfoItems.last() == item,
-                        topStart = if (appInfoItems.first() == item) 20.dp else 5.dp,
-                        topEnd = if (appInfoItems.first() == item) 20.dp else 5.dp,
-                        bottomStart = if (appInfoItems.last() == item) 20.dp else 5.dp,
-                        bottomEnd = if (appInfoItems.last() == item) 20.dp else 5.dp
+                        isFirst = appInfoItems.first() == item,
+                        isLast = appInfoItems.last() == item
                     )
                 }
             }
@@ -86,11 +83,8 @@ fun AboutScreen(paddingValues: PaddingValues) {
                         onClick = {
                             uriHandler.openUri(url)
                         },
-                        isLast = legalInfoItems.last() == item,
-                        topStart = if (legalInfoItems.first() == item) 20.dp else 5.dp,
-                        topEnd = if (legalInfoItems.first() == item) 20.dp else 5.dp,
-                        bottomStart = if (legalInfoItems.last() == item) 20.dp else 5.dp,
-                        bottomEnd = if (legalInfoItems.last() == item) 20.dp else 5.dp
+                        isFirst = legalInfoItems.first() == item,
+                        isLast = legalInfoItems.last() == item
                     )
                 }
             }
