@@ -123,21 +123,27 @@ class BatteryUtils (private val context: Context) {
         return context.registerReceiver(null, intentFilter)
     }
 
-    fun getAllData(): List<DeviceInfo> {
+    fun getGeneralData(): List<DeviceInfo> {
         val cycleCount = getBatteryCycleCount()
         val capacity = getBatteryCapacity().toInt()
         return buildList {
             add(DeviceInfo(R.string.battery_level, getBatteryPercentage(), "%"))
-            add(DeviceInfo(R.string.status, getBatteryStatus()))
             add(DeviceInfo(R.string.health, getBatteryHealth()))
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
                 add(DeviceInfo(R.string.cycle_count, if (cycleCount >= 0) cycleCount else context.getString(R.string.n_a)))
-            add(DeviceInfo(R.string.capacity, if (capacity > 0) capacity else context.getString(R.string.unknown), if (capacity > 0) " mAh" else ""))
+            if (capacity > 0)
+                add(DeviceInfo(R.string.capacity, capacity ,  " mAh"))
+            add(DeviceInfo(R.string.technology, getBatteryTechnology()))
+        }
+    }
+
+    fun getPowerData(): List<DeviceInfo> {
+        return buildList {
+            add(DeviceInfo(R.string.status, getBatteryStatus()))
             add(DeviceInfo(R.string.temperature, getBatteryTemperature(), " °C"))
             add(DeviceInfo(R.string.current, getDischargeCurrent(), " mA"))
             add(DeviceInfo(R.string.voltage, getChargingVoltage(), " V"))
             add(DeviceInfo(R.string.plug_type, getPlugType()))
-            add(DeviceInfo(R.string.technology, getBatteryTechnology()))
         }
     }
 

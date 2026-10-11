@@ -40,6 +40,7 @@ import com.lkonlesoft.displayinfo.view.GeneralProgressBar
 import com.lkonlesoft.displayinfo.view.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.GeneralWarning
 import com.lkonlesoft.displayinfo.view.HeaderForDashboard
+import com.lkonlesoft.displayinfo.view.HeaderLine
 import com.lkonlesoft.displayinfo.view.IndividualLine
 import com.lkonlesoft.displayinfo.view.staggeredHeader
 import com.lkonlesoft.displayinfo.widget.BatteryWidgetReceiver
@@ -89,9 +90,12 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList = remember(refreshKey) { BatteryUtils(context).getAllData() }
-    val batteryLevel = remember(infoList) { infoList.first() }
-    val batteryDetails = remember(infoList) { infoList.filter { it != infoList.first() } }
+    val generalData = remember(refreshKey) { BatteryUtils(context).getGeneralData() }
+    val batteryLevel = remember(generalData) { generalData.first() }
+    val batteryDetails = remember(generalData) { generalData.filter { it != generalData.first() } }
+    val powerData = remember(refreshKey) { BatteryUtils(context).getPowerData() }
+    val chargeStatus = remember(powerData) { powerData.first() }
+    val powerDetails = remember(powerData) { powerData.filter { it != powerData.first() } }
     LaunchedEffect(Unit) {
         while (true){
             delay(1000L.milliseconds)
@@ -103,13 +107,11 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp)
-            .padding(top = paddingValues.calculateTopPadding())
+            .padding(top = paddingValues.calculateTopPadding(),
+                start = paddingValues.calculateStartPadding(layoutDirection),
+                end = paddingValues.calculateEndPadding(layoutDirection))
             .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-        contentPadding = PaddingValues(
-            start = paddingValues.calculateStartPadding(layoutDirection),
-            end = paddingValues.calculateEndPadding(layoutDirection),
-            bottom = paddingValues.calculateBottomPadding()
-        ),
+        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {
@@ -124,9 +126,30 @@ fun BatteryScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolea
                         verticalPadding = 15.dp
                     )
                 }
+                HeaderLine(title = stringResource(R.string.general))
                 batteryDetails.forEachIndexed { index, it ->
                     val isFirst = index == 0
                     val isLast = index == batteryDetails.lastIndex
+                    IndividualLine(
+                        title = stringResource(it.name),
+                        info = "${it.value}${it.extra}",
+                        canLongPress = longPressCopy,
+                        copyTitle = copyTitle,
+                        isLast = isLast,
+                        topStart = if (isFirst) 20.dp else 5.dp,
+                        topEnd = if (isFirst) 20.dp else 5.dp,
+                        bottomStart = if (isLast) 20.dp else 5.dp,
+                        bottomEnd = if (isLast) 20.dp else 5.dp
+                    )
+                }
+            }
+        }
+        item {
+            Column {
+                HeaderLine(title = chargeStatus.value.toString())
+                powerDetails.forEachIndexed { index, it ->
+                    val isFirst = index == 0
+                    val isLast = index == powerDetails.lastIndex
                     IndividualLine(
                         title = stringResource(it.name),
                         info = "${it.value}${it.extra}",

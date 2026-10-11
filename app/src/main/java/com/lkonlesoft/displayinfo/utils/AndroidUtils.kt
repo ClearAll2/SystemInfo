@@ -2,6 +2,7 @@ package com.lkonlesoft.displayinfo.utils
 
 import android.content.Context
 import android.os.Build
+import androidx.annotation.RequiresApi
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import java.util.Locale
@@ -51,6 +52,15 @@ class AndroidUtils (private val context: Context) {
         return Build.VERSION.SDK_INT
     }
 
+    fun getFullApiLevel(): String {
+        val major = Build.getMajorSdkVersion(Build.VERSION.SDK_INT_FULL)
+        val minor = Build.getMinorSdkVersion(Build.VERSION.SDK_INT_FULL)
+        if (minor == 0) {
+            return major.toString()
+        }
+        return "$major.$minor"
+    }
+
     fun getSecurityPatch(): String {
         return Build.VERSION.SECURITY_PATCH ?: context.getString(R.string.unknown)
     }
@@ -59,6 +69,17 @@ class AndroidUtils (private val context: Context) {
         return try {
             Build.VERSION_CODES::class.java.fields
                 .firstOrNull { it.getInt(null) == Build.VERSION.SDK_INT }
+                ?.name ?: context.getString(R.string.unknown)
+        } catch (_: Exception) {
+            context.getString(R.string.n_a)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.BAKLAVA)
+    fun getFullSdkName(): String {
+        return try {
+            Build.VERSION_CODES_FULL::class.java.fields
+                .firstOrNull { it.getInt(null) == Build.VERSION.SDK_INT_FULL }
                 ?.name ?: context.getString(R.string.unknown)
         } catch (_: Exception) {
             context.getString(R.string.n_a)
@@ -107,9 +128,9 @@ class AndroidUtils (private val context: Context) {
     fun getAndroidInfo(): List<DeviceInfo> {
         return listOf(
             DeviceInfo(R.string.android_version, getAndroidVersion()),
-            DeviceInfo(R.string.api_level, getApiLevel().toString()),
+            DeviceInfo(R.string.api_level, if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) getApiLevel().toString() else getFullApiLevel()),
             DeviceInfo(R.string.security_patch,  getSecurityPatch()),
-            DeviceInfo(R.string.sdk, getSdkName()),
+            DeviceInfo(R.string.sdk, if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) getSdkName() else getFullSdkName()),
             DeviceInfo(R.string.id, getId()),
             DeviceInfo(R.string.build_id, getDisplay()),
             DeviceInfo(R.string.incremental, getIncremental()),
@@ -123,9 +144,9 @@ class AndroidUtils (private val context: Context) {
     fun getDashboardData(): List<DeviceInfo> {
         return listOf(
             DeviceInfo(R.string.android_version, getAndroidVersion()),
-            DeviceInfo(R.string.api_level, getApiLevel().toString()),
+            DeviceInfo(R.string.api_level, if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) getApiLevel().toString() else getFullApiLevel()),
             DeviceInfo(R.string.security_patch,  getSecurityPatch()),
-            DeviceInfo(R.string.sdk, getSdkName()),
+            DeviceInfo(R.string.sdk, if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) getSdkName() else getFullSdkName()),
             DeviceInfo(R.string.google_play_service, getGmsVersion()),
             DeviceInfo(R.string.google_play_store, getPlayStoreVersion())
         )

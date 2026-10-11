@@ -165,13 +165,11 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp)
-            .padding(top = paddingValues.calculateTopPadding())
+            .padding(start = paddingValues.calculateStartPadding(layoutDirection),
+                end = paddingValues.calculateEndPadding(layoutDirection),
+                top = paddingValues.calculateTopPadding())
             .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-        contentPadding = PaddingValues(
-            start = paddingValues.calculateStartPadding(layoutDirection),
-            end = paddingValues.calculateEndPadding(layoutDirection),
-            bottom = paddingValues.calculateBottomPadding()
-        ),
+        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {
@@ -236,13 +234,12 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp)
-                    .padding(top = paddingValues.calculateTopPadding())
+                    .padding(
+                        start = paddingValues.calculateStartPadding(layoutDirection),
+                        end = paddingValues.calculateEndPadding(layoutDirection),
+                        top = paddingValues.calculateTopPadding())
                     .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-                contentPadding = PaddingValues(
-                    start = paddingValues.calculateStartPadding(layoutDirection),
-                    end = paddingValues.calculateEndPadding(layoutDirection),
-                    bottom = paddingValues.calculateBottomPadding()
-                ),
+                contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 if (detailsInternal.isNotEmpty()) {

@@ -396,7 +396,8 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                     columns = if (width < 600.dp) StaggeredGridCells.Fixed(2) else StaggeredGridCells.Adaptive(240.dp),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = paddingValues.calculateTopPadding(),
+                        .padding(
+                            top = paddingValues.calculateTopPadding(),
                             start = paddingValues.calculateStartPadding(layoutDirection),
                             end = paddingValues.calculateEndPadding(layoutDirection)
                         )
@@ -422,7 +423,8 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                     columns = if (width < 600.dp) StaggeredGridCells.Fixed(1) else StaggeredGridCells.Adaptive(400.dp),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = paddingValues.calculateTopPadding(),
+                        .padding(
+                            top = paddingValues.calculateTopPadding(),
                             start = paddingValues.calculateStartPadding(layoutDirection),
                             end = paddingValues.calculateEndPadding(layoutDirection)
                         )
@@ -466,13 +468,11 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
                             .fillMaxHeight()
                             .fillMaxWidth(if (width < 840.dp) 1f else .7f)
                             .padding(horizontal = 20.dp)
-                            .padding(top = paddingValues.calculateTopPadding())
+                            .padding(top = paddingValues.calculateTopPadding(),
+                                start = paddingValues.calculateStartPadding(layoutDirection),
+                                end = paddingValues.calculateEndPadding(layoutDirection))
                             .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
-                        contentPadding = PaddingValues(
-                            start = paddingValues.calculateStartPadding(layoutDirection),
-                            end = paddingValues.calculateEndPadding(layoutDirection),
-                            bottom = paddingValues.calculateBottomPadding()
-                        ),
+                        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding())
                     ) {
                         items(listScreen) { item ->
                             val isSelected = currentRoute == item.first.route
