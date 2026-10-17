@@ -57,6 +57,9 @@ android {
 }
 
 dependencies {
+    implementation("dev.chrisbanes.haze:haze:2.0.1")
+    implementation("dev.chrisbanes.haze:haze-blur:2.0.1")
+    implementation("dev.chrisbanes.haze:haze-blur-materials:2.0.1")
     implementation("io.insert-koin:koin-android:4.2.2")
     implementation("io.insert-koin:koin-androidx-compose:4.2.2")
     implementation("androidx.window:window:1.5.1")

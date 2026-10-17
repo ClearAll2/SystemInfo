@@ -35,6 +35,7 @@ import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
 
 @Composable
 fun MainNavigation(
+    modifier: Modifier,
     settings: SettingsViewModel,
     navController: NavHostController,
     currentRoute: String?,
@@ -48,7 +49,7 @@ fun MainNavigation(
     val copyTitle by settings.copyTitle.collectAsStateWithLifecycle()
     val showNotice by settings.showNotice.collectAsStateWithLifecycle()
     NavHost(
-        modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainer),
+        modifier = modifier.background(color = MaterialTheme.colorScheme.surfaceContainer),
         navController = navController,
         startDestination = NavigationItem.Home.route,
         predictivePopExitTransition = {

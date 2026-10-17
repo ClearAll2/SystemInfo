@@ -20,7 +20,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -28,7 +30,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -100,6 +101,8 @@ import com.lkonlesoft.displayinfo.view.module.SoCDashBoard
 import com.lkonlesoft.displayinfo.view.module.StorageDashboard
 import com.lkonlesoft.displayinfo.view.module.SystemDashboard
 import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.FlowPreview
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -194,6 +197,7 @@ fun MainContext(settings: SettingsViewModel){
         targetValue = if (currentRoute == NavigationItem.Home.route) 0f else 360f,
         animationSpec = tween(250)
     )
+    val hazeState = rememberHazeState()
     ScreenInfoTheme (
         typographyType = typographyType,
         darkTheme = when(appColor) {
@@ -228,7 +232,8 @@ fun MainContext(settings: SettingsViewModel){
                         navigationIcon = {
                             AnimatedContent(
                                 contentAlignment = Alignment.Center,
-                                targetState = currentRoute == NavigationItem.Home.route,
+                                targetState =
+                                    currentRoute == NavigationItem.Home.route || currentRoute == NavigationItem.Settings.route,
                                 transitionSpec = {
                                     fadeIn() + slideInHorizontally(initialOffsetX = { -it  }) togetherWith
                                             fadeOut() + slideOutHorizontally(targetOffsetX = { -it  })
@@ -260,48 +265,44 @@ fun MainContext(settings: SettingsViewModel){
                                 enter = fadeIn() + slideInHorizontally(initialOffsetX = { it  }),
                                 exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it  })
                             ) {
-                                Row (
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    IconButton(
-                                        shapes = IconButtonDefaults.shapes(),
-                                        colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
-                                        modifier = Modifier.rotate(rotateSettingGear),
-                                        onClick = {
-                                            settings.setCurrentView(if (currentView == 2) 0 else currentView + 1)
-                                        }) {
-                                        Crossfade(
-                                            targetState = currentView,
-                                            label = "TitleAnimation"
-                                        ) { view ->
-                                            when(view){
-                                                0 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_24px), contentDescription = "newDashboard")
-                                                1 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.view_list_24px), contentDescription = "listDashboard")
-                                                else -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_2_24px), contentDescription = "oldDashboard")
-                                            }
+                                IconButton(
+                                    shapes = IconButtonDefaults.shapes(),
+                                    colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
+                                    modifier = Modifier.rotate(rotateSettingGear),
+                                    onClick = {
+                                        settings.setCurrentView(if (currentView == 2) 0 else currentView + 1)
+                                    }) {
+                                    Crossfade(
+                                        targetState = currentView,
+                                        label = "TitleAnimation"
+                                    ) { view ->
+                                        when(view){
+                                            0 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_24px), contentDescription = "newDashboard")
+                                            1 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.view_list_24px), contentDescription = "listDashboard")
+                                            else -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_2_24px), contentDescription = "oldDashboard")
                                         }
                                     }
-                                    IconButton(
-                                        shapes = IconButtonDefaults.shapes(),
-                                        colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
-                                        modifier = Modifier.padding(end = 5.dp).rotate(rotateSettingGear),
-                                        onClick = {
-                                            navController.navigate(NavigationItem.Settings.route)
-                                        }) {
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(
-                                                R.drawable.settings_24px
-                                            ), contentDescription = "Settings"
-                                        )
-                                    }
                                 }
-
                             }
                         }
                     )
+                },
+                bottomBar = {
+                    AnimatedVisibility(
+                        visible = currentRoute == NavigationItem.Home.route || currentRoute == NavigationItem.Settings.route,
+                        enter = fadeIn() + slideInVertically(initialOffsetY = { up -> up }),
+                        exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> down })
+                    ) {
+                        FloatingNavigationBar(
+                            hazeState = hazeState,
+                            currentRoute = currentRoute,
+                            onRouteSelected = { route -> navController.navigate(route) }
+                        )
+                    }
                 }
             ) { paddingValues ->
                 MainNavigation(
+                    modifier = Modifier.hazeSource(hazeState),
                     settings = settings,
                     navController = navController,
                     currentRoute = currentRoute,
@@ -371,10 +372,6 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             Pair(
                 NavigationItem.Sensors,
                 buildDetailsSubTextSetting(resources, R.string.sensor_count)
-            ),
-            Pair(
-                NavigationItem.Apps,
-                buildDetailsSubTextSetting(resources,  R.string.system, R.string.user)
             )
         )
     }
