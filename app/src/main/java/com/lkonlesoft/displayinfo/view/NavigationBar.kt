@@ -70,6 +70,7 @@ fun FloatingNavigationBar(
         buildList {
             add(NavigationItem.Home)
             add(NavigationItem.Apps)
+            add(NavigationItem.Test)
             add(NavigationItem.Settings)
         }
     }

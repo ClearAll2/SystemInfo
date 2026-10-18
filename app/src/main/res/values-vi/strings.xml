@@ -321,4 +321,26 @@
     <string name="af_mode_continuous_picture">Ảnh liên tục</string>
     <string name="af_mode_edof">EDOF</string>
     <string name="video_cap_4k">Hỗ trợ 4K</string>
+    <string name="color_test_title">Kiểm tra màu sắc</string>
+    <string name="color_test_red">Đỏ thuần</string>
+    <string name="color_test_green">Xanh lá thuần</string>
+    <string name="color_test_blue">Xanh dương thuần</string>
+    <string name="color_test_white">Trắng thuần (Kiểm tra đều màu đèn nền)</string>
+    <string name="color_test_black">Đen thuần (OLED / Kiểm tra điểm chết)</string>
+    <string name="color_test_cyan">Xanh lơ (Cyan)</string>
+    <string name="color_test_magenta">Hồng cánh sen (Magenta)</string>
+    <string name="color_test_yellow">Vàng</string>
+    <string name="color_test_grey_25">Xám đậm 25%</string>
+    <string name="color_test_grey_50">Xám trung tính 50%</string>
+    <string name="color_test_grey_75">Xám nhạt 75%</string>
+    <string name="color_test_grad_rgb">Dải màu RGB ngang</string>
+    <string name="color_test_grad_spectrum">Dải màu cầu vồng</string>
+    <string name="color_test_grad_grayscale">Thang độ xám (0% - 100%)</string>
+    <string name="color_test_grad_radial">Dải màu độ sáng dạng tròn</string>
+    <string name="color_test_grid_primary">Lưới màu cơ bản (2x4)</string>
+    <string name="color_test_grid_density">Lưới ô bàn cờ nhiều màu (8x8)</string>
+    <string name="color_test_grid_high_density">Lưới màu mật độ cao (16x16)</string>
+    <string name="color_test_smpte">Thanh màu chuẩn SMPTE</string>
+    <string name="color_test_contrast_steps">Bảng kiểm tra độ tương phản 16 mức</string>
+    <string name="test">Kiểm tra</string>
 </resources>

@@ -321,4 +321,26 @@
     <string name="af_mode_continuous_picture">Continue foto</string>
     <string name="af_mode_edof">EDOF</string>
     <string name="video_cap_4k">4K-ondersteuning</string>
+    <string name="color_test_title">Kleurtest</string>
+    <string name="color_test_red">Puur Rood</string>
+    <string name="color_test_green">Puur Groen</string>
+    <string name="color_test_blue">Puur Blauw</string>
+    <string name="color_test_white">Puur Wit (Achtergrondverlichting test)</string>
+    <string name="color_test_black">Puur Zwart (OLED / Dode pixel controle)</string>
+    <string name="color_test_cyan">Cyaan</string>
+    <string name="color_test_magenta">Magenta</string>
+    <string name="color_test_yellow">Geel</string>
+    <string name="color_test_grey_25">25% Donkergrijs</string>
+    <string name="color_test_grey_50">50% Neutraal Grijs</string>
+    <string name="color_test_grey_75">75% Lichtgrijs</string>
+    <string name="color_test_grad_rgb">Horizontaal RGB-verloop</string>
+    <string name="color_test_grad_spectrum">Regenboog kleurenspectrum</string>
+    <string name="color_test_grad_grayscale">Grijswaarden verloop (0% - 100%)</string>
+    <string name="color_test_grad_radial">Radiaal luminantieverloop</string>
+    <string name="color_test_grid_primary">Primair kleurengraster (2x4)</string>
+    <string name="color_test_grid_density">Meerkleurig geblokt raster (8x8)</string>
+    <string name="color_test_grid_high_density">Hoge dichtheid kleurrooster (16x16)</string>
+    <string name="color_test_smpte">SMPTE-kleurenbalken</string>
+    <string name="color_test_contrast_steps">16-stappen luminantie contrastkaart</string>
+    <string name="test">Test</string>
 </resources>

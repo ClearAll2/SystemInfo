@@ -321,4 +321,26 @@
     <string name="af_mode_continuous_picture">연속 사진</string>
     <string name="af_mode_edof">EDOF</string>
     <string name="video_cap_4k">4K 지원</string>
+    <string name="color_test_title">색상 테스트</string>
+    <string name="color_test_red">순수 빨간색</string>
+    <string name="color_test_green">순수 초록색</string>
+    <string name="color_test_blue">순수 파란색</string>
+    <string name="color_test_white">순수 흰색 (백라이트 균일도 검사)</string>
+    <string name="color_test_black">순수 검은색 (OLED / 불량 화소 검사)</string>
+    <string name="color_test_cyan">시안</string>
+    <string name="color_test_magenta">마젠타</string>
+    <string name="color_test_yellow">노란색</string>
+    <string name="color_test_grey_25">25% 어두운 회색</string>
+    <string name="color_test_grey_50">50% 중립 회색</string>
+    <string name="color_test_grey_75">75% 밝은 회색</string>
+    <string name="color_test_grad_rgb">수평 RGB 그라데이션</string>
+    <string name="color_test_grad_spectrum">무지개 색상 스펙트럼</string>
+    <string name="color_test_grad_grayscale">그레이스케일 선형 램프 (0% - 100%)</string>
+    <string name="color_test_grad_radial">방사형 휘도 그라데이션</string>
+    <string name="color_test_grid_primary">기본 색상 격자 (2x4)</string>
+    <string name="color_test_grid_density">다색 체커보드 격자 (8x8)</string>
+    <string name="color_test_grid_high_density">고밀도 색상 메쉬 (16x16)</string>
+    <string name="color_test_smpte">SMPTE 컬러 바</string>
+    <string name="color_test_contrast_steps">16단계 휘도 대비 차트</string>
+    <string name="test">테스트</string>
 </resources>

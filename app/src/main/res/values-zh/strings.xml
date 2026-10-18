@@ -321,4 +321,26 @@
     <string name="af_mode_continuous_picture">连续照片</string>
     <string name="af_mode_edof">EDOF</string>
     <string name="video_cap_4k">4K 支持</string>
+    <string name="color_test_title">色彩测试</string>
+    <string name="color_test_red">纯红</string>
+    <string name="color_test_green">纯绿</string>
+    <string name="color_test_blue">纯蓝</string>
+    <string name="color_test_white">纯白（背光均匀度测试）</string>
+    <string name="color_test_black">纯黑（OLED / 坏点检测）</string>
+    <string name="color_test_cyan">青色</string>
+    <string name="color_test_magenta">洋红</string>
+    <string name="color_test_yellow">黄色</string>
+    <string name="color_test_grey_25">25% 深灰</string>
+    <string name="color_test_grey_50">50% 中性灰</string>
+    <string name="color_test_grey_75">75% 浅灰</string>
+    <string name="color_test_grad_rgb">水平 RGB 渐变</string>
+    <string name="color_test_grad_spectrum">彩虹全光谱渐变</string>
+    <string name="color_test_grad_grayscale">灰度阶梯渐变（0% - 100%）</string>
+    <string name="color_test_grad_radial">环形亮度渐变</string>
+    <string name="color_test_grid_primary">基础色彩网格 (2x4)</string>
+    <string name="color_test_grid_density">多色棋盘网格 (8x8)</string>
+    <string name="color_test_grid_high_density">高密度色彩网格 (16x16)</string>
+    <string name="color_test_smpte">SMPTE 标准彩条</string>
+    <string name="color_test_contrast_steps">16阶亮度对比度图表</string>
+    <string name="test">测试</string>
 </resources>

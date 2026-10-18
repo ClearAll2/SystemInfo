@@ -321,4 +321,26 @@
     <string name="af_mode_continuous_picture">Immagine continua</string>
     <string name="af_mode_edof">EDOF</string>
     <string name="video_cap_4k">Supporto 4K</string>
+    <string name="color_test_title">Test dei colori</string>
+    <string name="color_test_red">Rosso puro</string>
+    <string name="color_test_green">Verde puro</string>
+    <string name="color_test_blue">Blu puro</string>
+    <string name="color_test_white">Bianco puro (Uniformità retroilluminazione)</string>
+    <string name="color_test_black">Nero puro (OLED / Controllo pixel bloccati)</string>
+    <string name="color_test_cyan">Ciano</string>
+    <string name="color_test_magenta">Magenta</string>
+    <string name="color_test_yellow">Giallo</string>
+    <string name="color_test_grey_25">Grigio scuro 25%</string>
+    <string name="color_test_grey_50">Grigio neutro 50%</string>
+    <string name="color_test_grey_75">Grigio chiaro 75%</string>
+    <string name="color_test_grad_rgb">Sfumatura RGB orizzontale</string>
+    <string name="color_test_grad_spectrum">Spettro di colori arcobaleno</string>
+    <string name="color_test_grad_grayscale">Rampa scala di grigi (0% - 100%)</string>
+    <string name="color_test_grad_radial">Sfumatura di luminanza radiale</string>
+    <string name="color_test_grid_primary">Griglia colori primari (2x4)</string>
+    <string name="color_test_grid_density">Griglia multicolore (8x8)</string>
+    <string name="color_test_grid_high_density">Maglia di colore ad alta densità (16x16)</string>
+    <string name="color_test_smpte">Barre di colore SMPTE</string>
+    <string name="color_test_contrast_steps">Grafico di contrasto luminanza a 16 livelli</string>
+    <string name="test">Test</string>
 </resources>

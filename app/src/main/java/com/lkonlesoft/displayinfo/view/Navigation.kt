@@ -31,6 +31,8 @@ import com.lkonlesoft.displayinfo.view.module.NetworkScreen
 import com.lkonlesoft.displayinfo.view.module.SensorsScreen
 import com.lkonlesoft.displayinfo.view.module.StorageScreen
 import com.lkonlesoft.displayinfo.view.module.SystemScreen
+import com.lkonlesoft.displayinfo.view.module.TestScreen
+import com.lkonlesoft.displayinfo.view.test.ColorTestScreen
 import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
 
 @Composable
@@ -298,6 +300,30 @@ fun MainNavigation(
                 longPressCopy = longPressCopy,
                 copyTitle = copyTitle
             )
+        }
+        composable(
+            route = NavigationItem.Test.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "si://info/test"
+                }
+            )) {
+            TestScreen(
+                navController = navController,
+                currentRoute = currentRoute,
+                paddingValues = paddingValues
+            )
+        }
+        composable(
+            route = NavigationItem.ColorTest.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "si://info/colortest"
+                }
+            )) {
+            ColorTestScreen {
+                navController.navigateUp()
+            }
         }
     }
 }

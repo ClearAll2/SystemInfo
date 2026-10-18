@@ -173,9 +173,10 @@ fun MainContext(settings: SettingsViewModel){
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val routes = remember {
+    val mainRoutes = remember {
         listOf(
             NavigationItem.Home,
+            NavigationItem.Test,
             NavigationItem.SOC,
             NavigationItem.Battery,
             NavigationItem.Memory,
@@ -191,6 +192,11 @@ fun MainContext(settings: SettingsViewModel){
             NavigationItem.Media,
             NavigationItem.Apps,
             NavigationItem.Sensors
+        )
+    }
+    val testRoutes = remember {
+        listOf(
+            NavigationItem.ColorTest
         )
     }
     val rotateSettingGear by animateFloatAsState(
@@ -217,79 +223,90 @@ fun MainContext(settings: SettingsViewModel){
                     .nestedScroll(scrollBehavior.nestedScrollConnection)
                     .imePadding(),
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                        ),
-                        title = {
-                            Text(
-                                text = stringResource(routes.find { it.route == currentRoute }?.name ?: R.string.home),
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
-                        },
-                        navigationIcon = {
-                            AnimatedContent(
-                                contentAlignment = Alignment.Center,
-                                targetState =
-                                    currentRoute == NavigationItem.Home.route || currentRoute == NavigationItem.Settings.route,
-                                transitionSpec = {
-                                    fadeIn() + slideInHorizontally(initialOffsetX = { -it  }) togetherWith
-                                            fadeOut() + slideOutHorizontally(targetOffsetX = { -it  })
-                                },
-                                label = "NavIconAnimation"
-                            ) { isHomeRoute ->
-                                if (isHomeRoute) {
-                                    Spacer(modifier = Modifier.padding(start = 20.dp))
-                                } else {
+                    AnimatedVisibility(
+                        visible = testRoutes.find { it.route == currentRoute } == null,
+                        enter = fadeIn() + slideInVertically(initialOffsetY = { up -> -up }),
+                        exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> -down })
+                    ) {
+                        TopAppBar(
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                            ),
+                            title = {
+                                Text(
+                                    text = stringResource((mainRoutes + testRoutes).find { it.route == currentRoute }?.name ?: R.string.home),
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = Modifier.padding(start = 8.dp)
+                                )
+                            },
+                            navigationIcon = {
+                                AnimatedContent(
+                                    contentAlignment = Alignment.Center,
+                                    targetState =
+                                        currentRoute == NavigationItem.Home.route
+                                                || currentRoute == NavigationItem.Settings.route
+                                                || currentRoute == NavigationItem.Test.route
+                                    ,
+                                    transitionSpec = {
+                                        fadeIn() + slideInHorizontally(initialOffsetX = { -it  }) togetherWith
+                                                fadeOut() + slideOutHorizontally(targetOffsetX = { -it  })
+                                    },
+                                    label = "NavIconAnimation"
+                                ) { isHomeRoute ->
+                                    if (isHomeRoute) {
+                                        Spacer(modifier = Modifier.padding(start = 20.dp))
+                                    } else {
+                                        IconButton(
+                                            shapes = IconButtonDefaults.shapes(),
+                                            colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
+                                            modifier = Modifier.padding(start = 20.dp).width(52.dp),
+                                            onClick = { navController.navigateUp() }
+                                        ) {
+                                            Icon(
+                                                imageVector = ImageVector.vectorResource(R.drawable.baseline_arrow_back_24),
+                                                contentDescription = "backIcon",
+                                                tint = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                    }
+                                }
+                            },
+                            scrollBehavior = scrollBehavior,
+                            actions = {
+                                AnimatedVisibility(modifier = Modifier.padding(end = 8.dp),
+                                    visible = currentRoute == NavigationItem.Home.route,
+                                    enter = fadeIn() + slideInHorizontally(initialOffsetX = { it  }),
+                                    exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it  })
+                                ) {
                                     IconButton(
                                         shapes = IconButtonDefaults.shapes(),
                                         colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
-                                        modifier = Modifier.padding(start = 20.dp).width(52.dp),
-                                        onClick = { navController.navigateUp() }
-                                    ) {
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_arrow_back_24),
-                                            contentDescription = "backIcon",
-                                            tint = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    }
-                                }
-                            }
-                        },
-                        scrollBehavior = scrollBehavior,
-                        actions = {
-                            AnimatedVisibility(modifier = Modifier.padding(end = 8.dp),
-                                visible = currentRoute == NavigationItem.Home.route,
-                                enter = fadeIn() + slideInHorizontally(initialOffsetX = { it  }),
-                                exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it  })
-                            ) {
-                                IconButton(
-                                    shapes = IconButtonDefaults.shapes(),
-                                    colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
-                                    modifier = Modifier.rotate(rotateSettingGear),
-                                    onClick = {
-                                        settings.setCurrentView(if (currentView == 2) 0 else currentView + 1)
-                                    }) {
-                                    Crossfade(
-                                        targetState = currentView,
-                                        label = "TitleAnimation"
-                                    ) { view ->
-                                        when(view){
-                                            0 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_24px), contentDescription = "newDashboard")
-                                            1 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.view_list_24px), contentDescription = "listDashboard")
-                                            else -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_2_24px), contentDescription = "oldDashboard")
+                                        modifier = Modifier.rotate(rotateSettingGear),
+                                        onClick = {
+                                            settings.setCurrentView(if (currentView == 2) 0 else currentView + 1)
+                                        }) {
+                                        Crossfade(
+                                            targetState = currentView,
+                                            label = "TitleAnimation"
+                                        ) { view ->
+                                            when(view){
+                                                0 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_24px), contentDescription = "newDashboard")
+                                                1 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.view_list_24px), contentDescription = "listDashboard")
+                                                else -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_2_24px), contentDescription = "oldDashboard")
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
                 },
                 bottomBar = {
                     AnimatedVisibility(
-                        visible = currentRoute == NavigationItem.Home.route || currentRoute == NavigationItem.Settings.route,
+                        visible = currentRoute == NavigationItem.Home.route
+                                || currentRoute == NavigationItem.Settings.route
+                                || currentRoute == NavigationItem.Test.route,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { up -> up }),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> down })
                     ) {

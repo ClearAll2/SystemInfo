@@ -321,4 +321,26 @@
     <string name="af_mode_continuous_picture">Непрерывное фото</string>
     <string name="af_mode_edof">EDOF</string>
     <string name="video_cap_4k">Поддержка 4K</string>
+    <string name="color_test_title">Тест цветов</string>
+    <string name="color_test_red">Чистый красный</string>
+    <string name="color_test_green">Чистый зеленый</string>
+    <string name="color_test_blue">Чистый синий</string>
+    <string name="color_test_white">Чистый белый (Проверка подсветки)</string>
+    <string name="color_test_black">Чистый черный (OLED / Битые пиксели)</string>
+    <string name="color_test_cyan">Голубой</string>
+    <string name="color_test_magenta">Пурпурный</string>
+    <string name="color_test_yellow">Желтый</string>
+    <string name="color_test_grey_25">25% Темно-серый</string>
+    <string name="color_test_grey_50">50% Нейтрально-серый</string>
+    <string name="color_test_grey_75">75% Светло-серый</string>
+    <string name="color_test_grad_rgb">Горизонтальный градиент RGB</string>
+    <string name="color_test_grad_spectrum">Радужный спектр цветов</string>
+    <string name="color_test_grad_grayscale">Шкала градаций серого (0% - 100%)</string>
+    <string name="color_test_grad_radial">Радиальный градиент яркости</string>
+    <string name="color_test_grid_primary">Сетка основных цветов (2x4)</string>
+    <string name="color_test_grid_density">Многоцветная шахматная сетка (8x8)</string>
+    <string name="color_test_grid_high_density">Высокоплотная цветная сетка (16x16)</string>
+    <string name="color_test_smpte">Цветовые полосы SMPTE</string>
+    <string name="color_test_contrast_steps">16-ступенчатая таблица контрастности яркости</string>
+    <string name="test">Тест</string>
 </resources>

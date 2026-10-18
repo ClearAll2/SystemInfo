@@ -333,4 +333,26 @@
     <string name="format_aperture" translatable="false">f/%.2f</string>
     <string name="format_float_2" translatable="false">%.2f</string>
     <string name="format_sensor_size" translatable="false">%.2f x %.2f</string>
+    <string name="color_test_title">Color Test</string>
+    <string name="color_test_red">Pure Red</string>
+    <string name="color_test_green">Pure Green</string>
+    <string name="color_test_blue">Pure Blue</string>
+    <string name="color_test_white">Pure White (Backlight Uniformity)</string>
+    <string name="color_test_black">Pure Black (OLED / Stuck Pixel Check)</string>
+    <string name="color_test_cyan">Cyan</string>
+    <string name="color_test_magenta">Magenta</string>
+    <string name="color_test_yellow">Yellow</string>
+    <string name="color_test_grey_25">25% Dark Grey</string>
+    <string name="color_test_grey_50">50% Neutral Grey</string>
+    <string name="color_test_grey_75">75% Light Grey</string>
+    <string name="color_test_grad_rgb">Horizontal RGB Gradient</string>
+    <string name="color_test_grad_spectrum">Rainbow Color Spectrum</string>
+    <string name="color_test_grad_grayscale">Grayscale Linear Ramp (0% - 100%)</string>
+    <string name="color_test_grad_radial">Radial Luminance Gradient</string>
+    <string name="color_test_grid_primary">Primary Color Grid (2x4)</string>
+    <string name="color_test_grid_density">Multi-Color Checkered Grid (8x8)</string>
+    <string name="color_test_grid_high_density">High-Density Color Mesh (16x16)</string>
+    <string name="color_test_smpte">SMPTE Color Bars</string>
+    <string name="color_test_contrast_steps">16-Step Luminance Contrast Chart</string>
+    <string name="test">Test</string>
 </resources>

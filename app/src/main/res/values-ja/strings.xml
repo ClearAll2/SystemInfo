@@ -321,4 +321,26 @@
     <string name="af_mode_continuous_picture">連続写真</string>
     <string name="af_mode_edof">EDOF</string>
     <string name="video_cap_4k">4K対応</string>
+    <string name="color_test_title">カラーテスト</string>
+    <string name="color_test_red">ピュアレッド</string>
+    <string name="color_test_green">ピュアグリーン</string>
+    <string name="color_test_blue">ピュアブルー</string>
+    <string name="color_test_white">ピュアホワイト（バックライトムラチェック）</string>
+    <string name="color_test_black">ピュアブラック（OLED・ドット抜けチェック）</string>
+    <string name="color_test_cyan">シアン</string>
+    <string name="color_test_magenta">マゼンタ</string>
+    <string name="color_test_yellow">イエロー</string>
+    <string name="color_test_grey_25">25% ダークグレー</string>
+    <string name="color_test_grey_50">50% ニュートラルグレー</string>
+    <string name="color_test_grey_75">75% ライトグレー</string>
+    <string name="color_test_grad_rgb">水平RGBグラデーション</string>
+    <string name="color_test_grad_spectrum">レインボーカラースペクトル</string>
+    <string name="color_test_grad_grayscale">グレースケールグラデーション (0% - 100%)</string>
+    <string name="color_test_grad_radial">放射状輝度グラデーション</string>
+    <string name="color_test_grid_primary">原色グリッド (2x4)</string>
+    <string name="color_test_grid_density">マルチカラーチェックグリッド (8x8)</string>
+    <string name="color_test_grid_high_density">高密度カラーメッシュ (16x16)</string>
+    <string name="color_test_smpte">SMPTEカラーバー</string>
+    <string name="color_test_contrast_steps">16段階輝度コントラストチャート</string>
+    <string name="test">テスト</string>
 </resources>

@@ -322,4 +322,26 @@
     <string name="af_mode_continuous_picture">Kontinuierliches Bild</string>
     <string name="af_mode_edof">EDOF</string>
     <string name="video_cap_4k">4K-Unterstützung</string>
+    <string name="color_test_title">Farbtest</string>
+    <string name="color_test_red">Reines Rot</string>
+    <string name="color_test_green">Reines Grün</string>
+    <string name="color_test_blue">Reines Blau</string>
+    <string name="color_test_white">Reines Weiß (Hintergrundbeleuchtungstest)</string>
+    <string name="color_test_black">Reines Schwarz (OLED / Pixelfehlertest)</string>
+    <string name="color_test_cyan">Cyan</string>
+    <string name="color_test_magenta">Magenta</string>
+    <string name="color_test_yellow">Gelb</string>
+    <string name="color_test_grey_25">25% Dunkelgrau</string>
+    <string name="color_test_grey_50">50% Neutralgrau</string>
+    <string name="color_test_grey_75">75% Hellgrau</string>
+    <string name="color_test_grad_rgb">Horizontaler RGB-Farbverlauf</string>
+    <string name="color_test_grad_spectrum">Regenbogen-Farbspektrum</string>
+    <string name="color_test_grad_grayscale">Graustufen-Verlauf (0% - 100%)</string>
+    <string name="color_test_grad_radial">Radialer Luminanzverlauf</string>
+    <string name="color_test_grid_primary">Primärfarben-Gitter (2x4)</string>
+    <string name="color_test_grid_density">Mehrfarbiges Schachbrett-Gitter (8x8)</string>
+    <string name="color_test_grid_high_density">Hochdichtes Farbgitter (16x16)</string>
+    <string name="color_test_smpte">SMPTE-Farbbalken</string>
+    <string name="color_test_contrast_steps">16-Stufen-Luminanz-Kontrastdiagramm</string>
+    <string name="test">Test</string>
 </resources>
