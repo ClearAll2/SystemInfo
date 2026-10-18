@@ -343,4 +343,15 @@
     <string name="color_test_smpte">SMPTEカラーバー</string>
     <string name="color_test_contrast_steps">16段階輝度コントラストチャート</string>
     <string name="test">テスト</string>
+
+    <!-- Touch Test -->
+    <string name="touch_test_title">タッチテスト</string>
+    <string name="close">閉じる</string>
+    <string name="touch_test_clear">クリア</string>
+    <string name="touch_test_mode_trail">軌跡と情報</string>
+    <string name="touch_test_mode_grid">グリッドカバー率</string>
+    <string name="touch_test_active_touches">%1$d タッチ</string>
+    <string name="touch_test_max_touches">最大: %1$d</string>
+    <string name="touch_test_sample_rate">%1$d Hz</string>
+    <string name="touch_test_haptics">触覚フィードバック</string>
 </resources>

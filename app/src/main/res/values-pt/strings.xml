@@ -343,4 +343,15 @@
     <string name="color_test_smpte">Barras de cor SMPTE</string>
     <string name="color_test_contrast_steps">Gráfico de contraste de luminância de 16 etapas</string>
     <string name="test">Teste</string>
+
+    <!-- Touch Test -->
+    <string name="touch_test_title">Teste de toque</string>
+    <string name="close">Fechar</string>
+    <string name="touch_test_clear">Limpar</string>
+    <string name="touch_test_mode_trail">Traços e info</string>
+    <string name="touch_test_mode_grid">Cobertura da grade</string>
+    <string name="touch_test_active_touches">%1$d toques</string>
+    <string name="touch_test_max_touches">Máx: %1$d</string>
+    <string name="touch_test_sample_rate">%1$d Hz</string>
+    <string name="touch_test_haptics">Háptico</string>
 </resources>

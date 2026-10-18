@@ -344,4 +344,15 @@
     <string name="color_test_smpte">SMPTE-Farbbalken</string>
     <string name="color_test_contrast_steps">16-Stufen-Luminanz-Kontrastdiagramm</string>
     <string name="test">Test</string>
+
+    <!-- Touch Test -->
+    <string name="touch_test_title">Touch-Test</string>
+    <string name="close">Schließen</string>
+    <string name="touch_test_clear">Löschen</string>
+    <string name="touch_test_mode_trail">Pfade &amp; Info</string>
+    <string name="touch_test_mode_grid">Rasterabdeckung</string>
+    <string name="touch_test_active_touches">%1$d Berührungen</string>
+    <string name="touch_test_max_touches">Max: %1$d</string>
+    <string name="touch_test_sample_rate">%1$d Hz</string>
+    <string name="touch_test_haptics">Haptik</string>
 </resources>

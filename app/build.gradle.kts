@@ -6,7 +6,7 @@ plugins {
 }
 
 val buildCode = 62
-val buildName = "4.4"
+val buildName = "5.0"
 val appId = "com.lkonlesoft.displayinfo"
 
 android {

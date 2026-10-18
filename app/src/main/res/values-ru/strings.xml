@@ -343,4 +343,15 @@
     <string name="color_test_smpte">Цветовые полосы SMPTE</string>
     <string name="color_test_contrast_steps">16-ступенчатая таблица контрастности яркости</string>
     <string name="test">Тест</string>
+
+    <!-- Touch Test -->
+    <string name="touch_test_title">Тест сенсора</string>
+    <string name="close">Закрыть</string>
+    <string name="touch_test_clear">Очистить</string>
+    <string name="touch_test_mode_trail">Следы и инфо</string>
+    <string name="touch_test_mode_grid">Покрытие сетки</string>
+    <string name="touch_test_active_touches">Касаний: %1$d</string>
+    <string name="touch_test_max_touches">Макс: %1$d</string>
+    <string name="touch_test_sample_rate">%1$d Гц</string>
+    <string name="touch_test_haptics">Виброотклик</string>
 </resources>

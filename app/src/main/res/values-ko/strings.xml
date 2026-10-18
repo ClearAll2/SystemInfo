@@ -343,4 +343,15 @@
     <string name="color_test_smpte">SMPTE 컬러 바</string>
     <string name="color_test_contrast_steps">16단계 휘도 대비 차트</string>
     <string name="test">테스트</string>
+
+    <!-- Touch Test -->
+    <string name="touch_test_title">터치 테스트</string>
+    <string name="close">닫기</string>
+    <string name="touch_test_clear">지우기</string>
+    <string name="touch_test_mode_trail">궤적 및 정보</string>
+    <string name="touch_test_mode_grid">그리드 검사</string>
+    <string name="touch_test_active_touches">%1$d개 터치</string>
+    <string name="touch_test_max_touches">최대: %1$d</string>
+    <string name="touch_test_sample_rate">%1$d Hz</string>
+    <string name="touch_test_haptics">햅틱</string>
 </resources>

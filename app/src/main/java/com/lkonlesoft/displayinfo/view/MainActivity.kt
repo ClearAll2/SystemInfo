@@ -196,7 +196,8 @@ fun MainContext(settings: SettingsViewModel){
     }
     val testRoutes = remember {
         listOf(
-            NavigationItem.ColorTest
+            NavigationItem.ColorTest,
+            NavigationItem.TouchTest
         )
     }
     val rotateSettingGear by animateFloatAsState(

@@ -343,4 +343,15 @@
     <string name="color_test_smpte">SMPTE-kleurenbalken</string>
     <string name="color_test_contrast_steps">16-stappen luminantie contrastkaart</string>
     <string name="test">Test</string>
+
+    <!-- Touch Test -->
+    <string name="touch_test_title">Touchtest</string>
+    <string name="close">Sluiten</string>
+    <string name="touch_test_clear">Wis</string>
+    <string name="touch_test_mode_trail">Sporen &amp; info</string>
+    <string name="touch_test_mode_grid">Rasterdekking</string>
+    <string name="touch_test_active_touches">%1$d aanrakingen</string>
+    <string name="touch_test_max_touches">Max: %1$d</string>
+    <string name="touch_test_sample_rate">%1$d Hz</string>
+    <string name="touch_test_haptics">Haptiek</string>
 </resources>

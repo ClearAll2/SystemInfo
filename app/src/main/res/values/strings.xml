@@ -355,4 +355,13 @@
     <string name="color_test_smpte">SMPTE Color Bars</string>
     <string name="color_test_contrast_steps">16-Step Luminance Contrast Chart</string>
     <string name="test">Test</string>
+    <string name="touch_test_title">Touch Test</string>
+    <string name="close">Close</string>
+    <string name="touch_test_clear">Clear</string>
+    <string name="touch_test_mode_trail">Trails &amp; Info</string>
+    <string name="touch_test_mode_grid" >Grid Coverage</string>
+    <string name="touch_test_active_touches" >%1$d Touches</string>
+    <string name="touch_test_max_touches" >Max: %1$d</string>
+    <string name="touch_test_sample_rate" >%1$d Hz</string>
+    <string name="touch_test_haptics" >Haptics</string>
 </resources>

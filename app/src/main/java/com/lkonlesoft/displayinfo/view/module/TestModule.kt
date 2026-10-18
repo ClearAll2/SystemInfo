@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,10 +28,10 @@ fun TestScreen(navController: NavHostController, currentRoute: String?, paddingV
     val layoutDirection = LocalLayoutDirection.current
     val width = LocalWindowInfo.current.containerDpSize.width
     val state = rememberLazyStaggeredGridState()
-    val resources = LocalResources.current
     val listTestScreen = remember {
         listOf(
-            NavigationItem.ColorTest
+            NavigationItem.ColorTest,
+            NavigationItem.TouchTest
         )
     }
     LazyVerticalStaggeredGrid (

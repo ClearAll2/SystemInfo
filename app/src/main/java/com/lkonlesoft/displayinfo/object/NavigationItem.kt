@@ -71,6 +71,7 @@ sealed class NavigationItem (
     //Tests
 
     data object ColorTest: NavigationItem(name = R.string.color_test_title, route = "colorTest", R.drawable.colors_24px, R.drawable.colors_24px)
+    data object TouchTest: NavigationItem(name = R.string.touch_test_title, route = "touchTest", R.drawable.touch_app_24px, R.drawable.touch_app_24px)
 
 
 }

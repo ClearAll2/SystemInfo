@@ -343,4 +343,15 @@
     <string name="color_test_smpte">Thanh màu chuẩn SMPTE</string>
     <string name="color_test_contrast_steps">Bảng kiểm tra độ tương phản 16 mức</string>
     <string name="test">Kiểm tra</string>
+
+    <!-- Touch Test -->
+    <string name="touch_test_title">Kiểm tra cảm ứng</string>
+    <string name="close">Đóng</string>
+    <string name="touch_test_clear">Xóa</string>
+    <string name="touch_test_mode_trail">Vệt vẽ &amp; Thông tin</string>
+    <string name="touch_test_mode_grid">Độ phủ lưới</string>
+    <string name="touch_test_active_touches">%1$d điểm cảm ứng</string>
+    <string name="touch_test_max_touches">Tối đa: %1$d</string>
+    <string name="touch_test_sample_rate">%1$d Hz</string>
+    <string name="touch_test_haptics">Rung phản hồi</string>
 </resources>

@@ -33,6 +33,7 @@ import com.lkonlesoft.displayinfo.view.module.StorageScreen
 import com.lkonlesoft.displayinfo.view.module.SystemScreen
 import com.lkonlesoft.displayinfo.view.module.TestScreen
 import com.lkonlesoft.displayinfo.view.test.ColorTestScreen
+import com.lkonlesoft.displayinfo.view.test.TouchTestScreen
 import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
 
 @Composable
@@ -322,6 +323,17 @@ fun MainNavigation(
                 }
             )) {
             ColorTestScreen {
+                navController.navigateUp()
+            }
+        }
+        composable(
+            route = NavigationItem.TouchTest.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "si://info/touchtest"
+                }
+            )) {
+            TouchTestScreen {
                 navController.navigateUp()
             }
         }
