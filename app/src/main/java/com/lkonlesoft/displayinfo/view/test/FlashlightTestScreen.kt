@@ -156,6 +156,7 @@ fun FlashlightTestScreen(
         }
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_PAUSE) {
+                isTorchOn = false
                 setTorchState(false)
             }
         }

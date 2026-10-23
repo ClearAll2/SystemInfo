@@ -256,8 +256,7 @@ fun MainContext(settings: SettingsViewModel){
                                     targetState =
                                         currentRoute == NavigationItem.Home.route
                                                 || currentRoute == NavigationItem.Settings.route
-                                                || currentRoute == NavigationItem.Test.route
-                                    ,
+                                                || currentRoute == NavigationItem.Test.route,
                                     transitionSpec = {
                                         fadeIn() + slideInHorizontally(initialOffsetX = { -it  }) togetherWith
                                                 fadeOut() + slideOutHorizontally(targetOffsetX = { -it  })

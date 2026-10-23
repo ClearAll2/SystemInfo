@@ -25,7 +25,7 @@ sealed class NavigationItem (
     @param:DrawableRes val selectedIcon: Int,
     val color: Color = Color.Transparent){
     data object Home: NavigationItem(name = R.string.home, route = "home", R.drawable.home_24px, R.drawable.filled_home_24px)
-    data object Test: NavigationItem(name = R.string.tests, route = "test", R.drawable.troubleshoot_24px, R.drawable.troubleshoot_24px)
+    data object Test: NavigationItem(name = R.string.tests, route = "tests", R.drawable.troubleshoot_24px, R.drawable.troubleshoot_24px)
     data object About: NavigationItem(name = R.string.about, route = "about", R.drawable.outline_info_24, R.drawable.outline_info_24)
     data object System: NavigationItem(name = R.string.system, route = "system", R.drawable.manufacturing_24px, R.drawable.manufacturing_24px,
         SystemColor
