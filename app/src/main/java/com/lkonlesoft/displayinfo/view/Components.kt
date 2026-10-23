@@ -384,7 +384,7 @@ fun CommonSwitchOption(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
-                modifier = Modifier.weight(0.7f),
+                modifier = Modifier.weight(0.8f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(modifier = Modifier.padding(vertical = 10.dp)) {
@@ -413,7 +413,7 @@ fun CommonSwitchOption(
             }
             Switch(
                 modifier = Modifier
-                    .weight(0.2f)
+                    .weight(0.15f)
                     .padding(start = 15.dp),
                 enabled = enabled,
                 checked = checked,

@@ -25,7 +25,7 @@ sealed class NavigationItem (
     @param:DrawableRes val selectedIcon: Int,
     val color: Color = Color.Transparent){
     data object Home: NavigationItem(name = R.string.home, route = "home", R.drawable.home_24px, R.drawable.filled_home_24px)
-    data object Test: NavigationItem(name = R.string.test, route = "test", R.drawable.troubleshoot_24px, R.drawable.troubleshoot_24px)
+    data object Test: NavigationItem(name = R.string.tests, route = "test", R.drawable.troubleshoot_24px, R.drawable.troubleshoot_24px)
     data object About: NavigationItem(name = R.string.about, route = "about", R.drawable.outline_info_24, R.drawable.outline_info_24)
     data object System: NavigationItem(name = R.string.system, route = "system", R.drawable.manufacturing_24px, R.drawable.manufacturing_24px,
         SystemColor
@@ -72,6 +72,9 @@ sealed class NavigationItem (
 
     data object ColorTest: NavigationItem(name = R.string.color_test_title, route = "colorTest", R.drawable.colors_24px, R.drawable.colors_24px)
     data object TouchTest: NavigationItem(name = R.string.touch_test_title, route = "touchTest", R.drawable.touch_app_24px, R.drawable.touch_app_24px)
-
-
+    data object FlashlightTest: NavigationItem(name = R.string.flashlight_test_title, route = "flashlightTest", R.drawable.flashlight_on_24px, R.drawable.flashlight_on_24px)
+    data object VibrationTest: NavigationItem(name = R.string.vibration_test_title, route = "vibrationTest", R.drawable.mobile_vibrate_24px, R.drawable.mobile_vibrate_24px)
+    data object LightSensorTest: NavigationItem(name = R.string.light_sensor_test_title, route = "lightSensorTest", R.drawable.lightbulb_24px, R.drawable.lightbulb_24px)
+    data object ProximityTest: NavigationItem(name = R.string.proximity_test_title, route = "proximityTest", R.drawable.radar_24px, R.drawable.radar_24px)
+    data object AccelerometerTest: NavigationItem(name = R.string.accelerometer_test_title, route = "accelerometerTest", R.drawable.mobile_rotate_24px, R.drawable.mobile_rotate_24px)
 }

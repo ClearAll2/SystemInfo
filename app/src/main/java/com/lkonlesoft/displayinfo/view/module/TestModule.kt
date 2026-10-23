@@ -31,12 +31,17 @@ fun TestScreen(navController: NavHostController, currentRoute: String?, paddingV
     val listTestScreen = remember {
         listOf(
             NavigationItem.ColorTest,
-            NavigationItem.TouchTest
+            NavigationItem.TouchTest,
+            NavigationItem.FlashlightTest,
+            NavigationItem.VibrationTest,
+            NavigationItem.LightSensorTest,
+            NavigationItem.ProximityTest,
+            NavigationItem.AccelerometerTest
         )
     }
     LazyVerticalStaggeredGrid (
         state = state,
-        columns = if (width < 600.dp) StaggeredGridCells.Fixed(2) else StaggeredGridCells.Adaptive(240.dp),
+        columns = if (width < 600.dp) StaggeredGridCells.Fixed(1) else StaggeredGridCells.Adaptive(240.dp),
         modifier = Modifier
             .fillMaxSize()
             .padding(

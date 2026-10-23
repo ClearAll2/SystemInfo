@@ -194,10 +194,19 @@ fun MainContext(settings: SettingsViewModel){
             NavigationItem.Sensors
         )
     }
-    val testRoutes = remember {
+    val fullScreenTestRoutes = remember {
         listOf(
             NavigationItem.ColorTest,
             NavigationItem.TouchTest
+        )
+    }
+    val testRoutes = remember {
+        listOf(
+            NavigationItem.FlashlightTest,
+            NavigationItem.VibrationTest,
+            NavigationItem.LightSensorTest,
+            NavigationItem.ProximityTest,
+            NavigationItem.AccelerometerTest
         )
     }
     val rotateSettingGear by animateFloatAsState(
@@ -225,7 +234,7 @@ fun MainContext(settings: SettingsViewModel){
                     .imePadding(),
                 topBar = {
                     AnimatedVisibility(
-                        visible = testRoutes.find { it.route == currentRoute } == null,
+                        visible = fullScreenTestRoutes.find { it.route == currentRoute } == null,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { up -> -up }),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> -down })
                     ) {
@@ -236,7 +245,7 @@ fun MainContext(settings: SettingsViewModel){
                             ),
                             title = {
                                 Text(
-                                    text = stringResource((mainRoutes + testRoutes).find { it.route == currentRoute }?.name ?: R.string.home),
+                                    text = stringResource((mainRoutes + fullScreenTestRoutes + testRoutes).find { it.route == currentRoute }?.name ?: R.string.home),
                                     fontWeight = FontWeight.Medium,
                                     modifier = Modifier.padding(start = 8.dp)
                                 )
@@ -390,6 +399,10 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             Pair(
                 NavigationItem.Sensors,
                 buildDetailsSubTextSetting(resources, R.string.sensor_count)
+            ),
+            Pair(
+                NavigationItem.Apps,
+                buildDetailsSubTextSetting(resources, R.string.system, R.string.user)
             )
         )
     }

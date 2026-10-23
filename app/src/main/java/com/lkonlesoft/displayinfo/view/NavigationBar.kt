@@ -28,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -69,14 +70,14 @@ fun FloatingNavigationBar(
     val navItems = remember {
         buildList {
             add(NavigationItem.Home)
-            add(NavigationItem.Apps)
             add(NavigationItem.Test)
             add(NavigationItem.Settings)
         }
     }
-    val selectedIndex = remember(currentRoute, navItems) {
-        val index = navItems.indexOfFirst { it.route == currentRoute }
-        if (index >= 0) index else 0
+    val selectedIndex by remember(currentRoute, navItems) {
+        derivedStateOf {
+            navItems.indexOfFirst { it.route == currentRoute }
+        }
     }
     val haptic = LocalHapticFeedback.current
     var isDragging by remember { mutableStateOf(false) }
@@ -85,7 +86,8 @@ fun FloatingNavigationBar(
     val itemWidth = 90.dp
     val showLabels = LocalWindowInfo.current.containerDpSize.width >= 360.dp
     LaunchedEffect(selectedIndex) {
-        activeHoverIndex = selectedIndex
+        if (selectedIndex >= 0)
+            activeHoverIndex = selectedIndex
     }
     Row(
         modifier = Modifier
@@ -165,7 +167,7 @@ fun FloatingNavigationBar(
 
                                 if (hoverIndex != activeHoverIndex) {
                                     activeHoverIndex = hoverIndex
-                                    haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 }
                             }
                         )
@@ -186,7 +188,7 @@ fun FloatingNavigationBar(
                         spring(stiffness = Spring.StiffnessHigh)
                     } else {
                         spring(
-                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            dampingRatio = Spring.DampingRatioLowBouncy,
                             stiffness = Spring.StiffnessLow
                         )
                     },
@@ -206,7 +208,7 @@ fun FloatingNavigationBar(
                 ) {
                     navItems.forEachIndexed { index, item ->
                         val isHighlighted =
-                            if (isDragging) index == activeHoverIndex else index == selectedIndex
+                            if (isDragging || selectedIndex == -1) index == activeHoverIndex else index == selectedIndex
 
                         val iconColor by animateColorAsState(
                             targetValue = if (isHighlighted) {

@@ -1,5 +1,6 @@
 package com.lkonlesoft.displayinfo.view.test.touch
 
+import android.content.res.Resources
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -14,6 +15,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -22,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lkonlesoft.displayinfo.R
 import kotlin.math.roundToInt
 
 @Composable
@@ -35,6 +38,7 @@ fun TouchTestCanvas(
     sampleRateHz: Int,
     onPointerEvent: (List<TouchPoint>) -> Unit
 ) {
+    val resources = LocalResources.current
     val textMeasurer = rememberTextMeasurer()
     Canvas(
         modifier = Modifier
@@ -74,6 +78,7 @@ fun TouchTestCanvas(
         drawActivePointers(activeTouches)
         // 4. Draw Center Multi-Touch Stats (Active Count, Max Count, Sample Rate)
         drawCenterStats(
+            resources = resources,
             textMeasurer = textMeasurer,
             activeCount = activeTouches.size,
             maxCount = maxTouches,
@@ -180,6 +185,7 @@ private fun DrawScope.drawActivePointers(activeTouches: List<TouchPoint>) {
 }
 
 private fun DrawScope.drawCenterStats(
+    resources: Resources,
     textMeasurer: TextMeasurer,
     activeCount: Int,
     maxCount: Int,
@@ -204,11 +210,17 @@ private fun DrawScope.drawCenterStats(
         )
     )
     // Subtitle Stats (Max Touches, Sample Rate, Coverage)
-    val subText = StringBuilder("MAX: $maxCount | RATE: ${sampleRateHz}Hz").apply {
+    val subText = buildString {
+        append(resources.getString(R.string.max))
+        append(": $maxCount | ")
+        append(resources.getString(R.string.rate))
+        append(": $sampleRateHz Hz")
         if (gridCoveragePercent != null) {
-            append(" | COVERAGE: $gridCoveragePercent%")
+            append(" | ")
+            append(resources.getString(R.string.coverage))
+            append(": $gridCoveragePercent%")
         }
-    }.toString()
+    }
     val subStyle = TextStyle(
         color = Color.White.copy(alpha = 0.65f),
         fontSize = 14.sp,

@@ -57,7 +57,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -90,18 +89,19 @@ enum class DiagnosticType {
 
 sealed class TestPattern(
     @StringRes val titleRes: Int,
-    val detailText: String
+    @StringRes val detailTextRes: Int = -1,
+    val detailText: String = ""
 ) {
     data class Solid(
         @StringRes val nameRes: Int,
         val color: Color,
         val hexCode: String
-    ) : TestPattern(nameRes, hexCode)
+    ) : TestPattern(nameRes, detailText = hexCode)
 
     data class Gradient(
         @StringRes val nameRes: Int,
         val gradientType: GradientType,
-        val label: String
+        @StringRes val label: Int
     ) : TestPattern(nameRes, label)
 
     data class Grid(
@@ -109,12 +109,12 @@ sealed class TestPattern(
         val rows: Int,
         val cols: Int,
         val gridType: GridType
-    ) : TestPattern(nameRes, "${rows}x${cols} Matrix")
+    ) : TestPattern(nameRes, detailText = "${rows}x${cols} Matrix")
 
     data class Diagnostic(
         @StringRes val nameRes: Int,
         val diagnosticType: DiagnosticType,
-        val label: String
+        @StringRes val label: Int
     ) : TestPattern(nameRes, label)
 }
 
@@ -133,10 +133,10 @@ val defaultColorTestPatterns = listOf(
     TestPattern.Solid(R.string.color_test_grey_75, Color(0xFFC0C0C0), "#C0C0C0"),
 
     // 2. Gradients
-    TestPattern.Gradient(R.string.color_test_grad_rgb, GradientType.RGB_HORIZONTAL, "Red -> Green -> Blue"),
-    TestPattern.Gradient(R.string.color_test_grad_spectrum, GradientType.SPECTRUM_RAINBOW, "Full Spectrum Rainbow"),
-    TestPattern.Gradient(R.string.color_test_grad_grayscale, GradientType.GRAYSCALE_RAMP, "0% Black to 100% White Ramp"),
-    TestPattern.Gradient(R.string.color_test_grad_radial, GradientType.RADIAL_LUMINANCE, "Center White to Outer Black"),
+    TestPattern.Gradient(R.string.color_test_grad_rgb, GradientType.RGB_HORIZONTAL, R.string.RGB),
+    TestPattern.Gradient(R.string.color_test_grad_spectrum, GradientType.SPECTRUM_RAINBOW, R.string.full_spectrum_rainbow),
+    TestPattern.Gradient(R.string.color_test_grad_grayscale, GradientType.GRAYSCALE_RAMP, R.string.greyscale_ramp),
+    TestPattern.Gradient(R.string.color_test_grad_radial, GradientType.RADIAL_LUMINANCE, R.string.radial_luminance),
 
     // 3. Multi-Color Grids & Rectangles
     TestPattern.Grid(R.string.color_test_grid_primary, 2, 4, GridType.PRIMARY_BLOCKS),
@@ -144,8 +144,8 @@ val defaultColorTestPatterns = listOf(
     TestPattern.Grid(R.string.color_test_grid_high_density, 16, 16, GridType.HIGH_DENSITY_MESH),
 
     // 4. Diagnostic Calibration
-    TestPattern.Diagnostic(R.string.color_test_smpte, DiagnosticType.SMPTE_COLOR_BARS, "TV Standard Color Bars"),
-    TestPattern.Diagnostic(R.string.color_test_contrast_steps, DiagnosticType.CONTRAST_16_STEPS, "16-Level Dynamic Range")
+    TestPattern.Diagnostic(R.string.color_test_smpte, DiagnosticType.SMPTE_COLOR_BARS, R.string.smpte_color_bars),
+    TestPattern.Diagnostic(R.string.color_test_contrast_steps, DiagnosticType.CONTRAST_16_STEPS, R.string.contrast_16_steps)
 )
 
 @Composable
@@ -287,16 +287,19 @@ fun ColorTestTopHud(
                     Text(
                         text = stringResource(pattern.titleRes),
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "$currentStage / $totalStages • ${pattern.detailText}",
+                        text = if (pattern.detailTextRes == -1) "$currentStage / $totalStages • ${pattern.detailText}"
+                            else buildString {
+                            append("$currentStage / $totalStages • ")
+                            append(stringResource(pattern.detailTextRes))
+                        },
                         fontSize = 12.sp,
-                        fontFamily = FontFamily.Monospace,
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
