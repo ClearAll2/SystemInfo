@@ -61,15 +61,16 @@ fun SystemDashboard(onClick: () -> Unit) {
 fun SystemScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
-    val deviceInfoList = remember { SystemUtils(context).getDeviceData()}
-    val deviceFeaturesList = remember { SystemUtils(context).getDeviceFeatures() }
+    val systemUtils = remember { SystemUtils(context) }
+    val deviceInfoList = remember { systemUtils.getDeviceData()}
+    val deviceFeaturesList = remember { systemUtils.getDeviceFeatures() }
     var rootInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
     var extraInfoList by remember { mutableStateOf(emptyList<DeviceInfo>()) }
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            rootInfoList = SystemUtils(context).getRootData()
-            extraInfoList = SystemUtils(context).getExtraData()
+            rootInfoList = systemUtils.getRootData()
+            extraInfoList = systemUtils.getExtraData()
         }
     }
     LazyVerticalStaggeredGrid(

@@ -7,8 +7,27 @@ import android.os.BatteryManager
 import android.os.Build
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
+import kotlin.math.abs
+import kotlin.math.max
+
+
+data class ChargingState(
+    val level: Int = -1,
+    val plugType: String = "",
+    val statusStr: String = "",
+    val wattage: Float = 0f,
+    val minsTo80: Int = 0,
+    val minsTo100: Int = 0,
+    val currentMa: Int = -1,
+    val tempC: Float = -1f,
+    val voltageV: Float = -1f
+)
 
 class BatteryUtils (private val context: Context) {
+
+    private val batteryManager by lazy {
+        context.applicationContext.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+    }
 
     fun getBatteryCapacity(): Double {
         return try {
@@ -98,8 +117,6 @@ class BatteryUtils (private val context: Context) {
     }
 
     fun getDischargeCurrent(): Int {
-        val batteryManager = context.applicationContext.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
-
         // Value in microamperes (µA); negative = discharging, positive = charging
         val currentMicroAmps = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
 
@@ -114,6 +131,93 @@ class BatteryUtils (private val context: Context) {
         val intent = getBatteryIntent()
         val temp = intent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1) ?: -1
         return if (temp > 0) temp / 1000f else -1f
+    }
+
+    fun getChargingWattage(): Float {
+        val v = getChargingVoltage()
+        val a = abs(getDischargeCurrent()) / 1000f
+        return if (v > 0 && a > 0) v * a else 0f
+    }
+
+    fun isCharging(): Boolean {
+        val intent = getBatteryIntent()
+        val status = intent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+        return status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL
+    }
+
+    fun getEstimatedChargeTimes(): Pair<Int, Int> {
+        val level = getBatteryPercentage()
+        if (level !in 0..<100) return Pair(0, 0)
+
+        val batteryManager = context.applicationContext.getSystemService(Context.BATTERY_SERVICE) as? BatteryManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val remainingMs = batteryManager?.computeChargeTimeRemaining() ?: -1L
+            if (remainingMs > 0) {
+                val totalMins = (remainingMs / 60000L).toInt()
+                val mins80 = if (level < 80) {
+                    ((remainingMs.toDouble() * (80 - level) / (100 - level)) / 60000.0).toInt()
+                } else 0
+                return Pair(mins80, totalMins)
+            }
+        }
+
+        // Fallback estimation based on capacity and current
+        val capacity = getBatteryCapacity().let { if (it > 0) it else 4000.0 }
+        val rawCurrent = abs(getDischargeCurrent())
+        val currentMa = if (rawCurrent > 50) rawCurrent.toDouble() else 2000.0
+
+        val remainingMinsTo80 = if (level < 80) {
+            val mahTo80 = (80 - level) * capacity / 100.0
+            ((mahTo80 / currentMa) * 60.0).toInt()
+        } else 0
+
+        val remainingMinsTo100 = run {
+            val mahTo80 = if (level < 80) (80 - level) * capacity / 100.0 else 0.0
+            val mah80To100 = (100 - max(80, level)) * capacity / 100.0
+            val timeMins = ((mahTo80 / currentMa) + (mah80To100 / currentMa) * 1.3) * 60.0
+            timeMins.toInt()
+        }
+
+        return Pair(max(0, remainingMinsTo80), max(0, remainingMinsTo100))
+    }
+
+    fun getChargingState(): ChargingState {
+        val intent = getBatteryIntent()
+
+        val level = intent?.let {
+            val l = it.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+            val s = it.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+            if (l >= 0 && s > 0) (l * 100 / s) else -1
+        } ?: -1
+
+        val plugTypeInt = intent?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
+        val plugType = plugMap[plugTypeInt] ?: context.getString(R.string.unplugged)
+
+        val statusInt = intent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+        val statusStr = statusMap[statusInt] ?: context.getString(R.string.other)
+
+        val temp = intent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1) ?: -1
+        val tempC = if (temp > 0) temp / 10f else -1f
+
+        val rawVoltage = intent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1) ?: -1
+        val voltageV = if (rawVoltage > 0) rawVoltage / 1000f else -1f
+
+        val currentMa = getDischargeCurrent()
+        val wattage = if (voltageV > 0f && currentMa != -1) voltageV * (abs(currentMa) / 1000f) else 0f
+        val (minsTo80, minsTo100) = getEstimatedChargeTimes()
+
+        return ChargingState(
+            level = level,
+            plugType = plugType,
+            statusStr = statusStr,
+            wattage = wattage,
+            minsTo80 = minsTo80,
+            minsTo100 = minsTo100,
+            currentMa = currentMa,
+            tempC = tempC,
+            voltageV = voltageV
+        )
     }
 
 

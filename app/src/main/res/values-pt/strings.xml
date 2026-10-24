@@ -402,7 +402,7 @@
     <string name="strobe_mode">Modo estroboscópio</string>
     <string name="RGB">Vermelho - Verde - Azul</string>
     <string name="full_spectrum_rainbow">Arco-íris de espectro completo</string>
-    <string name="greyscale_ramp">Rampa de 0% preto a 100% branco</string>
+    <string name="greyscale_ramp" formatted="false">Rampa de 0% preto a 100% branco</string>
     <string name="radial_luminance">Centro branco para exterior preto</string>
     <string name="smpte_color_bars">Barras de cores padrão de TV</string>
     <string name="contrast_16_steps">Faixa dinâmica de 16 níveis</string>
@@ -432,4 +432,14 @@
     <string name="total_downloaded">Total baixado</string>
     <string name="total_uploaded">Total enviado</string>
     <string name="network_monitor">Monitor de rede</string>
+    <string name="charging_screen">Tela de carregamento</string>
+    <string name="charging_display">Tela de carregamento</string>
+    <string name="fast_charging">Carregamento rápido</string>
+    <string name="slow_charging">Carregamento lento</string>
+    <string name="wireless_charging">Carregamento sem fio</string>
+    <string name="exit_charging_screen_hint">Toque para sair</string>
+    <string name="tile_added">Bloco adicionado</string>
+    <string name="tile_already_added">Bloco já adicionado</string>
+    <string name="charging_screen_details">Exibir tela de carregamento impressionante</string>
+    <string name="add_quick_settings_tile">Adicionar bloco de Configurações rápidas</string>
 </resources>

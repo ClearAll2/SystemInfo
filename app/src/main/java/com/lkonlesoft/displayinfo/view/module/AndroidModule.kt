@@ -56,11 +56,12 @@ fun AndroidDashboard(onClick: () -> Unit) {
 fun AndroidScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
+    val androidUtils = remember { AndroidUtils(context) }
     val androidInfoList = remember {
-        AndroidUtils(context).getAndroidInfo()
+        androidUtils.getAndroidInfo()
     }
     val extraInfoList = remember {
-        AndroidUtils(context).getExtraInfo()
+        androidUtils.getExtraInfo()
     }
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),

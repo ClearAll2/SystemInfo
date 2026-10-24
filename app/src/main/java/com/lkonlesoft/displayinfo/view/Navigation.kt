@@ -1,5 +1,6 @@
 package com.lkonlesoft.displayinfo.view
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -12,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -56,6 +58,7 @@ fun MainNavigation(
     isDynamicColors: Boolean,
     paddingValues: PaddingValues
 ) {
+    val context = LocalContext.current
     val longPressCopy by settings.longPressCopy.collectAsStateWithLifecycle()
     val copyTitle by settings.copyTitle.collectAsStateWithLifecycle()
     val showNotice by settings.showNotice.collectAsStateWithLifecycle()
@@ -206,7 +209,10 @@ fun MainNavigation(
                 paddingValues = paddingValues,
                 longPressCopy = longPressCopy,
                 copyTitle = copyTitle,
-                showNotice = showNotice
+                showNotice = showNotice,
+                onNavigateToChargingScreen = {
+                    context.startActivity(Intent(context, ChargingActivity::class.java))
+                }
             )
         }
         composable(

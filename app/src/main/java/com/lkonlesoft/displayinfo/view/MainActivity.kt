@@ -199,7 +199,7 @@ fun MainContext(settings: SettingsViewModel){
             NavigationItem.Sensors
         )
     }
-    val fullScreenTestRoutes = remember {
+    val fullScreenRoutes = remember {
         listOf(
             NavigationItem.ColorTest,
             NavigationItem.TouchTest
@@ -248,7 +248,7 @@ fun MainContext(settings: SettingsViewModel){
                     .imePadding(),
                 topBar = {
                     AnimatedVisibility(
-                        visible = fullScreenTestRoutes.find { it.route == currentRoute } == null,
+                        visible = fullScreenRoutes.find { it.route == currentRoute } == null,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { up -> -up }, animationSpec = tween(250)),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> -down }, animationSpec = tween(250))
                     ) {
@@ -259,7 +259,7 @@ fun MainContext(settings: SettingsViewModel){
                             ),
                             title = {
                                 Text(
-                                    text = stringResource((mainRoutes + fullScreenTestRoutes + testsAndMonitorsRoutes).find { it.route == currentRoute }?.name ?: R.string.home),
+                                    text = stringResource((mainRoutes + fullScreenRoutes + testsAndMonitorsRoutes).find { it.route == currentRoute }?.name ?: R.string.home),
                                     fontWeight = FontWeight.Medium
                                 )
                             },

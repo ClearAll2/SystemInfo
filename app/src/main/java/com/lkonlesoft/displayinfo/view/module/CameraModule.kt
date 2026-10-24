@@ -80,6 +80,7 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyT
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
+    val cameraUtils = remember { CameraUtils(context) }
     var showWarningPopup by remember { mutableStateOf(false) }
     val hasCameraPermission = remember(refreshKey) {
         ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
@@ -101,7 +102,7 @@ fun CameraInfoScreen(paddingValues: PaddingValues, longPressCopy: Boolean, copyT
     }
     
     LaunchedEffect(refreshKey) {
-        cameraInfoList = CameraUtils(context).getAllData()
+        cameraInfoList = cameraUtils.getAllData()
     }
     AnimatedVisibility(visible = showWarningPopup,
         enter = fadeIn(

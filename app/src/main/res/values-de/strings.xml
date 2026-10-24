@@ -403,7 +403,7 @@
     <string name="strobe_mode">Stroboskop-Modus</string>
     <string name="RGB">Rot - Grün - Blau</string>
     <string name="full_spectrum_rainbow">Vollspektrum-Regenbogen</string>
-    <string name="greyscale_ramp">0% Schwarz bis 100% Weiß</string>
+    <string name="greyscale_ramp" formatted="false">0% Schwarz bis 100% Weiß</string>
     <string name="radial_luminance">Mitte Weiß zu Außen Schwarz</string>
     <string name="smpte_color_bars">TV-Standard-Farbbalken</string>
     <string name="contrast_16_steps">16-stufiger Dynamikbereich</string>
@@ -433,4 +433,14 @@
     <string name="total_downloaded">Insgesamt heruntergeladen</string>
     <string name="total_uploaded">Insgesamt hochgeladen</string>
     <string name="network_monitor">Netzwerkmonitor</string>
+    <string name="charging_screen">Ladebildschirm</string>
+    <string name="charging_display">Ladeanzeige</string>
+    <string name="fast_charging">Schnellladen</string>
+    <string name="slow_charging">Langsames Laden</string>
+    <string name="wireless_charging">Kabelloses Laden</string>
+    <string name="exit_charging_screen_hint">Zum Beenden tippen</string>
+    <string name="tile_added">Kachel hinzugefügt</string>
+    <string name="tile_already_added">Kachel bereits hinzugefügt</string>
+    <string name="charging_screen_details">Beeindruckenden Ladebildschirm anzeigen</string>
+    <string name="add_quick_settings_tile">Schnell­einstellungen-Kachel hinzufügen</string>
 </resources>

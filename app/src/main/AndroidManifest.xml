@@ -49,9 +49,26 @@
                     android:scheme="si" />
             </intent-filter>
         </activity>
-        <receiver android:name=".widget.BatteryWidgetReceiver"
-            android:label="@string/battery"
-            android:exported="true">
+
+        <service
+            android:name=".service.ChargingTileService"
+            android:exported="true"
+            android:icon="@drawable/mobile_charge_24px"
+            android:label="@string/charging_display"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.quicksettings.TILE_CATEGORY"
+                android:value="android.service.quicksettings.CATEGORY_DISPLAY" />
+        </service>
+
+        <receiver
+            android:name=".widget.BatteryWidgetReceiver"
+            android:exported="true"
+            android:label="@string/battery">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -67,6 +84,17 @@
                 android:name="autoStoreLocales"
                 android:value="true" />
         </service>
+
+        <activity
+            android:name=".view.ChargingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_charging"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.ScreenInfo"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
+
     </application>
 
 </manifest>

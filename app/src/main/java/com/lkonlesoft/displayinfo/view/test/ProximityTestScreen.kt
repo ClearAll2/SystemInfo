@@ -167,10 +167,10 @@ fun ProximityTestScreen(
                     end = paddingValues.calculateEndPadding(layoutDirection)
                 )
                 .padding(horizontal = 20.dp)
-                .clip(shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
             contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
             verticalItemSpacing = 16.dp,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             staggeredHeader {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -315,7 +315,8 @@ fun ProximityTestScreen(
                                         color = if (log.isNear) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer
                                     ) {
                                         Text(
-                                            text = "${if (log.isNear) "NEAR" else "FAR"} (%.1f cm)".format(log.distance),
+                                            text = "${if (log.isNear) stringResource(R.string.near) 
+                                            else stringResource(R.string.far)} (%.1f cm)".format(log.distance),
                                             style = MaterialTheme.typography.labelSmall,
                                             fontWeight = FontWeight.Bold,
                                             color = if (log.isNear) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onPrimaryContainer,

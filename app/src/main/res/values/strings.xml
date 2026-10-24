@@ -359,8 +359,8 @@
     <string name="close">Close</string>
     <string name="touch_test_clear">Clear</string>
     <string name="touch_test_mode_trail">Trails &amp; Info</string>
-    <string name="touch_test_mode_grid" >Grid Coverage</string>
-    <string name="touch_test_haptics" >Haptics</string>
+    <string name="touch_test_mode_grid">Grid Coverage</string>
+    <string name="touch_test_haptics">Haptics</string>
     <string name="flashlight_test_title">Flashlight Test</string>
     <string name="flashlight_on">Flashlight ON</string>
     <string name="flashlight_off">Flashlight OFF</string>
@@ -414,7 +414,7 @@
     <string name="strobe_mode">Strobe Mode</string>
     <string name="RGB">Red - Green - Blue</string>
     <string name="full_spectrum_rainbow">Full Spectrum Rainbow</string>
-    <string name="greyscale_ramp">0% Black to 100% White Ramp</string>
+    <string name="greyscale_ramp" formatted="false">0% Black to 100% White Ramp</string>
     <string name="radial_luminance">Center White to Outer Black</string>
     <string name="smpte_color_bars">TV Standard Color Bars</string>
     <string name="contrast_16_steps">16-Level Dynamic Range</string>
@@ -444,4 +444,14 @@
     <string name="total_downloaded">Total Downloaded</string>
     <string name="total_uploaded">Total Uploaded</string>
     <string name="network_monitor">Network Monitor</string>
+    <string name="charging_screen">Charging Screen</string>
+    <string name="charging_display">Charging Display</string>
+    <string name="fast_charging">Fast charging</string>
+    <string name="slow_charging">Slow charging</string>
+    <string name="wireless_charging">Wireless charging</string>
+    <string name="exit_charging_screen_hint">Tap anywhere to exit</string>
+    <string name="tile_added">Tile added</string>
+    <string name="tile_already_added">Tile already added</string>
+    <string name="charging_screen_details">Display stunning charging screen</string>
+    <string name="add_quick_settings_tile">Add Quick Settings Tile</string>
 </resources>

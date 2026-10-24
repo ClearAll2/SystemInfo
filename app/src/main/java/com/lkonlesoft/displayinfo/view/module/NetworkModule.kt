@@ -57,7 +57,8 @@ import kotlin.time.Duration.Companion.milliseconds
 fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList = remember(refreshKey) { NetworkUtils(context).getDashboardData() }
+    val networkUtils = remember { NetworkUtils(context) }
+    val infoList = remember(refreshKey) { networkUtils.getDashboardData() }
     // Auto-refresh every 5 seconds
     LaunchedEffect(Unit) {
         while (true) {
@@ -90,13 +91,14 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     val resource = LocalResources.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
+    val networkUtils = remember { NetworkUtils(context) }
     var showWarningPopup by remember { mutableStateOf(false) }
     val hasPhonePermission = remember(refreshKey) { context.hasPermission(Manifest.permission.READ_PHONE_STATE) }
     val hasLocationPermission = remember(refreshKey) { context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) }
-    val networkType = remember(refreshKey) { NetworkUtils(context).getNetwork() }
-    val infoList = remember(refreshKey) { NetworkUtils(context).getDetailsInfo() }
+    val networkType = remember(refreshKey) { networkUtils.getNetwork() }
+    val infoList = remember(refreshKey) { networkUtils.getDetailsInfo() }
     var wifiInfoList by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
-    val simInfoList = remember(refreshKey) { NetworkUtils(context).getSimInfo() }
+    val simInfoList = remember(refreshKey) { networkUtils.getSimInfo() }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
@@ -116,7 +118,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     }
     //only reload data when network changes or has location permission, reduce location access frequency
     LaunchedEffect(networkType, hasLocationPermission) {
-        wifiInfoList = NetworkUtils(context).getWifiDetails()
+        wifiInfoList = networkUtils.getWifiDetails()
     }
     LaunchedEffect(Unit) {
         while (true){

@@ -402,7 +402,7 @@
     <string name="strobe_mode">Mode stroboscope</string>
     <string name="RGB">Rouge - Vert - Bleu</string>
     <string name="full_spectrum_rainbow">Arc-en-ciel spectre complet</string>
-    <string name="greyscale_ramp">Rampe 0% noir à 100% blanc</string>
+    <string name="greyscale_ramp" formatted="false">Rampe 0% noir à 100% blanc</string>
     <string name="radial_luminance">Centre blanc vers extérieur noir</string>
     <string name="smpte_color_bars">Barres de couleur standard TV</string>
     <string name="contrast_16_steps">Plage dynamique 16 niveaux</string>
@@ -432,4 +432,14 @@
     <string name="total_downloaded">Total téléchargé</string>
     <string name="total_uploaded">Total téléversé</string>
     <string name="network_monitor">Moniteur réseau</string>
+    <string name="charging_screen">Écran de charge</string>
+    <string name="charging_display">Écran de charge</string>
+    <string name="fast_charging">Charge rapide</string>
+    <string name="slow_charging">Charge lente</string>
+    <string name="wireless_charging">Charge sans fil</string>
+    <string name="exit_charging_screen_hint">Appuyez pour quitter</string>
+    <string name="tile_added">Tuile ajoutée</string>
+    <string name="tile_already_added">Tuile déjà ajoutée</string>
+    <string name="charging_screen_details">Afficher un superbe écran de charge</string>
+    <string name="add_quick_settings_tile">Ajouter une tuile des paramètres rapides</string>
 </resources>

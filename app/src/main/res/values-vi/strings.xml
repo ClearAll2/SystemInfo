@@ -402,7 +402,7 @@
     <string name="strobe_mode">Chế độ nhấp nháy</string>
     <string name="RGB">Đỏ - Xanh lá - Xanh dương</string>
     <string name="full_spectrum_rainbow">Cầu vồng toàn phổ</string>
-    <string name="greyscale_ramp">Thang từ 0% đen đến 100% trắng</string>
+    <string name="greyscale_ramp" formatted="false">Thang từ 0% đen đến 100% trắng</string>
     <string name="radial_luminance">Trung tâm trắng ra ngoài đen</string>
     <string name="smpte_color_bars">Thanh màu chuẩn TV</string>
     <string name="contrast_16_steps">Dải động 16 mức</string>
@@ -432,4 +432,14 @@
     <string name="total_downloaded">Tổng đã tải xuống</string>
     <string name="total_uploaded">Tổng đã tải lên</string>
     <string name="network_monitor">Giám sát mạng</string>
+    <string name="charging_screen">Màn hình sạc</string>
+    <string name="charging_display">Hiển thị sạc</string>
+    <string name="fast_charging">Sạc nhanh</string>
+    <string name="slow_charging">Sạc chậm</string>
+    <string name="wireless_charging">Sạc không dây</string>
+    <string name="exit_charging_screen_hint">Nhấn để thoát</string>
+    <string name="tile_added">Đã thêm ô</string>
+    <string name="tile_already_added">Ô đã được thêm</string>
+    <string name="charging_screen_details">Hiển thị màn hình sạc ấn tượng</string>
+    <string name="add_quick_settings_tile">Thêm ô Cài đặt nhanh</string>
 </resources>

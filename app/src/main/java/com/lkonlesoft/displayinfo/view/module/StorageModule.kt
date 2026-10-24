@@ -61,7 +61,8 @@ import kotlin.time.Duration.Companion.milliseconds
 fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val ramInfoList = remember (refreshKey) { StorageUtils(context).getRAMInfo() }
+    val storageUtils = remember { StorageUtils(context) }
+    val ramInfoList = remember (refreshKey) { storageUtils.getRAMInfo() }
     val detailsInfo = remember(ramInfoList) { ramInfoList.filter { it.type != 1 } }
 
     // Auto-refresh every 5 seconds
@@ -102,13 +103,14 @@ fun MemoryDashBoard(intervalMillis: Long = 5000L, onClick: () -> Unit) {
 @Composable
 fun StorageDashboard(intervalMillis: Long = 60000L, onClick: () -> Unit) {
     val context = LocalContext.current
+    val storageUtils = remember { StorageUtils(context) }
     var internalStorageStats by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     val detailsInfo = remember(internalStorageStats) { internalStorageStats.filter { it != internalStorageStats.first() } }
     // Auto-refresh every 60 seconds
     LaunchedEffect(Unit) {
         while (true) {
             withContext(Dispatchers.IO) {
-                internalStorageStats = StorageUtils(context).getInternalStorageInfo()
+                internalStorageStats = storageUtils.getInternalStorageInfo()
             }
             delay(intervalMillis.milliseconds)
         }
@@ -150,7 +152,8 @@ fun MemoryScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Padd
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val ramInfo = remember(refreshKey) { StorageUtils(context).getRAMInfo() }
+    val storageUtils = remember { StorageUtils(context) }
+    val ramInfo = remember(refreshKey) { storageUtils.getRAMInfo() }
     val filteredRamInfo = remember(ramInfo) { ramInfo.filter { it != ramInfo.first() } }
     // Auto-refresh every 2 seconds
     LaunchedEffect(Unit) {
@@ -203,14 +206,15 @@ fun StorageScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     var isLoading by remember { mutableStateOf(true) }
+    val storageUtils = remember { StorageUtils(context) }
     var internalStorageStats by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     val detailsInternal = remember(internalStorageStats) { internalStorageStats.filter { it != internalStorageStats.first() } }
     var externalStorageStats by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     val detailsExternal = remember(externalStorageStats) { externalStorageStats.filter { it != externalStorageStats.first() } }
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            internalStorageStats = StorageUtils(context).getInternalStorageInfo()
-            externalStorageStats = StorageUtils(context).getExternalStorageInfo()
+            internalStorageStats = storageUtils.getInternalStorageInfo()
+            externalStorageStats = storageUtils.getExternalStorageInfo()
         }
         isLoading = false
     }

@@ -402,7 +402,7 @@
     <string name="strobe_mode">Stroboscoopmodus</string>
     <string name="RGB">Rood - Groen - Blauw</string>
     <string name="full_spectrum_rainbow">Volledig spectrum regenboog</string>
-    <string name="greyscale_ramp">0% zwart tot 100% wit helling</string>
+    <string name="greyscale_ramp" formatted="false">0% zwart tot 100% wit helling</string>
     <string name="radial_luminance">Centrum wit naar buiten zwart</string>
     <string name="smpte_color_bars">TV-standaard kleurenvlakken</string>
     <string name="contrast_16_steps">16-niveaus dynamisch bereik</string>
@@ -432,4 +432,14 @@
     <string name="total_downloaded">Totaal gedownload</string>
     <string name="total_uploaded">Totaal geüpload</string>
     <string name="network_monitor">Netwerkmonitor</string>
+    <string name="charging_screen">Oplaadscherm</string>
+    <string name="charging_display">Oplaaddisplay</string>
+    <string name="fast_charging">Snel opladen</string>
+    <string name="slow_charging">Langzaam opladen</string>
+    <string name="wireless_charging">Draadloos opladen</string>
+    <string name="exit_charging_screen_hint">Tik om af te sluiten</string>
+    <string name="tile_added">Tegel toegevoegd</string>
+    <string name="tile_already_added">Tegel is al toegevoegd</string>
+    <string name="charging_screen_details">Prachtig oplaadscherm weergeven</string>
+    <string name="add_quick_settings_tile">Snelinstellingentegel toevoegen</string>
 </resources>

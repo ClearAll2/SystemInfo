@@ -106,7 +106,7 @@ fun NetworkMonitorScreen(paddingValues: PaddingValues) {
             .padding(horizontal = 20.dp)
             .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
         contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
         verticalItemSpacing = 16.dp
     ) {
         staggeredHeader {

@@ -402,7 +402,7 @@
     <string name="strobe_mode">频闪模式</string>
     <string name="RGB">红 - 绿 - 蓝</string>
     <string name="full_spectrum_rainbow">全光谱彩虹</string>
-    <string name="greyscale_ramp">0% 黑到 100% 白渐变</string>
+    <string name="greyscale_ramp" formatted="false">0% 黑到 100% 白渐变</string>
     <string name="radial_luminance">中心白到外黑</string>
     <string name="smpte_color_bars">电视标准彩条</string>
     <string name="contrast_16_steps">16 级动态范围</string>
@@ -432,4 +432,14 @@
     <string name="total_downloaded">总下载量</string>
     <string name="total_uploaded">总上传量</string>
     <string name="network_monitor">网络监视器</string>
+    <string name="charging_screen">充电画面</string>
+    <string name="charging_display">充电显示</string>
+    <string name="fast_charging">快速充电</string>
+    <string name="slow_charging">慢速充电</string>
+    <string name="wireless_charging">无线充电</string>
+    <string name="exit_charging_screen_hint">点击任意位置退出</string>
+    <string name="tile_added">已添加磁贴</string>
+    <string name="tile_already_added">磁贴已添加</string>
+    <string name="charging_screen_details">显示精美的充电界面</string>
+    <string name="add_quick_settings_tile">添加快捷设置磁贴</string>
 </resources>

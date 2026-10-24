@@ -43,12 +43,13 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun SoCDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
     val context = LocalContext.current
+    val socUtils = remember { SocUtils(context) }
     var cpuUsageInfo by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     // Auto-refresh every 2 seconds
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             while (true) {
-                cpuUsageInfo = SocUtils(context).getCPUUsage()
+                cpuUsageInfo = socUtils.getCPUUsage()
                 delay(intervalMillis.milliseconds)
             }
         }
@@ -75,19 +76,20 @@ fun SoCDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
 fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues, showNotice: Boolean) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
+    val socUtils = remember { SocUtils(context) }
     var cpuClusterInfo by remember { mutableStateOf<List<List<DeviceInfo>>>(emptyList()) }
     var cpuInfoList by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     var cpuUsageInfo by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     var gpuInfo by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     LaunchedEffect(Unit) {
-        SocUtils(context).fetchGpuInfoOptimized {
+        socUtils.fetchGpuInfoOptimized {
             gpuInfo = it
         }
         withContext(Dispatchers.IO) {
-            cpuInfoList = SocUtils(context).getCPUInfo()
-            cpuClusterInfo = SocUtils(context).getCPUClusterInfo()
+            cpuInfoList = socUtils.getCPUInfo()
+            cpuClusterInfo = socUtils.getCPUClusterInfo()
             while (true) {
-                cpuUsageInfo = SocUtils(context).getCPUUsage()
+                cpuUsageInfo = socUtils.getCPUUsage()
                 delay(1000L.milliseconds) // Update every 1 second
             }
         }

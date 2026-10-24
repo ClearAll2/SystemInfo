@@ -402,7 +402,7 @@
     <string name="strobe_mode">ストロボモード</string>
     <string name="RGB">赤 - 緑 - 青</string>
     <string name="full_spectrum_rainbow">フルスペクトラムレインボー</string>
-    <string name="greyscale_ramp">0% 黒から 100% 白へのランプ</string>
+    <string name="greyscale_ramp" formatted="false">0% 黒から 100% 白へのランプ</string>
     <string name="radial_luminance">中心白から外側黒</string>
     <string name="smpte_color_bars">TV標準カラーバー</string>
     <string name="contrast_16_steps">16段階ダイナミックレンジ</string>
@@ -432,4 +432,14 @@
     <string name="total_downloaded">総ダウンロード</string>
     <string name="total_uploaded">総アップロード</string>
     <string name="network_monitor">ネットワークモニター</string>
+    <string name="charging_screen">充電画面</string>
+    <string name="charging_display">充電ディスプレイ</string>
+    <string name="fast_charging">急速充電</string>
+    <string name="slow_charging">低速充電</string>
+    <string name="wireless_charging">ワイヤレス充電</string>
+    <string name="exit_charging_screen_hint">タップして終了</string>
+    <string name="tile_added">タイルを追加しました</string>
+    <string name="tile_already_added">タイルは既に追加されています</string>
+    <string name="charging_screen_details">魅力的な充電画面を表示</string>
+    <string name="add_quick_settings_tile">クイック設定タイルを追加</string>
 </resources>

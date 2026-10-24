@@ -79,18 +79,19 @@ fun MediaScreen(longPressCopy: Boolean, copyTitle: Boolean, showNotice: Boolean,
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     var isLoading by remember { mutableStateOf(true) }
+    val mediaUtils = remember { MediaUtils(context) }
     val mediaFeature = remember {
-        MediaUtils(context).getAudioFeatures()
+        mediaUtils.getAudioFeatures()
     }
     val mediaCodecs = remember {
-        MediaUtils(context).getMediaCodecs()
+        mediaUtils.getMediaCodecs()
     }
     var widevineInfo by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     var clearKeyInfo by remember { mutableStateOf<List<DeviceInfo>>(emptyList()) }
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            widevineInfo = MediaUtils(context).getWidevineInfo()
-            clearKeyInfo = MediaUtils(context).getClearKeyInfo()
+            widevineInfo = mediaUtils.getWidevineInfo()
+            clearKeyInfo = mediaUtils.getClearKeyInfo()
             isLoading = false
         }
     }

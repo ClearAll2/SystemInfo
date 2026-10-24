@@ -402,7 +402,7 @@
     <string name="strobe_mode">스트로브 모드</string>
     <string name="RGB">빨강 - 초록 - 파랑</string>
     <string name="full_spectrum_rainbow">전체 스펙트럼 무지개</string>
-    <string name="greyscale_ramp">0% 검정에서 100% 흰색 램프</string>
+    <string name="greyscale_ramp" formatted="false">0% 검정에서 100% 흰색 램프</string>
     <string name="radial_luminance">중심 흰색에서 바깥 검정</string>
     <string name="smpte_color_bars">TV 표준 컬러 바</string>
     <string name="contrast_16_steps">16단계 다이나믹 레인지</string>
@@ -432,4 +432,14 @@
     <string name="total_downloaded">총 다운로드됨</string>
     <string name="total_uploaded">총 업로드됨</string>
     <string name="network_monitor">네트워크 모니터</string>
+    <string name="charging_screen">충전 화면</string>
+    <string name="charging_display">충전 디스플레이</string>
+    <string name="fast_charging">고속 충전</string>
+    <string name="slow_charging">저속 충전</string>
+    <string name="wireless_charging">무선 충전</string>
+    <string name="exit_charging_screen_hint">탭하여 종료</string>
+    <string name="tile_added">타일이 추가됨</string>
+    <string name="tile_already_added">타일이 이미 추가됨</string>
+    <string name="charging_screen_details">멋진 충전 화면 표시</string>
+    <string name="add_quick_settings_tile">빠른 설정 타일 추가</string>
 </resources>

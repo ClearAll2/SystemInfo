@@ -402,7 +402,7 @@
     <string name="strobe_mode">Режим строба</string>
     <string name="RGB">Красный - Зелёный - Синий</string>
     <string name="full_spectrum_rainbow">Полный спектр радуги</string>
-    <string name="greyscale_ramp">От 0% чёрного до 100% белого</string>
+    <string name="greyscale_ramp" formatted="false">От 0% чёрного до 100% белого</string>
     <string name="radial_luminance">Центр белый к краю чёрный</string>
     <string name="smpte_color_bars">Стандартные цветные полосы ТВ</string>
     <string name="contrast_16_steps">16-уровневый динамический диапазон</string>
@@ -432,4 +432,14 @@
     <string name="total_downloaded">Всего скачано</string>
     <string name="total_uploaded">Всего отдано</string>
     <string name="network_monitor">Монитор сети</string>
+    <string name="charging_screen">Экран зарядки</string>
+    <string name="charging_display">Дисплей зарядки</string>
+    <string name="fast_charging">Быстрая зарядка</string>
+    <string name="slow_charging">Медленная зарядка</string>
+    <string name="wireless_charging">Беспроводная зарядка</string>
+    <string name="exit_charging_screen_hint">Нажмите, чтобы выйти</string>
+    <string name="tile_added">Плитка добавлена</string>
+    <string name="tile_already_added">Плитка уже добавлена</string>
+    <string name="charging_screen_details">Показывать эффектный экран зарядки</string>
+    <string name="add_quick_settings_tile">Добавить плитку быстрых настроек</string>
 </resources>

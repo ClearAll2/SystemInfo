@@ -44,7 +44,8 @@ fun DisplayDashboard(intervalMillis: Long = 1000L,onClick: () -> Unit) {
     val context = LocalContext.current
     val resources = LocalResources.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList = remember(refreshKey) { DisplayUtils(context, resources).getDashboardData() }
+    val displayUtils = remember { DisplayUtils(context, resources) }
+    val infoList = remember(refreshKey) { displayUtils.getDashboardData() }
     val refreshRate = remember(infoList) { infoList.first() }
     val detailsList = remember(infoList) { infoList.filter { it != infoList.first() } }
     LaunchedEffect(Unit) {
@@ -80,7 +81,8 @@ fun DisplayScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
     val resources = LocalResources.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
-    val infoList = remember(refreshKey) { DisplayUtils(context, resources).getAllDisplayDetails() }
+    val displayUtils = remember { DisplayUtils(context, resources) }
+    val infoList = remember(refreshKey) { displayUtils.getAllDisplayDetails() }
     LaunchedEffect(Unit) {
         while (true){
             delay(1000L.milliseconds)
