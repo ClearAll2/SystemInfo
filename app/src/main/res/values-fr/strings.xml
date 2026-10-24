@@ -421,4 +421,15 @@
     <string name="rate">TAUX</string>
     <string name="coverage">COUVERTURE</string>
     <string name="level">Niveau</string>
+    <string name="monitors">Surveillance</string>
+    <string name="offline">Hors ligne</string>
+    <string name="overall_cpu_usage">Utilisation globale du CPU</string>
+    <string name="cpu_cores_usage">Utilisation du CPU par cœur</string>
+    <string name="realtime_chart">Graphique en temps réel</string>
+    <string name="active_cores">Cœurs actifs</string>
+    <string name="download_speed">Vitesse de téléchargement</string>
+    <string name="upload_speed">Vitesse de téléversement</string>
+    <string name="total_downloaded">Total téléchargé</string>
+    <string name="total_uploaded">Total téléversé</string>
+    <string name="network_monitor">Moniteur réseau</string>
 </resources>

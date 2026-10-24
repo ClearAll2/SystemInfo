@@ -421,4 +421,15 @@
     <string name="rate">ЧАСТОТА</string>
     <string name="coverage">ПОКРЫТИЕ</string>
     <string name="level">Уровень</string>
+    <string name="monitors">Мониторинг</string>
+    <string name="offline">Офлайн</string>
+    <string name="overall_cpu_usage">Общая загрузка ЦП</string>
+    <string name="cpu_cores_usage">Загрузка ЦП по ядрам</string>
+    <string name="realtime_chart">График в реальном времени</string>
+    <string name="active_cores">Активные ядра</string>
+    <string name="download_speed">Скорость загрузки</string>
+    <string name="upload_speed">Скорость отдачи</string>
+    <string name="total_downloaded">Всего скачано</string>
+    <string name="total_uploaded">Всего отдано</string>
+    <string name="network_monitor">Монитор сети</string>
 </resources>

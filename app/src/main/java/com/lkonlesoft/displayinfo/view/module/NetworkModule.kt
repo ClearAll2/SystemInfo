@@ -200,6 +200,7 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                         info = stringResource(R.string.n_a),
                         canLongPress = longPressCopy,
                         copyTitle = copyTitle,
+                        isFirst = true,
                         isLast = true
                     )
                 }

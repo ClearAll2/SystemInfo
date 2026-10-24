@@ -113,7 +113,7 @@ fun BigTile(
                 tint = MaterialTheme.colorScheme.primary
             )
             Text(text = title,
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 softWrap = false,
                 maxLines = 1,
                 modifier = Modifier.basicMarquee()

@@ -71,7 +71,7 @@ fun FloatingNavigationBar(
         buildList {
             add(NavigationItem.Home)
             add(NavigationItem.Test)
-            add(NavigationItem.Settings)
+            add(NavigationItem.Monitors)
         }
     }
     val selectedIndex by remember(currentRoute, navItems) {

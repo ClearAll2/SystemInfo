@@ -421,4 +421,15 @@
     <string name="rate">속도</string>
     <string name="coverage">커버리지</string>
     <string name="level">레벨</string>
+    <string name="monitors">모니터링</string>
+    <string name="offline">오프라인</string>
+    <string name="overall_cpu_usage">전체 CPU 사용량</string>
+    <string name="cpu_cores_usage">코어별 CPU 사용량</string>
+    <string name="realtime_chart">실시간 차트</string>
+    <string name="active_cores">활성 코어</string>
+    <string name="download_speed">다운로드 속도</string>
+    <string name="upload_speed">업로드 속도</string>
+    <string name="total_downloaded">총 다운로드됨</string>
+    <string name="total_uploaded">총 업로드됨</string>
+    <string name="network_monitor">네트워크 모니터</string>
 </resources>

@@ -19,6 +19,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -30,6 +32,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -57,6 +60,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -176,6 +180,7 @@ fun MainContext(settings: SettingsViewModel){
     val mainRoutes = remember {
         listOf(
             NavigationItem.Home,
+            NavigationItem.Monitors,
             NavigationItem.Test,
             NavigationItem.SOC,
             NavigationItem.Battery,
@@ -200,17 +205,26 @@ fun MainContext(settings: SettingsViewModel){
             NavigationItem.TouchTest
         )
     }
-    val testRoutes = remember {
+    val testsAndMonitorsRoutes = remember {
         listOf(
             NavigationItem.FlashlightTest,
             NavigationItem.VibrationTest,
             NavigationItem.LightSensorTest,
             NavigationItem.ProximityTest,
-            NavigationItem.AccelerometerTest
+            NavigationItem.AccelerometerTest,
+            NavigationItem.CPUMonitor,
+            NavigationItem.NetworkMonitor
         )
     }
+    val showControlBars by remember(currentRoute) {
+        derivedStateOf {
+            currentRoute == NavigationItem.Home.route
+                    || currentRoute == NavigationItem.Monitors.route
+                    || currentRoute == NavigationItem.Test.route
+        }
+    }
     val rotateSettingGear by animateFloatAsState(
-        targetValue = if (currentRoute == NavigationItem.Home.route) 0f else 360f,
+        targetValue = if (showControlBars) 0f else 360f,
         animationSpec = tween(250)
     )
     val hazeState = rememberHazeState()
@@ -235,8 +249,8 @@ fun MainContext(settings: SettingsViewModel){
                 topBar = {
                     AnimatedVisibility(
                         visible = fullScreenTestRoutes.find { it.route == currentRoute } == null,
-                        enter = fadeIn() + slideInVertically(initialOffsetY = { up -> -up }),
-                        exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> -down })
+                        enter = fadeIn() + slideInVertically(initialOffsetY = { up -> -up }, animationSpec = tween(250)),
+                        exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> -down }, animationSpec = tween(250))
                     ) {
                         TopAppBar(
                             colors = TopAppBarDefaults.topAppBarColors(
@@ -245,21 +259,17 @@ fun MainContext(settings: SettingsViewModel){
                             ),
                             title = {
                                 Text(
-                                    text = stringResource((mainRoutes + fullScreenTestRoutes + testRoutes).find { it.route == currentRoute }?.name ?: R.string.home),
-                                    fontWeight = FontWeight.Medium,
-                                    modifier = Modifier.padding(start = 8.dp)
+                                    text = stringResource((mainRoutes + fullScreenTestRoutes + testsAndMonitorsRoutes).find { it.route == currentRoute }?.name ?: R.string.home),
+                                    fontWeight = FontWeight.Medium
                                 )
                             },
                             navigationIcon = {
                                 AnimatedContent(
                                     contentAlignment = Alignment.Center,
-                                    targetState =
-                                        currentRoute == NavigationItem.Home.route
-                                                || currentRoute == NavigationItem.Settings.route
-                                                || currentRoute == NavigationItem.Test.route,
+                                    targetState = showControlBars,
                                     transitionSpec = {
-                                        fadeIn() + slideInHorizontally(initialOffsetX = { -it  }) togetherWith
-                                                fadeOut() + slideOutHorizontally(targetOffsetX = { -it  })
+                                        fadeIn() + slideInHorizontally(initialOffsetX = { -it  }, animationSpec = tween(250)) togetherWith
+                                                fadeOut() + slideOutHorizontally(targetOffsetX = { -it  }, animationSpec = tween(250))
                                     },
                                     label = "NavIconAnimation"
                                 ) { isHomeRoute ->
@@ -269,7 +279,7 @@ fun MainContext(settings: SettingsViewModel){
                                         IconButton(
                                             shapes = IconButtonDefaults.shapes(),
                                             colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
-                                            modifier = Modifier.padding(start = 20.dp).width(52.dp),
+                                            modifier = Modifier.padding(start = 20.dp, end = 8.dp).width(52.dp),
                                             onClick = { navController.navigateUp() }
                                         ) {
                                             Icon(
@@ -283,27 +293,58 @@ fun MainContext(settings: SettingsViewModel){
                             },
                             scrollBehavior = scrollBehavior,
                             actions = {
-                                AnimatedVisibility(modifier = Modifier.padding(end = 8.dp),
-                                    visible = currentRoute == NavigationItem.Home.route,
-                                    enter = fadeIn() + slideInHorizontally(initialOffsetX = { it  }),
-                                    exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it  })
-                                ) {
-                                    IconButton(
-                                        shapes = IconButtonDefaults.shapes(),
-                                        colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
-                                        modifier = Modifier.rotate(rotateSettingGear),
-                                        onClick = {
-                                            settings.setCurrentView(if (currentView == 2) 0 else currentView + 1)
-                                        }) {
-                                        Crossfade(
-                                            targetState = currentView,
-                                            label = "TitleAnimation"
-                                        ) { view ->
-                                            when(view){
-                                                0 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_24px), contentDescription = "newDashboard")
-                                                1 -> Icon(imageVector = ImageVector.vectorResource(R.drawable.view_list_24px), contentDescription = "listDashboard")
-                                                else -> Icon(imageVector = ImageVector.vectorResource(R.drawable.dashboard_2_24px), contentDescription = "oldDashboard")
+                                Row(modifier = Modifier.padding(end = 8.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    AnimatedVisibility(
+                                        visible = currentRoute == NavigationItem.Home.route,
+                                        enter = fadeIn() + scaleIn(tween(250)),
+                                        exit = fadeOut() + scaleOut(tween(250))
+                                    ) {
+                                        IconButton(
+                                            shapes = IconButtonDefaults.shapes(),
+                                            colors = IconButtonDefaults.iconButtonColors(
+                                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                                            ),
+                                            modifier = Modifier.width(52.dp),
+                                            onClick = {
+                                                settings.setCurrentView(if (currentView == 2) 0 else currentView + 1)
+                                            }) {
+                                            Crossfade(targetState = currentView) { view ->
+                                                when (view) {
+                                                    0 -> Icon(
+                                                        imageVector = ImageVector.vectorResource(
+                                                            R.drawable.dashboard_24px
+                                                        ), contentDescription = "newDashboard"
+                                                    )
+
+                                                    1 -> Icon(
+                                                        imageVector = ImageVector.vectorResource(
+                                                            R.drawable.view_list_24px
+                                                        ), contentDescription = "listDashboard"
+                                                    )
+                                                    else -> Icon(
+                                                        imageVector = ImageVector.vectorResource(
+                                                            R.drawable.dashboard_2_24px
+                                                        ), contentDescription = "oldDashboard"
+                                                    )
+                                                }
                                             }
+                                        }
+                                    }
+                                    AnimatedVisibility(
+                                        visible = showControlBars,
+                                        enter = fadeIn() + slideInHorizontally(initialOffsetX = { it  }, animationSpec = tween(250)),
+                                        exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it  }, animationSpec = tween(250))
+                                    ) {
+                                        IconButton(
+                                            shapes = IconButtonDefaults.shapes(),
+                                            colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
+                                            modifier = Modifier.rotate(rotateSettingGear),
+                                            onClick = {
+                                                if (currentRoute != NavigationItem.Settings.route)
+                                                    navController.navigate(NavigationItem.Settings.route)
+                                            }) {
+                                            Icon(imageVector = ImageVector.vectorResource(R.drawable.settings_24px), contentDescription = "settings")
                                         }
                                     }
                                 }
@@ -313,9 +354,7 @@ fun MainContext(settings: SettingsViewModel){
                 },
                 bottomBar = {
                     AnimatedVisibility(
-                        visible = currentRoute == NavigationItem.Home.route
-                                || currentRoute == NavigationItem.Settings.route
-                                || currentRoute == NavigationItem.Test.route,
+                        visible = showControlBars,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { up -> up }),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> down })
                     ) {

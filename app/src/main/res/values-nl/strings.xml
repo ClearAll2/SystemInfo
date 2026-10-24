@@ -421,4 +421,15 @@
     <string name="rate">SNELHEID</string>
     <string name="coverage">DEKKING</string>
     <string name="level">Niveau</string>
+    <string name="monitors">Bewaking</string>
+    <string name="offline">Offline</string>
+    <string name="overall_cpu_usage">Totaal CPU-gebruik</string>
+    <string name="cpu_cores_usage">CPU-gebruik per kern</string>
+    <string name="realtime_chart">Realtime grafiek</string>
+    <string name="active_cores">Actieve kernen</string>
+    <string name="download_speed">Downloadsnelheid</string>
+    <string name="upload_speed">Uploadsnelheid</string>
+    <string name="total_downloaded">Totaal gedownload</string>
+    <string name="total_uploaded">Totaal geüpload</string>
+    <string name="network_monitor">Netwerkmonitor</string>
 </resources>

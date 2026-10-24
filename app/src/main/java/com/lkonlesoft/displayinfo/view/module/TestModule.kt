@@ -41,7 +41,7 @@ fun TestScreen(navController: NavHostController, currentRoute: String?, paddingV
     }
     LazyVerticalStaggeredGrid (
         state = state,
-        columns = if (width < 600.dp) StaggeredGridCells.Fixed(1) else StaggeredGridCells.Adaptive(240.dp),
+        columns = if (width < 600.dp) StaggeredGridCells.Fixed(2) else StaggeredGridCells.Adaptive(240.dp),
         modifier = Modifier
             .fillMaxSize()
             .padding(

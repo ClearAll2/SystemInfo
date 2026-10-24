@@ -421,4 +421,15 @@
     <string name="rate">FREQUENZA</string>
     <string name="coverage">COPERTURA</string>
     <string name="level">Livello</string>
+    <string name="monitors">Monitoraggio</string>
+    <string name="offline">Offline</string>
+    <string name="overall_cpu_usage">Utilizzo generale della CPU</string>
+    <string name="cpu_cores_usage">Utilizzo CPU per core</string>
+    <string name="realtime_chart">Grafico in tempo reale</string>
+    <string name="active_cores">Core attivi</string>
+    <string name="download_speed">Velocità download</string>
+    <string name="upload_speed">Velocità upload</string>
+    <string name="total_downloaded">Totale scaricato</string>
+    <string name="total_uploaded">Totale caricato</string>
+    <string name="network_monitor">Monitor di rete</string>
 </resources>

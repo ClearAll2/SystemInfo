@@ -26,6 +26,7 @@ sealed class NavigationItem (
     val color: Color = Color.Transparent){
     data object Home: NavigationItem(name = R.string.home, route = "home", R.drawable.home_24px, R.drawable.filled_home_24px)
     data object Test: NavigationItem(name = R.string.tests, route = "tests", R.drawable.troubleshoot_24px, R.drawable.troubleshoot_24px)
+    data object Monitors: NavigationItem(name = R.string.monitors, route = "monitors", R.drawable.monitoring_24px, R.drawable.monitoring_24px)
     data object About: NavigationItem(name = R.string.about, route = "about", R.drawable.outline_info_24, R.drawable.outline_info_24)
     data object System: NavigationItem(name = R.string.system, route = "system", R.drawable.manufacturing_24px, R.drawable.manufacturing_24px,
         SystemColor
@@ -77,4 +78,9 @@ sealed class NavigationItem (
     data object LightSensorTest: NavigationItem(name = R.string.light_sensor_test_title, route = "lightSensorTest", R.drawable.lightbulb_24px, R.drawable.lightbulb_24px)
     data object ProximityTest: NavigationItem(name = R.string.proximity_test_title, route = "proximityTest", R.drawable.radar_24px, R.drawable.radar_24px)
     data object AccelerometerTest: NavigationItem(name = R.string.accelerometer_test_title, route = "accelerometerTest", R.drawable.mobile_rotate_24px, R.drawable.mobile_rotate_24px)
+
+    //Monitors
+    data object CPUMonitor: NavigationItem(name = R.string.cpu_usage, route = "cpuMonitor", R.drawable.developer_board_24px, R.drawable.developer_board_24px)
+    data object NetworkMonitor: NavigationItem(name = R.string.network_monitor, route = "networkMonitor", R.drawable.network_check_24px, R.drawable.network_check_24px)
+
 }

@@ -9,6 +9,7 @@ import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.net.TrafficStats
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
@@ -25,9 +26,22 @@ import com.lkonlesoft.displayinfo.helper.dc.SimInfo
 import com.lkonlesoft.displayinfo.helper.dc.WifiConnectionInfo
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
+import java.util.Locale
 import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.milliseconds
+
+data class NetworkTrafficSnapshot(
+    val downloadSpeedBps: Long,
+    val uploadSpeedBps: Long,
+    val totalRxBytes: Long,
+    val totalTxBytes: Long
+)
 
 class NetworkUtils(private val context: Context) {
+
+    private var lastRxBytes: Long = -1L
+    private var lastTxBytes: Long = -1L
+    private var lastTimeMillis: Long = 0L
 
     private val connectivityManager by lazy {
         context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -72,7 +86,7 @@ class NetworkUtils(private val context: Context) {
         val wifiInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // On Android 12+, legacy might be redacted. Try callback if legacy is null or missing SSID.
             if (legacy == null || legacy.ssid == "<unknown ssid>") {
-                withTimeoutOrNull(1000L) { getWifiInfo() } ?: legacy
+                withTimeoutOrNull(1000L.milliseconds) { getWifiInfo() } ?: legacy
             } else {
                 legacy
             }
@@ -203,7 +217,6 @@ class NetworkUtils(private val context: Context) {
         return emptyList()
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     fun getNetwork(): String {
         val nw = connectivityManager.activeNetwork ?: return context.getString(R.string.unknown)
         val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return context.getString(R.string.unknown)
@@ -268,7 +281,7 @@ class NetworkUtils(private val context: Context) {
         return netInfo
     }
 
-    @Suppress("DEPRECATION")
+   /* @Suppress("DEPRECATION")
     fun getNetworkOldApi(): String {
         // ConnectionManager instance
         val mInfo = connectivityManager.activeNetworkInfo
@@ -276,7 +289,7 @@ class NetworkUtils(private val context: Context) {
         // If not connected, "-" will be displayed
         if ((mInfo == null) || !mInfo.isConnected) return "-"
 
-        // If Connected to Wifi
+        // If Connected to Wi-Fi
         if (mInfo.type == ConnectivityManager.TYPE_WIFI) return context.getString(R.string.wifi)
 
         // If Connected to Mobile
@@ -290,7 +303,7 @@ class NetworkUtils(private val context: Context) {
             }
         }
         return context.getString(R.string.unknown)
-    }
+    }*/
 
     @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
     fun getDualSimInfo(): List<SimInfo> {
@@ -359,5 +372,54 @@ class NetworkUtils(private val context: Context) {
         return simInfoList.sortedBy { it.slot }
     }
 
+    fun getTrafficSnapshot(): NetworkTrafficSnapshot {
+        val currentRx = TrafficStats.getTotalRxBytes()
+        val currentTx = TrafficStats.getTotalTxBytes()
+        val currentTime = System.currentTimeMillis()
+
+        var downloadSpeed = 0L
+        var uploadSpeed = 0L
+
+        if (lastRxBytes != -1L && lastTxBytes != -1L && lastTimeMillis > 0L) {
+            val timeDeltaSeconds = (currentTime - lastTimeMillis) / 1000.0
+            if (timeDeltaSeconds > 0.0) {
+                val rxDelta = currentRx - lastRxBytes
+                val txDelta = currentTx - lastTxBytes
+                if (rxDelta >= 0) downloadSpeed = (rxDelta / timeDeltaSeconds).toLong()
+                if (txDelta >= 0) uploadSpeed = (txDelta / timeDeltaSeconds).toLong()
+            }
+        }
+        lastRxBytes = currentRx
+        lastTxBytes = currentTx
+        lastTimeMillis = currentTime
+
+        return NetworkTrafficSnapshot(
+            downloadSpeedBps = maxOf(0L, downloadSpeed),
+            uploadSpeedBps = maxOf(0L, uploadSpeed),
+            totalRxBytes = if (currentRx >= 0L) currentRx else 0L,
+            totalTxBytes = if (currentTx >= 0L) currentTx else 0L,
+        )
+    }
+
+    fun formatSpeed(bytesPerSec: Long): String {
+        val locale = Locale.getDefault()
+        return when {
+            bytesPerSec >= 1024 * 1024 * 1024 -> String.format(locale, "%.2f GB/s", bytesPerSec / (1024.0 * 1024 * 1024))
+            bytesPerSec >= 1024 * 1024 -> String.format(locale, "%.2f MB/s", bytesPerSec / (1024.0 * 1024))
+            bytesPerSec >= 1024 -> String.format(locale, "%.2f KB/s", bytesPerSec / 1024.0)
+            else -> "$bytesPerSec B/s"
+        }
+    }
+
+    fun formatBytes(bytes: Long): String {
+        val locale = Locale.getDefault()
+        return when {
+            bytes >= 1024L * 1024 * 1024 * 1024 -> String.format(locale, "%.2f TB", bytes / (1024.0 * 1024 * 1024 * 1024))
+            bytes >= 1024L * 1024 * 1024 -> String.format(locale, "%.2f GB", bytes / (1024.0 * 1024 * 1024))
+            bytes >= 1024L * 1024 -> String.format(locale, "%.2f MB", bytes / (1024.0 * 1024))
+            bytes >= 1024L -> String.format(locale, "%.2f KB", bytes / 1024.0)
+            else -> "$bytes B"
+        }
+    }
 
 }

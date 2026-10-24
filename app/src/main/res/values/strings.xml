@@ -433,4 +433,15 @@
     <string name="rate">RATE</string>
     <string name="coverage">COVERAGE</string>
     <string name="level">Level</string>
+    <string name="monitors">Monitors</string>
+    <string name="offline">Offline</string>
+    <string name="overall_cpu_usage">Overall CPU Usage</string>
+    <string name="cpu_cores_usage">Per-Core CPU Usage</string>
+    <string name="realtime_chart">Real-time Usage Chart</string>
+    <string name="active_cores">Active Cores</string>
+    <string name="download_speed">Download Speed</string>
+    <string name="upload_speed">Upload Speed</string>
+    <string name="total_downloaded">Total Downloaded</string>
+    <string name="total_uploaded">Total Uploaded</string>
+    <string name="network_monitor">Network Monitor</string>
 </resources>

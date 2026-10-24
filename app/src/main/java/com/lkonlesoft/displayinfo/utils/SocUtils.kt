@@ -14,9 +14,27 @@ import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import java.io.File
 import java.io.RandomAccessFile
 
+data class CpuCoreState(
+    val coreIndex: Int,
+    val currentFreqMhz: Int,
+    val minFreqMhz: Int,
+    val maxFreqMhz: Int,
+    val usagePercent: Float,
+    val governor: String,
+    val isOffline: Boolean
+)
+
+data class CpuSnapshot(
+    val overallUsagePercent: Float,
+    val activeCoreCount: Int,
+    val totalCoreCount: Int,
+    val coreStates: List<CpuCoreState>
+)
+
 class SocUtils(private val context: Context) {
 
     private val path = "/sys/devices/system/cpu/"
+    private var previousCpuStats: List<LongArray>? = null
 
     private val activityManager by lazy {
         context.applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
@@ -59,9 +77,9 @@ class SocUtils(private val context: Context) {
         return (0 until cpuCount).map { getCpuClockSpeed(it) }
     }
 
-    fun getGlEsVersion(): String{
+    /*fun getGlEsVersion(): String{
         return activityManager.deviceConfigurationInfo.glEsVersion
-    }
+    }*/
 
     fun getNumberOfCores(): Int {
         return Runtime.getRuntime().availableProcessors()
@@ -210,6 +228,110 @@ class SocUtils(private val context: Context) {
                 }
             }
         }.start()
+    }
+
+    fun getCpuSnapshot(): CpuSnapshot {
+        val numCores = getNumberOfCores()
+        val frequencies = getAllCpuFrequencies()
+        val governors = getAllGovernors()
+
+        val currentStats = readProcStat()
+        val coreUsages = mutableListOf<Float>()
+        val coreStates = mutableListOf<CpuCoreState>()
+
+        for (i in 0 until numCores) {
+            val curFreq = frequencies.getOrElse(i) { -1 }
+            val gov = governors.getOrElse(i) { context.getString(R.string.unknown) }
+            val (minFreq, maxFreq) = getMinMaxFreq(i)
+            val isOffline = curFreq <= 0
+
+            val usage = if (isOffline) {
+                0f
+            } else if (currentStats != null && previousCpuStats != null && i + 1 < currentStats.size && i + 1 < previousCpuStats!!.size) {
+                calculateUsageFromStat(previousCpuStats!![i + 1], currentStats[i + 1])
+            } else {
+                if (maxFreq > minFreq && maxFreq > 0) {
+                    ((curFreq - minFreq).toFloat() / (maxFreq - minFreq).toFloat() * 100f).coerceIn(0f, 100f)
+                } else if (maxFreq > 0) {
+                    (curFreq.toFloat() / maxFreq.toFloat() * 100f).coerceIn(0f, 100f)
+                } else {
+                    15f
+                }
+            }
+
+            coreUsages.add(usage)
+            coreStates.add(
+                CpuCoreState(
+                    coreIndex = i,
+                    currentFreqMhz = curFreq,
+                    minFreqMhz = minFreq.toInt(),
+                    maxFreqMhz = maxFreq.toInt(),
+                    usagePercent = usage,
+                    governor = gov,
+                    isOffline = isOffline
+                )
+            )
+        }
+
+        if (currentStats != null) {
+            previousCpuStats = currentStats
+        }
+
+        val overallUsage = if (currentStats != null && previousCpuStats != null && currentStats.isNotEmpty() && previousCpuStats!!.isNotEmpty()) {
+            calculateUsageFromStat(previousCpuStats!![0], currentStats[0])
+        } else if (coreUsages.isNotEmpty()) {
+            coreUsages.average().toFloat()
+        } else {
+            0f
+        }
+
+        val activeCount = coreStates.count { !it.isOffline }
+
+        return CpuSnapshot(
+            overallUsagePercent = overallUsage.coerceIn(0f, 100f),
+            activeCoreCount = activeCount,
+            totalCoreCount = numCores,
+            coreStates = coreStates
+        )
+    }
+
+    private fun readProcStat(): List<LongArray>? {
+        return try {
+            val file = File("/proc/stat")
+            if (!file.exists()) return null
+            val lines = file.readLines()
+            val result = mutableListOf<LongArray>()
+            for (line in lines) {
+                if (line.startsWith("cpu")) {
+                    val tokens = line.split(Regex("\\s+")).filter { it.isNotBlank() }
+                    if (tokens.size >= 8) {
+                        val user = tokens[1].toLongOrNull() ?: 0L
+                        val nice = tokens[2].toLongOrNull() ?: 0L
+                        val system = tokens[3].toLongOrNull() ?: 0L
+                        val idle = tokens[4].toLongOrNull() ?: 0L
+                        val iowait = tokens.getOrNull(5)?.toLongOrNull() ?: 0L
+                        val irq = tokens.getOrNull(6)?.toLongOrNull() ?: 0L
+                        val softirq = tokens.getOrNull(7)?.toLongOrNull() ?: 0L
+                        val steal = tokens.getOrNull(8)?.toLongOrNull() ?: 0L
+
+                        val idleTotal = idle + iowait
+                        val total = user + nice + system + idleTotal + irq + softirq + steal
+                        result.add(longArrayOf(total, idleTotal))
+                    }
+                }
+            }
+            result.ifEmpty { null }
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private fun calculateUsageFromStat(prev: LongArray, curr: LongArray): Float {
+        val totalDelta = curr[0] - prev[0]
+        val idleDelta = curr[1] - prev[1]
+        if (totalDelta <= 0L) return 0f
+        val activeDelta = totalDelta - idleDelta
+        return ((activeDelta.toFloat() / totalDelta.toFloat()) * 100f).coerceIn(0f, 100f)
     }
 
 }

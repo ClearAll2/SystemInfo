@@ -421,4 +421,15 @@
     <string name="rate">TASA</string>
     <string name="coverage">COBERTURA</string>
     <string name="level">Nivel</string>
+    <string name="monitors">Monitoreo</string>
+    <string name="offline">Desconectado</string>
+    <string name="overall_cpu_usage">Uso general de la CPU</string>
+    <string name="cpu_cores_usage">Uso de CPU por núcleo</string>
+    <string name="realtime_chart">Gráfico en tiempo real</string>
+    <string name="active_cores">Núcleos activos</string>
+    <string name="download_speed">Velocidad de descarga</string>
+    <string name="upload_speed">Velocidad de subida</string>
+    <string name="total_downloaded">Total descargado</string>
+    <string name="total_uploaded">Total subido</string>
+    <string name="network_monitor">Monitor de red</string>
 </resources>

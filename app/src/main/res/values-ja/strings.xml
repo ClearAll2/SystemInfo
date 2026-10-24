@@ -421,4 +421,15 @@
     <string name="rate">レート</string>
     <string name="coverage">カバレッジ</string>
     <string name="level">レベル</string>
+    <string name="monitors">モニタリング</string>
+    <string name="offline">オフライン</string>
+    <string name="overall_cpu_usage">全体のCPU使用率</string>
+    <string name="cpu_cores_usage">コアごとのCPU使用率</string>
+    <string name="realtime_chart">リアルタイムチャート</string>
+    <string name="active_cores">アクティブコア</string>
+    <string name="download_speed">ダウンロード速度</string>
+    <string name="upload_speed">アップロード速度</string>
+    <string name="total_downloaded">総ダウンロード</string>
+    <string name="total_uploaded">総アップロード</string>
+    <string name="network_monitor">ネットワークモニター</string>
 </resources>

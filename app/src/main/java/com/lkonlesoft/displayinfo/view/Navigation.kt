@@ -27,11 +27,14 @@ import com.lkonlesoft.displayinfo.view.module.DisplayScreen
 import com.lkonlesoft.displayinfo.view.module.HardwareScreen
 import com.lkonlesoft.displayinfo.view.module.MediaScreen
 import com.lkonlesoft.displayinfo.view.module.MemoryScreen
+import com.lkonlesoft.displayinfo.view.module.MonitorsScreen
 import com.lkonlesoft.displayinfo.view.module.NetworkScreen
 import com.lkonlesoft.displayinfo.view.module.SensorsScreen
 import com.lkonlesoft.displayinfo.view.module.StorageScreen
 import com.lkonlesoft.displayinfo.view.module.SystemScreen
 import com.lkonlesoft.displayinfo.view.module.TestScreen
+import com.lkonlesoft.displayinfo.view.monitors.CpuMonitorScreen
+import com.lkonlesoft.displayinfo.view.monitors.NetworkMonitorScreen
 import com.lkonlesoft.displayinfo.view.test.AccelerometerTestScreen
 import com.lkonlesoft.displayinfo.view.test.ColorTestScreen
 import com.lkonlesoft.displayinfo.view.test.FlashlightTestScreen
@@ -386,6 +389,33 @@ fun MainNavigation(
                 }
             )) {
             AccelerometerTestScreen(paddingValues = paddingValues)
+        }
+        composable(
+            route = NavigationItem.Monitors.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "si://info/$route"
+                }
+            )) {
+            MonitorsScreen(navController = navController, currentRoute = currentRoute, paddingValues = paddingValues)
+        }
+        composable(
+            route = NavigationItem.CPUMonitor.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "si://info/$route"
+                }
+            )) {
+            CpuMonitorScreen(paddingValues = paddingValues)
+        }
+        composable(
+            route = NavigationItem.NetworkMonitor.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "si://info/$route"
+                }
+            )) {
+            NetworkMonitorScreen(paddingValues = paddingValues)
         }
     }
 }

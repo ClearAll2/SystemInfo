@@ -421,4 +421,15 @@
     <string name="rate">速率</string>
     <string name="coverage">覆盖率</string>
     <string name="level">级别</string>
+    <string name="monitors">监控</string>
+    <string name="offline">离线</string>
+    <string name="overall_cpu_usage">总体 CPU 使用率</string>
+    <string name="cpu_cores_usage">每个核心的 CPU 使用率</string>
+    <string name="realtime_chart">实时图表</string>
+    <string name="active_cores">活动核心</string>
+    <string name="download_speed">下载速度</string>
+    <string name="upload_speed">上传速度</string>
+    <string name="total_downloaded">总下载量</string>
+    <string name="total_uploaded">总上传量</string>
+    <string name="network_monitor">网络监视器</string>
 </resources>

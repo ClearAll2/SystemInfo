@@ -422,4 +422,15 @@
     <string name="rate">RATE</string>
     <string name="coverage">ABDECKUNG</string>
     <string name="level">Stufe</string>
+    <string name="monitors">Überwachung</string>
+    <string name="offline">Offline</string>
+    <string name="overall_cpu_usage">Gesamte CPU-Auslastung</string>
+    <string name="cpu_cores_usage">CPU-Auslastung pro Kern</string>
+    <string name="realtime_chart">Echtzeit-Diagramm</string>
+    <string name="active_cores">Aktive Kerne</string>
+    <string name="download_speed">Download-Geschwindigkeit</string>
+    <string name="upload_speed">Upload-Geschwindigkeit</string>
+    <string name="total_downloaded">Insgesamt heruntergeladen</string>
+    <string name="total_uploaded">Insgesamt hochgeladen</string>
+    <string name="network_monitor">Netzwerkmonitor</string>
 </resources>

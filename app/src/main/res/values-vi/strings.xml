@@ -421,4 +421,15 @@
     <string name="rate">TỐC ĐỘ</string>
     <string name="coverage">PHỦ</string>
     <string name="level">Mức</string>
+    <string name="monitors">Giám sát</string>
+    <string name="offline">Ngoại tuyến</string>
+    <string name="overall_cpu_usage">Sử dụng CPU tổng thể</string>
+    <string name="cpu_cores_usage">Sử dụng CPU theo từng lõi</string>
+    <string name="realtime_chart">Biểu đồ thời gian thực</string>
+    <string name="active_cores">Lõi đang hoạt động</string>
+    <string name="download_speed">Tốc độ tải xuống</string>
+    <string name="upload_speed">Tốc độ tải lên</string>
+    <string name="total_downloaded">Tổng đã tải xuống</string>
+    <string name="total_uploaded">Tổng đã tải lên</string>
+    <string name="network_monitor">Giám sát mạng</string>
 </resources>

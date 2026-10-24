@@ -421,4 +421,15 @@
     <string name="rate">TAXA</string>
     <string name="coverage">COBERTURA</string>
     <string name="level">Nível</string>
+    <string name="monitors">Monitoramento</string>
+    <string name="offline">Off-line</string>
+    <string name="overall_cpu_usage">Uso geral da CPU</string>
+    <string name="cpu_cores_usage">Uso da CPU por núcleo</string>
+    <string name="realtime_chart">Gráfico em tempo real</string>
+    <string name="active_cores">Núcleos ativos</string>
+    <string name="download_speed">Velocidade de download</string>
+    <string name="upload_speed">Velocidade de upload</string>
+    <string name="total_downloaded">Total baixado</string>
+    <string name="total_uploaded">Total enviado</string>
+    <string name="network_monitor">Monitor de rede</string>
 </resources>
