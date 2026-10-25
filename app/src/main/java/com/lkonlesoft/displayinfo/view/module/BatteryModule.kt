@@ -8,6 +8,7 @@ import android.graphics.drawable.Icon
 import android.os.Build
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -229,11 +230,14 @@ fun BatteryScreen(
             }
             item {
                 GeneralWarning(
+                    modifier = Modifier.animateContentSize(tween(250)),
                     title = R.string.charging_screen,
                     text = R.string.charging_screen_details,
                     icon = R.drawable.mobile_charge_24px,
                     extra = {
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Column(
+                            modifier = Modifier.animateContentSize(tween(250)),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             AnimatedVisibility(
                                 visible = isCharging,
                                 enter = fadeIn() + scaleIn(tween(250)),
@@ -253,6 +257,12 @@ fun BatteryScreen(
                                     )
                                 }
                             }
+                            Text(
+                                text = stringResource(R.string.add_quick_settings_tile_details),
+                                fontSize = 14.sp,
+                                modifier = Modifier
+                                    .padding(vertical = 10.dp)
+                            )
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                                 val statusBarService =
                                     context.getSystemService(StatusBarManager::class.java)

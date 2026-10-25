@@ -440,6 +440,7 @@
     <string name="exit_charging_screen_hint">Toque para sair</string>
     <string name="tile_added">Bloco adicionado</string>
     <string name="tile_already_added">Bloco já adicionado</string>
-    <string name="charging_screen_details">Exibir tela de carregamento impressionante</string>
+    <string name="charging_screen_details">Exibe um protetor de tela impressionante enquanto o telefone carrega.</string>
     <string name="add_quick_settings_tile">Adicionar bloco de Configurações rápidas</string>
+    <string name="add_quick_settings_tile_details">Se a opção de protetor de tela estiver ausente no seu telefone, você pode adicionar um bloco de Configurações rápidas.</string>
 </resources>

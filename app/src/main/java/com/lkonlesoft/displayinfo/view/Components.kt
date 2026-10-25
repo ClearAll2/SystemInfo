@@ -436,6 +436,7 @@ fun CommonSwitchOption(
 
 @Composable
 fun GeneralWarning(
+    modifier: Modifier = Modifier,
     canClick: Boolean = false,
     title: Int,
     text: Int,
@@ -444,7 +445,7 @@ fun GeneralWarning(
     extra: @Composable () -> Unit = {}
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(top = 20.dp)
             .fillMaxWidth()
             .clip(shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp))

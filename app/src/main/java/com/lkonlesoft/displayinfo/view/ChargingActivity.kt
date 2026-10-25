@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.view.OrientationEventListener
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
@@ -148,7 +147,7 @@ fun ChargingScreen(
 ) {
     val context = LocalContext.current
     val view = LocalView.current
-    val window = (view.context as Activity).window
+    val window = (view.context as? Activity)?.window
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
     var isLocked by remember { mutableStateOf(false) }
     val intentFilter = IntentFilter().apply {
@@ -180,6 +179,7 @@ fun ChargingScreen(
         chargingState.wattage
     ) {
         when {
+            chargingState.currentMa < 0 -> ""
             chargingState.statusStr == fullyChargedStr -> fullyChargedStr
             chargingState.plugType == wirelessStr -> wirelessChargingStr
             chargingState.wattage >= 15f -> fastChargingStr
@@ -187,7 +187,6 @@ fun ChargingScreen(
             else -> chargingStr
         }
     }
-    val accentColor = BatteryColor
     val dismissAction : () -> Unit = {
         if (isLocked)
             onLockScreenDismiss()
@@ -211,15 +210,19 @@ fun ChargingScreen(
             }
         }
         context.registerReceiver(receiver, intentFilter)
-        WindowInsetsControllerCompat(window, view).let { controller ->
-            controller.hide(WindowInsetsCompat.Type.systemBars())
-            controller.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        window?.let { win ->
+            WindowInsetsControllerCompat(win, view).let { controller ->
+                controller.hide(WindowInsetsCompat.Type.systemBars())
+                controller.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
         }
         //revert all changes above, reset activity back to normal
         onDispose {
             context.unregisterReceiver(receiver)
-            WindowInsetsControllerCompat(window, view).show(WindowInsetsCompat.Type.systemBars())
+            window?.let { win ->
+                WindowInsetsControllerCompat(win, view).show(WindowInsetsCompat.Type.systemBars())
+            }
         }
     }
     LaunchedEffect(Unit) {
@@ -238,15 +241,15 @@ fun ChargingScreen(
             }
         }
     }
-    BackHandler {
-       dismissAction()
-    }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
             .clickable {
-                showExtraInfo = !showExtraInfo
+                if (showExtraInfo)
+                    dismissAction()
+                else
+                    showExtraInfo = true
             }
             .offset {
                 IntOffset(
@@ -260,9 +263,10 @@ fun ChargingScreen(
                 level = chargingState.level,
                 timeString = currentTimeString,
                 chargingLabel = chargingLabel,
+                currentMa = chargingState.currentMa,
                 minsTo80 = chargingState.minsTo80,
                 minsTo100 = chargingState.minsTo100,
-                accentColor = accentColor
+                accentColor = BatteryColor
             )
         }
         else {
@@ -270,9 +274,10 @@ fun ChargingScreen(
                 level = chargingState.level,
                 timeString = currentTimeString,
                 chargingLabel = chargingLabel,
+                currentMa = chargingState.currentMa,
                 minsTo80 = chargingState.minsTo80,
                 minsTo100 = chargingState.minsTo100,
-                accentColor = accentColor
+                accentColor = BatteryColor
             )
         }
         // Overlay tooltip or extra stats when tapped
@@ -295,7 +300,7 @@ fun ChargingScreen(
                     .background(Color(0xCC121212), shape = RoundedCornerShape(16.dp))
                     .padding(horizontal = 16.dp, vertical = 10.dp)
                     .clickable {
-                        dismissAction()
+                        showExtraInfo = false
                     }
             ) {
                 if (chargingState.wattage > 0f || chargingState.tempC > 0f) {
@@ -327,6 +332,7 @@ private fun ChargingPortraitContent(
     level: Int,
     timeString: String,
     chargingLabel: String,
+    currentMa: Int,
     minsTo80: Int,
     minsTo100: Int,
     accentColor: Color
@@ -347,6 +353,7 @@ private fun ChargingPortraitContent(
             level = level,
             minsTo80 = minsTo80,
             minsTo100 = minsTo100,
+            currentMa = currentMa,
             accentColor = accentColor
         )
 
@@ -405,6 +412,7 @@ private fun ChargingPortraitContent(
 private fun PortraitVerticalProgressBar(
     modifier: Modifier,
     level: Int,
+    currentMa: Int,
     minsTo80: Int,
     minsTo100: Int,
     accentColor: Color
@@ -486,7 +494,7 @@ private fun PortraitVerticalProgressBar(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
-            if (minsTo100 > 0 && level < 100) {
+            if (minsTo100 > 0 && level < 100 && currentMa > 0) {
                 Text(
                     text = "${minsTo100}m",
                     color = Color.White.copy(alpha = 0.6f),
@@ -508,7 +516,7 @@ private fun PortraitVerticalProgressBar(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
-            if (minsTo80 > 0 && level < 80) {
+            if (minsTo80 > 0 && level < 80 && currentMa > 0) {
                 Text(
                     text = "${minsTo80}m",
                     color = Color.White.copy(alpha = 0.6f),
@@ -524,6 +532,7 @@ private fun ChargingLandscapeContent(
     level: Int,
     timeString: String,
     chargingLabel: String,
+    currentMa: Int,
     minsTo80: Int,
     minsTo100: Int,
     accentColor: Color
@@ -565,6 +574,7 @@ private fun ChargingLandscapeContent(
             level = level,
             minsTo80 = minsTo80,
             minsTo100 = minsTo100,
+            currentMa = currentMa,
             accentColor = accentColor
         )
 
@@ -596,6 +606,7 @@ private fun ChargingLandscapeContent(
 private fun LandscapeHorizontalProgressBar(
     modifier: Modifier,
     level: Int,
+    currentMa: Int,
     minsTo80: Int,
     minsTo100: Int,
     accentColor: Color
@@ -671,7 +682,7 @@ private fun LandscapeHorizontalProgressBar(
                 .align(Alignment.TopStart)
                 .offset(x = 180.dp, y = 0.dp)
         ) {
-            if (minsTo80 > 0 && level < 80) {
+            if (minsTo80 > 0 && level < 80 && currentMa > 0) {
                 Text(
                     text = "${minsTo80}m",
                     color = Color.White.copy(alpha = 0.7f),
@@ -693,7 +704,7 @@ private fun LandscapeHorizontalProgressBar(
                 .align(Alignment.TopEnd)
                 .offset(x = (-10).dp, y = 0.dp)
         ) {
-            if (minsTo100 > 0 && level < 100) {
+            if (minsTo100 > 0 && level < 100 && currentMa > 0) {
                 Text(
                     text = "${minsTo100}m",
                     color = Color.White.copy(alpha = 0.7f),

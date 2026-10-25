@@ -441,6 +441,7 @@
     <string name="exit_charging_screen_hint">Zum Beenden tippen</string>
     <string name="tile_added">Kachel hinzugefügt</string>
     <string name="tile_already_added">Kachel bereits hinzugefügt</string>
-    <string name="charging_screen_details">Beeindruckenden Ladebildschirm anzeigen</string>
+    <string name="charging_screen_details">Beeindruckenden Bildschirmschoner anzeigen, während Ihr Telefon geladen wird.</string>
     <string name="add_quick_settings_tile">Schnell­einstellungen-Kachel hinzufügen</string>
+    <string name="add_quick_settings_tile_details">Falls die Bildschirmschoner-Option auf Ihrem Telefon fehlt, können Sie eine Schnelleinstellungen-Kachel hinzufügen.</string>
 </resources>

@@ -149,10 +149,8 @@ class BatteryUtils (private val context: Context) {
         val level = getBatteryPercentage()
         if (level !in 0..<100) return Pair(0, 0)
 
-        val batteryManager = context.applicationContext.getSystemService(Context.BATTERY_SERVICE) as? BatteryManager
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val remainingMs = batteryManager?.computeChargeTimeRemaining() ?: -1L
+            val remainingMs = batteryManager.computeChargeTimeRemaining() ?: -1L
             if (remainingMs > 0) {
                 val totalMins = (remainingMs / 60000L).toInt()
                 val mins80 = if (level < 80) {

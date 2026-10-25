@@ -440,6 +440,7 @@
     <string name="exit_charging_screen_hint">Appuyez pour quitter</string>
     <string name="tile_added">Tuile ajoutée</string>
     <string name="tile_already_added">Tuile déjà ajoutée</string>
-    <string name="charging_screen_details">Afficher un superbe écran de charge</string>
+    <string name="charging_screen_details">Affichez un superbe économiseur d\'écran pendant la charge de votre téléphone.</string>
     <string name="add_quick_settings_tile">Ajouter une tuile des paramètres rapides</string>
+    <string name="add_quick_settings_tile_details">Si l\'option d\'économiseur d\'écran est absente sur votre téléphone, vous pouvez ajouter une tuile des paramètres rapides.</string>
 </resources>

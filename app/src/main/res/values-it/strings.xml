@@ -440,6 +440,7 @@
     <string name="exit_charging_screen_hint">Tocca per uscire</string>
     <string name="tile_added">Riquadro aggiunto</string>
     <string name="tile_already_added">Riquadro già aggiunto</string>
-    <string name="charging_screen_details">Mostra uno splendido schermo di carica</string>
+    <string name="charging_screen_details">Mostra uno splendido salvaschermo durante la ricarica del telefono.</string>
     <string name="add_quick_settings_tile">Aggiungi riquadro Impostazioni rapide</string>
+    <string name="add_quick_settings_tile_details">Se l\'opzione salvaschermo non è disponibile sul tuo telefono, puoi aggiungere un riquadro Impostazioni rapide.</string>
 </resources>

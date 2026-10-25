@@ -440,6 +440,7 @@
     <string name="exit_charging_screen_hint">Toca para salir</string>
     <string name="tile_added">Icono añadido</string>
     <string name="tile_already_added">El icono ya está añadido</string>
-    <string name="charging_screen_details">Mostrar una impresionante pantalla de carga</string>
+    <string name="charging_screen_details">Muestra un impresionante salvapantallas mientras se carga tu teléfono.</string>
     <string name="add_quick_settings_tile">Añadir icono de ajustes rápidos</string>
+    <string name="add_quick_settings_tile_details">Si la opción de salvapantallas no está disponible en tu teléfono, puedes añadir un icono de ajustes rápidos.</string>
 </resources>
