@@ -31,18 +31,17 @@ Show various system information of device:
 ## Screenshots
 Simple and adaptive UI.
 <p>
-  <img src="screenshots/261.png" alt="sp1"  height="360px"/>
-  <img src="screenshots/262.png" alt="sp2"  height="360px"/>
-  <img src="screenshots/263.png" alt="sp3"  height="360px"/>
-  <img src="screenshots/264.png" alt="sp4"  height="360px"/>
-  <img src="screenshots/265.png" alt="sp5"  height="360px"/>
-  <img src="screenshots/266.png" alt="sp6"  height="360px"/>
-  <img src="screenshots/267.png" alt="sp7"  height="360px"/>	
+  <img src="screenshots/51.png" alt="sp1"  height="360px"/>
+  <img src="screenshots/52.png" alt="sp2"  height="360px"/>
+  <img src="screenshots/53.png" alt="sp3"  height="360px"/>
+  <img src="screenshots/54.png" alt="sp4"  height="360px"/>
+  <img src="screenshots/55.png" alt="sp5"  height="360px"/>
+  <img src="screenshots/56.png" alt="sp6"  height="360px"/>	
 </p>
 Screenshots made by Hotpot.ai
 
 ## Minimum supported Android version
-Android 6 (Marshmallow)
+Android 7.0 (Nougat)
 
 ## Changelog
 Read app [changelog](changelog.md)

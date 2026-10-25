@@ -4,6 +4,15 @@ Thank you for choosing System Info! We're constantly making changes and improvem
 
 
 
+## 5.0
+
+* Tests Module: A brand-new module to test your device hardware.
+* Monitors Module: Brand-new real-time tracking and monitoring tools.
+* Charging Screensaver: Give your screen a sleek look while powering up.
+* Under the Hood: Performance and stability boost across the entire app.
+* Minimum OS Update: Now requires Android 7.0 (Nougat) or higher.
+* Fun fact: 90% of the new code in this release was built with the help of AI 🤖!
+
 ## 4.3
 
 * New Sensors info.
