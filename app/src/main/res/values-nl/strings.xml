@@ -443,4 +443,5 @@
     <string name="charging_screen_details">Toon een prachtige schermbeveiliging terwijl je telefoon wordt opgeladen.</string>
     <string name="add_quick_settings_tile">Snelinstellingentegel toevoegen</string>
     <string name="add_quick_settings_tile_details">Als de optie voor schermbeveiliging ontbreekt op je telefoon, kun je een snelinstellingentegel toevoegen.</string>
+    <string name="short_minute">%s min</string>
 </resources>

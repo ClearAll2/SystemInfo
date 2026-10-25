@@ -443,4 +443,5 @@
     <string name="charging_screen_details">Показывает эффектную заставку во время зарядки телефона.</string>
     <string name="add_quick_settings_tile">Добавить плитку быстрых настроек</string>
     <string name="add_quick_settings_tile_details">Если на вашем телефоне нет опции заставки, вы можете добавить плитку быстрых настроек.</string>
+    <string name="short_minute">%s мин</string>
 </resources>

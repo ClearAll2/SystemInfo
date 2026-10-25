@@ -25,6 +25,10 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,10 +38,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
@@ -86,7 +92,12 @@ fun NetworkDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
 }
 
 @Composable
-fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues) {
+fun NetworkScreen(
+    longPressCopy: Boolean,
+    copyTitle: Boolean,
+    paddingValues: PaddingValues,
+    onNetworkMonitorClick: () -> Unit,
+) {
     val context = LocalContext.current
     val resource = LocalResources.current
     val layoutDirection = LocalLayoutDirection.current
@@ -175,6 +186,17 @@ fun NetworkScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pad
                     isFirst = true,
                     isLast = true
                 )
+                FilledTonalButton(
+                    modifier = Modifier.padding(top = 8.dp),
+                    shapes = ButtonDefaults.shapes(),
+                    onClick = onNetworkMonitorClick) {
+                    Text(stringResource(R.string.network_monitor))
+                    Icon(
+                        modifier = Modifier.padding(start = 8.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.open_in_new_24px),
+                        contentDescription = null
+                    )
+                }
             }
         }
         item {

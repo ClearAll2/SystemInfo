@@ -443,4 +443,5 @@
     <string name="charging_screen_details">Hiển thị hình nền bảo vệ màn hình ấn tượng khi sạc điện thoại.</string>
     <string name="add_quick_settings_tile">Thêm ô Cài đặt nhanh</string>
     <string name="add_quick_settings_tile_details">Nếu tùy chọn hình nền bảo vệ màn hình không có trên điện thoại của bạn, bạn có thể thêm ô Cài đặt nhanh.</string>
+    <string name="short_minute">%s phút</string>
 </resources>

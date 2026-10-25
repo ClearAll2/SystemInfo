@@ -13,6 +13,10 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,9 +25,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
@@ -73,7 +79,13 @@ fun SoCDashBoard(intervalMillis: Long = 2000L, onClick: () -> Unit) {
 }
 
 @Composable
-fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: PaddingValues, showNotice: Boolean) {
+fun HardwareScreen(
+    longPressCopy: Boolean,
+    copyTitle: Boolean,
+    paddingValues: PaddingValues,
+    showNotice: Boolean,
+    onMonitorsClick: () -> Unit
+) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
     val socUtils = remember { SocUtils(context) }
@@ -147,6 +159,17 @@ fun HardwareScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Pa
                         copyTitle = copyTitle,
                         isFirst = cpuUsageInfo.first() == it,
                         isLast = cpuUsageInfo.last() == it
+                    )
+                }
+                FilledTonalButton(
+                    modifier = Modifier.padding(top = 8.dp),
+                    shapes = ButtonDefaults.shapes(),
+                    onClick = onMonitorsClick) {
+                    Text(stringResource(R.string.monitors))
+                    Icon(
+                        modifier = Modifier.padding(start = 8.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.open_in_new_24px),
+                        contentDescription = null
                     )
                 }
             }

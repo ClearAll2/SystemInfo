@@ -443,4 +443,5 @@
     <string name="charging_screen_details">Exibe um protetor de tela impressionante enquanto o telefone carrega.</string>
     <string name="add_quick_settings_tile">Adicionar bloco de Configurações rápidas</string>
     <string name="add_quick_settings_tile_details">Se a opção de protetor de tela estiver ausente no seu telefone, você pode adicionar um bloco de Configurações rápidas.</string>
+    <string name="short_minute">%s min</string>
 </resources>

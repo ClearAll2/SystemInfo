@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 62
+val buildCode = 63
 val buildName = "5.0"
 val appId = "com.lkonlesoft.displayinfo"
 
@@ -83,7 +83,6 @@ dependencies {
     implementation("androidx.compose.animation:animation-core:1.12.1")
     implementation("androidx.compose.ui:ui-graphics:1.12.1")
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2026.02.01"))
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.12.1")

@@ -455,4 +455,5 @@
     <string name="charging_screen_details">Display a stunning screen saver while charging your phone.</string>
     <string name="add_quick_settings_tile">Add Quick Settings Tile</string>
     <string name="add_quick_settings_tile_details">If the screen saver option is missing on your phone, you can add a Quick Settings Tile.</string>
+    <string name="short_minute">%s min</string>
 </resources>

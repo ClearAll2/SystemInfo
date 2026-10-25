@@ -443,4 +443,5 @@
     <string name="charging_screen_details">휴대폰 충전 중 멋진 화면 보호기를 표시합니다.</string>
     <string name="add_quick_settings_tile">빠른 설정 타일 추가</string>
     <string name="add_quick_settings_tile_details">휴대폰에 화면 보호기 옵션이 없는 경우 빠른 설정 타일을 추가할 수 있습니다.</string>
+    <string name="short_minute">%s분</string>
 </resources>

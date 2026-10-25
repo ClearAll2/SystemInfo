@@ -18,8 +18,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -283,15 +283,15 @@ fun ChargingScreen(
         // Overlay tooltip or extra stats when tapped
         AnimatedVisibility(
             visible = showExtraInfo,
-            enter = fadeIn() + slideInVertically(
-                initialOffsetY = { up -> -up },
+            enter = fadeIn() + slideInHorizontally(
+                initialOffsetX = { left -> -left },
                 animationSpec = tween(250)
             ),
-            exit = fadeOut() + slideOutVertically(
-                targetOffsetY = { down -> -down },
+            exit = fadeOut() + slideOutHorizontally(
+                targetOffsetX = { left -> -left },
                 animationSpec = tween(250)
             ),
-            modifier = Modifier.align(Alignment.TopCenter)
+            modifier = Modifier.align(Alignment.CenterStart)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -371,16 +371,17 @@ private fun ChargingPortraitContent(
                 Text(
                     text = if (level >= 0) "$level" else "--",
                     color = accentColor,
-                    fontSize = 110.sp,
+                    fontSize = 120.sp,
                     fontWeight = FontWeight.ExtraLight,
-                    lineHeight = 110.sp
+                    lineHeight = 120.sp,
+                    modifier = Modifier.alignByBaseline()
                 )
                 Text(
                     text = "%",
                     color = accentColor,
-                    fontSize = 38.sp,
+                    fontSize = 40.sp,
                     fontWeight = FontWeight.Light,
-                    modifier = Modifier.padding(bottom = 12.dp, start = 2.dp)
+                    modifier = Modifier.alignByBaseline().padding(bottom = 12.dp, start = 2.dp)
                 )
             }
         }
@@ -394,7 +395,7 @@ private fun ChargingPortraitContent(
             Text(
                 text = timeString,
                 color = Color.White,
-                fontSize = 24.sp,
+                fontSize = 30.sp,
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.height(2.dp))
@@ -417,111 +418,118 @@ private fun PortraitVerticalProgressBar(
     minsTo100: Int,
     accentColor: Color
 ) {
-    Canvas(modifier = modifier) {
-        val width = size.width
-        val height = size.height
-        val lineX = width - 8.dp.toPx()
-        val strokeWidth = 5.dp.toPx()
-        val gap = 6.dp.toPx()
+    BoxWithConstraints(modifier = modifier) {
+        val barHeight = maxHeight
 
-        // 80% split position: 0% at bottom, 100% at top
-        val seg1TopY = height * 0.2f + gap / 2f
-        val seg2TopY = 0f
-        val seg2BottomY = height * 0.2f - gap / 2f
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val width = size.width
+            val height = size.height
+            val lineX = width - 8.dp.toPx()
+            val strokeWidth = 5.dp.toPx()
+            val gap = 6.dp.toPx()
 
-        val trackColor = Color.White.copy(alpha = 0.25f)
+            // 80% split position: 0% at bottom, 100% at top
+            val seg1TopY = height * 0.2f + gap / 2f
+            val seg2TopY = 0f
+            val seg2BottomY = height * 0.2f - gap / 2f
 
-        // Draw track segment 1 (0 to 80%)
-        drawLine(
-            color = trackColor,
-            start = Offset(lineX, height),
-            end = Offset(lineX, seg1TopY),
-            strokeWidth = strokeWidth,
-            cap = StrokeCap.Round
-        )
+            val trackColor = Color.White.copy(alpha = 0.25f)
 
-        // Draw track segment 2 (80 to 100%)
-        drawLine(
-            color = trackColor,
-            start = Offset(lineX, seg2BottomY),
-            end = Offset(lineX, seg2TopY),
-            strokeWidth = strokeWidth,
-            cap = StrokeCap.Round
-        )
-
-        // Draw Filled Progress
-        val progressRatio = (level.coerceIn(0, 100) / 100f)
-        val currentFillY = height * (1f - progressRatio)
-
-        if (level > 0) {
-            // Fill segment 1
-            if (currentFillY < height) {
-                val endY = currentFillY.coerceAtLeast(seg1TopY)
-                drawLine(
-                    color = accentColor,
-                    start = Offset(lineX, height),
-                    end = Offset(lineX, endY),
-                    strokeWidth = strokeWidth,
-                    cap = StrokeCap.Round
-                )
-            }
-            // Fill segment 2 (above 80%)
-            if (currentFillY < seg1TopY) {
-                val endY = currentFillY.coerceAtLeast(seg2TopY)
-                drawLine(
-                    color = accentColor,
-                    start = Offset(lineX, seg2BottomY),
-                    end = Offset(lineX, endY),
-                    strokeWidth = strokeWidth,
-                    cap = StrokeCap.Round
-                )
-            }
-        }
-    }
-
-    // Overlay text markers at 100% (top) and 80%
-    Box(modifier = modifier) {
-        // 100% Marker
-        Column(
-            horizontalAlignment = Alignment.End,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .offset(x = (-20).dp, y = (-8).dp)
-        ) {
-            Text(
-                text = "100%",
-                color = Color.White.copy(alpha = 0.9f),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
+            // Draw track segment 1 (0 to 80%)
+            drawLine(
+                color = trackColor,
+                start = Offset(lineX, height),
+                end = Offset(lineX, seg1TopY),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
             )
-            if (minsTo100 > 0 && level < 100 && currentMa > 0) {
-                Text(
-                    text = "${minsTo100}m",
-                    color = Color.White.copy(alpha = 0.6f),
-                    fontSize = 13.sp
-                )
+
+            // Draw track segment 2 (80 to 100%)
+            drawLine(
+                color = trackColor,
+                start = Offset(lineX, seg2BottomY),
+                end = Offset(lineX, seg2TopY),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
+
+            // Draw Filled Progress
+            val progressRatio = (level.coerceIn(0, 100) / 100f)
+            val currentFillY = height * (1f - progressRatio)
+
+            if (level > 0) {
+                // Fill segment 1
+                if (currentFillY < height) {
+                    val endY = currentFillY.coerceAtLeast(seg1TopY)
+                    drawLine(
+                        color = accentColor,
+                        start = Offset(lineX, height),
+                        end = Offset(lineX, endY),
+                        strokeWidth = strokeWidth,
+                        cap = StrokeCap.Round
+                    )
+                }
+                // Fill segment 2 (above 80%)
+                if (currentFillY < seg1TopY) {
+                    val endY = currentFillY.coerceAtLeast(seg2TopY)
+                    drawLine(
+                        color = accentColor,
+                        start = Offset(lineX, seg2BottomY),
+                        end = Offset(lineX, endY),
+                        strokeWidth = strokeWidth,
+                        cap = StrokeCap.Round
+                    )
+                }
             }
         }
 
-        // 80% Marker
-        Column(
-            horizontalAlignment = Alignment.End,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .offset(x = (-20).dp, y = 54.dp)
-        ) {
-            Text(
-                text = "80%",
-                color = Color.White.copy(alpha = 0.9f),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
-            )
-            if (minsTo80 > 0 && level < 80 && currentMa > 0) {
+        // Overlay text markers at 100% (top) and 80%
+        Box(modifier = Modifier.fillMaxSize()) {
+            // 100% Marker
+            Column(
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = (-20).dp, y = (-8).dp)
+            ) {
                 Text(
-                    text = "${minsTo80}m",
-                    color = Color.White.copy(alpha = 0.6f),
-                    fontSize = 13.sp
+                    text = "100%",
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
                 )
+                if (minsTo100 > 0 && level < 100 && currentMa > 0) {
+                    Text(
+                        text = stringResource(R.string.short_minute, minsTo100),
+                        color = Color.White.copy(alpha = 0.6f),
+                        fontSize = 13.sp
+                    )
+                }
+            }
+
+            // 80% Marker
+            Column(
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(
+                        x = (-20).dp,
+                        y = barHeight * 0.2f - 12.dp
+                    )
+            ) {
+                Text(
+                    text = "80%",
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                if (minsTo80 > 0 && level < 80 && currentMa > 0) {
+                    Text(
+                        text = stringResource(R.string.short_minute, minsTo80),
+                        color = Color.White.copy(alpha = 0.6f),
+                        fontSize = 13.sp
+                    )
+                }
             }
         }
     }
@@ -551,14 +559,15 @@ private fun ChargingLandscapeContent(
                 color = accentColor,
                 fontSize = 120.sp,
                 fontWeight = FontWeight.ExtraLight,
-                lineHeight = 120.sp
+                lineHeight = 120.sp,
+                modifier = Modifier.alignByBaseline()
             )
             Text(
                 text = "%",
                 color = accentColor,
-                fontSize = 42.sp,
+                fontSize = 40.sp,
                 fontWeight = FontWeight.Light,
-                modifier = Modifier.padding(bottom = 16.dp, start = 2.dp)
+                modifier = Modifier.alignByBaseline().padding(bottom = 16.dp, start = 2.dp)
             )
         }
 
@@ -588,7 +597,7 @@ private fun ChargingLandscapeContent(
             Text(
                 text = timeString,
                 color = Color.White,
-                fontSize = 22.sp,
+                fontSize = 30.sp,
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.height(2.dp))
@@ -611,112 +620,116 @@ private fun LandscapeHorizontalProgressBar(
     minsTo100: Int,
     accentColor: Color
 ) {
-    Canvas(modifier = modifier) {
-        val width = size.width
-        val height = size.height
-        val lineY = height - 12.dp.toPx()
-        val strokeWidth = 5.dp.toPx()
-        val gap = 6.dp.toPx()
+    BoxWithConstraints(modifier = modifier) {
+        val barWidth = maxWidth
 
-        // 80% split position: 0% at left, 100% at right
-        val seg1LeftX = 0f
-        val seg1RightX = width * 0.8f - gap / 2f
-        val seg2LeftX = width * 0.8f + gap / 2f
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val width = size.width
+            val height = size.height
+            val lineY = height - 12.dp.toPx()
+            val strokeWidth = 5.dp.toPx()
+            val gap = 6.dp.toPx()
 
-        val trackColor = Color.White.copy(alpha = 0.25f)
+            // 80% split position: 0% at left, 100% at right
+            val seg1LeftX = 0f
+            val seg1RightX = width * 0.8f - gap / 2f
+            val seg2LeftX = width * 0.8f + gap / 2f
 
-        // Draw track segment 1 (0 to 80%)
-        drawLine(
-            color = trackColor,
-            start = Offset(seg1LeftX, lineY),
-            end = Offset(seg1RightX, lineY),
-            strokeWidth = strokeWidth,
-            cap = StrokeCap.Round
-        )
+            val trackColor = Color.White.copy(alpha = 0.25f)
 
-        // Draw track segment 2 (80 to 100%)
-        drawLine(
-            color = trackColor,
-            start = Offset(seg2LeftX, lineY),
-            end = Offset(width, lineY),
-            strokeWidth = strokeWidth,
-            cap = StrokeCap.Round
-        )
+            // Draw track segment 1 (0 to 80%)
+            drawLine(
+                color = trackColor,
+                start = Offset(seg1LeftX, lineY),
+                end = Offset(seg1RightX, lineY),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
 
-        // Draw Filled Progress
-        val progressRatio = (level.coerceIn(0, 100) / 100f)
-        val currentFillX = width * progressRatio
+            // Draw track segment 2 (80 to 100%)
+            drawLine(
+                color = trackColor,
+                start = Offset(seg2LeftX, lineY),
+                end = Offset(width, lineY),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
 
-        if (level > 0) {
-            // Fill segment 1
-            if (currentFillX > seg1LeftX) {
-                val endX = currentFillX.coerceAtMost(seg1RightX)
-                drawLine(
-                    color = accentColor,
-                    start = Offset(seg1LeftX, lineY),
-                    end = Offset(endX, lineY),
-                    strokeWidth = strokeWidth,
-                    cap = StrokeCap.Round
-                )
-            }
-            // Fill segment 2
-            if (currentFillX > seg2LeftX) {
-                val endX = currentFillX.coerceAtMost(width)
-                drawLine(
-                    color = accentColor,
-                    start = Offset(seg2LeftX, lineY),
-                    end = Offset(endX, lineY),
-                    strokeWidth = strokeWidth,
-                    cap = StrokeCap.Round
-                )
+            // Draw Filled Progress
+            val progressRatio = (level.coerceIn(0, 100) / 100f)
+            val currentFillX = width * progressRatio
+
+            if (level > 0) {
+                // Fill segment 1
+                if (currentFillX > seg1LeftX) {
+                    val endX = currentFillX.coerceAtMost(seg1RightX)
+                    drawLine(
+                        color = accentColor,
+                        start = Offset(seg1LeftX, lineY),
+                        end = Offset(endX, lineY),
+                        strokeWidth = strokeWidth,
+                        cap = StrokeCap.Round
+                    )
+                }
+                // Fill segment 2
+                if (currentFillX > seg2LeftX) {
+                    val endX = currentFillX.coerceAtMost(width)
+                    drawLine(
+                        color = accentColor,
+                        start = Offset(seg2LeftX, lineY),
+                        end = Offset(endX, lineY),
+                        strokeWidth = strokeWidth,
+                        cap = StrokeCap.Round
+                    )
+                }
             }
         }
-    }
 
-    // Overlay text markers above 80% and 100%
-    Box(modifier = modifier) {
-        // 80% Marker above bar
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .offset(x = 180.dp, y = 0.dp)
-        ) {
-            if (minsTo80 > 0 && level < 80 && currentMa > 0) {
+        // Overlay text markers above 80% and 100%
+        Box(modifier = Modifier.fillMaxSize()) {
+            // 80% Marker above bar
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .offset(x = barWidth * 0.8f - 24.dp, y = 0.dp)
+            ) {
+                if (minsTo80 > 0 && level < 80 && currentMa > 0) {
+                    Text(
+                        text = stringResource(R.string.short_minute, minsTo80),
+                        color = Color.White.copy(alpha = 0.7f),
+                        fontSize = 13.sp
+                    )
+                }
                 Text(
-                    text = "${minsTo80}m",
-                    color = Color.White.copy(alpha = 0.7f),
-                    fontSize = 13.sp
+                    text = "80%",
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
                 )
             }
-            Text(
-                text = "80%",
-                color = Color.White.copy(alpha = 0.9f),
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
 
-        // 100% Marker above bar
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .offset(x = (-10).dp, y = 0.dp)
-        ) {
-            if (minsTo100 > 0 && level < 100 && currentMa > 0) {
+            // 100% Marker above bar
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = (-10).dp, y = 0.dp)
+            ) {
+                if (minsTo100 > 0 && level < 100 && currentMa > 0) {
+                    Text(
+                        text = stringResource(R.string.short_minute, minsTo100),
+                        color = Color.White.copy(alpha = 0.7f),
+                        fontSize = 13.sp
+                    )
+                }
                 Text(
-                    text = "${minsTo100}m",
-                    color = Color.White.copy(alpha = 0.7f),
-                    fontSize = 13.sp
+                    text = "100%",
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
                 )
             }
-            Text(
-                text = "100%",
-                color = Color.White.copy(alpha = 0.9f),
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Medium
-            )
         }
     }
 }

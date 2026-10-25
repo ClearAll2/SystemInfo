@@ -443,4 +443,5 @@
     <string name="charging_screen_details">充電中に魅力的なスクリーンセーバーを表示します。</string>
     <string name="add_quick_settings_tile">クイック設定タイルを追加</string>
     <string name="add_quick_settings_tile_details">スマートフォンにスクリーンセーバーのオプションがない場合は、クイック設定タイルを追加できます。</string>
+    <string name="short_minute">%s 分</string>
 </resources>

@@ -444,4 +444,5 @@
     <string name="charging_screen_details">Beeindruckenden Bildschirmschoner anzeigen, während Ihr Telefon geladen wird.</string>
     <string name="add_quick_settings_tile">Schnell­einstellungen-Kachel hinzufügen</string>
     <string name="add_quick_settings_tile_details">Falls die Bildschirmschoner-Option auf Ihrem Telefon fehlt, können Sie eine Schnelleinstellungen-Kachel hinzufügen.</string>
+    <string name="short_minute">%s Min</string>
 </resources>

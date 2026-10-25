@@ -182,7 +182,10 @@ fun MainNavigation(
                 paddingValues = paddingValues,
                 longPressCopy = longPressCopy,
                 copyTitle = copyTitle,
-                showNotice = showNotice
+                showNotice = showNotice,
+                onMonitorsClick = {
+                    navController.navigate(NavigationItem.CPUMonitor.route)
+                }
             )
         }
         composable(
@@ -251,7 +254,10 @@ fun MainNavigation(
             NetworkScreen(
                 paddingValues = paddingValues,
                 longPressCopy = longPressCopy,
-                copyTitle = copyTitle
+                copyTitle = copyTitle,
+                onNetworkMonitorClick = {
+                    navController.navigate(NavigationItem.NetworkMonitor.route)
+                }
             )
         }
         composable(

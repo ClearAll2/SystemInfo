@@ -252,7 +252,7 @@ fun BatteryScreen(
                                     Text(stringResource(R.string.charging_screen))
                                     Icon(
                                         modifier = Modifier.padding(start = 8.dp),
-                                        imageVector = ImageVector.vectorResource(R.drawable.arrow_forward_24px),
+                                        imageVector = ImageVector.vectorResource(R.drawable.open_in_new_24px),
                                         contentDescription = null
                                     )
                                 }

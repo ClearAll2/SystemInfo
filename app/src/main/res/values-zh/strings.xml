@@ -443,4 +443,5 @@
     <string name="charging_screen_details">在手机充电时显示精美的屏保。</string>
     <string name="add_quick_settings_tile">添加快捷设置磁贴</string>
     <string name="add_quick_settings_tile_details">如果您的手机缺少屏保选项，可以添加快捷设置磁贴。</string>
+    <string name="short_minute">%s 分</string>
 </resources>
