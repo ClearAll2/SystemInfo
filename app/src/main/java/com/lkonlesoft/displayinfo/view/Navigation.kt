@@ -104,7 +104,7 @@ fun MainNavigation(
             route = NavigationItem.Settings.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.Settings.route}"
                 }
             )) {
             SettingsScreen(
@@ -125,7 +125,7 @@ fun MainNavigation(
             route = NavigationItem.About.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.About.route}"
                 }
             )) {
             AboutScreen(paddingValues = paddingValues)
@@ -135,7 +135,7 @@ fun MainNavigation(
             route = NavigationItem.Home.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.Home.route}"
                 }
             )) {
             HomeScreen(
@@ -149,7 +149,7 @@ fun MainNavigation(
             route = NavigationItem.System.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.System.route}"
                 }
             )) {
             SystemScreen(
@@ -162,7 +162,7 @@ fun MainNavigation(
             route = NavigationItem.Android.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.Android.route}"
                 }
             )) {
             AndroidScreen(
@@ -175,7 +175,7 @@ fun MainNavigation(
             route = NavigationItem.SOC.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.SOC.route}"
                 }
             )) {
             HardwareScreen(
@@ -192,7 +192,7 @@ fun MainNavigation(
             route = NavigationItem.Display.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.Display.route}"
                 }
             )) {
             DisplayScreen(
@@ -205,7 +205,7 @@ fun MainNavigation(
             route = NavigationItem.Battery.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.Battery.route}"
                 }
             )) {
             BatteryScreen(
@@ -222,7 +222,7 @@ fun MainNavigation(
             route = NavigationItem.Memory.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.Memory.route}"
                 }
             )) {
             MemoryScreen(
@@ -235,7 +235,7 @@ fun MainNavigation(
             route = NavigationItem.Storage.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.Storage.route}"
                 })
         ) {
             StorageScreen(
@@ -248,7 +248,7 @@ fun MainNavigation(
             route = NavigationItem.Network.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.Network.route}"
                 }
             )) {
             NetworkScreen(
@@ -263,7 +263,7 @@ fun MainNavigation(
         composable(
             route = NavigationItem.Camera.route, deepLinks = listOf(
             navDeepLink {
-                uriPattern = "si://info/$route"
+                uriPattern = "si://info/${NavigationItem.Camera.route}"
             }
         )) {
             CameraInfoScreen(
@@ -276,7 +276,7 @@ fun MainNavigation(
         composable(
             route = NavigationItem.Connectivity.route, deepLinks = listOf(
             navDeepLink {
-                uriPattern = "si://info/$route"
+                uriPattern = "si://info/${NavigationItem.Connectivity.route}"
             }
         )) {
             ConnectivityScreen(
@@ -288,7 +288,7 @@ fun MainNavigation(
         composable(
             route = NavigationItem.Media.route, deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.Media.route}"
                 }
             )) {
             MediaScreen(
@@ -301,7 +301,7 @@ fun MainNavigation(
         composable(
             route = NavigationItem.Apps.route, deepLinks = listOf(
             navDeepLink {
-                uriPattern = "si://info/$route"
+                uriPattern = "si://info/${NavigationItem.Apps.route}"
             }
         )) {
             AppsScreen(
@@ -313,7 +313,7 @@ fun MainNavigation(
         composable(
             route = NavigationItem.Sensors.route, deepLinks = listOf(
             navDeepLink {
-                uriPattern = "si://info/$route"
+                uriPattern = "si://info/${NavigationItem.Sensors.route}"
             }
         )) {
             SensorsScreen(
@@ -326,7 +326,7 @@ fun MainNavigation(
             route = NavigationItem.Test.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.Test.route}"
                 }
             )) {
             TestScreen(
@@ -339,7 +339,7 @@ fun MainNavigation(
             route = NavigationItem.ColorTest.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.ColorTest.route}"
                 }
             )) {
             ColorTestScreen {
@@ -350,7 +350,7 @@ fun MainNavigation(
             route = NavigationItem.TouchTest.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.TouchTest.route}"
                 }
             )) {
             TouchTestScreen {
@@ -361,7 +361,7 @@ fun MainNavigation(
             route = NavigationItem.FlashlightTest.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.FlashlightTest.route}"
                 }
             )) {
             FlashlightTestScreen (paddingValues = paddingValues)
@@ -370,7 +370,7 @@ fun MainNavigation(
             route = NavigationItem.VibrationTest.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.VibrationTest.route}"
                 }
             )) {
             VibrationTestScreen(paddingValues = paddingValues)
@@ -379,7 +379,7 @@ fun MainNavigation(
             route = NavigationItem.LightSensorTest.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.LightSensorTest.route}"
                 }
             )) {
             LightSensorTestScreen(paddingValues = paddingValues)
@@ -388,7 +388,7 @@ fun MainNavigation(
             route = NavigationItem.ProximityTest.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.ProximityTest.route}"
                 }
             )) {
             ProximityTestScreen(paddingValues = paddingValues)
@@ -397,7 +397,7 @@ fun MainNavigation(
             route = NavigationItem.AccelerometerTest.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.AccelerometerTest.route}"
                 }
             )) {
             AccelerometerTestScreen(paddingValues = paddingValues)
@@ -406,7 +406,7 @@ fun MainNavigation(
             route = NavigationItem.Monitors.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.Monitors.route}"
                 }
             )) {
             MonitorsScreen(navController = navController, currentRoute = currentRoute, paddingValues = paddingValues)
@@ -415,7 +415,7 @@ fun MainNavigation(
             route = NavigationItem.CPUMonitor.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.CPUMonitor.route}"
                 }
             )) {
             CpuMonitorScreen(paddingValues = paddingValues)
@@ -424,7 +424,7 @@ fun MainNavigation(
             route = NavigationItem.NetworkMonitor.route,
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "si://info/$route"
+                    uriPattern = "si://info/${NavigationItem.NetworkMonitor.route}"
                 }
             )) {
             NetworkMonitorScreen(paddingValues = paddingValues)

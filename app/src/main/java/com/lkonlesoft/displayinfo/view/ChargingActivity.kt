@@ -19,7 +19,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -283,15 +285,29 @@ fun ChargingScreen(
         // Overlay tooltip or extra stats when tapped
         AnimatedVisibility(
             visible = showExtraInfo,
-            enter = fadeIn() + slideInHorizontally(
-                initialOffsetX = { left -> -left },
-                animationSpec = tween(250)
-            ),
-            exit = fadeOut() + slideOutHorizontally(
+            enter = fadeIn() + if (isPortrait) {
+                slideInHorizontally(
+                    initialOffsetX = { left -> -left },
+                    animationSpec = tween(250)
+                )
+            }  else {
+                slideInVertically (
+                    initialOffsetY = { top -> -top },
+                    animationSpec = tween(250)
+                )
+            }
+            ,
+            exit = fadeOut() + if (isPortrait) { slideOutHorizontally(
                 targetOffsetX = { left -> -left },
-                animationSpec = tween(250)
-            ),
-            modifier = Modifier.align(Alignment.CenterStart)
+                animationSpec = tween(250))
+            } else {
+                slideOutVertically(
+                    targetOffsetY = { top -> -top},
+                    animationSpec = tween(250)
+                )
+            }
+            ,
+            modifier = Modifier.align(if (isPortrait) Alignment.CenterStart else Alignment.TopCenter)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -486,49 +502,53 @@ private fun PortraitVerticalProgressBar(
         // Overlay text markers at 100% (top) and 80%
         Box(modifier = Modifier.fillMaxSize()) {
             // 100% Marker
-            Column(
-                horizontalAlignment = Alignment.End,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = (-20).dp, y = (-8).dp)
-            ) {
-                Text(
-                    text = "100%",
-                    color = Color.White.copy(alpha = 0.9f),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                if (minsTo100 > 0 && level < 100 && currentMa > 0) {
+            if (level < 100) {
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = (-20).dp, y = (-8).dp)
+                ) {
                     Text(
-                        text = stringResource(R.string.short_minute, minsTo100),
-                        color = Color.White.copy(alpha = 0.6f),
-                        fontSize = 13.sp
+                        text = "100%",
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
                     )
+                    if (minsTo100 > 0 && currentMa > 0) {
+                        Text(
+                            text = stringResource(R.string.short_minute, minsTo100),
+                            color = Color.White.copy(alpha = 0.6f),
+                            fontSize = 13.sp
+                        )
+                    }
                 }
             }
 
-            // 80% Marker
-            Column(
-                horizontalAlignment = Alignment.End,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(
-                        x = (-20).dp,
-                        y = barHeight * 0.2f - 12.dp
-                    )
-            ) {
-                Text(
-                    text = "80%",
-                    color = Color.White.copy(alpha = 0.9f),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                if (minsTo80 > 0 && level < 80 && currentMa > 0) {
+            if (level < 80) {
+                // 80% Marker
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(
+                            x = (-20).dp,
+                            y = barHeight * 0.2f - 12.dp
+                        )
+                ) {
                     Text(
-                        text = stringResource(R.string.short_minute, minsTo80),
-                        color = Color.White.copy(alpha = 0.6f),
-                        fontSize = 13.sp
+                        text = "80%",
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
                     )
+                    if (minsTo80 > 0 && currentMa > 0) {
+                        Text(
+                            text = stringResource(R.string.short_minute, minsTo80),
+                            color = Color.White.copy(alpha = 0.6f),
+                            fontSize = 13.sp
+                        )
+                    }
                 }
             }
         }
@@ -687,48 +707,52 @@ private fun LandscapeHorizontalProgressBar(
 
         // Overlay text markers above 80% and 100%
         Box(modifier = Modifier.fillMaxSize()) {
-            // 80% Marker above bar
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .offset(x = barWidth * 0.8f - 24.dp, y = 0.dp)
-            ) {
-                if (minsTo80 > 0 && level < 80 && currentMa > 0) {
+            if (level < 80) {
+                // 80% Marker above bar
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .offset(x = barWidth * 0.8f - 24.dp, y = 0.dp)
+                ) {
+                    if (minsTo80 > 0 && currentMa > 0) {
+                        Text(
+                            text = stringResource(R.string.short_minute, minsTo80),
+                            color = Color.White.copy(alpha = 0.7f),
+                            fontSize = 13.sp
+                        )
+                    }
                     Text(
-                        text = stringResource(R.string.short_minute, minsTo80),
-                        color = Color.White.copy(alpha = 0.7f),
-                        fontSize = 13.sp
+                        text = "80%",
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
                     )
                 }
-                Text(
-                    text = "80%",
-                    color = Color.White.copy(alpha = 0.9f),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
             }
 
-            // 100% Marker above bar
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = (-10).dp, y = 0.dp)
-            ) {
-                if (minsTo100 > 0 && level < 100 && currentMa > 0) {
+            if (level < 100) {
+                // 100% Marker above bar
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = (-10).dp, y = 0.dp)
+                ) {
+                    if (minsTo100 > 0 && currentMa > 0) {
+                        Text(
+                            text = stringResource(R.string.short_minute, minsTo100),
+                            color = Color.White.copy(alpha = 0.7f),
+                            fontSize = 13.sp
+                        )
+                    }
                     Text(
-                        text = stringResource(R.string.short_minute, minsTo100),
-                        color = Color.White.copy(alpha = 0.7f),
-                        fontSize = 13.sp
+                        text = "100%",
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
                     )
                 }
-                Text(
-                    text = "100%",
-                    color = Color.White.copy(alpha = 0.9f),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
             }
         }
     }
