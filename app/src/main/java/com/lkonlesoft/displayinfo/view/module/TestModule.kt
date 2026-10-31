@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.lkonlesoft.displayinfo.`object`.NavigationItem
-import com.lkonlesoft.displayinfo.view.BigTile
+import com.lkonlesoft.displayinfo.view.components.BigTile
 
 @Composable
 fun TestScreen(navController: NavHostController, currentRoute: String?, paddingValues: PaddingValues) {

@@ -67,7 +67,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.view.staggeredHeader
+import com.lkonlesoft.displayinfo.view.components.staggeredHeader
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

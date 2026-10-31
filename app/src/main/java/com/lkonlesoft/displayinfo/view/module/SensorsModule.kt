@@ -36,11 +36,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.SensorUtils
-import com.lkonlesoft.displayinfo.view.CardDashboard
-import com.lkonlesoft.displayinfo.view.GeneralStatRow
-import com.lkonlesoft.displayinfo.view.HeaderForDashboard
-import com.lkonlesoft.displayinfo.view.IndividualLine
-import com.lkonlesoft.displayinfo.view.staggeredHeader
+import com.lkonlesoft.displayinfo.view.components.CardDashboard
+import com.lkonlesoft.displayinfo.view.components.GeneralStatRow
+import com.lkonlesoft.displayinfo.view.components.HeaderForDashboard
+import com.lkonlesoft.displayinfo.view.components.IndividualLine
+import com.lkonlesoft.displayinfo.view.components.staggeredHeader
 
 @Composable
 fun SensorsDashboard(onClick: () -> Unit) {

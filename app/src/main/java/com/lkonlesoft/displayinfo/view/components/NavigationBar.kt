@@ -1,4 +1,4 @@
-package com.lkonlesoft.displayinfo.view
+package com.lkonlesoft.displayinfo.view.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring

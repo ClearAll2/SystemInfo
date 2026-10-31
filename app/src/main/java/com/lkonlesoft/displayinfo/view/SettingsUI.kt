@@ -60,6 +60,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.os.LocaleListCompat
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.`object`.AppTheme
+import com.lkonlesoft.displayinfo.view.components.CommonSwitchOption
+import com.lkonlesoft.displayinfo.view.components.HeaderLine
+import com.lkonlesoft.displayinfo.view.components.IndividualLine
+import com.lkonlesoft.displayinfo.view.components.NewThemePickerItem
+import com.lkonlesoft.displayinfo.view.components.PopupSelectionLine
+import com.lkonlesoft.displayinfo.view.components.getCurrentLanguage
+import com.lkonlesoft.displayinfo.view.components.staggeredHeader
 import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
 
 @Composable
@@ -158,13 +165,11 @@ fun SettingsScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp)
-            .padding(top = paddingValues.calculateTopPadding())
+            .padding(top = paddingValues.calculateTopPadding(),
+                start = paddingValues.calculateStartPadding(layoutDirection),
+                end = paddingValues.calculateEndPadding(layoutDirection))
             .clip(shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-        contentPadding = PaddingValues(
-            start = paddingValues.calculateStartPadding(layoutDirection),
-            end = paddingValues.calculateEndPadding(layoutDirection),
-            bottom = paddingValues.calculateBottomPadding()
-        ),
+        contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {
@@ -198,7 +203,7 @@ fun SettingsScreen(
                 IndividualLine(
                     title = stringResource(R.string.font),
                     info = if (typographyType == 1) stringResource(R.string.system_default)
-                        else stringResource(R.string.gg_sf_font),
+                    else stringResource(R.string.gg_sf_font),
                     onClick = {
                         showFontDialog = !showFontDialog
                     }

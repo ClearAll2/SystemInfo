@@ -42,8 +42,8 @@ import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.utils.NetworkTrafficSnapshot
 import com.lkonlesoft.displayinfo.utils.NetworkUtils
-import com.lkonlesoft.displayinfo.view.LiveChart
-import com.lkonlesoft.displayinfo.view.staggeredHeader
+import com.lkonlesoft.displayinfo.view.components.LiveChart
+import com.lkonlesoft.displayinfo.view.components.staggeredHeader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

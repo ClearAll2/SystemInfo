@@ -1,4 +1,4 @@
-package com.lkonlesoft.displayinfo.view
+package com.lkonlesoft.displayinfo.view.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth

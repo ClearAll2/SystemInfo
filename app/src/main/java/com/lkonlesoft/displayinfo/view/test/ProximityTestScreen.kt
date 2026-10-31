@@ -55,8 +55,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.view.CommonSwitchOption
-import com.lkonlesoft.displayinfo.view.staggeredHeader
+import com.lkonlesoft.displayinfo.view.components.CommonSwitchOption
+import com.lkonlesoft.displayinfo.view.components.staggeredHeader
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

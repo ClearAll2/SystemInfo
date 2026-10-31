@@ -13,7 +13,7 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-import com.lkonlesoft.displayinfo.view.ChargingScreen
+import com.lkonlesoft.displayinfo.view.components.ChargingScreen
 
 class ChargingDreamService : DreamService(), LifecycleOwner, SavedStateRegistryOwner, ViewModelStoreOwner {
 

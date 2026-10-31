@@ -1,4 +1,4 @@
-package com.lkonlesoft.displayinfo.view
+package com.lkonlesoft.displayinfo.view.components
 
 import android.graphics.drawable.Drawable
 import android.widget.Toast

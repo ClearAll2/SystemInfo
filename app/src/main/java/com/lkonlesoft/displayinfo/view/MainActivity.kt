@@ -1,16 +1,9 @@
 package com.lkonlesoft.displayinfo.view
 
-import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
-import android.graphics.Canvas
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -30,7 +23,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -47,8 +39,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -80,8 +70,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -89,8 +77,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.lkonlesoft.displayinfo.R
+import com.lkonlesoft.displayinfo.helper.buildDetailsSubTextSetting
+import com.lkonlesoft.displayinfo.helper.createTintedIconCompat
 import com.lkonlesoft.displayinfo.`object`.NavigationItem
 import com.lkonlesoft.displayinfo.ui.theme.ScreenInfoTheme
+import com.lkonlesoft.displayinfo.view.components.BigTile
+import com.lkonlesoft.displayinfo.view.components.FloatingNavigationBar
+import com.lkonlesoft.displayinfo.view.components.ListViewItem
+import com.lkonlesoft.displayinfo.view.components.staggeredHeader
 import com.lkonlesoft.displayinfo.view.module.AndroidDashboard
 import com.lkonlesoft.displayinfo.view.module.AppDashboard
 import com.lkonlesoft.displayinfo.view.module.BatteryDashboard
@@ -107,7 +101,6 @@ import com.lkonlesoft.displayinfo.view.module.SystemDashboard
 import com.lkonlesoft.displayinfo.viewmodel.SettingsViewModel
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.FlowPreview
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -124,8 +117,12 @@ class MainActivity : AppCompatActivity() {
         val shortcutAndroid = ShortcutInfoCompat.Builder(this, "android")
             .setShortLabel(getString(R.string.android))
             .setLongLabel(getString(R.string.android))
-            .setIcon(createTintedIconCompat(context = this, resId = R.drawable.outline_android_24,
-                ContextCompat.getColor(this, R.color.teal_700)))
+            .setIcon(
+                createTintedIconCompat(
+                    context = this, resId = R.drawable.outline_android_24,
+                    ContextCompat.getColor(this, R.color.teal_700)
+                )
+            )
             .setIntent(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -136,8 +133,12 @@ class MainActivity : AppCompatActivity() {
         val shortcutBattery = ShortcutInfoCompat.Builder(this, "battery")
             .setShortLabel(getString(R.string.battery))
             .setLongLabel(getString(R.string.battery))
-            .setIcon(createTintedIconCompat(context = this, resId = R.drawable.battery_android_4_24px,
-                ContextCompat.getColor(this, R.color.teal_700)))
+            .setIcon(
+                createTintedIconCompat(
+                    context = this, resId = R.drawable.battery_android_4_24px,
+                    ContextCompat.getColor(this, R.color.teal_700)
+                )
+            )
             .setIntent(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -148,8 +149,12 @@ class MainActivity : AppCompatActivity() {
         val shortcutMemory = ShortcutInfoCompat.Builder(this, "memory")
             .setShortLabel(getString(R.string.memory))
             .setLongLabel(getString(R.string.memory))
-            .setIcon(createTintedIconCompat(context = this, resId = R.drawable.memory_24px,
-                ContextCompat.getColor(this, R.color.teal_700)))
+            .setIcon(
+                createTintedIconCompat(
+                    context = this, resId = R.drawable.memory_24px,
+                    ContextCompat.getColor(this, R.color.teal_700)
+                )
+            )
             .setIntent(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -163,9 +168,6 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalLayoutApi::class
-)
 @Composable
 fun MainContext(settings: SettingsViewModel){
     val typographyType by settings.typographyType.collectAsStateWithLifecycle()
@@ -381,7 +383,6 @@ fun MainContext(settings: SettingsViewModel){
     }
 }
 
-@OptIn(FlowPreview::class)
 @Composable
 fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute: String?, paddingValues: PaddingValues) {
     val layoutDirection = LocalLayoutDirection.current
@@ -392,23 +393,48 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
         listOf(
             Pair(
                 NavigationItem.System,
-                buildDetailsSubTextSetting(resources, R.string.model, R.string.kernel, R.string.root_status)
+                buildDetailsSubTextSetting(
+                    resources,
+                    R.string.model,
+                    R.string.kernel,
+                    R.string.root_status
+                )
             ),
             Pair(
                 NavigationItem.Android,
-                buildDetailsSubTextSetting(resources, R.string.android_version, R.string.api_level, R.string.sdk)
+                buildDetailsSubTextSetting(
+                    resources,
+                    R.string.android_version,
+                    R.string.api_level,
+                    R.string.sdk
+                )
             ),
             Pair(
                 NavigationItem.SOC,
-                buildDetailsSubTextSetting(resources, R.string.cpu_info, R.string.cpu_usage, R.string.gpu_info)
+                buildDetailsSubTextSetting(
+                    resources,
+                    R.string.cpu_info,
+                    R.string.cpu_usage,
+                    R.string.gpu_info
+                )
             ),
             Pair(
                 NavigationItem.Display,
-                buildDetailsSubTextSetting(resources, R.string.size, R.string.refresh_rate, R.string.capacity)
+                buildDetailsSubTextSetting(
+                    resources,
+                    R.string.size,
+                    R.string.refresh_rate,
+                    R.string.capacity
+                )
             ),
             Pair(
                 NavigationItem.Battery,
-                buildDetailsSubTextSetting(resources, R.string.health, R.string.cycle_count, R.string.temperature)
+                buildDetailsSubTextSetting(
+                    resources,
+                    R.string.health,
+                    R.string.cycle_count,
+                    R.string.temperature
+                )
             ),
             Pair(
                 NavigationItem.Memory,
@@ -416,11 +442,20 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             ),
             Pair(
                 NavigationItem.Storage,
-                buildDetailsSubTextSetting(resources, R.string.internal_storage, R.string.external_storage)
+                buildDetailsSubTextSetting(
+                    resources,
+                    R.string.internal_storage,
+                    R.string.external_storage
+                )
             ),
             Pair(
                 NavigationItem.Network,
-                buildDetailsSubTextSetting(resources, R.string.network_type, R.string.wifi, R.string.sim_info)
+                buildDetailsSubTextSetting(
+                    resources,
+                    R.string.network_type,
+                    R.string.wifi,
+                    R.string.sim_info
+                )
             ),
             Pair(
                 NavigationItem.Camera,
@@ -428,7 +463,11 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             ),
             Pair(
                 NavigationItem.Connectivity,
-                buildDetailsSubTextSetting(resources, R.string.bluetooth, R.string.connected_devices)
+                buildDetailsSubTextSetting(
+                    resources,
+                    R.string.bluetooth,
+                    R.string.connected_devices
+                )
             ),
             Pair(
                 NavigationItem.Media,
@@ -566,43 +605,4 @@ fun HomeScreen(currentView: Int, navController: NavHostController, currentRoute:
             }
         }
     }
-}
-
-private fun buildDetailsSubTextSetting(resources: Resources, vararg resIds: Int): String {
-    return when (resIds.size) {
-        0 -> ""
-        1 -> resources.getString(resIds[0])
-        2 -> "${resources.getString(resIds[0])} & ${resources.getString(resIds[1])}"
-        else -> {
-            val lastString = resources.getString(resIds.last())
-            // Drop the last element to join the rest with commas
-            val remainingStrings = resIds.dropLast(1).joinToString(", ") { resources.getString(it) }
-            "$remainingStrings & $lastString" // Added the Oxford comma for grammatical correctness
-        }
-    }
-}
-
-private fun createTintedIconCompat(
-    context: Context,
-    @DrawableRes resId: Int,
-    @ColorInt tintColor: Int
-): IconCompat {
-
-    val drawable = ContextCompat.getDrawable(context, resId)?.mutate()
-        ?: return IconCompat.createWithResource(context, resId) // fallback
-
-    // Force tint with SRC_IN (most reliable across versions)
-    drawable.colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
-
-    // Create bitmap with explicit config for better compatibility
-    val width = drawable.intrinsicWidth.coerceAtLeast(1)
-    val height = drawable.intrinsicHeight.coerceAtLeast(1)
-
-    val bitmap = createBitmap(width, height)
-
-    val canvas = Canvas(bitmap)
-    drawable.setBounds(0, 0, width, height)
-    drawable.draw(canvas)
-
-    return IconCompat.createWithBitmap(bitmap)
 }

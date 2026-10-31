@@ -56,7 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.view.staggeredHeader
+import com.lkonlesoft.displayinfo.view.components.staggeredHeader
 
 @Composable
 fun VibrationTestScreen(

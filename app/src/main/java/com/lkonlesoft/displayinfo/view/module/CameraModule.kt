@@ -42,14 +42,14 @@ import androidx.core.content.ContextCompat
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.helper.dc.DeviceInfo
 import com.lkonlesoft.displayinfo.utils.CameraUtils
-import com.lkonlesoft.displayinfo.view.CardDashboard
-import com.lkonlesoft.displayinfo.view.ConfirmActionPopup
-import com.lkonlesoft.displayinfo.view.GeneralStatRow
-import com.lkonlesoft.displayinfo.view.GeneralWarning
-import com.lkonlesoft.displayinfo.view.HeaderForDashboard
-import com.lkonlesoft.displayinfo.view.HeaderLine
-import com.lkonlesoft.displayinfo.view.IndividualLine
-import com.lkonlesoft.displayinfo.view.staggeredHeader
+import com.lkonlesoft.displayinfo.view.components.CardDashboard
+import com.lkonlesoft.displayinfo.view.components.ConfirmActionPopup
+import com.lkonlesoft.displayinfo.view.components.GeneralStatRow
+import com.lkonlesoft.displayinfo.view.components.GeneralWarning
+import com.lkonlesoft.displayinfo.view.components.HeaderForDashboard
+import com.lkonlesoft.displayinfo.view.components.HeaderLine
+import com.lkonlesoft.displayinfo.view.components.IndividualLine
+import com.lkonlesoft.displayinfo.view.components.staggeredHeader
 
 
 @Composable
