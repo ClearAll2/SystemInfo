@@ -53,46 +53,37 @@ import kotlin.time.Duration.Companion.milliseconds
 fun NetworkMonitorScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
+    val networkUtils = remember { NetworkUtils(context) }
     var snapshot by remember { mutableStateOf<NetworkTrafficSnapshot?>(null) }
     var refreshInterval by remember { mutableLongStateOf(1000L) }
-
     val downloadHistory = remember { mutableStateOf(listOf<Float>()) }
     val uploadHistory = remember { mutableStateOf(listOf<Float>()) }
 
     LaunchedEffect(refreshInterval) {
-        val networkUtils = NetworkUtils(context)
         while (true) {
             withContext(Dispatchers.IO) {
                 val currentSnapshot = networkUtils.getTrafficSnapshot()
-                withContext(Dispatchers.Main) {
-                    snapshot = currentSnapshot
+                snapshot = currentSnapshot
+                val dlKbps = currentSnapshot.downloadSpeedBps / 1024f
+                val ulKbps = currentSnapshot.uploadSpeedBps / 1024f
+                val currentDlList = downloadHistory.value.toMutableList()
+                val currentUlList = uploadHistory.value.toMutableList()
+                currentDlList.add(dlKbps)
+                currentUlList.add(ulKbps)
+                val maxHistoryPoints = 50
+                if (currentDlList.size > maxHistoryPoints) currentDlList.removeAt(0)
+                if (currentUlList.size > maxHistoryPoints) currentUlList.removeAt(0)
 
-                    val dlKbps = currentSnapshot.downloadSpeedBps / 1024f
-                    val ulKbps = currentSnapshot.uploadSpeedBps / 1024f
+                // Normalize independently for download and upload charts so each scales to full height nicely
+                val maxDl = maxOf(10f, currentDlList.maxOrNull() ?: 10f)
+                val maxUl = maxOf(10f, currentUlList.maxOrNull() ?: 10f)
 
-                    val currentDlList = downloadHistory.value.toMutableList()
-                    val currentUlList = uploadHistory.value.toMutableList()
-
-                    currentDlList.add(dlKbps)
-                    currentUlList.add(ulKbps)
-
-                    val maxHistoryPoints = 50
-                    if (currentDlList.size > maxHistoryPoints) currentDlList.removeAt(0)
-                    if (currentUlList.size > maxHistoryPoints) currentUlList.removeAt(0)
-
-                    // Normalize independently for download and upload charts so each scales to full height nicely
-                    val maxDl = maxOf(10f, currentDlList.maxOrNull() ?: 10f)
-                    val maxUl = maxOf(10f, currentUlList.maxOrNull() ?: 10f)
-
-                    downloadHistory.value = currentDlList.map { (it / maxDl * 100f).coerceIn(0f, 100f) }
-                    uploadHistory.value = currentUlList.map { (it / maxUl * 100f).coerceIn(0f, 100f) }
-                }
+                downloadHistory.value = currentDlList.map { (it / maxDl * 100f).coerceIn(0f, 100f) }
+                uploadHistory.value = currentUlList.map { (it / maxUl * 100f).coerceIn(0f, 100f) }
             }
             delay(refreshInterval.milliseconds)
         }
     }
-
-    val networkUtils = remember { NetworkUtils(context) }
 
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),

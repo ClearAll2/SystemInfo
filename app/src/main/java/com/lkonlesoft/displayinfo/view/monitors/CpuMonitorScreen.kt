@@ -57,32 +57,28 @@ import kotlin.time.Duration.Companion.milliseconds
 fun CpuMonitorScreen(paddingValues: PaddingValues) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
-
+    val socUtils = remember { SocUtils(context) }
     var cpuSnapshot by remember { mutableStateOf<CpuSnapshot?>(null) }
     var refreshInterval by remember { mutableLongStateOf(1000L) }
-
     val overallHistory = remember { mutableStateOf(listOf<Float>()) }
     val coreHistories = remember { mutableStateMapOf<Int, MutableList<Float>>() }
 
     LaunchedEffect(refreshInterval) {
-        val socUtils = SocUtils(context)
         while (true) {
             withContext(Dispatchers.IO) {
                 val snapshot = socUtils.getCpuSnapshot()
-                withContext(Dispatchers.Main) {
-                    cpuSnapshot = snapshot
-                    // Update overall history
-                    val currentOverall = overallHistory.value.toMutableList()
-                    currentOverall.add(snapshot.overallUsagePercent)
-                    if (currentOverall.size > 40) currentOverall.removeAt(0)
-                    overallHistory.value = currentOverall
+                cpuSnapshot = snapshot
+                // Update overall history
+                val currentOverall = overallHistory.value.toMutableList()
+                currentOverall.add(snapshot.overallUsagePercent)
+                if (currentOverall.size > 40) currentOverall.removeAt(0)
+                overallHistory.value = currentOverall
 
-                    // Update per-core history
-                    snapshot.coreStates.forEach { core ->
-                        val history = coreHistories.getOrPut(core.coreIndex) { mutableListOf() }
-                        history.add(core.usagePercent)
-                        if (history.size > 40) history.removeAt(0)
-                    }
+                // Update per-core history
+                snapshot.coreStates.forEach { core ->
+                    val history = coreHistories.getOrPut(core.coreIndex) { mutableListOf() }
+                    history.add(core.usagePercent)
+                    if (history.size > 40) history.removeAt(0)
                 }
             }
             delay(refreshInterval.milliseconds)

@@ -231,6 +231,7 @@
     <string name="zh">Китайский</string>
     <string name="en">Английский</string>
     <string name="vi">Вьетнамский</string>
+    <string name="uz">Узбекский</string>
     <string name="system_default">По умолчанию системы</string>
     <string name="OK">OK</string>
     <string name="connected">Подключено</string>

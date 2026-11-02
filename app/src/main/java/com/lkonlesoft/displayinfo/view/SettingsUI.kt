@@ -101,7 +101,8 @@ fun SettingsScreen(
             "de" to R.string.de,
             "it" to R.string.it,
             "pt" to R.string.pt,
-            "es" to R.string.es
+            "es" to R.string.es,
+            "uz" to R.string.uz,
         )
     }
     LaunchedEffect(Unit) {
@@ -391,7 +392,7 @@ fun LanguageSelectionPopup(
         Surface(
             modifier = Modifier.fillMaxWidth(),
             tonalElevation = 10.dp,
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(25.dp)
+            shape = RoundedCornerShape(25.dp)
         ) {
             Column(
                 modifier = modifier.verticalScroll(rememberScrollState())
@@ -476,7 +477,7 @@ fun FontSelectionPopup(
         Surface(
             modifier = Modifier.fillMaxWidth(),
             tonalElevation = 10.dp,
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(25.dp)
+            shape = RoundedCornerShape(25.dp)
         ) {
             Column(
                 modifier = modifier.verticalScroll(rememberScrollState())

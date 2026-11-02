@@ -231,6 +231,7 @@
     <string name="zh">중국어</string>
     <string name="en">영어</string>
     <string name="vi">베트남어</string>
+    <string name="uz">우즈베크어</string>
     <string name="system_default">시스템 기본</string>
     <string name="OK">확인</string>
     <string name="connected">연결됨</string>

@@ -26,7 +26,7 @@ android {
             useSupportLibrary = true
         }
         @Suppress("UnstableApiUsage")
-        androidResources.localeFilters += listOf("en", "vi", "nl", "fr", "de", "it", "pt", "es", "ru", "ja", "ko", "zh")
+        androidResources.localeFilters += listOf("en", "vi", "nl", "fr", "de", "it", "pt", "es", "ru", "ja", "ko", "zh", "uz")
     }
 
     configurations.all {

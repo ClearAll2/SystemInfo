@@ -12,6 +12,7 @@ import kotlin.math.max
 
 
 data class ChargingState(
+    val isCharging: Boolean = false,
     val level: Int = -1,
     val plugType: String = "",
     val statusStr: String = "",
@@ -161,7 +162,7 @@ class BatteryUtils (private val context: Context) {
         }
 
         // Fallback estimation based on capacity and current
-        val capacity = getBatteryCapacity().let { if (it > 0) it else 4000.0 }
+        val capacity = getBatteryCapacity().let { if (it > 0) it else 5000.0 }
         val rawCurrent = abs(getDischargeCurrent())
         val currentMa = if (rawCurrent > 50) rawCurrent.toDouble() else 2000.0
 
@@ -181,40 +182,18 @@ class BatteryUtils (private val context: Context) {
     }
 
     fun getChargingState(): ChargingState {
-        val intent = getBatteryIntent()
-
-        val level = intent?.let {
-            val l = it.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-            val s = it.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-            if (l >= 0 && s > 0) (l * 100 / s) else -1
-        } ?: -1
-
-        val plugTypeInt = intent?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
-        val plugType = plugMap[plugTypeInt] ?: context.getString(R.string.unplugged)
-
-        val statusInt = intent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
-        val statusStr = statusMap[statusInt] ?: context.getString(R.string.other)
-
-        val temp = intent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1) ?: -1
-        val tempC = if (temp > 0) temp / 10f else -1f
-
-        val rawVoltage = intent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1) ?: -1
-        val voltageV = if (rawVoltage > 0) rawVoltage / 1000f else -1f
-
-        val currentMa = getDischargeCurrent()
-        val wattage = if (voltageV > 0f && currentMa != -1) voltageV * (abs(currentMa) / 1000f) else 0f
         val (minsTo80, minsTo100) = getEstimatedChargeTimes()
-
         return ChargingState(
-            level = level,
-            plugType = plugType,
-            statusStr = statusStr,
-            wattage = wattage,
+            isCharging = isCharging(),
+            level = getBatteryPercentage(),
+            plugType = getPlugType(),
+            statusStr = getBatteryStatus(),
+            wattage = getChargingWattage(),
             minsTo80 = minsTo80,
             minsTo100 = minsTo100,
-            currentMa = currentMa,
-            tempC = tempC,
-            voltageV = voltageV
+            currentMa = getDischargeCurrent(),
+            tempC = getBatteryTemperature(),
+            voltageV = getChargingVoltage()
         )
     }
 

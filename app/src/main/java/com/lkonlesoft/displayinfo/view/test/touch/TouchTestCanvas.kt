@@ -127,17 +127,17 @@ private fun DrawScope.drawGridOverlay(
 }
 
 private fun DrawScope.drawTrails(trails: List<PointerTrail>) {
-    for (trail in trails) {
-        if (trail.points.size > 1) {
+    for ((_, color, points) in trails) {
+        if (points.size > 1) {
             val path = Path().apply {
-                moveTo(trail.points.first().x, trail.points.first().y)
-                for (i in 1 until trail.points.size) {
-                    lineTo(trail.points[i].x, trail.points[i].y)
+                moveTo(points.first().x, points.first().y)
+                for (i in 1 until points.size) {
+                    lineTo(points[i].x, points[i].y)
                 }
             }
             drawPath(
                 path = path,
-                color = trail.color.copy(alpha = 0.8f),
+                color = color.copy(alpha = 0.8f),
                 style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
             )
         }
@@ -145,40 +145,40 @@ private fun DrawScope.drawTrails(trails: List<PointerTrail>) {
 }
 
 private fun DrawScope.drawActivePointers(activeTouches: List<TouchPoint>) {
-    for (touch in activeTouches) {
+    for ((_, position, pressure, color) in activeTouches) {
         val baseRadius = 40.dp.toPx()
-        val pressureRadius = baseRadius * (0.8f + touch.pressure * 0.8f)
+        val pressureRadius = baseRadius * (0.8f + pressure * 0.8f)
         // Outer glowing pressure ring
         drawCircle(
-            color = touch.color.copy(alpha = 0.25f),
+            color = color.copy(alpha = 0.25f),
             radius = pressureRadius * 1.5f,
-            center = touch.position
+            center = position
         )
         // Concentric pressure stroke ring
         drawCircle(
-            color = touch.color,
+            color = color,
             radius = pressureRadius,
-            center = touch.position,
+            center = position,
             style = Stroke(width = 3.dp.toPx())
         )
         // Center solid core
         drawCircle(
-            color = touch.color,
+            color = color,
             radius = 10.dp.toPx(),
-            center = touch.position
+            center = position
         )
         // Crosshairs
         val crossHairSize = 24.dp.toPx()
         drawLine(
             color = Color.White.copy(alpha = 0.8f),
-            start = Offset(touch.position.x - crossHairSize, touch.position.y),
-            end = Offset(touch.position.x + crossHairSize, touch.position.y),
+            start = Offset(position.x - crossHairSize, position.y),
+            end = Offset(position.x + crossHairSize, position.y),
             strokeWidth = 2.dp.toPx()
         )
         drawLine(
             color = Color.White.copy(alpha = 0.8f),
-            start = Offset(touch.position.x, touch.position.y - crossHairSize),
-            end = Offset(touch.position.x, touch.position.y + crossHairSize),
+            start = Offset(position.x, position.y - crossHairSize),
+            end = Offset(position.x, position.y + crossHairSize),
             strokeWidth = 2.dp.toPx()
         )
     }
@@ -241,10 +241,10 @@ private fun DrawScope.drawPointerTooltips(
     textMeasurer: TextMeasurer,
     activeTouches: List<TouchPoint>
 ) {
-    for (touch in activeTouches) {
+    for ((id, position, pressure) in activeTouches) {
         val infoText = buildString {
-            append("P${touch.id}: (${touch.position.x.roundToInt()}, ${touch.position.y.roundToInt()}) ")
-            append("P:${(touch.pressure * 100).roundToInt()}%")
+            append("P$id: (${position.x.roundToInt()}, ${position.y.roundToInt()}) ")
+            append("P:${(pressure * 100).roundToInt()}%")
         }
         val style = TextStyle(
             color = Color.White,
@@ -255,8 +255,8 @@ private fun DrawScope.drawPointerTooltips(
         val layout = textMeasurer.measure(infoText, style)
 
         val tooltipOffset = Offset(
-            x = (touch.position.x + 45.dp.toPx()).coerceAtMost(size.width - layout.size.width - 16f),
-            y = (touch.position.y - 30.dp.toPx()).coerceAtLeast(16f)
+            x = (position.x + 45.dp.toPx()).coerceAtMost(size.width - layout.size.width - 16f),
+            y = (position.y - 30.dp.toPx()).coerceAtLeast(16f)
         )
         // Tooltip Background Card
         drawRoundRect(
