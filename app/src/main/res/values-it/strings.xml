@@ -445,4 +445,6 @@
     <string name="add_quick_settings_tile">Aggiungi riquadro Impostazioni rapide</string>
     <string name="add_quick_settings_tile_details">Se l\'opzione salvaschermo non è disponibile sul tuo telefono, puoi aggiungere un riquadro Impostazioni rapide.</string>
     <string name="short_minute">%s min</string>
+    <string name="thanks_to">Grazie a</string>
+    <string name="translator">Traduttore</string>
 </resources>

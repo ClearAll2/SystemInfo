@@ -54,15 +54,15 @@ class BatteryUtils (private val context: Context) {
         BatteryManager.BATTERY_HEALTH_UNKNOWN to context.getString(R.string.unknown)
     )
 
-    fun getBatteryHealth(): String {
-        val intent = getBatteryIntent()
-        val health = intent?.getIntExtra(BatteryManager.EXTRA_HEALTH, -1) ?: -1
+    fun getBatteryHealth(intent: Intent? = null): String {
+        val batteryIntent = intent ?: getBatteryIntent()
+        val health = batteryIntent?.getIntExtra(BatteryManager.EXTRA_HEALTH, -1) ?: -1
         return healthMap[health] ?: context.getString(R.string.unknown)
     }
 
-    fun getBatteryTechnology(): String {
-        val intent = getBatteryIntent()
-        return intent?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: context.getString(R.string.unknown)
+    fun getBatteryTechnology(intent: Intent? = null): String {
+        val batteryIntent = intent ?: getBatteryIntent()
+        return batteryIntent?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: context.getString(R.string.unknown)
     }
 
     // ⚡️ Battery Status (Charging, Full, etc.)
@@ -74,9 +74,9 @@ class BatteryUtils (private val context: Context) {
         BatteryManager.BATTERY_STATUS_UNKNOWN to context.getString(R.string.unknown)
     )
 
-    fun getBatteryStatus(): String {
-        val intent = getBatteryIntent()
-        val status = intent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+    fun getBatteryStatus(intent: Intent? = null): String {
+        val batteryIntent = intent ?: getBatteryIntent()
+        val status = batteryIntent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
         return statusMap[status] ?: context.getString(R.string.other)
     }
 
@@ -87,31 +87,31 @@ class BatteryUtils (private val context: Context) {
         BatteryManager.BATTERY_PLUGGED_WIRELESS to context.getString(R.string.wireless)
     )
 
-    fun getPlugType(): String {
-        val intent = getBatteryIntent()
-        val plugType = intent?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
+    fun getPlugType(intent: Intent? = null): String {
+        val batteryIntent = intent ?: getBatteryIntent()
+        val plugType = batteryIntent?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
         return plugMap[plugType] ?: context.getString(R.string.unplugged)
     }
 
     // 🔋 Battery Level %
-    fun getBatteryPercentage(): Int {
-        val intent = getBatteryIntent()
-        val level = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
-        val scale = intent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
+    fun getBatteryPercentage(intent: Intent? = null): Int {
+        val batteryIntent = intent ?: getBatteryIntent()
+        val level = batteryIntent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+        val scale = batteryIntent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
         return if (level >= 0 && scale > 0) (level * 100 / scale) else -1
     }
 
     // 🌡️ Temperature in °C
-    fun getBatteryTemperature(): Float {
-        val intent = getBatteryIntent()
-        val temp = intent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1) ?: -1
+    fun getBatteryTemperature(intent: Intent? = null): Float {
+        val batteryIntent = intent ?: getBatteryIntent()
+        val temp = batteryIntent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1) ?: -1
         return if (temp > 0) temp / 10f else -1f
     }
 
-    fun getBatteryCycleCount(): Int {
+    fun getBatteryCycleCount(intent: Intent? = null): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            val intent = getBatteryIntent()
-            intent?.getIntExtra(BatteryManager.EXTRA_CYCLE_COUNT, -1) ?: -1
+            val batteryIntent = intent ?: getBatteryIntent()
+            batteryIntent?.getIntExtra(BatteryManager.EXTRA_CYCLE_COUNT, -1) ?: -1
         } else {
             -1
         }
@@ -128,26 +128,26 @@ class BatteryUtils (private val context: Context) {
         }
     }
 
-    fun getChargingVoltage(): Float {
-        val intent = getBatteryIntent()
-        val temp = intent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1) ?: -1
+    fun getChargingVoltage(intent: Intent? = null): Float {
+        val batteryIntent = intent ?: getBatteryIntent()
+        val temp = batteryIntent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1) ?: -1
         return if (temp > 0) temp / 1000f else -1f
     }
 
-    fun getChargingWattage(): Float {
-        val v = getChargingVoltage()
+    fun getChargingWattage(intent: Intent? = null): Float {
+        val v = getChargingVoltage(intent)
         val a = abs(getDischargeCurrent()) / 1000f
         return if (v > 0 && a > 0) v * a else 0f
     }
 
-    fun isCharging(): Boolean {
-        val intent = getBatteryIntent()
-        val status = intent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+    fun isCharging(intent: Intent? = null): Boolean {
+        val batteryIntent = intent ?: getBatteryIntent()
+        val status = batteryIntent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
         return status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL
     }
 
-    fun getEstimatedChargeTimes(): Pair<Int, Int> {
-        val level = getBatteryPercentage()
+    fun getEstimatedChargeTimes(intent: Intent? = null): Pair<Int, Int> {
+        val level = getBatteryPercentage(intent)
         if (level !in 0..<100) return Pair(0, 0)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -181,19 +181,20 @@ class BatteryUtils (private val context: Context) {
         return Pair(max(0, remainingMinsTo80), max(0, remainingMinsTo100))
     }
 
-    fun getChargingState(): ChargingState {
-        val (minsTo80, minsTo100) = getEstimatedChargeTimes()
+    fun getChargingState(intent: Intent? = null): ChargingState {
+        val batteryIntent = intent ?: getBatteryIntent()
+        val (minsTo80, minsTo100) = getEstimatedChargeTimes(batteryIntent)
         return ChargingState(
-            isCharging = isCharging(),
-            level = getBatteryPercentage(),
-            plugType = getPlugType(),
-            statusStr = getBatteryStatus(),
-            wattage = getChargingWattage(),
+            isCharging = isCharging(batteryIntent),
+            level = getBatteryPercentage(batteryIntent),
+            plugType = getPlugType(batteryIntent),
+            statusStr = getBatteryStatus(batteryIntent),
+            wattage = getChargingWattage(batteryIntent),
             minsTo80 = minsTo80,
             minsTo100 = minsTo100,
             currentMa = getDischargeCurrent(),
-            tempC = getBatteryTemperature(),
-            voltageV = getChargingVoltage()
+            tempC = getBatteryTemperature(batteryIntent),
+            voltageV = getChargingVoltage(batteryIntent)
         )
     }
 

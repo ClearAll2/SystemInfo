@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -495,10 +496,13 @@ fun AccelerometerTestScreen(
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = value,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
                                 )
                             }
                         }

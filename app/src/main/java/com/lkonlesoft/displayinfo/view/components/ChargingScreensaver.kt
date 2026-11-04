@@ -35,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,11 +56,12 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.lkonlesoft.displayinfo.R
 import com.lkonlesoft.displayinfo.ui.theme.BatteryColor
 import com.lkonlesoft.displayinfo.utils.BatteryUtils
+import com.lkonlesoft.displayinfo.utils.ChargingState
 import kotlinx.coroutines.delay
 import java.text.DateFormat
 import java.util.Date
 import kotlin.math.sin
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun ChargingScreen(
@@ -73,16 +73,9 @@ fun ChargingScreen(
     val window = (view.context as? Activity)?.window
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
     var isLocked by remember { mutableStateOf(false) }
-    val intentFilter = IntentFilter().apply {
-        addAction(Intent.ACTION_SCREEN_ON)
-        addAction(Intent.ACTION_SCREEN_OFF)
-        addAction(Intent.ACTION_USER_PRESENT)
-        addAction(Intent.ACTION_POWER_DISCONNECTED)
-    }
-
-    // Periodic updates for time & battery stats
-    var refreshKey by remember { mutableIntStateOf(0) }
-    var currentTimeString by remember(refreshKey) {
+    val batteryUtils = remember(context) { BatteryUtils(context) }
+    var chargingState by remember { mutableStateOf(ChargingState()) }
+    var currentTimeString by remember {
         mutableStateOf(
             DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
         )
@@ -90,8 +83,6 @@ fun ChargingScreen(
     var burnInShiftX by remember { mutableStateOf(0.dp) }
     var burnInShiftY by remember { mutableStateOf(0.dp) }
     var showExtraInfo by remember { mutableStateOf(false) }
-    val batteryUtils = remember(context) { BatteryUtils(context) }
-    val chargingState = remember(refreshKey) { batteryUtils.getChargingState() }
     val wirelessStr = stringResource(R.string.wireless)
     val wirelessChargingStr = stringResource(R.string.wireless_charging)
     val fastChargingStr = stringResource(R.string.fast_charging)
@@ -120,21 +111,35 @@ fun ChargingScreen(
     }
     // Hide system bars & keep screen awake
     DisposableEffect(Unit) {
-        //monitor lock status
+        val intentFilter = IntentFilter().apply {
+            addAction(Intent.ACTION_BATTERY_CHANGED)
+            addAction(Intent.ACTION_SCREEN_ON)
+            addAction(Intent.ACTION_SCREEN_OFF)
+            addAction(Intent.ACTION_USER_PRESENT)
+            addAction(Intent.ACTION_POWER_DISCONNECTED)
+        }
+
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val km = context?.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
-                    ?: return
 
                 when (intent?.action) {
+                    Intent.ACTION_BATTERY_CHANGED -> {
+                        chargingState = batteryUtils.getChargingState(intent)
+                    }
                     Intent.ACTION_POWER_DISCONNECTED -> dismissAction()
                     Intent.ACTION_SCREEN_OFF -> isLocked = true
                     Intent.ACTION_USER_PRESENT -> isLocked = false
-                    else -> isLocked = km.isKeyguardLocked
+                    else -> {
+                        isLocked = km?.isKeyguardLocked == true
+                    }
                 }
             }
         }
-        context.registerReceiver(receiver, intentFilter)
+
+        val stickyBatteryIntent = context.registerReceiver(receiver, intentFilter)
+        chargingState = batteryUtils.getChargingState(stickyBatteryIntent)
+
         window?.let { win ->
             WindowInsetsControllerCompat(win, view).let { controller ->
                 controller.hide(WindowInsetsCompat.Type.systemBars())
@@ -151,19 +156,23 @@ fun ChargingScreen(
         }
     }
     LaunchedEffect(Unit) {
-        var tickCount = 0L
+        var minuteCount = 0L
         while (true) {
-            delay(1.seconds)
-            tickCount++
-            refreshKey++
+            currentTimeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
+
             // Anti-burn-in shift every ~2 minutes
-            if (tickCount % 120 == 0L) {
-                val shiftXVal = (sin(tickCount.toDouble()) * 4).dp
-                val shiftYVal = (sin(tickCount.toDouble() * 0.7) * 4).dp
+            if (minuteCount % 2L == 0L) {
+                val shiftXVal = (sin(minuteCount.toDouble()) * 4).dp
+                val shiftYVal = (sin(minuteCount.toDouble() * 0.7) * 4).dp
                 burnInShiftX = shiftXVal
                 burnInShiftY = shiftYVal
-                tickCount = 0L
             }
+            minuteCount++
+
+            // Calculate delay until the top of the next minute
+            val now = System.currentTimeMillis()
+            val delay = 60_000 - (now % 60_000)
+            delay(delay.milliseconds)
         }
     }
     Box(

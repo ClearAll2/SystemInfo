@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -387,12 +388,13 @@ fun CommonSwitchOption(
                 modifier = Modifier.weight(0.8f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.padding(vertical = 10.dp)) {
+                Column(modifier = Modifier.padding(vertical = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
                     Text(
                         text = stringResource(id = text),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(vertical = 5.dp),
                         color = if (enabled) MaterialTheme.colorScheme.onBackground else Color.Gray
                     )
                     if (subText != -1)
@@ -407,14 +409,14 @@ fun CommonSwitchOption(
                 VerticalDivider(
                     color = Color.Gray,
                     modifier = Modifier
-                        .height(30.dp)
+                        .fillMaxHeight(.4f)
                         .width(1.dp)
                 )
             }
             Switch(
                 modifier = Modifier
                     .weight(0.15f)
-                    .padding(start = 15.dp),
+                    .padding(start = 20.dp),
                 enabled = enabled,
                 checked = checked,
                 onCheckedChange = onSwitch,
@@ -422,7 +424,7 @@ fun CommonSwitchOption(
                     Icon(
                         imageVector = ImageVector.vectorResource(if (checked) R.drawable.baseline_check_24 else R.drawable.baseline_close_24),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onBackground,
+                        tint = if (enabled) MaterialTheme.colorScheme.onBackground else Color.Gray,
                         modifier = Modifier.size(SwitchDefaults.IconSize),
                     )
                 }

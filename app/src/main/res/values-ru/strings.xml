@@ -445,4 +445,6 @@
     <string name="add_quick_settings_tile">Добавить плитку быстрых настроек</string>
     <string name="add_quick_settings_tile_details">Если на вашем телефоне нет опции заставки, вы можете добавить плитку быстрых настроек.</string>
     <string name="short_minute">%s мин</string>
+    <string name="thanks_to">Благодарности</string>
+    <string name="translator">Переводчик</string>
 </resources>

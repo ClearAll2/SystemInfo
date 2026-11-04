@@ -445,4 +445,6 @@
     <string name="add_quick_settings_tile">Snelinstellingentegel toevoegen</string>
     <string name="add_quick_settings_tile_details">Als de optie voor schermbeveiliging ontbreekt op je telefoon, kun je een snelinstellingentegel toevoegen.</string>
     <string name="short_minute">%s min</string>
+    <string name="thanks_to">Dank aan</string>
+    <string name="translator">Vertaler</string>
 </resources>

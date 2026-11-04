@@ -34,4 +34,8 @@ sealed class AboutItem(@param:StringRes val title: Int, @param:StringRes val tex
         R.string.contact_text,
         R.string.contact_link
     )
+
+    object HazeCredit: AboutItem(R.string.haze_credit, R.string.haze, R.string.haze_credit_link)
+    object UzTranslatorCredit: AboutItem(R.string.uz_translator_credit, R.string.translator, R.string.contact_link)
+
 }

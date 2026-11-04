@@ -8,6 +8,7 @@ import android.os.VibratorManager
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
@@ -78,7 +80,7 @@ fun VibrationTestScreen(
 
     val hasVibrator = remember { vibrator.hasVibrator() }
     val hasAmplitudeControl = remember {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) vibrator.hasAmplitudeControl() else false
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && vibrator.hasAmplitudeControl()
     }
 
     var amplitude by remember { mutableIntStateOf(255) }
@@ -450,6 +452,7 @@ fun VibrationTestScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(text = stringResource(R.string.amplitude_control), style = MaterialTheme.typography.bodyMedium)
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = if (hasAmplitudeControl) stringResource(R.string.supported) else stringResource(R.string.not_supported),
                                 style = MaterialTheme.typography.bodyMedium,
@@ -466,11 +469,14 @@ fun VibrationTestScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(text = stringResource(R.string.primitive_composition), style = MaterialTheme.typography.bodyMedium)
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = if (hasEnvelope) stringResource(R.string.supported) else stringResource(R.string.not_supported),
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (hasEnvelope) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                                    color = if (hasEnvelope) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
                                 )
                             }
                         }

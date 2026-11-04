@@ -44,6 +44,12 @@ fun AboutScreen(paddingValues: PaddingValues) {
             AboutItem.Terms
         )
     }
+    val thanksToItems = remember {
+        listOf(
+            AboutItem.HazeCredit,
+            AboutItem.UzTranslatorCredit
+        )
+    }
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(320.dp),
         modifier = Modifier
@@ -86,6 +92,23 @@ fun AboutScreen(paddingValues: PaddingValues) {
                         },
                         isFirst = legalInfoItems.first() == item,
                         isLast = legalInfoItems.last() == item
+                    )
+                }
+            }
+        }
+        item {
+            Column {
+                HeaderLine(title = stringResource(R.string.thanks_to))
+                thanksToItems.forEach { item ->
+                    val url = stringResource(id = item.url)
+                    IndividualLine(
+                        title = stringResource(id = item.title),
+                        info = stringResource(id = item.text),
+                        onClick = {
+                            uriHandler.openUri(url)
+                        },
+                        isFirst = thanksToItems.first() == item,
+                        isLast = thanksToItems.last() == item
                     )
                 }
             }

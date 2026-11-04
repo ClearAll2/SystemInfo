@@ -445,4 +445,6 @@
     <string name="add_quick_settings_tile">Thêm ô Cài đặt nhanh</string>
     <string name="add_quick_settings_tile_details">Nếu tùy chọn hình nền bảo vệ màn hình không có trên điện thoại của bạn, bạn có thể thêm ô Cài đặt nhanh.</string>
     <string name="short_minute">%s phút</string>
+    <string name="thanks_to">Cảm ơn</string>
+    <string name="translator">Người dịch</string>
 </resources>

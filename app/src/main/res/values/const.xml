@@ -15,4 +15,8 @@
     <string name="clearKeyUUID" translatable="false">e2719d58-a985-b3c9-781a-b030af78d30e</string>
     <string name="ssid" translatable="false">SSID</string>
     <string name="title_activity_charging" translatable="false">ChargingActivity</string>
+    <string name="haze" translatable="false">Haze</string>
+    <string name="haze_credit" translatable="false">Chris Banes</string>
+    <string name="haze_credit_link" translatable="false">https://chrisbanes.github.io/haze/latest/</string>
+    <string name="uz_translator_credit" translatable="false">Sherzodbek Sher</string>
 </resources>

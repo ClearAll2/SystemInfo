@@ -457,4 +457,6 @@
     <string name="add_quick_settings_tile">Tezkor sozlamalar elementini qo\'shish</string>
     <string name="add_quick_settings_tile_details">Agar telefoningizda ekran saqlovchi opsiyasi mavjud bo\'lmasa, unga Tezkor sozlamalar elementini qo\'shishingiz mumkin.</string>
     <string name="short_minute">%s daq</string>
+    <string name="thanks_to">Minnatdorchilik</string>
+    <string name="translator">Tarjimon</string>
 </resources>
