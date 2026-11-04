@@ -435,16 +435,8 @@
     <string name="network_monitor">Moniteur réseau</string>
     <string name="charging_screen">Écran de charge</string>
     <string name="charging_display">Écran de charge</string>
-    <string name="fast_charging">Charge rapide</string>
-    <string name="slow_charging">Charge lente</string>
-    <string name="wireless_charging">Charge sans fil</string>
-    <string name="exit_charging_screen_hint">Appuyez pour quitter</string>
-    <string name="tile_added">Tuile ajoutée</string>
-    <string name="tile_already_added">Tuile déjà ajoutée</string>
-    <string name="charging_screen_details">Affichez un superbe économiseur d\'écran pendant la charge de votre téléphone.</string>
-    <string name="add_quick_settings_tile">Ajouter une tuile des paramètres rapides</string>
-    <string name="add_quick_settings_tile_details">Si l\'option d\'économiseur d\'écran est absente sur votre téléphone, vous pouvez ajouter une tuile des paramètres rapides.</string>
     <string name="short_minute">%s min</string>
     <string name="thanks_to">Merci à</string>
     <string name="translator">Traducteur</string>
+    <string name="flip_clock">Horloge à volets</string>
 </resources>

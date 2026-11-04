@@ -447,16 +447,8 @@
     <string name="network_monitor">Tarmoq monitori</string>
     <string name="charging_screen">Quvvatlash ekrani</string>
     <string name="charging_display">Quvvatlash ko\'rsatkichi</string>
-    <string name="fast_charging">Tez quvvatlash</string>
-    <string name="slow_charging">Sekin quvvatlanish</string>
-    <string name="wireless_charging">Simsiz quvvatlash</string>
-    <string name="exit_charging_screen_hint">Chiqish uchun istalgan joyga bosing</string>
-    <string name="tile_added">Plitka qo\'shildi</string>
-    <string name="tile_already_added">Plitka allaqachon qo\'shilgan</string>
-    <string name="charging_screen_details">Telefoningizni quvvatlayotganda ajoyib ekran saqlovchisini namoyish eting.</string>
-    <string name="add_quick_settings_tile">Tezkor sozlamalar elementini qo\'shish</string>
-    <string name="add_quick_settings_tile_details">Agar telefoningizda ekran saqlovchi opsiyasi mavjud bo\'lmasa, unga Tezkor sozlamalar elementini qo\'shishingiz mumkin.</string>
     <string name="short_minute">%s daq</string>
     <string name="thanks_to">Minnatdorchilik</string>
     <string name="translator">Tarjimon</string>
+    <string name="flip_clock">Aylantiruvchi soat</string>
 </resources>

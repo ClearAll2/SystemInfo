@@ -50,21 +50,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".service.ChargingTileService"
-            android:exported="true"
-            android:icon="@drawable/mobile_charge_24px"
-            android:label="@string/charging_display"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.service.quicksettings.TILE_CATEGORY"
-                android:value="android.service.quicksettings.CATEGORY_DISPLAY" />
-        </service>
-
         <receiver
             android:name=".widget.BatteryWidgetReceiver"
             android:exported="true"
@@ -86,16 +71,6 @@
                 android:value="true" />
         </service>
 
-        <activity
-            android:name=".view.ChargingActivity"
-            android:exported="false"
-            android:label="@string/title_activity_charging"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
-            android:theme="@style/Theme.ScreenInfo"
-            android:windowSoftInputMode="adjustResize">
-        </activity>
-
         <service
             android:name=".service.ChargingDreamService"
             android:exported="true"
@@ -111,10 +86,27 @@
 
             <meta-data
                 android:name="android.service.dream"
-                android:resource="@xml/dream_info" />
+                android:resource="@xml/charging_dream_info" />
         </service>
 
+        <service
+            android:name=".service.FlipClockDreamService"
+            android:exported="true"
+            android:label="@string/flip_clock"
+            android:description="@string/system_info"
+            android:icon="@drawable/mobile_text_24px"
+            android:permission="android.permission.BIND_DREAM_SERVICE">
 
+            <intent-filter>
+                <action android:name="android.service.dreams.DreamService" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.dream"
+                android:resource="@xml/flipclock_dream_info" />
+        </service>
 
     </application>
 

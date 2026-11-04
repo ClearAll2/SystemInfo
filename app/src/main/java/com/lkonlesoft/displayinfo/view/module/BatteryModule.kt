@@ -1,14 +1,10 @@
 package com.lkonlesoft.displayinfo.view.module
 
 
-import android.app.StatusBarManager
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
-import android.graphics.drawable.Icon
 import android.os.Build
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -17,8 +13,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,10 +26,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,17 +41,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import com.lkonlesoft.displayinfo.R
-import com.lkonlesoft.displayinfo.service.ChargingTileService
 import com.lkonlesoft.displayinfo.utils.BatteryUtils
 import com.lkonlesoft.displayinfo.view.components.BigPercentageValue
 import com.lkonlesoft.displayinfo.view.components.CardDashboard
@@ -120,10 +107,8 @@ fun BatteryScreen(
     copyTitle: Boolean,
     showNotice: Boolean,
     paddingValues: PaddingValues,
-    onNavigateToChargingScreen: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
-    val resources = LocalResources.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val batteryUtils = remember { BatteryUtils(context) }
@@ -227,85 +212,6 @@ fun BatteryScreen(
                         )
                     }
                 }
-            }
-            item {
-                GeneralWarning(
-                    modifier = Modifier.animateContentSize(tween(250)),
-                    title = R.string.charging_screen,
-                    text = R.string.charging_screen_details,
-                    icon = R.drawable.mobile_charge_24px,
-                    extra = {
-                        Column(
-                            modifier = Modifier.animateContentSize(tween(250)),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            AnimatedVisibility(
-                                visible = isCharging,
-                                enter = fadeIn() + scaleIn(tween(250)),
-                                exit = fadeOut() + scaleOut(tween(250))
-                            ) {
-                                Button(
-                                    shapes = ButtonDefaults.shapes(),
-                                    onClick = {
-                                        onNavigateToChargingScreen?.invoke()
-                                    }
-                                ) {
-                                    Text(stringResource(R.string.charging_screen))
-                                    Icon(
-                                        modifier = Modifier.padding(start = 8.dp),
-                                        imageVector = ImageVector.vectorResource(R.drawable.open_in_new_24px),
-                                        contentDescription = null
-                                    )
-                                }
-                            }
-                            Text(
-                                text = stringResource(R.string.add_quick_settings_tile_details),
-                                fontSize = 14.sp,
-                                modifier = Modifier
-                                    .padding(vertical = 10.dp)
-                            )
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                                val statusBarService =
-                                    context.getSystemService(StatusBarManager::class.java)
-                                val componentName =
-                                    ComponentName(context, ChargingTileService::class.java)
-                                val title = resources.getString(R.string.charging_screen)
-                                val icon =
-                                    Icon.createWithResource(context, R.drawable.mobile_charge_24px)
-                                FilledTonalButton(
-                                    shapes = ButtonDefaults.shapes(),
-                                    onClick = {
-                                        statusBarService.requestAddTileService(
-                                            componentName,
-                                            title,
-                                            icon,
-                                            ContextCompat.getMainExecutor(context)
-                                        ) { result ->
-                                            val message = when (result) {
-                                                StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED -> resources.getString(
-                                                    R.string.tile_added
-                                                )
-
-                                                StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED -> resources.getString(
-                                                    R.string.tile_already_added
-                                                )
-
-                                                StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_NOT_ADDED -> resources.getString(
-                                                    R.string.cancel
-                                                )
-
-                                                else -> resources.getString(R.string.unknown)
-                                            }
-                                            Toast.makeText(context, message, Toast.LENGTH_SHORT)
-                                                .show()
-                                        }
-                                    }
-                                ) {
-                                    Text(stringResource(R.string.add_quick_settings_tile))
-                                }
-                            }
-                        }
-                    }
-                )
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 item {

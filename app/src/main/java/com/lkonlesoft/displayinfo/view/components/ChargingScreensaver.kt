@@ -7,14 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,7 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -82,27 +73,6 @@ fun ChargingScreen(
     }
     var burnInShiftX by remember { mutableStateOf(0.dp) }
     var burnInShiftY by remember { mutableStateOf(0.dp) }
-    var showExtraInfo by remember { mutableStateOf(false) }
-    val wirelessStr = stringResource(R.string.wireless)
-    val wirelessChargingStr = stringResource(R.string.wireless_charging)
-    val fastChargingStr = stringResource(R.string.fast_charging)
-    val slowChargingStr = stringResource(R.string.slow_charging)
-    val chargingStr = stringResource(R.string.charging)
-    val fullyChargedStr = stringResource(R.string.full)
-    val chargingLabel = remember(
-        chargingState.statusStr,
-        chargingState.plugType,
-        chargingState.wattage
-    ) {
-        when {
-            chargingState.currentMa < 0 -> ""
-            chargingState.statusStr == fullyChargedStr -> fullyChargedStr
-            chargingState.plugType == wirelessStr -> wirelessChargingStr
-            chargingState.wattage >= 15f -> fastChargingStr
-            chargingState.wattage in 0.1f..7.5f -> slowChargingStr
-            else -> chargingStr
-        }
-    }
     val dismissAction : () -> Unit = {
         if (isLocked)
             onLockScreenDismiss()
@@ -170,9 +140,8 @@ fun ChargingScreen(
             minuteCount++
 
             // Calculate delay until the top of the next minute
-            val now = System.currentTimeMillis()
-            val delay = 60_000 - (now % 60_000)
-            delay(delay.milliseconds)
+            val delayMs = 60_000L - (System.currentTimeMillis() % 60_000L) + 10L
+            delay(delayMs.milliseconds)
         }
     }
     Box(
@@ -180,10 +149,7 @@ fun ChargingScreen(
             .fillMaxSize()
             .background(Color.Black)
             .clickable {
-                if (showExtraInfo)
-                    dismissAction()
-                else
-                    showExtraInfo = true
+                dismissAction()
             }
             .offset {
                 IntOffset(
@@ -196,7 +162,7 @@ fun ChargingScreen(
             ChargingLandscapeContent(
                 level = chargingState.level,
                 timeString = currentTimeString,
-                chargingLabel = chargingLabel,
+                chargingLabel = chargingState.statusStr,
                 currentMa = chargingState.currentMa,
                 minsTo80 = chargingState.minsTo80,
                 minsTo100 = chargingState.minsTo100,
@@ -206,74 +172,12 @@ fun ChargingScreen(
             ChargingPortraitContent(
                 level = chargingState.level,
                 timeString = currentTimeString,
-                chargingLabel = chargingLabel,
+                chargingLabel = chargingState.statusStr,
                 currentMa = chargingState.currentMa,
                 minsTo80 = chargingState.minsTo80,
                 minsTo100 = chargingState.minsTo100,
                 accentColor = BatteryColor
             )
-        }
-        // Overlay tooltip or extra stats when tapped
-        AnimatedVisibility(
-            visible = showExtraInfo,
-            enter = fadeIn() + if (isPortrait) {
-                slideInHorizontally(
-                    initialOffsetX = { left -> -left },
-                    animationSpec = tween(250)
-                )
-            } else {
-                slideInVertically(
-                    initialOffsetY = { top -> -top },
-                    animationSpec = tween(250)
-                )
-            },
-            exit = fadeOut() + if (isPortrait) {
-                slideOutHorizontally(
-                    targetOffsetX = { left -> -left },
-                    animationSpec = tween(250)
-                )
-            } else {
-                slideOutVertically(
-                    targetOffsetY = { top -> -top },
-                    animationSpec = tween(250)
-                )
-            },
-            modifier = Modifier.align(if (isPortrait) Alignment.CenterStart else Alignment.TopCenter)
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(top = 48.dp, start = 16.dp, end = 16.dp)
-                    .background(Color(0xCC121212), shape = RoundedCornerShape(16.dp))
-                    .padding(horizontal = 16.dp, vertical = 10.dp)
-                    .clickable {
-                        showExtraInfo = false
-                    }
-            ) {
-                if (chargingState.wattage > 0f || chargingState.tempC > 0f) {
-                    Text(
-                        text = buildString {
-                            if (chargingState.wattage > 0f) append("%.1f W".format(chargingState.wattage))
-                            if (chargingState.currentMa != -1) append(
-                                " • %d mA".format(
-                                    chargingState.currentMa
-                                )
-                            )
-                            if (chargingState.voltageV > 0f) append(" • %.2f V".format(chargingState.voltageV))
-                            if (chargingState.tempC > 0f) append(" • %.1f °C".format(chargingState.tempC))
-                        },
-                        color = Color.White.copy(alpha = 0.9f),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
-                Text(
-                    text = stringResource(R.string.exit_charging_screen_hint),
-                    color = Color.White.copy(alpha = 0.6f),
-                    fontSize = 12.sp
-                )
-            }
         }
     }
 }

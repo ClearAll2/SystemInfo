@@ -435,16 +435,8 @@
     <string name="network_monitor">Netwerkmonitor</string>
     <string name="charging_screen">Oplaadscherm</string>
     <string name="charging_display">Oplaaddisplay</string>
-    <string name="fast_charging">Snel opladen</string>
-    <string name="slow_charging">Langzaam opladen</string>
-    <string name="wireless_charging">Draadloos opladen</string>
-    <string name="exit_charging_screen_hint">Tik om af te sluiten</string>
-    <string name="tile_added">Tegel toegevoegd</string>
-    <string name="tile_already_added">Tegel is al toegevoegd</string>
-    <string name="charging_screen_details">Toon een prachtige schermbeveiliging terwijl je telefoon wordt opgeladen.</string>
-    <string name="add_quick_settings_tile">Snelinstellingentegel toevoegen</string>
-    <string name="add_quick_settings_tile_details">Als de optie voor schermbeveiliging ontbreekt op je telefoon, kun je een snelinstellingentegel toevoegen.</string>
     <string name="short_minute">%s min</string>
     <string name="thanks_to">Dank aan</string>
     <string name="translator">Vertaler</string>
+    <string name="flip_clock">Flapklok</string>
 </resources>

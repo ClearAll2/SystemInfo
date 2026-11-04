@@ -435,16 +435,8 @@
     <string name="network_monitor">ネットワークモニター</string>
     <string name="charging_screen">充電画面</string>
     <string name="charging_display">充電ディスプレイ</string>
-    <string name="fast_charging">急速充電</string>
-    <string name="slow_charging">低速充電</string>
-    <string name="wireless_charging">ワイヤレス充電</string>
-    <string name="exit_charging_screen_hint">タップして終了</string>
-    <string name="tile_added">タイルを追加しました</string>
-    <string name="tile_already_added">タイルは既に追加されています</string>
-    <string name="charging_screen_details">充電中に魅力的なスクリーンセーバーを表示します。</string>
-    <string name="add_quick_settings_tile">クイック設定タイルを追加</string>
-    <string name="add_quick_settings_tile_details">スマートフォンにスクリーンセーバーのオプションがない場合は、クイック設定タイルを追加できます。</string>
     <string name="short_minute">%s 分</string>
     <string name="thanks_to">感謝</string>
     <string name="translator">翻訳者</string>
+    <string name="flip_clock">フリップクロック</string>
 </resources>

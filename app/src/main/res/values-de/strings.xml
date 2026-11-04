@@ -436,16 +436,8 @@
     <string name="network_monitor">Netzwerkmonitor</string>
     <string name="charging_screen">Ladebildschirm</string>
     <string name="charging_display">Ladeanzeige</string>
-    <string name="fast_charging">Schnellladen</string>
-    <string name="slow_charging">Langsames Laden</string>
-    <string name="wireless_charging">Kabelloses Laden</string>
-    <string name="exit_charging_screen_hint">Zum Beenden tippen</string>
-    <string name="tile_added">Kachel hinzugefügt</string>
-    <string name="tile_already_added">Kachel bereits hinzugefügt</string>
-    <string name="charging_screen_details">Beeindruckenden Bildschirmschoner anzeigen, während Ihr Telefon geladen wird.</string>
-    <string name="add_quick_settings_tile">Schnell­einstellungen-Kachel hinzufügen</string>
-    <string name="add_quick_settings_tile_details">Falls die Bildschirmschoner-Option auf Ihrem Telefon fehlt, können Sie eine Schnelleinstellungen-Kachel hinzufügen.</string>
     <string name="short_minute">%s Min</string>
     <string name="thanks_to">Dank an</string>
     <string name="translator">Übersetzer</string>
+    <string name="flip_clock">Klappuhr</string>
 </resources>

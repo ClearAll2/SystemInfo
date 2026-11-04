@@ -435,16 +435,8 @@
     <string name="network_monitor">Giám sát mạng</string>
     <string name="charging_screen">Màn hình sạc</string>
     <string name="charging_display">Hiển thị sạc</string>
-    <string name="fast_charging">Sạc nhanh</string>
-    <string name="slow_charging">Sạc chậm</string>
-    <string name="wireless_charging">Sạc không dây</string>
-    <string name="exit_charging_screen_hint">Nhấn để thoát</string>
-    <string name="tile_added">Đã thêm ô</string>
-    <string name="tile_already_added">Ô đã được thêm</string>
-    <string name="charging_screen_details">Hiển thị hình nền bảo vệ màn hình ấn tượng khi sạc điện thoại.</string>
-    <string name="add_quick_settings_tile">Thêm ô Cài đặt nhanh</string>
-    <string name="add_quick_settings_tile_details">Nếu tùy chọn hình nền bảo vệ màn hình không có trên điện thoại của bạn, bạn có thể thêm ô Cài đặt nhanh.</string>
     <string name="short_minute">%s phút</string>
     <string name="thanks_to">Cảm ơn</string>
     <string name="translator">Người dịch</string>
+    <string name="flip_clock">Đồng hồ lật</string>
 </resources>
