@@ -4,6 +4,17 @@ Thank you for choosing System Info! We're constantly making changes and improvem
 
 
 
+## 5.1
+
+
+
+* New Flip Clock screensaver 💪.
+* Support Uzbek language (thanks to Sherzodbek Sher).
+* Improved performance and efficiency of Charging screensaver, removed support for Quick setting tile.
+* Fixed a bug that app shortcuts didn't work.
+
+
+
 ## 5.0
 
 * Tests Module: A brand-new module to test your device hardware.
