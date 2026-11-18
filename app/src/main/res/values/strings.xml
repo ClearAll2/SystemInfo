@@ -472,4 +472,7 @@
     <string name="positioning_constellations">Positioning &amp; Constellations</string>
     <string name="dual_frequency_gnss">Dual-Frequency GNSS (L1 + L5)</string>
     <string name="single_frequency_gnss">Single-Frequency GNSS (L1)</string>
+    <string name="screensaver">Screensaver</string>
+    <string name="screensaver_access">Display stunning screensavers while charging your device</string>
+    <string name="not_all_device_warning">Availability varies by manufacturer</string>
 </resources>

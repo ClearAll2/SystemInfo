@@ -461,4 +461,7 @@
     <string name="positioning_constellations">Ortung &amp; Konstellationen</string>
     <string name="dual_frequency_gnss">Zweifrequenz-GNSS (L1 + L5)</string>
     <string name="single_frequency_gnss">Einfrequenz-GNSS (L1)</string>
+    <string name="screensaver">Bildschirmschoner</string>
+    <string name="screensaver_access">Beeindruckende Bildschirmschoner während des Ladens anzeigen</string>
+    <string name="not_all_device_warning">Verfügbarkeit hängt vom Hersteller ab</string>
 </resources>

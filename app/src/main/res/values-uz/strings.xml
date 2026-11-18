@@ -472,4 +472,7 @@
     <string name="positioning_constellations">Pozitsiyalash va yulduz turkumlari</string>
     <string name="dual_frequency_gnss">Ikki chastotali GNSS (L1 + L5)</string>
     <string name="single_frequency_gnss">Bir chastotali GNSS (L1)</string>
+    <string name="screensaver">Ekran himoyachisi</string>
+    <string name="screensaver_access">Qurilmani zaryadlash paytida ajoyib ekran himoyachilarini koʻrsatish</string>
+    <string name="not_all_device_warning">Mavjudlik ishlab chiqaruvchiga qarab farq qiladi</string>
 </resources>

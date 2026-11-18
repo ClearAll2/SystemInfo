@@ -20,7 +20,7 @@ android {
         versionCode = buildCode
         versionName = buildName
         resValue("string", "app_ver", "$buildName ($buildCode)")
-        resValue("string", "copy_right", "© ${LocalDate.now().year} LKONLE")
+        resValue("string", "copy_right", "© ${LocalDate.now().year} ClearAll2")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true

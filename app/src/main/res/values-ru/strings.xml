@@ -460,4 +460,7 @@
     <string name="positioning_constellations">Позиционирование и созвездия</string>
     <string name="dual_frequency_gnss">Двухчастотный GNSS (L1 + L5)</string>
     <string name="single_frequency_gnss">Одночастотный GNSS (L1)</string>
+    <string name="screensaver">Заставка</string>
+    <string name="screensaver_access">Показывайте эффектные заставки во время зарядки устройства</string>
+    <string name="not_all_device_warning">Доступность зависит от производителя</string>
 </resources>

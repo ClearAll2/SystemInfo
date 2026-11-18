@@ -150,11 +150,12 @@ fun IndividualLine(
     copyTitle: Boolean = true,
     isFirst: Boolean = false,
     isLast: Boolean = false,
+    isSettingItem: Boolean = false,
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceBright
 ){
     val context = LocalContext.current
     val resource = LocalResources.current
-    val isNotExpandable by remember { mutableStateOf(info.length < 120) }
+    val isNotExpandable by remember { mutableStateOf(info.length < 120 || isSettingItem) }
     var expanded by rememberSaveable { mutableStateOf(isNotExpandable) }
     Column(
         modifier = Modifier
@@ -238,7 +239,7 @@ fun IndividualLine(
                         )
                     } else {
                         Text(
-                            text = info.take(60) + "...",
+                            text = info.take(90) + "...",
                             fontSize = 14.sp,
                             modifier = Modifier.padding(vertical = 5.dp)
                         )
@@ -388,7 +389,7 @@ fun CommonSwitchOption(
                 modifier = Modifier.weight(0.8f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.padding(vertical = 10.dp),
+                Column(modifier = Modifier.padding(vertical = 10.dp).padding(end = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                     Text(
@@ -416,7 +417,7 @@ fun CommonSwitchOption(
             Switch(
                 modifier = Modifier
                     .weight(0.15f)
-                    .padding(start = 16.dp, end = 8.dp),
+                    .padding(start = 12.dp, end = 8.dp),
                 enabled = enabled,
                 checked = checked,
                 onCheckedChange = onSwitch,

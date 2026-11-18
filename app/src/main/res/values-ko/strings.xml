@@ -460,4 +460,7 @@
     <string name="positioning_constellations">측위 및 위성 성단</string>
     <string name="dual_frequency_gnss">이중 주파수 GNSS (L1 + L5)</string>
     <string name="single_frequency_gnss">단일 주파수 GNSS (L1)</string>
+    <string name="screensaver">화면 보호기</string>
+    <string name="screensaver_access">기기 충전 중 멋진 화면 보호기를 표시합니다</string>
+    <string name="not_all_device_warning">제조사에 따라 사용 가능 여부가 다릅니다</string>
 </resources>

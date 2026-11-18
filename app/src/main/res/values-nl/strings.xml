@@ -460,4 +460,7 @@
     <string name="positioning_constellations">Positionering &amp; Constellaties</string>
     <string name="dual_frequency_gnss">Dual-Frequency GNSS (L1 + L5)</string>
     <string name="single_frequency_gnss">Single-Frequency GNSS (L1)</string>
+    <string name="screensaver">Schermbeveiliging</string>
+    <string name="screensaver_access">Toon prachtige schermbeveiligingen tijdens het opladen van je apparaat</string>
+    <string name="not_all_device_warning">Beschikbaarheid verschilt per fabrikant</string>
 </resources>

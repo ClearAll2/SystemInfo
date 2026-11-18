@@ -3,7 +3,10 @@ package com.lkonlesoft.displayinfo.view.module
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
+import android.content.Intent
 import android.os.Build
+import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -13,6 +16,8 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +33,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,9 +47,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lkonlesoft.displayinfo.R
@@ -109,6 +118,7 @@ fun BatteryScreen(
     paddingValues: PaddingValues,
 ) {
     val context = LocalContext.current
+    val resource = LocalResources.current
     val layoutDirection = LocalLayoutDirection.current
     var refreshKey by remember { mutableIntStateOf(0) }
     val batteryUtils = remember { BatteryUtils(context) }
@@ -130,6 +140,7 @@ fun BatteryScreen(
         label = "ChargingPulseAlpha"
     )
     val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
+    val screensaverIntent = Intent(Settings.ACTION_DREAM_SETTINGS)
     LaunchedEffect(Unit) {
         while (true){
             delay(1.seconds)
@@ -210,6 +221,32 @@ fun BatteryScreen(
                             isFirst = isFirst,
                             isLast = isLast
                         )
+                    }
+                    AnimatedVisibility (isCharging,
+                        enter = fadeIn(tween(500)) + scaleIn(),
+                        exit = fadeOut(tween(500)) + scaleOut()
+                    ) {
+                        FilledTonalButton(
+                            modifier = Modifier.padding(top = 8.dp),
+                            shapes = ButtonDefaults.shapes(),
+                            onClick = {
+                                try {
+                                    context.startActivity(screensaverIntent)
+                                } catch (_: Exception) {
+                                    Toast.makeText(
+                                        context,
+                                        resource.getString(R.string.failure),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }) {
+                            Text(stringResource(R.string.screensaver))
+                            Icon(
+                                modifier = Modifier.padding(start = 8.dp),
+                                imageVector = ImageVector.vectorResource(R.drawable.open_in_new_24px),
+                                contentDescription = null
+                            )
+                        }
                     }
                 }
             }

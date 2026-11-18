@@ -460,4 +460,7 @@
     <string name="positioning_constellations">測位と衛星コンステレーション</string>
     <string name="dual_frequency_gnss">2周波GNSS (L1 + L5)</string>
     <string name="single_frequency_gnss">1周波GNSS (L1)</string>
+    <string name="screensaver">スクリーンセーバー</string>
+    <string name="screensaver_access">充電中に魅力的なスクリーンセーバーを表示</string>
+    <string name="not_all_device_warning">利用可否はメーカーによって異なります</string>
 </resources>

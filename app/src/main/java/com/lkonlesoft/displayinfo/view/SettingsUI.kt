@@ -1,6 +1,9 @@
 package com.lkonlesoft.displayinfo.view
 
+import android.content.Intent
 import android.os.Build
+import android.provider.Settings
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -45,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalResources
@@ -81,6 +85,7 @@ fun SettingsScreen(
     onAboutClick: () -> Unit,
     paddingValues: PaddingValues
 ) {
+    val context = LocalContext.current
     val resource = LocalResources.current
     val layoutDirection = LocalLayoutDirection.current
     val uriHandler = LocalUriHandler.current
@@ -105,6 +110,7 @@ fun SettingsScreen(
             "uz" to R.string.uz,
         )
     }
+    val screensaverIntent = Intent(Settings.ACTION_DREAM_SETTINGS)
     LaunchedEffect(Unit) {
         currentLang = getCurrentLanguage()
     }
@@ -266,7 +272,24 @@ fun SettingsScreen(
                         settings.setCopyTitle(it)
                     },
                     enabled = longPressCopy,
-                    clickable = longPressCopy,
+                    clickable = longPressCopy
+                )
+                IndividualLine(
+                    title = stringResource(R.string.screensaver),
+                    info = buildString {
+                        append(stringResource(R.string.screensaver_access))
+                        append("\n")
+                        append(stringResource(R.string.not_all_device_warning))
+                    },
+                    isSettingItem = true,
+                    onClick = {
+                        try {
+                            context.startActivity(screensaverIntent)
+                        }
+                        catch (_: Exception){
+                            Toast.makeText(context, resource.getString(R.string.failure), Toast.LENGTH_SHORT).show()
+                        }
+                    },
                     isLast = true
                 )
             }

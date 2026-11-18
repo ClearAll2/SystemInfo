@@ -460,4 +460,7 @@
     <string name="positioning_constellations">Positionnement &amp; Constellations</string>
     <string name="dual_frequency_gnss">GNSS double fréquence (L1 + L5)</string>
     <string name="single_frequency_gnss">GNSS simple fréquence (L1)</string>
+    <string name="screensaver">Économiseur d\'écran</string>
+    <string name="screensaver_access">Affichez de superbes économiseurs d\'écran pendant la charge de votre appareil</string>
+    <string name="not_all_device_warning">La disponibilité varie selon le fabricant</string>
 </resources>

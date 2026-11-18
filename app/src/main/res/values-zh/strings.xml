@@ -460,4 +460,7 @@
     <string name="positioning_constellations">定位与卫星星座</string>
     <string name="dual_frequency_gnss">双频 GNSS (L1 + L5)</string>
     <string name="single_frequency_gnss">单频 GNSS (L1)</string>
+    <string name="screensaver">屏保</string>
+    <string name="screensaver_access">在设备充电时显示精美的屏保</string>
+    <string name="not_all_device_warning">可用性因制造商而异</string>
 </resources>
