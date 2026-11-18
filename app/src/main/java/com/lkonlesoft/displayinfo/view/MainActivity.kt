@@ -214,6 +214,7 @@ fun MainContext(settings: SettingsViewModel){
             NavigationItem.LightSensorTest,
             NavigationItem.ProximityTest,
             NavigationItem.AccelerometerTest,
+            NavigationItem.GpsTest,
             NavigationItem.CPUMonitor,
             NavigationItem.NetworkMonitor
         )
@@ -357,8 +358,8 @@ fun MainContext(settings: SettingsViewModel){
                 bottomBar = {
                     AnimatedVisibility(
                         visible = showControlBars,
-                        enter = fadeIn() + slideInVertically(initialOffsetY = { up -> up }),
-                        exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> down })
+                        enter = fadeIn() + slideInVertically(initialOffsetY = { up -> up }, animationSpec = tween(250)),
+                        exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> down }, animationSpec = tween(250))
                     ) {
                         FloatingNavigationBar(
                             hazeState = hazeState,

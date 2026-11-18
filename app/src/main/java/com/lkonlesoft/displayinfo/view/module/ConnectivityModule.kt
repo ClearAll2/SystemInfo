@@ -61,12 +61,10 @@ fun BluetoothDashboard(intervalMillis: Long = 5000L,onClick: () -> Unit) {
     val bluetoothUtils = remember { BluetoothUtils(context) }
     val hasBluetoothPermission by remember(refreshKey)  {
         mutableStateOf(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) == PackageManager.PERMISSION_GRANTED
-            else true
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.S || ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) == PackageManager.PERMISSION_GRANTED
         )
     }
     val infoList = remember(refreshKey) {
@@ -116,12 +114,10 @@ fun ConnectivityScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues
     var showWarningPopup by remember { mutableStateOf(false) }
     val bluetoothUtils = remember { BluetoothUtils(context) }
     val hasBluetoothPermission = remember(refreshKey)  {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.BLUETOOTH_CONNECT
-            ) == PackageManager.PERMISSION_GRANTED
-        else true
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.S || ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.BLUETOOTH_CONNECT
+        ) == PackageManager.PERMISSION_GRANTED
     }
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()

@@ -439,4 +439,25 @@
     <string name="thanks_to">Dank aan</string>
     <string name="translator">Vertaler</string>
     <string name="flip_clock">Flapklok</string>
+    <string name="gps_test_title">GPS-test</string>
+    <string name="gps_not_available">GPS-hardware is niet beschikbaar op dit apparaat</string>
+    <string name="gps_disabled">Locatiediensten / GPS is uitgeschakeld</string>
+    <string name="gps_enable_location">Locatie inschakelen</string>
+    <string name="gps_grant_permission">Locatiemachtiging verlenen</string>
+    <string name="gps_searching">Zoeken naar GPS-signaal…</string>
+    <string name="gps_has_fix">GPS-locatie bepaald</string>
+    <string name="latitude">Breedtegraad</string>
+    <string name="longitude">Lengtegraad</string>
+    <string name="accuracy">Nauwkeurigheid</string>
+    <string name="altitude">Hoogte</string>
+    <string name="speed">Snelheid</string>
+    <string name="bearing">Koers</string>
+    <string name="provider">Provider</string>
+    <string name="satellites">Satellieten</string>
+    <string name="satellites_used_in_fix">Satellieten (Fix / In zicht)</string>
+    <string name="copy_coordinates">Coördinaten kopiëren</string>
+    <string name="coordinates_copied">Coördinaten gekopieerd naar klembord</string>
+    <string name="positioning_constellations">Positionering &amp; Constellaties</string>
+    <string name="dual_frequency_gnss">Dual-Frequency GNSS (L1 + L5)</string>
+    <string name="single_frequency_gnss">Single-Frequency GNSS (L1)</string>
 </resources>

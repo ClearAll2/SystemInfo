@@ -439,4 +439,25 @@
     <string name="thanks_to">Grazie a</string>
     <string name="translator">Traduttore</string>
     <string name="flip_clock">Orologio a scatti</string>
+    <string name="gps_test_title">Test GPS</string>
+    <string name="gps_not_available">L\'hardware GPS non è disponibile su questo dispositivo</string>
+    <string name="gps_disabled">I servizi di localizzazione / GPS sono disattivati</string>
+    <string name="gps_enable_location">Abilita posizione</string>
+    <string name="gps_grant_permission">Concedi autorizzazione posizione</string>
+    <string name="gps_searching">Ricerca del segnale GPS…</string>
+    <string name="gps_has_fix">Posizione GPS acquisita</string>
+    <string name="latitude">Latitudine</string>
+    <string name="longitude">Longitudine</string>
+    <string name="accuracy">Precisione</string>
+    <string name="altitude">Altitudine</string>
+    <string name="speed">Velocità</string>
+    <string name="bearing">Rilevamento</string>
+    <string name="provider">Provider</string>
+    <string name="satellites">Satelliti</string>
+    <string name="satellites_used_in_fix">Satelliti (Fissati / In vista)</string>
+    <string name="copy_coordinates">Copia coordinate</string>
+    <string name="coordinates_copied">Coordinate copiate negli appunti</string>
+    <string name="positioning_constellations">Posizionamento e Costellazioni</string>
+    <string name="dual_frequency_gnss">GNSS a doppia frequenza (L1 + L5)</string>
+    <string name="single_frequency_gnss">GNSS a singola frequenza (L1)</string>
 </resources>

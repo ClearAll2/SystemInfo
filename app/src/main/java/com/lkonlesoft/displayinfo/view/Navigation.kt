@@ -38,6 +38,7 @@ import com.lkonlesoft.displayinfo.view.monitors.NetworkMonitorScreen
 import com.lkonlesoft.displayinfo.view.test.AccelerometerTestScreen
 import com.lkonlesoft.displayinfo.view.test.ColorTestScreen
 import com.lkonlesoft.displayinfo.view.test.FlashlightTestScreen
+import com.lkonlesoft.displayinfo.view.test.GpsTestScreen
 import com.lkonlesoft.displayinfo.view.test.LightSensorTestScreen
 import com.lkonlesoft.displayinfo.view.test.ProximityTestScreen
 import com.lkonlesoft.displayinfo.view.test.TouchTestScreen
@@ -395,6 +396,15 @@ fun MainNavigation(
                 }
             )) {
             AccelerometerTestScreen(paddingValues = paddingValues)
+        }
+        composable(
+            route = NavigationItem.GpsTest.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "si://info/${NavigationItem.GpsTest.route}"
+                }
+            )) {
+            GpsTestScreen(paddingValues = paddingValues)
         }
         composable(
             route = NavigationItem.Monitors.route,

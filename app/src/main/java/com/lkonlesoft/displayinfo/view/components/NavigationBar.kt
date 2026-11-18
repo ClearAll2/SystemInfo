@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -92,6 +93,12 @@ fun FloatingNavigationBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(brush = Brush.verticalGradient(
+                listOf(
+                    Color.Transparent,
+                    MaterialTheme.colorScheme.surfaceContainer)
+                )
+            )
             .navigationBarsPadding()
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,

@@ -451,4 +451,25 @@
     <string name="thanks_to">Thanks to</string>
     <string name="translator">Translator</string>
     <string name="flip_clock">Flip Clock</string>
+    <string name="gps_test_title">GPS Test</string>
+    <string name="gps_not_available">GPS hardware is not available on this device</string>
+    <string name="gps_disabled">Location services / GPS is turned off</string>
+    <string name="gps_enable_location">Enable Location</string>
+    <string name="gps_grant_permission">Grant Location Permission</string>
+    <string name="gps_searching">Searching for GPS signal…</string>
+    <string name="gps_has_fix">GPS Location Fixed</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="altitude">Altitude</string>
+    <string name="speed">Speed</string>
+    <string name="bearing">Bearing</string>
+    <string name="provider">Provider</string>
+    <string name="satellites">Satellites</string>
+    <string name="satellites_used_in_fix">Satellites (Fix / View)</string>
+    <string name="copy_coordinates">Copy Coordinates</string>
+    <string name="coordinates_copied">Coordinates copied to clipboard</string>
+    <string name="positioning_constellations">Positioning &amp; Constellations</string>
+    <string name="dual_frequency_gnss">Dual-Frequency GNSS (L1 + L5)</string>
+    <string name="single_frequency_gnss">Single-Frequency GNSS (L1)</string>
 </resources>

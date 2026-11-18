@@ -5,8 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val buildCode = 64
-val buildName = "5.1"
+val buildCode = 65
+val buildName = "5.2"
 val appId = "com.lkonlesoft.displayinfo"
 
 android {
@@ -57,9 +57,9 @@ android {
 }
 
 dependencies {
-    implementation("dev.chrisbanes.haze:haze:2.0.1")
-    implementation("dev.chrisbanes.haze:haze-blur:2.0.1")
-    implementation("dev.chrisbanes.haze:haze-blur-materials:2.0.1")
+    implementation("dev.chrisbanes.haze:haze:2.1.0")
+    implementation("dev.chrisbanes.haze:haze-blur:2.1.0")
+    implementation("dev.chrisbanes.haze:haze-blur-materials:2.1.0")
     implementation("io.insert-koin:koin-android:4.2.2")
     implementation("io.insert-koin:koin-androidx-compose:4.2.2")
     implementation("androidx.window:window:1.5.1")
@@ -76,7 +76,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material3:material3:1.5.0-beta02")
+    implementation("androidx.compose.material3:material3:1.5.0-rc01")
     implementation("androidx.navigation:navigation-compose:2.10.2")
     implementation("androidx.work:work-runtime-ktx:2.12.0")
     implementation("androidx.compose.ui:ui-text:1.12.1")

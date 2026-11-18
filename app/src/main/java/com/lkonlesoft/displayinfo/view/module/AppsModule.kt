@@ -160,13 +160,7 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
             if (isAtTop) {
                 true
             } else {
-                val isScrollingUp = if (listState.firstVisibleItemIndex < previousIndex) {
-                    true
-                } else if (listState.firstVisibleItemIndex > previousIndex) {
-                    false
-                } else {
-                    listState.firstVisibleItemScrollOffset < previousScrollOffset
-                }
+                val isScrollingUp = listState.firstVisibleItemIndex < previousIndex || listState.firstVisibleItemIndex <= previousIndex && listState.firstVisibleItemScrollOffset < previousScrollOffset
                 isScrollingUp
             }
         }
@@ -316,8 +310,8 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                 AnimatedVisibility(
                     modifier = Modifier.align(Alignment.BottomCenter),
                     visible = showSearchBar,
-                    enter = fadeIn() + slideInVertically(initialOffsetY = { up -> up }),
-                    exit = fadeOut() + slideOutVertically(targetOffsetY = { down -> down })
+                    enter = fadeIn(tween(500)) + slideInVertically(initialOffsetY = { up -> up }, animationSpec = tween(500)),
+                    exit = fadeOut(tween(500)) + slideOutVertically(targetOffsetY = { down -> down }, animationSpec = tween(500))
                     ) {
                     OutlinedTextField(
                         value = searchQuery,

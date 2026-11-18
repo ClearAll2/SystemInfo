@@ -439,4 +439,25 @@
     <string name="thanks_to">Благодарности</string>
     <string name="translator">Переводчик</string>
     <string name="flip_clock">Перекидные часы</string>
+    <string name="gps_test_title">Тест GPS</string>
+    <string name="gps_not_available">Оборудование GPS недоступно на этом устройстве</string>
+    <string name="gps_disabled">Службы геолокации / GPS отключены</string>
+    <string name="gps_enable_location">Включить геолокацию</string>
+    <string name="gps_grant_permission">Предоставить разрешение на геолокацию</string>
+    <string name="gps_searching">Поиск сигнала GPS…</string>
+    <string name="gps_has_fix">Местоположение GPS определено</string>
+    <string name="latitude">Широта</string>
+    <string name="longitude">Долгота</string>
+    <string name="accuracy">Точность</string>
+    <string name="altitude">Высота</string>
+    <string name="speed">Скорость</string>
+    <string name="bearing">Азимут</string>
+    <string name="provider">Провайдер</string>
+    <string name="satellites">Спутники</string>
+    <string name="satellites_used_in_fix">Спутники (Используются / В зоне видимости)</string>
+    <string name="copy_coordinates">Скопировать координаты</string>
+    <string name="coordinates_copied">Координаты скопированы в буфер обмена</string>
+    <string name="positioning_constellations">Позиционирование и созвездия</string>
+    <string name="dual_frequency_gnss">Двухчастотный GNSS (L1 + L5)</string>
+    <string name="single_frequency_gnss">Одночастотный GNSS (L1)</string>
 </resources>

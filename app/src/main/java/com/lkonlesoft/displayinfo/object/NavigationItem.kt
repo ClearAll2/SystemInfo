@@ -78,6 +78,7 @@ sealed class NavigationItem (
     data object LightSensorTest: NavigationItem(name = R.string.light_sensor_test_title, route = "lightSensorTest", R.drawable.lightbulb_24px, R.drawable.lightbulb_24px)
     data object ProximityTest: NavigationItem(name = R.string.proximity_test_title, route = "proximityTest", R.drawable.radar_24px, R.drawable.radar_24px)
     data object AccelerometerTest: NavigationItem(name = R.string.accelerometer_test_title, route = "accelerometerTest", R.drawable.mobile_rotate_24px, R.drawable.mobile_rotate_24px)
+    data object GpsTest: NavigationItem(name = R.string.gps_test_title, route = "gpsTest", R.drawable.location_on, R.drawable.location_on)
 
     //Monitors
     data object CPUMonitor: NavigationItem(name = R.string.cpu_usage, route = "cpuMonitor", R.drawable.developer_board_24px, R.drawable.developer_board_24px)

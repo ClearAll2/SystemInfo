@@ -439,4 +439,25 @@
     <string name="thanks_to">감사한 분들</string>
     <string name="translator">번역가</string>
     <string name="flip_clock">플립 시계</string>
+    <string name="gps_test_title">GPS 테스트</string>
+    <string name="gps_not_available">이 기기에서는 GPS 하드웨어를 사용할 수 없습니다</string>
+    <string name="gps_disabled">위치 서비스 / GPS가 꺼져 있습니다</string>
+    <string name="gps_enable_location">위치 활성화</string>
+    <string name="gps_grant_permission">위치 권한 허용</string>
+    <string name="gps_searching">GPS 신호 검색 중…</string>
+    <string name="gps_has_fix">GPS 위치 고정됨</string>
+    <string name="latitude">위도</string>
+    <string name="longitude">경도</string>
+    <string name="accuracy">정확도</string>
+    <string name="altitude">고도</string>
+    <string name="speed">속도</string>
+    <string name="bearing">방위</string>
+    <string name="provider">제공자</string>
+    <string name="satellites">위성</string>
+    <string name="satellites_used_in_fix">위성 (고정 / 가시)</string>
+    <string name="copy_coordinates">좌표 복사</string>
+    <string name="coordinates_copied">좌표가 클립보드에 복사되었습니다</string>
+    <string name="positioning_constellations">측위 및 위성 성단</string>
+    <string name="dual_frequency_gnss">이중 주파수 GNSS (L1 + L5)</string>
+    <string name="single_frequency_gnss">단일 주파수 GNSS (L1)</string>
 </resources>

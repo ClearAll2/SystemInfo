@@ -36,7 +36,8 @@ fun TestScreen(navController: NavHostController, currentRoute: String?, paddingV
             NavigationItem.VibrationTest,
             NavigationItem.LightSensorTest,
             NavigationItem.ProximityTest,
-            NavigationItem.AccelerometerTest
+            NavigationItem.AccelerometerTest,
+            NavigationItem.GpsTest
         )
     }
     LazyVerticalStaggeredGrid (

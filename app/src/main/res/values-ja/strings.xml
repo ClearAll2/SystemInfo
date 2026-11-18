@@ -439,4 +439,25 @@
     <string name="thanks_to">感謝</string>
     <string name="translator">翻訳者</string>
     <string name="flip_clock">フリップクロック</string>
+    <string name="gps_test_title">GPSテスト</string>
+    <string name="gps_not_available">このデバイスではGPSハードウェアを利用できません</string>
+    <string name="gps_disabled">位置情報サービス / GPSがオフになっています</string>
+    <string name="gps_enable_location">位置情報を有効化</string>
+    <string name="gps_grant_permission">位置情報の権限を許可</string>
+    <string name="gps_searching">GPS信号を検索中…</string>
+    <string name="gps_has_fix">GPS位置情報を取得</string>
+    <string name="latitude">緯度</string>
+    <string name="longitude">経度</string>
+    <string name="accuracy">精度</string>
+    <string name="altitude">高度</string>
+    <string name="speed">速度</string>
+    <string name="bearing">方位</string>
+    <string name="provider">プロバイダー</string>
+    <string name="satellites">衛星</string>
+    <string name="satellites_used_in_fix">衛星 (固定 / 可視)</string>
+    <string name="copy_coordinates">座標をコピー</string>
+    <string name="coordinates_copied">座標がクリップボードにコピーされました</string>
+    <string name="positioning_constellations">測位と衛星コンステレーション</string>
+    <string name="dual_frequency_gnss">2周波GNSS (L1 + L5)</string>
+    <string name="single_frequency_gnss">1周波GNSS (L1)</string>
 </resources>

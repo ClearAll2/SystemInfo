@@ -439,4 +439,25 @@
     <string name="thanks_to">Cảm ơn</string>
     <string name="translator">Người dịch</string>
     <string name="flip_clock">Đồng hồ lật</string>
+    <string name="gps_test_title">Kiểm tra GPS</string>
+    <string name="gps_not_available">Phần cứng GPS không khả dụng trên thiết bị này</string>
+    <string name="gps_disabled">Dịch vụ vị trí / GPS đang tắt</string>
+    <string name="gps_enable_location">Bật vị trí</string>
+    <string name="gps_grant_permission">Cấp quyền vị trí</string>
+    <string name="gps_searching">Đang tìm tín hiệu GPS…</string>
+    <string name="gps_has_fix">Đã xác định vị trí GPS</string>
+    <string name="latitude">Vĩ độ</string>
+    <string name="longitude">Kinh độ</string>
+    <string name="accuracy">Độ chính xác</string>
+    <string name="altitude">Độ cao</string>
+    <string name="speed">Tốc độ</string>
+    <string name="bearing">Hướng</string>
+    <string name="provider">Nhà cung cấp</string>
+    <string name="satellites">Vệ tinh</string>
+    <string name="satellites_used_in_fix">Vệ tinh (Định vị / Nhìn thấy)</string>
+    <string name="copy_coordinates">Sao chép tọa độ</string>
+    <string name="coordinates_copied">Đã sao chép tọa độ vào bộ nhớ tạm</string>
+    <string name="positioning_constellations">Định vị &amp; Chùm vệ tinh</string>
+    <string name="dual_frequency_gnss">GNSS tần số kép (L1 + L5)</string>
+    <string name="single_frequency_gnss">GNSS tần số đơn (L1)</string>
 </resources>

@@ -451,4 +451,25 @@
     <string name="thanks_to">Minnatdorchilik</string>
     <string name="translator">Tarjimon</string>
     <string name="flip_clock">Aylantiruvchi soat</string>
+    <string name="gps_test_title">GPS testi</string>
+    <string name="gps_not_available">Ushbu qurilmada GPS apparat ta\'minoti mavjud emas</string>
+    <string name="gps_disabled">Joylashuv xizmatlari / GPS o\'chirilgan</string>
+    <string name="gps_enable_location">Joylashuvni yoqish</string>
+    <string name="gps_grant_permission">Joylashuv ruxsatini berish</string>
+    <string name="gps_searching">GPS signali qidirilmoqda…</string>
+    <string name="gps_has_fix">GPS joylashuvi aniqlandi</string>
+    <string name="latitude">Kenglik</string>
+    <string name="longitude">Uzunlik</string>
+    <string name="accuracy">Aniqlik</string>
+    <string name="altitude">Balandlik</string>
+    <string name="speed">Tezlik</string>
+    <string name="bearing">Yo\'nalish</string>
+    <string name="provider">Provayder</string>
+    <string name="satellites">Sun\'iy yo\'ldoshlar</string>
+    <string name="satellites_used_in_fix">Sun\'iy yo\'ldoshlar (Fikslangan / Ko\'rinadigan)</string>
+    <string name="copy_coordinates">Koordinatalarni nusxalash</string>
+    <string name="coordinates_copied">Koordinatalar buferga nusxalandi</string>
+    <string name="positioning_constellations">Pozitsiyalash va yulduz turkumlari</string>
+    <string name="dual_frequency_gnss">Ikki chastotali GNSS (L1 + L5)</string>
+    <string name="single_frequency_gnss">Bir chastotali GNSS (L1)</string>
 </resources>

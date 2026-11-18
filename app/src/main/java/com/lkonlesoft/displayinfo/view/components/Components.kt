@@ -49,10 +49,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.IconToggleButtonShapes
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -416,7 +416,7 @@ fun CommonSwitchOption(
             Switch(
                 modifier = Modifier
                     .weight(0.15f)
-                    .padding(start = 20.dp),
+                    .padding(start = 16.dp, end = 8.dp),
                 enabled = enabled,
                 checked = checked,
                 onCheckedChange = onSwitch,
@@ -620,15 +620,17 @@ fun NewThemePickerItem(
     Column(modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedIconToggleButton(
+        IconToggleButton(
             shapes = IconToggleButtonShapes(
                 checkedShape = ToggleButtonDefaults.checkedShape,
                 shape = ToggleButtonDefaults.shape,
                 pressedShape = ToggleButtonDefaults.pressedShape
             ),
             colors = IconButtonDefaults.outlinedIconToggleButtonVibrantColors(
-                checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                checkedContainerColor = ToggleButtonDefaults.colors().checkedContainerColor,
+                checkedContentColor = ToggleButtonDefaults.colors().checkedContentColor,
+                containerColor = ToggleButtonDefaults.colors().containerColor,
+                contentColor = ToggleButtonDefaults.colors().contentColor
             ),
             modifier = Modifier.size(64.dp),
             checked = checked,
@@ -651,8 +653,10 @@ fun NewThemePickerItem(
 
         }
         Text(text = text,
-            fontSize = 14.sp,
-            fontWeight = if (checked) FontWeight.Medium else FontWeight.Normal
+            fontSize = 14.nonScaledSp,
+            fontWeight = if (checked) FontWeight.Medium else FontWeight.Normal,
+            maxLines = 1,
+            modifier = Modifier.basicMarquee()
         )
     }
 }

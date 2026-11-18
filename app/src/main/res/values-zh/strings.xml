@@ -439,4 +439,25 @@
     <string name="thanks_to">感谢</string>
     <string name="translator">翻译者</string>
     <string name="flip_clock">翻页时钟</string>
+    <string name="gps_test_title">GPS测试</string>
+    <string name="gps_not_available">此设备不支持GPS硬件</string>
+    <string name="gps_disabled">位置服务 / GPS 已关闭</string>
+    <string name="gps_enable_location">开启位置服务</string>
+    <string name="gps_grant_permission">授予位置权限</string>
+    <string name="gps_searching">正在搜索GPS信号…</string>
+    <string name="gps_has_fix">已定位GPS位置</string>
+    <string name="latitude">纬度</string>
+    <string name="longitude">经度</string>
+    <string name="accuracy">精度</string>
+    <string name="altitude">海拔</string>
+    <string name="speed">速度</string>
+    <string name="bearing">方向</string>
+    <string name="provider">提供者</string>
+    <string name="satellites">卫星</string>
+    <string name="satellites_used_in_fix">卫星 (定位 / 可见)</string>
+    <string name="copy_coordinates">复制坐标</string>
+    <string name="coordinates_copied">坐标已复制到剪贴板</string>
+    <string name="positioning_constellations">定位与卫星星座</string>
+    <string name="dual_frequency_gnss">双频 GNSS (L1 + L5)</string>
+    <string name="single_frequency_gnss">单频 GNSS (L1)</string>
 </resources>
