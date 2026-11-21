@@ -4,9 +4,14 @@ Thank you for choosing System Info! We're constantly making changes and improvem
 
 
 
+## 5.2
+
+* New GPS Test screen.
+* Minor improvements.
+
+
+
 ## 5.1
-
-
 
 * New Flip Clock screensaver 💪.
 * Support Uzbek language (thanks to Sherzodbek Sher).
