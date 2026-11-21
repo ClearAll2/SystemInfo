@@ -64,7 +64,7 @@ fun ChargingScreen(
     val window = (view.context as? Activity)?.window
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
     var isLocked by remember { mutableStateOf(false) }
-    val batteryUtils = remember(context) { BatteryUtils(context) }
+    val batteryUtils = remember { BatteryUtils(context) }
     var chargingState by remember { mutableStateOf(ChargingState()) }
     var currentTimeString by remember {
         mutableStateOf(

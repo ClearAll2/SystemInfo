@@ -14,12 +14,12 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -33,8 +33,9 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -43,9 +44,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedToggleButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
@@ -81,6 +82,7 @@ import com.lkonlesoft.displayinfo.view.components.CardDashboard
 import com.lkonlesoft.displayinfo.view.components.GeneralStatRow
 import com.lkonlesoft.displayinfo.view.components.HeaderForDashboard
 import com.lkonlesoft.displayinfo.view.components.IndividualLine
+import com.lkonlesoft.displayinfo.view.components.nonScaledSp
 import com.lkonlesoft.displayinfo.view.components.staggeredHeader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -128,6 +130,8 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
             1 to R.string.user
         )
     }
+    val interactionSources = remember { List(appTypes.size) { MutableInteractionSource() } }
+    val contentPadding = ButtonDefaults.ButtonWithIconContentPadding
     var isLoading by remember { mutableStateOf(true) }
     var allApps by remember { mutableStateOf(emptyList<AppInfo>()) }
     var appCountInfo by remember { mutableStateOf(emptyList<DeviceInfo>()) }
@@ -200,34 +204,50 @@ fun AppsScreen(longPressCopy: Boolean, copyTitle: Boolean, paddingValues: Paddin
                     modifier = Modifier.align(Alignment.Center),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(if (width < 840.dp) 1f else .7f)
-                            .horizontalScroll(rememberScrollState())
+                    ButtonGroup(
+                        modifier = Modifier.fillMaxWidth(if (width < 840.dp) 1f else .7f)
                             .padding(horizontal = 20.dp)
                             .padding(bottom = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+                        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                        expandedRatio = .1f,
+                        overflowIndicator = {}
                     ) {
-                        appTypes.entries.forEach { type ->
-                            OutlinedToggleButton(
-                                checked = selectType == type.key,
-                                onCheckedChange = {
-                                    selectType = type.key
-                                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                        appTypes.entries.forEachIndexed { index, type ->
+                            val checked = selectType == type.key
+                            customItem(
+                                buttonGroupContent = {
+                                    ToggleButton (
+                                        shapes = when (index) {
+                                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                            appTypes.size - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                        },
+                                        checked = checked,
+                                        colors = ToggleButtonDefaults.colors(
+                                            containerColor = MaterialTheme.colorScheme.background,
+                                            contentColor = MaterialTheme.colorScheme.onBackground
+                                        ),
+                                        onCheckedChange = {
+                                            selectType = type.key
+                                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                        },
+                                        interactionSource = interactionSources[index],
+                                        modifier =
+                                            Modifier.weight(1f).animateWidth(
+                                                interactionSource = interactionSources[index],
+                                                compressionLimit = contentPadding.calculateEndPadding(layoutDirection),
+                                            )
+                                    ) {
+                                        Text(text = "${resource.getString(type.value)} (${appCountInfo[type.key + 1].value})",
+                                            fontSize = 14.nonScaledSp,
+                                            maxLines = 1,
+                                            modifier = Modifier.basicMarquee()
+                                        )
+                                    }
                                 },
-                                shapes = when (type.key) {
-                                    -1 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                    appTypes.keys.last() -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                                },
-                                colors = ToggleButtonDefaults.colors(
-                                    disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                                    disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer
-                                )
-                            ) {
-                                Text(text = "${resource.getString(type.value)} (${appCountInfo[type.key + 1].value})")
-                            }
+                                menuContent = {}
+                            )
                         }
                     }
                     AnimatedContent(

@@ -50,7 +50,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.computedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -220,7 +220,7 @@ fun MainContext(settings: SettingsViewModel){
         )
     }
     val showControlBars by remember(currentRoute) {
-        derivedStateOf {
+        computedStateOf {
             currentRoute == NavigationItem.Home.route
                     || currentRoute == NavigationItem.Monitors.route
                     || currentRoute == NavigationItem.Test.route

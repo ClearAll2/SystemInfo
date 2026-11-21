@@ -28,7 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.computedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -68,6 +68,7 @@ fun FloatingNavigationBar(
     currentRoute: String?,
     onRouteSelected: (String) -> Unit
 ) {
+    val fontScale = LocalDensity.current.fontScale
     val navItems = remember {
         buildList {
             add(NavigationItem.Home)
@@ -76,7 +77,7 @@ fun FloatingNavigationBar(
         }
     }
     val selectedIndex by remember(currentRoute, navItems) {
-        derivedStateOf {
+        computedStateOf {
             navItems.indexOfFirst { it.route == currentRoute }
         }
     }
@@ -85,7 +86,7 @@ fun FloatingNavigationBar(
     var dragOffsetPx by remember { mutableFloatStateOf(0f) }
     var activeHoverIndex by remember { mutableIntStateOf(selectedIndex) }
     val itemWidth = 90.dp
-    val showLabels = LocalWindowInfo.current.containerDpSize.width >= 360.dp
+    val showLabels = LocalWindowInfo.current.containerDpSize.width >= 360.dp || fontScale > 1.2
     LaunchedEffect(selectedIndex) {
         if (selectedIndex >= 0)
             activeHoverIndex = selectedIndex
